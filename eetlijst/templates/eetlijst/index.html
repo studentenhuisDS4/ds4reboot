@@ -1,0 +1,14 @@
+{% extends 'base/base.html' %}
+
+{% block title %} | Bierlijst{% endblock %}
+{% block page_title %} | Bierlijst{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+
+    {% else %}
+        {% include 'base/login_form.html' %}
+    {% endif %}
+
+{% endblock %}

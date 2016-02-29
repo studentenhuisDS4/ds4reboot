@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^user/', include('user.urls')),
     url(r'^bierlijst/', include('bierlijst.urls')),
     url(r'^eetlijst/', include('eetlijst.urls')),
+    url(r'^contact/', include('contact.urls')),
     url(r'^admin/', admin.site.urls),
 ]

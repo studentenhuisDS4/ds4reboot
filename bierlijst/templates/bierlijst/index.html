@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block title %} | Bierlijst{% endblock %}
+{% block page_title %} | Bierlijst{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+    <table class="uk-table uk-table-striped">
+        <caption>...</caption>
+        <thead>
+            <tr>
+                <th>...</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td>...</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            <tr>
+                <td>...</td>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+        {% include 'base/login_form.html' %}
+    {% endif %}
+
+{% endblock %}

@@ -22,51 +22,54 @@
 
     <div class="uk-container uk-container-center uk-margin-top">
 
-        <nav class="uk-navbar uk-animation-slide-top uk-animation-5">
+        <nav class="uk-navbar">
 
-            <a class="uk-navbar-brand  uk-visible-large" href=""><img src="/static/img/logo-icon.png" /></a>
+            <a class="uk-navbar-brand  uk-visible-large" href="/"><img src="/static/img/logo-icon.png" /></a>
 
             <ul class="uk-navbar-nav uk-hidden-small">
-                <li class="uk-active"><a href=""><i class="uk-icon-home"></i> Home</a></li>
-                <li><a href=""><i class="uk-icon-beer"></i> Bierlijst</a></li>
-                <li><a href=""><i class="uk-icon-cutlery"></i> Eetlijst</a></li>
-                <li><a href=""><i class="uk-icon-star"></i> Lentefeest</a></li>
-                <li><a href=""><i class="uk-icon-book"></i> Archief</a></li>
-                <li><a href=""><i class="uk-icon-map-marker"></i> Contact & Route</a></li>
+                <li class="uk-active"><a href="/"><i class="uk-icon-home"></i> Home</a></li>
+                <li><a href="/bierlijst"><i class="uk-icon-beer"></i> Bierlijst</a></li>
+                <li><a href="/eetlijst"><i class="uk-icon-cutlery"></i> Eetlijst</a></li>
+                <li><a href="/"><i class="uk-icon-star"></i> Lentefeest</a></li>
+                <li><a href="/"><i class="uk-icon-book"></i> Archief</a></li>
+                <li><a href="/contact"><i class="uk-icon-map-marker"></i> Contact & Route</a></li>
             </ul>
 
             <div class="uk-navbar-flip">
                 <ul class="uk-navbar-nav">
-                    <li class="uk-parent" data-uk-dropdown="pos:'bottom-right'">
+
                     {% if user.is_authenticated %}
-                        <a href="">User <i class="uk-icon-angle-down"></i></a>
+                    <li class="uk-parent" data-uk-dropdown="pos:'bottom-right'">
+                        <a href="/user/profile"><strong>{{ request.user.username }}</strong> <i class="uk-icon-angle-down"></i></a>
                         <div class="uk-dropdown uk-dropdown-navbar">
                             <ul class="uk-nav uk-nav-navbar">
-                                <li class=" uk-hidden-small"><a href="">Change user to 'House'</a></li>
+                                <li class=" uk-hidden-small"><a href="/user/home">Change user to 'House'</a></li>
                                 <li class="uk-nav-divider  uk-hidden-small"></li>
-                                <li><a href=""><i class="uk-icon-user"></i> Profile</a></li>
-                                <li><a href=""><i class="uk-icon-cog"></i> Settings</a></li>
-                                <li><a href=""><i class="uk-icon-sign-out"></i> Logout</a></li>
+                                <li><a href="/user/profile"><i class="uk-icon-user"></i> Profile</a></li>
+                                <li><a href="/user/settings"><i class="uk-icon-cog"></i> Settings</a></li>
+                                <li><a href="/user/logout"><i class="uk-icon-sign-out"></i> Logout</a></li>
                             </ul>
                         </div>
+                    </li>
                     {% else %}
-                        <a href="">Log in <i class="uk-icon-angle-down"></i></a>
+                    <li class="uk-parent" data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
+                        <a href="/user/login/">Log in <i class="uk-icon-angle-down"></i></a>
                         <div class="uk-dropdown uk-dropdown-navbar">
-                            <form class="uk-form uk-margin-remove uk-display-inline-block">
-
-                                <div class="uk-form-row"><input type="text" placeholder="Username"></div>
-                                <div class="uk-form-row"><input type="password" placeholder="Password"></div>
-                                <div class="uk-form-row"><button class="uk-button uk-button-primary uk-width-1-1">Log in</button></div>
+                            <form class="uk-form uk-margin-remove uk-display-inline-block" method="post" action="/user/login/">
+                                {% csrf_token %}
+                                <div class="uk-form-row"><input type="text" name="username" placeholder="Username" class="uk-width-1-1"></div>
+                                <div class="uk-form-row"><input type="password" name="password" placeholder="Password" class="uk-width-1-1"></div>
+                                <div class="uk-form-row"><button type="submit" class="uk-button uk-button-primary uk-width-1-1">Log in</button></div>
 
                             </form>
                         </div>
-                    {% endif %}
                     </li>
+                    {% endif %}
                 </ul>
             </div>
 
             <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-            <div class="uk-navbar-brand uk-navbar-center uk-visible-small">DS4{% block page_title %}{% endblock %}</div>
+            <div class="uk-navbar-brand uk-visible-small">DS4{% block page_title %}{% endblock %}</div>
 
         </nav>
 
@@ -74,19 +77,20 @@
         {% block body_block %}Failed to load page content.{% endblock %}
 
 
-        <p class="uk-text-center uk-text-muted uk-hidden-small"><i class="uk-icon-heart-o"></i> DS4</p>
+        <p class="uk-text-center uk-text-muted uk-hidden-small uk-margin-large-top"><i class="uk-icon-heart-o"></i> DS4</p>
+
 
     </div>
 
      <div id="offcanvas" class="uk-offcanvas">
         <div class="uk-offcanvas-bar">
             <ul class="uk-nav uk-nav-offcanvas">
-                <li class="uk-active"><a href=""><i class="uk-icon-home"></i> Home</a></li>
-                <li><a href=""><i class="uk-icon-beer" style="width:2em"></i> Bierlijst</a></li>
-                <li><a href=""><i class="uk-icon-cutlery" style="width:2em"></i> Eetlijst</a></li>
-                <li><a href=""><i class="uk-icon-star" style="width:2em"></i> Lentefeest</a></li>
-                <li><a href=""><i class="uk-icon-book" style="width:2em"></i> Archief</a></li>
-                <li><a href=""><i class="uk-icon-map-marker" style="width:2em"></i> Contact & Route</a></li>
+                <li class="uk-active"><a href="/"><i class="uk-icon-home"></i> Home</a></li>
+                <li><a href="/bierlijst"><i class="uk-icon-beer" style="width:2em"></i> Bierlijst</a></li>
+                <li><a href="/eetlijst"><i class="uk-icon-cutlery" style="width:2em"></i> Eetlijst</a></li>
+                <li><a href="/"><i class="uk-icon-star" style="width:2em"></i> Lentefeest</a></li>
+                <li><a href="/"><i class="uk-icon-book" style="width:2em"></i> Archief</a></li>
+                <li><a href="/contact"><i class="uk-icon-map-marker" style="width:2em"></i> Contact & Route</a></li>
             </ul>
             <p class="uk-text-center uk-text-muted uk-margin-large-top"><i class="uk-icon-heart-o"></i> DS4</p></div>
         </div>
