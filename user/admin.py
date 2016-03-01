@@ -17,11 +17,13 @@ class HousematInline(admin.StackedInline):
     model = Housemate
     can_delete = False
     verbose_name_plural = 'Housemate Information'
+    exclude = ('sum_bier','sum_wwijn','sum_rwijn','total_bier','total_wwijn','total_rwijn', )
 
 
 # Define a new User admin
 class UserAdmin(BaseUserAdmin):
     inlines = (HousematInline, )
+
 
 # Re-register UserAdmin
 admin.site.unregister(User)

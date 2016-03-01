@@ -17,6 +17,15 @@ class Housemate(models.Model):
     parent_phone = models.CharField(default='06-', max_length=50)
 
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    boetes = models.IntegerField(default=0)
+
+    sum_bier = models.IntegerField(default=0)
+    sum_wwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    sum_rwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+
+    total_bier = models.IntegerField(default=0)
+    total_wwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    total_rwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
 
     def __str__(self):
-        return self.user.username
+        return self.display_name
