@@ -5,47 +5,23 @@
 
 {% block body_block %}
 
-    <p class="uk-clearfix" style="margin-top:2em; background:none"><img class="uk-align-center" src="/static/img/achtergrond.png" alt=""></p>
+    <div class="uk-width-1-1 uk-clearfix" style="margin-top:2em; margin-bottom:2em; position: relative;">
+
+        <div class="uk-hidden-small" style="width:25em; position:absolute; top:0; right:0;">
+            {% include 'home/quick_access.html' %}
+            </div>
+        </div>
+        <img src="/static/img/achtergrond.png" alt="">
+    </div>
 
     <div class="uk-grid uk-visible-small">
         <div class="uk-width-1-1">
-            <div class="uk-panel uk-panel-box uk-animation-fade uk-animation-5">
-                <form class="uk-form uk-margin-remove">
-
-                    <div class="uk-form-row">
-                        <div class="uk-button-group  uk-width-1-1">
-                            <button class="uk-button uk-button-large uk-width-3-5 uk-button-primary"><i class="uk-icon-plus-circle"></i> Turf bier</button>
-                            <a class="uk-button uk-button-large uk-width-2-5 uk-button-primary" href="bierlijst/"><i class="uk-icon-link"></i> Bierlijst</a>
-                        </div>
-                    </div>
-
-                    <div class="uk-form-row">
-                        <div class="uk-button-group  uk-width-1-1">
-                            <button class="uk-button uk-width-1-2" disabled>Bier: 250 <i class="uk-icon-circle" style="color:#ffdf00"></i></button>
-                            <button class="uk-button uk-width-1-2" disabled>Wijn: 1.33</button>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <div class="uk-form-row">
-                        <div class="uk-button-group  uk-width-1-1">
-                            <button class="uk-button uk-button-large uk-width-3-5 uk-button-success"><i class="uk-icon-plus-circle"></i> Eet mee</button>
-                            <a class="uk-button uk-button-large uk-width-2-5 uk-button-success" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
-                        </div>
-                    </div>
-
-                    <div class="uk-form-row">
-                        <div class="uk-button-group  uk-width-1-1">
-                            <button class="uk-button uk-width-1-2"><i class="uk-icon-shopping-basket"></i> Geen</button>
-                            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> 5</button>
-                            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span style="color:#32CD32">+4.20</span></button>
-                        </div>
-                    </div>
-
-                </form>
+            <div style="margin-left:1em; margin-right:1em;">
+            {% include 'home/quick_access.html' %}
             </div>
         </div>
     </div>
+
+
 
 {% endblock %}
