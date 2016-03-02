@@ -1,3 +1,60 @@
+html {
+    font-family: 'Roboto', sans-serif;
+}
+
 body {
     background: #f5f5f5;
+}
+
+.small-rows thead th {
+    padding: 5px 8px;
+    vertical-align: middle;
+}
+
+.small-rows tbody td {
+    padding: 4px 8px;
+    vertical-align: middle;
+}
+
+.small-rows tfoot td {
+    padding: 1px 8px;
+    vertical-align: middle;
+}
+
+.big-totals tfoot {
+    font-size: 14px;
+    font-style: normal;
+}
+
+.big-totals tfoot td {
+    padding: 4px 8px;
+}
+
+.eetlijst-dropdown {
+    margin-top: 4px;
+    width: 5.4em;
+    padding: 0px 5px;
+    white-space: nowrap;
+    border-radius: 0px;
+    border-color: #ccc;
+}
+
+.eetlijst-dropdown button {
+    border: 0;
+    padding: 5px 0px;
+    margin: 0;
+    background: none;
+    width: 100%;
+}
+
+.eetlijst-dropdown button:hover {
+    background: #39f;
+    color: #fff;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.eetlijst-dropdown li {
+    margin-left: 0px;
+    padding: 0px 10px;
 }

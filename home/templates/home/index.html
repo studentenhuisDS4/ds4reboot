@@ -6,14 +6,16 @@
 {% block body_block %}
 
     <div class="uk-width-1-1 uk-clearfix" style="margin-top:2em; margin-bottom:2em; position: relative;">
-
+        {% if user.is_authenticated and request.user.username != 'huis' %}
         <div class="uk-hidden-small" style="width:25em; position:absolute; top:0; right:0;">
             {% include 'home/quick_access.html' %}
             </div>
         </div>
+        {% endif %}
         <img src="/static/img/achtergrond.png" alt="">
     </div>
 
+    {% if user.is_authenticated and request.user.username != 'huis' %}
     <div class="uk-grid uk-visible-small">
         <div class="uk-width-1-1">
             <div style="margin-left:1em; margin-right:1em;">
@@ -21,7 +23,6 @@
             </div>
         </div>
     </div>
-
-
+    {% endif %}
 
 {% endblock %}

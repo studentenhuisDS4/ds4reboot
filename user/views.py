@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import redirect
 
 
 # Create your views here.
@@ -24,7 +25,7 @@ def login_user(request):
             if user.is_active:
 
                 login(request, user)
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                return redirect(request.META.get('HTTP_REFERER'))
             else:
                 return HttpResponse("Your account is disabled.")
         else:
@@ -36,4 +37,19 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return redirect(request.META.get('HTTP_REFERER'))
+
+def login_huis(request):
+    logout(request)
+
+    user = authenticate(username='huis', password='pass')
+
+    if user:
+        if user.is_active:
+
+            login(request, user)
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            return HttpResponse("Your account is disabled.")
+    else:
+        return HttpResponse("Invalid login details supplied.")

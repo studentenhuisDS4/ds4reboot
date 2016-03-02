@@ -1,6 +1,8 @@
 <div class="uk-panel uk-panel-box uk-animation-fade uk-animation-5" style="margin-top:2em; background-color:rgba(255, 255, 255, 0.8);">
-    <form class="uk-form uk-margin-remove">
-
+    <form class="uk-form uk-margin-remove" method="post" action="/bierlijst/turf/{{ request.user.id }}/">
+        {% csrf_token %}
+        <input type="hidden" name="count" value="1">
+        <input type="hidden" name="bier" value="bier">
         <div class="uk-form-row">
             <button class="uk-button uk-button-large uk-width-1-1 uk-button-primary uk-hidden-small"><i class="uk-icon-plus-circle"></i> Turf bier</button>
             <div class="uk-button-group uk-width-1-1 uk-visible-small">
@@ -11,13 +13,16 @@
 
         <div class="uk-form-row">
             <div class="uk-button-group  uk-width-1-1">
-                <button class="uk-button uk-width-1-2" disabled>Bier: 250 <i class="uk-icon-circle" style="color:#ffdf00"></i></button>
-                <button class="uk-button uk-width-1-2" disabled>Wijn: 1.33</button>
+                <button class="uk-button uk-width-1-2" disabled>Bier: {{ user_info.sum_bier }}{% if request.user.id in medals %} <i class="uk-icon-circle" style="color:{% if request.user.id == medals.0 %}#ffdf00{% endif %}{% if request.user.id == medals.1 %}#C0C0C0{% endif %}{% if request.user.id == medals.2 %}#cd8c32{% endif %}"></i>{% endif %}</button>
+                <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.total_wijn }}</button>
             </div>
         </div>
+    </form>
 
         <hr>
 
+    <form class="uk-form uk-margin-remove">
+        {% csrf_token %}
         <div class="uk-form-row">
             <button class="uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small"><i class="uk-icon-plus-circle"></i> Eet mee</button>
             <div class="uk-button-group  uk-width-1-1 uk-visible-small">
@@ -30,7 +35,7 @@
             <div class="uk-button-group  uk-width-1-1">
                 <button class="uk-button uk-width-1-2"><i class="uk-icon-shopping-basket"></i> Geen</button>
                 <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> 5</button>
-                <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="uk-text-success">+4.20</span></button>
+                <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
             </div>
         </div>
 

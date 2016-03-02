@@ -7,11 +7,13 @@ from django.db import models
 
 class Turf(models.Model):
 
-    turf_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    turf_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    turf_to = models.CharField(max_length=30)
+    turf_by = models.CharField(max_length=30)
 
     turf_time = models.DateTimeField(default=timezone.now)
 
-    turf_count = models.DecimalField(default=1, decimal_places=2, max_digits=4)
+    turf_count = models.DecimalField(decimal_places=2, max_digits=5)
     turf_type = models.CharField(max_length=10)
 
 

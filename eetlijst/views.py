@@ -1,8 +1,16 @@
+from django.contrib.auth.models import User
+from user.models import Housemate
 from django.shortcuts import render
-from django.http import HttpResponse
 
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'eetlijst/index.html')
+    active_users = User.objects.filter(is_active=True)
+    user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+
+    context = {
+        'user_list': user_list,
+    }
+
+    return render(request, 'eetlijst/index.html', context)

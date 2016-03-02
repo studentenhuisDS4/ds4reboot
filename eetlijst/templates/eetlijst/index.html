@@ -1,12 +1,70 @@
 {% extends 'base/base.html' %}
 
-{% block title %} | Bierlijst{% endblock %}
-{% block page_title %} | Bierlijst{% endblock %}
+{% block title %} | Eetlijst{% endblock %}
+{% block page_title %} | Eetlijst{% endblock %}
 
 {% block body_block %}
 
     {% if user.is_authenticated %}
+    <div style="background:#eaeaea">
+        <table class="small-rows big-totals uk-table uk-table-hover" style="border:1px solid #CCC">
+            <thead class="uk-h6" style="border-bottom:2px solid #CCC;">
+                <tr>
+                    <th></th>
+                    <th>Naam</th>
+                    <th class="uk-text-center">Balance</th>
+                    <th class="uk-hidden-small uk-text-center">Maandag</th>
+                    <th class="uk-hidden-small uk-text-center">Dinsdag</th>
+                    <th class="uk-hidden-small uk-text-center">Woensdag</th>
+                    <th class="uk-hidden-small uk-text-center">Donderdag</th>
+                    <th class="uk-hidden-small uk-text-center">Vrijdag</th>
+                    <th class="uk-hidden-small uk-text-center">Saterdag</th>
+                    <th class="uk-hidden-small uk-text-center">Zondag</th>
+                </tr>
+            </thead>
+            <tfoot style="border-top:2px solid #CCC">
+                <tr>
+                    <td></td>
+                    <td>Totaal</td>
+                    <td></td>
+                    <td class="uk-hidden-small uk-text-center">0</td>
+                    <td class="uk-hidden-small uk-text-center">22</td>
+                    <td class="uk-hidden-small uk-text-center">0</td>
+                    <td class="uk-hidden-small uk-text-center">0</td>
+                    <td class="uk-hidden-small uk-text-center">0</td>
+                    <td class="uk-hidden-small uk-text-center">0</td>
+                    <td class="uk-hidden-small uk-text-center">0</td>
+                </tr>
+            </tfoot>
+            <tbody>
+                {% for u in user_list %}
+                {% if u.user.username != "huis" %}
+                <tr>
+                    <td class="uk-margin-remove" style="width:9em">
+                        <form class="uk-form uk-width-1-1">
+                            <div class="uk-button-group uk-width-1-1">
+                                <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-plus"></i></button>
+                                <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-shopping-basket"></i></button>
+                                <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-minus"></i></button>
+                            </div>
+                        </form>
+                    </td>
 
+                    <td>{{ u }}</td>
+                    <td style="background-color:{% if u.user_id == 5 %}#CFB53B{% endif %}{% if u.user_id == 8 %}#C0C0C0{% endif %}{% if u.user_id == 12 %}#8C7853{% endif %}" class="uk-text-center">{{ u.balance }}</td>
+                    <td class="uk-hidden-small uk-text-center"></td>
+                    <td class="uk-hidden-small uk-text-center"><i class="uk-icon-times"></i> 2</td>
+                    <td class="uk-hidden-small uk-text-center"></td>
+                    <td class="uk-hidden-small uk-text-center"></td>
+                    <td class="uk-hidden-small uk-text-center"></td>
+                    <td class="uk-hidden-small uk-text-center"></td>
+                    <td class="uk-hidden-small uk-text-center"></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
         {% include 'base/login_form.html' %}
     {% endif %}

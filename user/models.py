@@ -17,7 +17,10 @@ class Housemate(models.Model):
     parent_phone = models.CharField(default='06-', max_length=50)
 
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    boetes = models.IntegerField(default=0)
+
+    boetes_open = models.IntegerField(default=0)
+    boetes_sum = models.IntegerField(default=0)
+    boetes_total = models.IntegerField(default=0)
 
     sum_bier = models.IntegerField(default=0)
     sum_wwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
@@ -26,6 +29,16 @@ class Housemate(models.Model):
     total_bier = models.IntegerField(default=0)
     total_wwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     total_rwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+
+    # sum wine columns
+    def get_sum_wijn(self):
+        return self.sum_wwijn + self.sum_rwijn
+
+    def get_total_wijn(self):
+        return self.total_wwijn + self.total_rwijn
+
+    sum_wijn = property(get_sum_wijn)
+    total_wijn = property(get_total_wijn)
 
     def __str__(self):
         return self.display_name
