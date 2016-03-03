@@ -5,4 +5,8 @@ from django.http import HttpResponse
 # Create your views here.
 
 def index(request):
-    return render(request, 'contact/index.html')
+
+    context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        }
+    return render(request, 'contact/index.html', context)

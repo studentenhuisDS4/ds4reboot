@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="2350492630">
-    <data-source source="LOCAL" name="MySQL - damienal_ds4@kefka.asmallorange.com" uuid="7f71ec05-0426-42a6-b43b-90eda13a345a">
+  <component name="DataSourceManagerImpl" format="xml" hash="1898880806">
+    <data-source source="LOCAL" name="MySQL - ds4db@localhost" uuid="7f71ec05-0426-42a6-b43b-90eda13a345a">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/ds4db</jdbc-url>
+      <driver-properties>
+        <property name="autoReconnect" value="true" />
+        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="tinyInt1isBit" value="false" />
+        <property name="characterEncoding" value="utf8" />
+        <property name="characterSetResults" value="utf8" />
+        <property name="yearIsDateType" value="false" />
+      </driver-properties>
+    </data-source>
+    <data-source source="LOCAL" name="MySQL - damienal_ds4@asmallorange" uuid="62a7c80c-8bd9-4958-8a0c-2f6ce51bf6fb">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>

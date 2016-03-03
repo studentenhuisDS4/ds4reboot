@@ -68,11 +68,9 @@ body {
 .gold {
     background-color: #e4c752;
 }
-
 .silver {
     background-color: #C0C0C0;
 }
-
 .bronze {
     background-color: #b39a6b;
 }
@@ -80,11 +78,27 @@ body {
 .gold-icon {
     color: #e4c752;
 }
-
 .silver-icon {
     color: #C0C0C0;
 }
-
 .bronze-icon {
     color: #b39a6b;
+}
+
+/* bierlijst form styling */
+
+.form-large {
+    width: 12em;
+    border-right: 1px dotted #ccc;
+}
+.form-large form {
+    width: 12em;
+}
+
+.form-small {
+    width: 8em;
+    border-right: 1px dotted #ccc;
+}
+.form-small form {
+    width: 8em;
 }

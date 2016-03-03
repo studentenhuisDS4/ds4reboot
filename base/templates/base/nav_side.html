@@ -2,11 +2,11 @@
     <div class="uk-offcanvas-bar">
         <ul class="uk-nav uk-nav-offcanvas">
             <li {% if request.get_full_path == '/' %}class="uk-active"{% endif %}><a href="/"><i class="uk-icon-home"></i> Home</a></li>
-            <li {% if request.get_full_path == '/bierlijst/' %}class="uk-active"{% endif %}><a href="/bierlijst"><i class="uk-icon-beer" style="width:2em"></i> Bierlijst</a></li>
-            <li {% if request.get_full_path == '/eetlijst/' %}class="uk-active"{% endif %}><a href="/eetlijst"><i class="uk-icon-cutlery" style="width:2em"></i> Eetlijst</a></li>
+            <li {% if '/bierlijst/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/bierlijst"><i class="uk-icon-beer" style="width:2em"></i> Bierlijst</a></li>
+            <li {% if '/eetlijst/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/eetlijst"><i class="uk-icon-cutlery" style="width:2em"></i> Eetlijst</a></li>
             <li><a href="/"><i class="uk-icon-star" style="width:2em"></i> Lentefeest</a></li>
             <li class="uk-hidden"><a href="/"><i class="uk-icon-book" style="width:2em"></i> Archief</a></li>
-            <li {% if request.get_full_path == '/contact/' %}class="uk-active"{% endif %}><a href="/contact"><i class="uk-icon-map-marker" style="width:2em"></i> Contact & Route</a></li>
+            <li {% if '/contact/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/contact"><i class="uk-icon-map-marker" style="width:2em"></i> Contact & Route</a></li>
         </ul>
         <p class="uk-text-center uk-text-muted uk-margin-large-top"><i class="uk-icon-heart-o"></i> DS4</p></div>
     </div>

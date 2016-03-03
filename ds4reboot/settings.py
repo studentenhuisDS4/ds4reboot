@@ -83,10 +83,10 @@ WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'damienal_ds4',
-        'USER': 'damienal_ds4db',
+        'NAME': 'ds4db',
+        'USER': 'ds4db_user',
         'PASSWORD': 'eXnhnTVFdSd9',
-        'HOST': 'kefka.asmallorange.com',   # Or an IP Address that your DB is hosted on
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
         'OPTIONS': {
           'autocommit': True,
