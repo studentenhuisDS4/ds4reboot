@@ -43,6 +43,27 @@ def index(request):
     return render(request, 'bierlijst/index.html', context)
 
 
+def show_log(request):
+
+    turf_list = Turf.objects.order_by('-turf_time')
+
+    context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        'turf_list': turf_list
+    }
+
+    return render(request, 'bierlijst/log.html', context)
+
+
+def boetes(request):
+
+    context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+    }
+
+    return render(request, 'bierlijst/boetes.html', context)
+
+
 def turf_item(request, user_id):
 
     if request.method == 'POST':

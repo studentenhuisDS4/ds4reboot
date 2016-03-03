@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block title %} | Bierlijst{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+<div class="uk-grid uk-padding-remove uk-hidden-small" style="position:relative;">
+        <div class="uk-width-7-10">
+
+        </div>
+        <div class="uk-width-3-10">
+            {% include 'bierlijst/boetes_options.html' %}
+        </div>
+    </div>
+
+    <div class="uk-visible-small">
+        <div class="uk-width-1-1">
+
+        </div>
+        <div class="uk-width-1-1 uk-margin-bottom">
+            {% include 'bierlijst/boetes_options.html' %}
+        </div>
+    </div>
+    {% else %}
+        {% include 'base/login_form.html' %}
+    {% endif %}
+
+{% endblock %}

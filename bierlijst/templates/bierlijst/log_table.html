@@ -1,0 +1,33 @@
+<table class="small-rows uk-table uk-table-hover" style="border:1px solid #ccc; background:#eaeaea;">
+    <thead class="uk-h6" style="border-bottom:2px solid #CCC;">
+        <tr>
+            <th>Nummer</th>
+            <th>Geturfd op</th>
+            <th class="uk-hidden-small">Geturfd door</th>
+            <th>Type</th>
+            <th>Tijd</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in turf_list %}
+        <tr>
+            <td>{{ t.turf_count }}</td>
+            <td>{{ t.turf_to }}</td>
+            <td class="uk-hidden-small">{{ t.turf_by }}</td>
+            <td>{{ t.turf_type }}</td>
+            <td>{{ t.turf_time }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<ul class="uk-pagination">
+    <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
+    <li class="uk-disabled"><span><i class="uk-icon-angle-left"></i></span></li>
+    <li class="uk-active"><span>1</span></li>
+    <li><a href="">2</a></li>
+    <li class="uk-disabled"><span>...</span></li>
+    <li><a href="">10</a></li>
+    <li><a href=""><i class="uk-icon-angle-right"></i></a></li>
+    <li><a href=""><i class="uk-icon-angle-double-right"></i></a></li>
+</ul>
