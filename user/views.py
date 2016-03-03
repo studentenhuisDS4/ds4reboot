@@ -32,7 +32,13 @@ def login_user(request):
             return HttpResponse("Invalid login details supplied.")
 
     else:
-        return render(request, 'base/login_page.html')
+
+
+        context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        }
+
+        return render(request, 'base/login_page.html', context)
 
 
 def logout_user(request):

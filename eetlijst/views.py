@@ -10,6 +10,7 @@ def index(request):
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
 
     context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'user_list': user_list,
     }
 

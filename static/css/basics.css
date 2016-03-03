@@ -1,3 +1,5 @@
+/* UIKIT OVERRIDES*/
+
 html {
     font-family: 'Roboto', sans-serif;
 }
@@ -57,4 +59,32 @@ body {
 .eetlijst-dropdown li {
     margin-left: 0px;
     padding: 0px 10px;
+}
+
+
+/* CUSTOM STYLING */
+
+/* medal colors */
+.gold {
+    background-color: #e4c752;
+}
+
+.silver {
+    background-color: #C0C0C0;
+}
+
+.bronze {
+    background-color: #b39a6b;
+}
+
+.gold-icon {
+    color: #e4c752;
+}
+
+.silver-icon {
+    color: #C0C0C0;
+}
+
+.bronze-icon {
+    color: #b39a6b;
 }

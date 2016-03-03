@@ -8,23 +8,29 @@ from django.http import HttpResponse
 
 def index(request):
 
-    user_info = Housemate.objects.get(user_id=request.user.id)
+    if request.user.is_authenticated():
 
-    active_users = User.objects.filter(is_active=True)
-    user_medals = Housemate.objects.filter(user__id__in=active_users).order_by('-sum_bier')[:3]
+        user_info = Housemate.objects.get(user_id=request.user.id)
 
-    medals = []
+        active_users = User.objects.filter(is_active=True)
+        user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
 
-    for u in user_medals:
-        if u.sum_bier > 0:
-            medals += [u.user_id]
-        else:
-            medals += [0]
+        medals = []
+
+        for u in user_medals:
+            if u.sum_bier > 0:
+                medals += [u.user_id]
+            else:
+                medals += [0]
 
 
-    context = {
-        'user_info': user_info,
-        'medals': medals,
-    }
+        context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+            'user_info': user_info,
+            'medals': medals,
+        }
 
-    return render(request, 'home/index.html', context)
+        return render(request, 'home/index.html', context)
+
+    else:
+        return render(request, 'home/index.html')

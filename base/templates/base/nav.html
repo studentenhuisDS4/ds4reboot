@@ -1,6 +1,6 @@
 <nav class="uk-navbar uk-margin-top" style="margin-bottom:1.5em">
 
-    <a class="uk-navbar-brand  uk-visible-large" href="/"><img src="/static/img/logo-icon.png" /></a>
+    <a class="uk-navbar-brand uk-visible-large" href="/"><img src="/static/img/logo-icon.png" /></a>
 
     <ul class="uk-navbar-nav uk-hidden-small">
         <li {% if request.get_full_path == '/' %}class="uk-active"{% endif %}><a href="/"><i class="uk-icon-home"></i> Home</a></li>
@@ -47,6 +47,19 @@
     </div>
 
     <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-    <div class="uk-navbar-brand uk-visible-small">DS4{% block page_title %}{% endblock %}</div>
+    <div class="uk-navbar-brand uk-padding-remove uk-visible-small">
+        <ul class="uk-breadcrumb uk-margin-remove" style="float:left; line-height: 40px;">
+            <li><a href="/">DS4</a></li>
+            {% if breadcrumbs %}
+            {% for b in breadcrumbs %}
+            {% if  forloop.counter0 == 0 and not forloop.revcounter0 == 0 %}
+            <li><a href="/{{ b }}/">{{ b }}</a></li>
+            {% else %}
+            <li class="uk-active"><span>{{ b }}</span></li>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
 
 </nav>

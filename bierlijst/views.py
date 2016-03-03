@@ -9,6 +9,7 @@ from django.db.models import Sum
 
 # Create your views here.
 
+
 def index(request):
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
@@ -22,7 +23,7 @@ def index(request):
               str(list(user_list.aggregate(Sum('boetes_open')).values())[0])]
 
     # find medaled users
-    user_medals = Housemate.objects.filter(user__id__in=active_users).order_by('-sum_bier')[:3]
+    user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
 
     medals = []
 
@@ -33,6 +34,7 @@ def index(request):
             medals += [0]
 
     context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'user_list': user_list,
         'totals': totals,
         'medals': medals,
