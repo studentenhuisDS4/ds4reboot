@@ -22,8 +22,8 @@ class Boete(models.Model):
 
     boete_user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    time_opened = models.DateTimeField(default=timezone.now)
-    time_closed = models.DateTimeField()
+    created_by = models.CharField(max_length=30)
+    created_time = models.DateTimeField(default=timezone.now)
 
-    boete_open = models.BooleanField(default=True)
+    boete_value = models.IntegerField(default=1)
     boete_note = models.CharField(max_length=50)

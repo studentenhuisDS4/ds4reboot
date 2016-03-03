@@ -1,0 +1,57 @@
+<table class="small-rows big-totals uk-table uk-table-hover" style="border:1px solid #CCC">
+    <thead class="uk-h6" style="border-bottom:2px solid #CCC;">
+        <tr>
+            <th></th>
+            <th>Naam</th>
+            <th class="uk-text-center">Balance</th>
+            <th class="uk-hidden-small uk-text-center">Ma</th>
+            <th class="uk-hidden-small uk-text-center">Di</th>
+            <th class="uk-hidden-small uk-text-center">Wo</th>
+            <th class="uk-hidden-small uk-text-center">Do</th>
+            <th class="uk-hidden-small uk-text-center">Vr</th>
+            <th class="uk-hidden-small uk-text-center">Za</th>
+            <th class="uk-hidden-small uk-text-center">Zo</th>
+        </tr>
+    </thead>
+    <tfoot style="border-top:2px solid #CCC">
+        <tr>
+            <td></td>
+            <td>Totaal</td>
+            <td></td>
+            <td class="uk-hidden-small uk-text-center">0</td>
+            <td class="uk-hidden-small uk-text-center">22</td>
+            <td class="uk-hidden-small uk-text-center">0</td>
+            <td class="uk-hidden-small uk-text-center">0</td>
+            <td class="uk-hidden-small uk-text-center">0</td>
+            <td class="uk-hidden-small uk-text-center">0</td>
+            <td class="uk-hidden-small uk-text-center">0</td>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for u in user_list %}
+        {% if u.user.username != "huis" %}
+        <tr>
+            <td class="uk-margin-remove" style="width:9em">
+                <form class="uk-form uk-width-1-1">
+                    <div class="uk-button-group uk-width-1-1">
+                        <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-plus"></i></button>
+                        <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-shopping-basket"></i></button>
+                        <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-minus"></i></button>
+                    </div>
+                </form>
+            </td>
+
+            <td>{{ u }}</td>
+            <td class="uk-text-center">{{ u.balance }}</td>
+            <td class="uk-hidden-small uk-text-center"></td>
+            <td class="uk-hidden-small uk-text-center"><i class="uk-icon-times"></i> 2</td>
+            <td class="uk-hidden-small uk-text-center"></td>
+            <td class="uk-hidden-small uk-text-center"></td>
+            <td class="uk-hidden-small uk-text-center"></td>
+            <td class="uk-hidden-small uk-text-center"></td>
+            <td class="uk-hidden-small uk-text-center"></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
