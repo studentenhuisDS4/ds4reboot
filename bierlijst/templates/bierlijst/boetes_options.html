@@ -2,4 +2,45 @@
     <h3 class="uk-panel-title">Opties</h3>
     <hr>
     <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/bierlijst/"><i class="uk-icon-arrow-circle-left"></i> Terug naar bierlijst</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/bierlijst/boetes/"><i class="uk-icon-download"></i> Exporteren naar CSV</a></p>
+
+    <hr>
+
+    <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
+        <form class="uk-form" method="post" action="/bierlijst/boetes/">
+            {% csrf_token %}
+            <div class="uk-form-row"><input type="text" name="note" placeholder="Reden" class="uk-width-1-1"></div>
+
+            <div class="uk-form-row uk-grid">
+
+                <div class="uk-button-group uk-width-5-10 uk-padding-remove">
+                    <button type="submit" name="bier" value="bier" class="uk-button uk-button-small uk-width-4-5 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-user"></i> Kiezen</button>
+                    <div class="uk-width-1-5" data-uk-dropdown="{mode:'click'}">
+                        <a href="" class="uk-button uk-button-small uk-width-1-1 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-angle-down"></i></a>
+                        <div class="uk-dropdown eetlijst-dropdown">
+                            <ul class="uk-nav">
+                                <li><button type="submit" name="wwijn" value="wwijn">W. Wijn</button></li>
+                                <li><button type="submit" name="rwijn" value="wwijn">R. Wijn</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="uk-form-row"><button type="submit" class="uk-button uk-button-primary uk-width-5-10">Voeg toe</button></div>
+
+            </div>
+
+        </form>
+    </div>
+
+
+    <hr>
+
+    <p>To do:</p>
+    <ul>
+        <li>Pagination</li>
+        <li>Date range</li>
+        <li>Results per page</li>
+        <li>Export functionality</li>
+    </ul>
 </div>

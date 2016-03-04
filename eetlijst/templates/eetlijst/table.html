@@ -31,18 +31,16 @@
         {% for u in user_list %}
         {% if u.user.username != "huis" %}
         <tr>
-            <td class="uk-margin-remove" style="width:9em">
-                <form class="uk-form uk-width-1-1">
-                    <div class="uk-button-group uk-width-1-1">
-                        <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-plus"></i></button>
-                        <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-shopping-basket"></i></button>
-                        <button class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-minus"></i></button>
-                    </div>
-                </form>
+            <td class="uk-margin-remove uk-hidden-small form-medium">
+                {% include 'eetlijst/signup_form.html' %}
+            </td>
+
+            <td class="uk-margin-remove uk-visible-small form-small">
+                {% include 'eetlijst/signup_form.html' %}
             </td>
 
             <td>{{ u }}</td>
-            <td class="uk-text-center">{{ u.balance }}</td>
+            <td class="uk-text-center" style="background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
             <td class="uk-hidden-small uk-text-center"></td>
             <td class="uk-hidden-small uk-text-center"><i class="uk-icon-times"></i> 2</td>
             <td class="uk-hidden-small uk-text-center"></td>

@@ -33,7 +33,7 @@
 
         <div class="uk-form-row">
             <div class="uk-button-group  uk-width-1-1">
-                <button class="uk-button uk-width-1-2"><i class="uk-icon-shopping-basket"></i> Geen</button>
+                <button class="uk-button uk-width-1-2"><img src="/static/img/chefs_hat.png" alt="Cook:" /> Geen</button>
                 <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> 5</button>
                 <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
             </div>

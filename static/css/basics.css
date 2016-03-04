@@ -8,6 +8,10 @@ html {
 body {
 }
 
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+
 .small-rows thead th {
     padding: 5px 8px;
     vertical-align: middle;
@@ -93,6 +97,14 @@ body {
 }
 .form-large form {
     width: 12em;
+}
+
+.form-medium {
+    width: 10em;
+    border-right: 1px dotted #ccc;
+}
+.form-medium form {
+    width: 10em;
 }
 
 .form-small {

@@ -5,20 +5,11 @@
 {% block body_block %}
 
     {% if user.is_authenticated %}
-    <div class="uk-grid uk-padding-remove uk-hidden-small" style="position:relative;">
-        <div class="uk-width-7-10">
+    <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+        <div class="uk-width-medium-7-10">
             {% include 'bierlijst/table.html' %}
         </div>
-        <div class="uk-width-3-10">
-            {% include 'bierlijst/options.html' %}
-        </div>
-    </div>
-
-    <div class="uk-visible-small">
-        <div class="uk-width-1-1">
-            {% include 'bierlijst/table.html' %}
-        </div>
-        <div class="uk-width-1-1 uk-margin-bottom">
+        <div class="uk-width-medium-3-10">
             {% include 'bierlijst/options.html' %}
         </div>
     </div>

@@ -1,7 +1,7 @@
 <form class="uk-form uk-margin-remove uk-grid" method="post" action="/bierlijst/turf/{{ u.user_id }}/">
     {% csrf_token %}
     <div class="uk-width-3-10" style="padding: 0px 5px 0px 0px;">
-        <input type="number" min="-999" max="999" name="count" class="uk-form-small">
+        <input type="number" inputmode="numeric" min="-999" max="999" step="any" name="count" class="uk-form-small">
     </div>
     <div class="uk-button-group uk-width-7-10 uk-padding-remove">
         <button type="submit" name="bier" value="bier" class="uk-button uk-button-small uk-width-3-5 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-plus"></i></button>
