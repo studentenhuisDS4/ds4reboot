@@ -3,8 +3,7 @@ from django.utils import timezone
 from django.db import models
 
 
-# Create your models here.
-
+# model for housemates (linked to auth user)
 class Housemate(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -19,7 +18,7 @@ class Housemate(models.Model):
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
     boetes_open = models.IntegerField(default=0)
-    boetes_sum = models.IntegerField(default=0)
+    boetes_turfed = models.IntegerField(default=0)
     boetes_total = models.IntegerField(default=0)
 
     sum_bier = models.IntegerField(default=0)

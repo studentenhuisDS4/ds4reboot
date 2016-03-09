@@ -495,7 +495,7 @@
 
             dragging.container.removeClass('uk-drag');
 
-            // TODO is this needed?
+            // NTODO is this needed?
             dragging.items.eq(store.focus);
 
             var itm, focus = false, i, z;

@@ -449,7 +449,7 @@
 
             // avoid triggering event twice
             if (currentlyDraggingElement) {
-                // TODO: trigger on right element?
+                // NTODO: trigger on right element?
                 this.options.stop(elem);
                 this.trigger('stop.uk.sortable', [this]);
             }

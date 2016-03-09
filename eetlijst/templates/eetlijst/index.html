@@ -1,8 +1,13 @@
 {% extends 'base/base.html' %}
 
-{% load balance_color %}
+{% load balance_color display_date %}
 
 {% block title %} | Eetlijst{% endblock %}
+
+{% block add_to_header %}
+<link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css">
+<script src="/static/js/components/datepicker.min.js"></script>
+{% endblock %}
 
 {% block body_block %}
 

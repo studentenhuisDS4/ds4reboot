@@ -12,6 +12,10 @@ input[type='number'] {
     -moz-appearance:textfield;
 }
 
+.small-rows td {
+    border-bottom: 1px solid #ccc;
+}
+
 .small-rows thead th {
     padding: 5px 8px;
     vertical-align: middle;
@@ -36,31 +40,30 @@ input[type='number'] {
     padding: 4px 8px;
 }
 
-.eetlijst-dropdown {
+.bierlijst-dropdown {
     margin-top: 4px;
-    width: 5.4em;
-    padding: 0px 5px;
+    width: 100%;
+    padding: 3px 5px 0px 5px;
     white-space: nowrap;
-    border-radius: 0px;
-    border-color: #ccc;
 }
 
-.eetlijst-dropdown button {
+.bierlijst-dropdown button {
     border: 0;
-    padding: 5px 0px;
+    padding: 5px 0px 0px 15px;
     margin: 0;
     background: none;
     width: 100%;
+    text-align: left;
 }
 
-.eetlijst-dropdown button:hover {
+.bierlijst-dropdown button:hover {
     background: #39f;
     color: #fff;
     cursor: pointer;
     cursor: hand;
 }
 
-.eetlijst-dropdown li {
+.bierlijst-dropdown li {
     margin-left: 0px;
     padding: 0px 10px;
 }
@@ -113,4 +116,12 @@ input[type='number'] {
 }
 .form-small form {
     width: 8em;
+}
+
+.form-mini {
+    width: 7em;
+    border-right: 1px dotted #ccc;
+}
+.form-mini form {
+    width: 7em;
 }

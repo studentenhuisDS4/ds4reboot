@@ -1,17 +1,37 @@
 <div class="uk-panel uk-panel-box">
-    <h3 class="uk-panel-title">Opties</h3>
-    <hr>
     <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/eetlijst/log/"><i class="uk-icon-archive"></i> Log kosten</a></p>
 
+    <div class="uk-grid uk-margin-remove uk-visible-large">
+        <div class="uk-width-1-2" style="padding: 0 0.5em 0 0;"><a href="{{ date_nav.pw }}" class="uk-button uk-button-small uk-width-1-1"><i class="uk-icon-chevron-circle-left"></i> Vorige week</a></div>
+        <div class="uk-width-1-2" style="padding: 0 0 0 0.5em;"><a href="{{ date_nav.nw }}" class="uk-button uk-button-small uk-width-1-1">Volgende week <i class="uk-icon-chevron-circle-right"></i></a></div>
+    </div>
+
+    <div class="uk-grid uk-margin-remove uk-hidden-large">
+        <div class="uk-width-1-2" style="padding: 0 0.5em 0 0;"><a href="{{ date_nav.pd }}" class="uk-button uk-button-small uk-width-1-1"><i class="uk-icon-chevron-circle-left"></i> Vorige dag</a></div>
+        <div class="uk-width-1-2" style="padding: 0 0 0 0.5em;"><a href="{{ date_nav.nd }}" class="uk-button uk-button-small uk-width-1-1">Volgende dag <i class="uk-icon-chevron-circle-right"></i></a></div>
+    </div>
+
     <hr>
+
+    <div class="uk-visible-large">
+        <div class="uk-container-center uk-width-2-3">
+            <form class="uk-form uk-grid uk-margin-remove" method="post" action="/eetlijst/go/">
+                {% csrf_token %}
+                <div class="uk-width-2-10" style="padding: 0;"><i class="uk-icon-calendar uk-icon-small"></i></div>
+                <div class="uk-width-5-10" style="padding: 0;"><input type="text" name="date" class="uk-width-1-1 uk-form-small" placeholder="{{ date_list|current_date }}" data-uk-datepicker="{format:'YYYY/MM/DD'}"></div>
+                <div class="uk-width-3-10" style="padding: 0 0 0 1em;"><button type="submit" class="uk-button uk-button-small uk-width-1-1"><i class="uk-icon-chevron-right"></i></button></div>
+            </form>
+        </div>
+    <hr>
+    </div>
+
     <p>To do:</p>
     <ul>
-        <li>Finish formatting</li>
         <li>Backend</li>
         <li>Balance transfer</li>
         <li>HO items</li>
-        <li>Time navigation</li>
         <li>Statistics page</li>
         <li>Push notifications</li>
+        <li>Allergies</li>
     </ul>
 </div>

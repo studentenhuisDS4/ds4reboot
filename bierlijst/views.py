@@ -1,16 +1,15 @@
 from django.contrib.auth.models import User
 from user.models import Housemate
-from bierlijst.models import Turf
-from django.shortcuts import render, redirect
+from bierlijst.models import Turf, Boete
+from django.shortcuts import render, redirect, get_list_or_404
 from django.http import HttpResponse
 from decimal import Decimal
 from django.db.models import Sum
 
 
-# Create your views here.
-
-
+# index view for bierlijst
 def index(request):
+
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
@@ -24,7 +23,6 @@ def index(request):
 
     # find medaled users
     user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
-
     medals = []
 
     for u in user_medals:
@@ -33,6 +31,7 @@ def index(request):
         else:
             medals += [0]
 
+    # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'user_list': user_list,
@@ -43,10 +42,13 @@ def index(request):
     return render(request, 'bierlijst/index.html', context)
 
 
+# view for bierlijst log
 def show_log(request):
 
+    # get list of turfed items
     turf_list = Turf.objects.order_by('-turf_time')
 
+    # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'turf_list': turf_list
@@ -55,19 +57,138 @@ def show_log(request):
     return render(request, 'bierlijst/log.html', context)
 
 
+# view for boetes including form submission
 def boetes(request):
 
+    # get list of active users sorted by move-in date
+    active_users = User.objects.filter(is_active=True)
+    housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+
+    # get lists of all boetes and users with open boetes
+    open_boetes = Housemate.objects.filter(boetes_open__gt = 0, user__id__in = active_users).order_by('-boetes_open')
+    num_boetes = str(list(open_boetes.aggregate(Sum('boetes_open')).values())[0])
+    boetes_list = Boete.objects.order_by('-created_time')
+
+    # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        'housemates': housemates,
+        'open_boetes': open_boetes,
+        'num_boetes': num_boetes,
+        'boetes_list': boetes_list,
     }
 
     return render(request, 'bierlijst/boetes.html', context)
 
 
+# handle add boetes post requests
+def add_boete(request):
+
+    if request.method == 'POST':
+        if request.user.is_authenticated():
+
+            # get data from POST
+            user_id = int(request.POST.get('housemate'))
+            note = request.POST.get('note')
+
+            if request.POST.get('count') == '':
+                count = 1
+            else:
+                count = int(request.POST.get('count'))
+
+            # validate form input
+            if count > 10 or count < 1:
+                return HttpResponse("Number of boetes must be between 1 and 10.")
+
+            if note == '':
+                return HttpResponse("Must add reason.")
+
+            if user_id == 0:
+                return HttpResponse("Must choose housemate.")
+
+            # update housemate object
+            h = Housemate.objects.get(user_id=user_id)
+            h.boetes_open += count
+            h.boetes_total += count
+            h.save()
+
+            # add entry to boete table
+            b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=request.user, boete_count=count, boete_note=note)
+            b.save()
+
+        else:
+            return render(request, 'base/login_page.html')
+
+    else:
+        return HttpResponse("Method must be POST.")
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+# handle remove boete requests
+def remove_boete(request, boete_id):
+
+    if request.user.is_authenticated():
+        b = Boete.objects.get(id=boete_id)
+
+        h = Housemate.objects.get(user_id=b.boete_user)
+        h.boetes_open -= b.boete_count
+        h.boetes_total -= b.boete_count
+        h.save()
+
+        b.delete()
+
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    else:
+        return render(request, 'base/login_page.html')
+
+
+# handle turf boete requests
+def turf_boete(request, type_wine, user_id):
+
+    if request.user.is_authenticated():
+
+        if type_wine == 'r' or type_wine == 'w':
+
+            h = Housemate.objects.get(user_id=user_id)
+            h.boetes_open -= 1
+            h.boetes_turfed += 1
+            h.save()
+
+
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        else:
+            return HttpResponse("Invalid turf type.")
+
+    else:
+        return render(request, 'base/login_page.html')
+
+
+# handle reset boete requests
+def reset_boetes(request):
+
+    if request.user.is_authenticated():
+
+
+        Boete.objects.all().delete()
+
+        for h in Housemate.objects.all():
+            h.boetes_open = 0
+            h.boetes_turfed = 0
+            h.save()
+
+        return HttpResponse("Boetes have been reset.")
+
+    else:
+        return render(request, 'base/login_page.html')
+
+
+# handle turf post requests
 def turf_item(request, user_id):
 
     if request.method == 'POST':
-
         if request.user.is_authenticated():
 
             # validate turf type

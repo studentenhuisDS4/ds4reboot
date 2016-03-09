@@ -12,6 +12,7 @@ class Turf(models.Model):
     turf_by = models.CharField(max_length=30)
 
     turf_time = models.DateTimeField(default=timezone.now)
+    turf_note = models.CharField(max_length=50, blank=True)
 
     turf_count = models.DecimalField(decimal_places=2, max_digits=5)
     turf_type = models.CharField(max_length=10)
@@ -21,9 +22,10 @@ class Turf(models.Model):
 class Boete(models.Model):
 
     boete_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    boete_name = models.CharField(max_length=30)
 
     created_by = models.CharField(max_length=30)
     created_time = models.DateTimeField(default=timezone.now)
 
-    boete_value = models.IntegerField(default=1)
+    boete_count = models.IntegerField(default=1)
     boete_note = models.CharField(max_length=50)

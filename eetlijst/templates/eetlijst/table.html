@@ -3,28 +3,24 @@
         <tr>
             <th></th>
             <th>Naam</th>
-            <th class="uk-text-center">Balance</th>
-            <th class="uk-hidden-small uk-text-center">Ma</th>
-            <th class="uk-hidden-small uk-text-center">Di</th>
-            <th class="uk-hidden-small uk-text-center">Wo</th>
-            <th class="uk-hidden-small uk-text-center">Do</th>
-            <th class="uk-hidden-small uk-text-center">Vr</th>
-            <th class="uk-hidden-small uk-text-center">Za</th>
-            <th class="uk-hidden-small uk-text-center">Zo</th>
+            <th class="uk-text-center" style="padding: 4px;">Bedrag</th>
+            {% for n, d in date_list.items %}
+            <th class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center"{% if d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
+                <a href="{{ d.1|link_date }}">{{ d.0 }}</a>
+                <br>
+                <span class="uk-text-muted">{{ d.1|disp_date }}</span>
+            </th>
+            {% endfor %}
         </tr>
     </thead>
     <tfoot style="border-top:2px solid #CCC">
         <tr>
             <td></td>
             <td>Totaal</td>
-            <td></td>
-            <td class="uk-hidden-small uk-text-center">0</td>
-            <td class="uk-hidden-small uk-text-center">22</td>
-            <td class="uk-hidden-small uk-text-center">0</td>
-            <td class="uk-hidden-small uk-text-center">0</td>
-            <td class="uk-hidden-small uk-text-center">0</td>
-            <td class="uk-hidden-small uk-text-center">0</td>
-            <td class="uk-hidden-small uk-text-center">0</td>
+            <td>{{ total_balance }}</td>
+            {% for n, d in date_list.items %}
+            <td class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center">0</td>
+            {% endfor %}
         </tr>
     </tfoot>
     <tbody>
@@ -40,14 +36,11 @@
             </td>
 
             <td>{{ u }}</td>
-            <td class="uk-text-center" style="background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
-            <td class="uk-hidden-small uk-text-center"></td>
-            <td class="uk-hidden-small uk-text-center"><i class="uk-icon-times"></i> 2</td>
-            <td class="uk-hidden-small uk-text-center"></td>
-            <td class="uk-hidden-small uk-text-center"></td>
-            <td class="uk-hidden-small uk-text-center"></td>
-            <td class="uk-hidden-small uk-text-center"></td>
-            <td class="uk-hidden-small uk-text-center"></td>
+            <td class="uk-text-center uk-hidden-small" style="width: 4em; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
+            <td class="uk-text-center uk-text-small uk-visible-small" style="width: 3em; padding: 4px; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
+            {% for n, d in date_list.items %}
+            <td class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center"{% if d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}></td>
+            {% endfor %}
         </tr>
         {% endif %}
         {% endfor %}
