@@ -8,7 +8,7 @@
             <th class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center"{% if d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
                 <a href="{{ d.1|link_date }}">{{ d.0 }}</a>
                 <br>
-                <span class="uk-text-muted">{{ d.1|disp_date }}</span>
+                <span class="uk-text-muted uk-text-small">{{ d.1|disp_date }}</span>
             </th>
             {% endfor %}
         </tr>
@@ -17,9 +17,9 @@
         <tr>
             <td></td>
             <td>Totaal</td>
-            <td>{{ total_balance }}</td>
+            <td class="uk-text-center">{{ total_balance }}</td>
             {% for n, d in date_list.items %}
-            <td class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center">0</td>
+            <td class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center">{{ d.1|day_total }}</td>
             {% endfor %}
         </tr>
     </tfoot>
@@ -38,7 +38,10 @@
             <td class="uk-text-center uk-hidden-small" style="width: 4em; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
             <td class="uk-text-center uk-text-small uk-visible-small" style="width: 3em; padding: 4px; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
             {% for n, d in date_list.items %}
-            <td class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center"{% if d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}></td>
+            <td class="{% if d.2 == False %}uk-visible-large {% endif %}uk-text-center"{% if d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
+                {% if d.1|is_cook:u.user.id %}<img src="/static/img/chefs_hat.png" alt="" style="margin-top: -3px; width: 12px; height: 12px;" />{% endif %}
+                {% if d.1|eating_with:u.user.id %}<i class="uk-icon-times"></i>{% if d.1|eating_with:u.user.id > 1 %}{{ d.1|eating_with:u.user.id }}{% endif %}{% endif %}
+            </td>
             {% endfor %}
         </tr>
         {% endfor %}

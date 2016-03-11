@@ -1,11 +1,13 @@
 from django.template.defaulttags import register
 
+
+# set background color based on current balance
 @register.filter
 def bal_color(balance):
 
     pos = [110, 185, 110]
     neg = [185, 110, 110]
-    alpha = '0.8'
+    alpha = '0.85'
 
     if balance >= 0:
         if balance > 30:

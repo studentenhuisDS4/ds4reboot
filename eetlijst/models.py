@@ -3,26 +3,31 @@ from django.utils import timezone
 from django.db import models
 
 
-# Create your models here.
-
+# model for eetlijst date logging
 class DateList(models.Model):
 
-    list_date = models.DateField(default=timezone.now)
+    cook = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    signup_time = models.DateTimeField(null=True)
+    close_time = models.DateTimeField(null=True)
+    date = models.DateField()
 
-    list_open = models.BooleanField(default=True)
-    list_cost = models.DecimalField(max_digits=5, decimal_places=2)
+    num_eating = models.IntegerField(default=0)
+    open = models.BooleanField(default=True)
+    cost = models.DecimalField(null=True, max_digits=5, decimal_places=2)
 
 
+# model for eetlijst signup logging
 class UserList(models.Model):
 
-    list_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    list_timestamp = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now)
+
     list_date = models.DateField()
-
     list_cook = models.BooleanField(default=False)
-    list_count = models.IntegerField()
+    list_count = models.IntegerField(default=0)
 
 
+# model for transfer logging
 class Transfer(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -33,6 +38,7 @@ class Transfer(models.Model):
     amount = models.DecimalField(max_digits=4, decimal_places=2)
 
 
+# model for ho logging
 class HOLog(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

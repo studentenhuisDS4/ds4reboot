@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import models
 
 
-# table to account for turfing beer/wine
+# model to account for turfing beer/wine
 class Turf(models.Model):
 
     turf_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -17,7 +17,7 @@ class Turf(models.Model):
     turf_type = models.CharField(max_length=10)
 
 
-# table to account for boetes
+# model to account for boetes
 class Boete(models.Model):
 
     boete_user = models.ForeignKey(User, on_delete=models.CASCADE)

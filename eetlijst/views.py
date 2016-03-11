@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from user.models import Housemate
-from eetlijst.models import HOLog, Transfer
+from eetlijst.models import HOLog, Transfer, DateList, UserList
 from django.shortcuts import render
 from django.utils import timezone
 import datetime as dt
@@ -16,6 +16,10 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
     # build date array
     focus_date = dt.date(int(year), int(month), int(day))
     prev_monday = focus_date - dt.timedelta(days=focus_date.weekday())
+    next_sunday = prev_monday + dt.timedelta(days=6)
+
+    data_dates = DateList.objects.filter(date__gte=prev_monday, date__lte=next_sunday)
+    data_users = UserList.objects.filter(list_date__gte=prev_monday, list_date__lte=next_sunday)
 
     day_names = ['Ma','Di','Wo','Do','Vr','Za','Zo']
     date_list = {}
@@ -55,7 +59,10 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
     context = {
         'breadcrumbs': ['eetlijst'],
         'user_list': user_list,
+        'data_users': data_users,
         'date_list': date_list,
+        'data_dates': data_dates,
+        'focus_date': str(year) + '-' + str(month) + '-' + str(day),
         'date_nav': date_nav,
         'total_balance': total_balance,
     }
@@ -181,3 +188,82 @@ def bal_transfer(request):
         return HttpResponse("Method must be POST.")
 
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+# handle eetlijst enrollment
+def enroll(request):
+
+    if request.method == 'POST':
+        if request.user.is_authenticated():
+
+            # get info from post
+            sel_user = Housemate.objects.get(user_id=request.POST.get('enroll-user'))
+            action = request.POST.get('enroll-action')
+            date = request.POST.get('enroll-date')
+
+            # get or create rows as necessary
+            user_entry, user_created = UserList.objects.get_or_create(user=sel_user.user, list_date=date)
+            date_entry, date_created = DateList.objects.get_or_create(date=date)
+
+            # modify models as appropriate
+            if action == 'eat':
+                user_entry.list_count += 1
+                date_entry.num_eating += 1
+
+            elif action == 'cook':
+                if date_entry.cook and not date_entry.cook == sel_user.user:
+                    return HttpResponse("There is already a cook.")
+                elif date_entry.cook == sel_user.user:
+                    user_entry.list_cook = False
+                    date_entry.num_eating -= 1
+                    date_entry.cook = None
+                    date_entry.signup_time = None
+                else:
+                    user_entry.list_cook = True
+                    date_entry.signup_time = timezone.now()
+                    date_entry.cook = sel_user.user
+                    date_entry.num_eating += 1
+
+            elif action == 'sponge':
+                date_entry.num_eating -= user_entry.list_count
+                user_entry.list_count = 0
+
+            elif action == 'swap':
+                date_entry.num_eating -= user_entry.list_count
+                user_entry.list_count = 0
+
+                if date_entry.cook and not date_entry.cook == sel_user.user:
+                    return HttpResponse("There is already a cook.")
+                elif date_entry.cook == sel_user.user:
+                    user_entry.list_cook = False
+                    date_entry.num_eating -= 1
+                    date_entry.cook = None
+                    date_entry.signup_time = None
+                else:
+                    user_entry.list_cook = True
+                    date_entry.signup_time = timezone.now()
+                    date_entry.cook = sel_user.user
+                    date_entry.num_eating += 1
+
+            else:
+                return HttpResponse("Invalid submit button.")
+
+            user_entry.timestamp = timezone.now()
+            user_entry.save()
+            date_entry.save()
+
+            # clean up if necessary
+            if user_entry.list_count == 0 and user_entry.list_cook == False:
+                user_entry.delete()
+
+            if date_entry.num_eating == 0:
+                date_entry.delete()
+
+        else:
+            return render(request, 'base/login_page.html')
+
+    else:
+        return HttpResponse("Method must be POST.")
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
