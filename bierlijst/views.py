@@ -6,6 +6,10 @@ from django.http import HttpResponse
 from decimal import Decimal
 from django.db.models import Sum
 
+# import plotly.plotly as ply
+# import plotly.tools as tls
+# from plotly.graph_objs import *
+
 
 # index view for bierlijst
 def index(request):
@@ -205,7 +209,7 @@ def turf_item(request, user_id):
 
                 # validate count input
                 try:
-                    turf_count = float(round(float(request.POST.get('count')), 2))
+                    turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
                 except ValueError:
                     return HttpResponse("Turf count must be numerical.")

@@ -2,6 +2,8 @@ from django.template.defaulttags import register
 from user.models import Housemate
 from bierlijst.models import Boete
 
+
+# custom template tag to check if deletion of boete is possible
 @register.filter
 def can_del(boete_id, user_id):
 

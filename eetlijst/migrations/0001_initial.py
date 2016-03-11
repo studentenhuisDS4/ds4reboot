@@ -18,16 +18,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Balance',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('bal_time', models.DateTimeField(default=django.utils.timezone.now)),
-                ('bal_amount', models.DecimalField(decimal_places=4, max_digits=7)),
-                ('bal_type', models.CharField(max_length=10)),
-                ('bal_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.CreateModel(
             name='DateList',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

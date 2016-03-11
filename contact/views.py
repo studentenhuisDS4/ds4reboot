@@ -1,9 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 
-# Create your views here.
-
+# view for relatively static contact page
 def index(request):
 
     context = {

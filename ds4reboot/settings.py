@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import plotly
+
+# Set plotly credentials
+plotly.tools.set_credentials_file(username='damienallen', api_key='kf1rtj9u7l')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'bierlijst.apps.BierlijstConfig',
     'eetlijst.apps.EetlijstConfig',
     'contact.apps.ContactConfig',
+    'thesau.apps.ThesauConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

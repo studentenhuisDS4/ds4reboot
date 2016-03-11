@@ -1,5 +1,4 @@
 <div class="uk-panel uk-panel-box">
-    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/eetlijst/log/"><i class="uk-icon-archive"></i> Log kosten</a></p>
 
     <div class="uk-grid uk-margin-remove uk-visible-large">
         <div class="uk-width-1-2" style="padding: 0 0.5em 0 0;"><a href="{{ date_nav.pw }}" class="uk-button uk-button-small uk-width-1-1"><i class="uk-icon-chevron-circle-left"></i> Vorige week</a></div>
@@ -11,9 +10,7 @@
         <div class="uk-width-1-2" style="padding: 0 0 0 0.5em;"><a href="{{ date_nav.nd }}" class="uk-button uk-button-small uk-width-1-1">Volgende dag <i class="uk-icon-chevron-circle-right"></i></a></div>
     </div>
 
-    <hr>
-
-    <div class="uk-visible-large">
+    <div class="uk-visible-large" style="margin-top: 1em;">
         <div class="uk-container-center uk-width-2-3">
             <form class="uk-form uk-grid uk-margin-remove" method="post" action="/eetlijst/go/">
                 {% csrf_token %}
@@ -22,14 +19,107 @@
                 <div class="uk-width-3-10" style="padding: 0 0 0 1em;"><button type="submit" class="uk-button uk-button-small uk-width-1-1"><i class="uk-icon-chevron-right"></i></button></div>
             </form>
         </div>
-    <hr>
     </div>
+
+    {% if not request.user.username == 'huis' %}
+    <hr>
+
+    <h5 class="uk-margin-remove">Kosten op huis</h5>
+
+    <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
+        <form class="uk-form" method="post" action="/eetlijst/ho/">
+            {% csrf_token %}
+
+            <div class="uk-form-row uk-grid uk-width-1-1" style="margin-left: 0;">
+                <div class="uk-width-5-10" style="padding: 0 1em 0 0;">
+                    <input type="text" name="note" list="presets" placeholder="Omschrijving" style="padding-left: 0.5em;">
+                    <datalist id="presets">
+                        <option value="Uien">
+                        <option value="Knoflook">
+                        <option value="Gember">
+                        <option value="Kruiden">
+                        <option value="Olie (olijf)">
+                        <option value="Olie (zonnebloem)">
+                        <option value="Olie (frituur)">
+                        <option value="Olie (overig)">
+                        <option value="Saus (mayo)">
+                        <option value="Saus (mosterd)">
+                        <option value="Saus (ketchup)">
+                        <option value="Saus (currie)">
+                        <option value="Saus (sladressing)">
+                        <option value="Saus (overig)">
+                        <option value="Bouillon">
+                        <option value="Thee">
+                        <option value="Koffie">
+                    </datalist>
+                </div>
+                <div class="uk-width-3-10 uk-padding-remove">
+                    <input type="number" min="-99" max="99" step="any" name="amount" placeholder="Bedrag" class="uk-width-1-1" style="padding-left: 0.5em;">
+                </div>
+                <div class="uk-width-2-10" style="padding-left: 1em;">
+                    <button type="submit" class="uk-button uk-button-primary uk-width-1-1"><i class="uk-icon-eur"></i></button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <hr>
+
+    <h5 class="uk-margin-remove">Saldo overdracht</h5>
+
+    <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
+        <form class="uk-form" method="post" action="/eetlijst/transfer/">
+            {% csrf_token %}
+
+            <div class="uk-form-row uk-grid" style="margin-left: 0;">
+
+                <div class="uk-width-3-10 uk-padding-remove">
+                    <button class="uk-button uk-button-small uk-width-1-1" disabled style="color:#333;">{{ request.user.housemate }}</button>
+                </div>
+
+                <div class="uk-width-3-10" style="padding: 0 1em;">
+                    <a class="uk-button uk-button-small uk-width-1-1" data-uk-toggle="{target:'.dir-toggle'}">
+                        <i class="uk-icon-arrow-right dir-toggle"></i>
+                        <i class="uk-icon-arrow-left dir-toggle uk-hidden"></i>
+                    </a>
+                </div>
+
+                <div class="uk-width-4-10 uk-padding-remove">
+                    <select name="housemate" class="uk-width-1-1 uk-form-small">
+                        <option value="0">Huisgenoot</option>
+                        {% for u in user_list %}
+                        {% if not u == request.user.housemate %}
+                        <option value="{{ u.user_id }}">{{ u }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="uk-container-center uk-width-1-2" style="margin-top: 1em;">
+                <div class="uk-form-row uk-grid" style="margin-left: 0;">
+                    <div class="uk-width-3-5 uk-padding-remove">
+                        <input type="number" min="-99" max="99" step="any" name="amount" placeholder="Bedrag" class="uk-width-1-1" style="padding-left: 0.5em;">
+                    </div>
+                    <div class="uk-width-2-5" style="padding-left: 1em;">
+                        <button type="submit" name="direction" value="to" class="uk-button uk-button-primary dir-toggle uk-width-1-1"><i class="uk-icon-eur"></i></button>
+                        <button type="submit" name="direction" value="from" class="uk-button uk-button-primary dir-toggle uk-width-1-1 uk-hidden"><i class="uk-icon-eur"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    {% endif %}
+
+    <hr>
 
     <p>To do:</p>
     <ul>
         <li>Backend</li>
-        <li>Balance transfer</li>
-        <li>HO items</li>
         <li>Statistics page</li>
         <li>Push notifications</li>
         <li>Allergies</li>

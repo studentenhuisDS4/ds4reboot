@@ -23,10 +23,20 @@ class UserList(models.Model):
     list_count = models.IntegerField()
 
 
-class Balance(models.Model):
+class Transfer(models.Model):
 
-    bal_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    bal_time = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    from_user = models.CharField(max_length=30)
+    to_user = models.CharField(max_length=30)
 
-    bal_amount = models.DecimalField(max_digits=7, decimal_places=4)
-    bal_type = models.CharField(max_length=10)  # types: ho, transfer, dinner
+    time = models.DateTimeField(default=timezone.now)
+    amount = models.DecimalField(max_digits=4, decimal_places=2)
+
+
+class HOLog(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    time = models.DateTimeField(default=timezone.now)
+    amount = models.DecimalField(max_digits=4, decimal_places=2)
+    note = models.CharField(max_length=20)  # types: ho, transfer, dinner

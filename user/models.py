@@ -16,6 +16,7 @@ class Housemate(models.Model):
     parent_phone = models.CharField(default='06-', max_length=50)
 
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    allergies = models.CharField(max_length=30, blank=True)
 
     boetes_open = models.IntegerField(default=0)
     boetes_turfed = models.IntegerField(default=0)
