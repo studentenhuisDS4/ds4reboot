@@ -149,6 +149,8 @@ def bal_transfer(request):
 
             if request.POST.get('amount') == '':
                 return HttpResponse("Must add amount.")
+            elif Decimal(request.POST.get('amount')) < 0:
+                return HttpResponse("Amount must be positive. Use arrow button instead.")
             else:
                 amount = Decimal(round(Decimal(request.POST.get('amount')),2))
 

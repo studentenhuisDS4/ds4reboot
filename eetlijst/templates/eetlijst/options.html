@@ -1,4 +1,6 @@
 <div class="uk-panel uk-panel-box">
+    <h3 class="uk-panel-title">Eetlijst</h3>
+    <hr>
 
     <div class="uk-grid uk-margin-remove uk-visible-large">
         <div class="uk-width-1-2" style="padding: 0 0.5em 0 0;"><a href="{{ date_nav.pw }}" class="uk-button uk-button-small uk-width-1-1"><i class="uk-icon-chevron-circle-left"></i> Vorige week</a></div>
@@ -24,7 +26,7 @@
     {% if not request.user.username == 'huis' %}
     <hr>
 
-    <h5 class="uk-margin-remove">Kosten op huis</h5>
+    <h6 class="uk-margin-remove uk-text-bold">Kosten op huis</h6>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
         <form class="uk-form" method="post" action="/eetlijst/ho/">
@@ -66,7 +68,7 @@
 
     <hr>
 
-    <h5 class="uk-margin-remove">Saldo overdracht</h5>
+    <h6 class="uk-margin-remove uk-text-bold">Saldo overdracht</h6>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
         <form class="uk-form" method="post" action="/eetlijst/transfer/">
@@ -101,7 +103,7 @@
             <div class="uk-container-center uk-width-1-2" style="margin-top: 1em;">
                 <div class="uk-form-row uk-grid" style="margin-left: 0;">
                     <div class="uk-width-3-5 uk-padding-remove">
-                        <input type="number" min="-99" max="99" step="any" name="amount" placeholder="Bedrag" class="uk-width-1-1" style="padding-left: 0.5em;">
+                        <input type="number" min="0" max="99" step="any" name="amount" placeholder="Bedrag" class="uk-width-1-1" style="padding-left: 0.5em;">
                     </div>
                     <div class="uk-width-2-5" style="padding-left: 1em;">
                         <button type="submit" name="direction" value="to" class="uk-button uk-button-primary dir-toggle uk-width-1-1"><i class="uk-icon-eur"></i></button>
