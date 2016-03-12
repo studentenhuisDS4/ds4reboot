@@ -3,8 +3,8 @@
     <input type="hidden" name="enroll-user" value="{{ u.user_id }}">
     <input type="hidden" name="enroll-date" value="{{ focus_date }}">
     <div class="uk-button-group uk-width-1-1">
-        <button type="submit" name="enroll-action" value="eat" class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-times uk-icon-small"></i></button>
-        <button type="submit" name="enroll-action" value="cook" class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><img src="/static/img/chefs_hat.png" alt="" style="margin-top: -2px;" /></button>
-        <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-small uk-width-1-3 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><img src="/static/img/sponge_bob.png" alt="" /></button>
+        <button type="submit" name="enroll-action" value="eat" class="uk-button uk-button-small uk-width-1-3{% if u.user_id == request.user.id %} uk-button-primary{% endif %}"{% if not focus_open %} disabled{% endif %}><i class="uk-icon-times uk-icon-small"></i></button>
+        <button type="submit" name="enroll-action" value="cook" class="uk-button uk-button-small uk-width-1-3{% if u.user_id == request.user.id %} uk-button-primary{% endif %}"{% if not focus_open %} disabled{% endif %}><img src="/static/img/chefs_hat.png" alt="" style="margin-top: -2px;" /></button>
+        <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-small uk-width-1-3{% if u.user_id == request.user.id %} uk-button-primary{% endif %}"{% if not focus_open %} disabled{% endif %}><img src="/static/img/sponge_bob{% if not focus_open %}_gray{% endif %}.png" alt="" /></button>
     </div>
 </form>

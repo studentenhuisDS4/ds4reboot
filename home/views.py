@@ -29,7 +29,7 @@ def index(request):
 
         # load eetlijst data
         try:
-            eating_with = UserList.objects.get(user_id=request.user.id).list_count
+            eating_with = UserList.objects.get(list_date=timezone.now(), user_id=request.user.id).list_count
 
         except UserList.DoesNotExist:
             eating_with = 0

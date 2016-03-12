@@ -7,6 +7,11 @@ import datetime as dt
 def disp_date(date):
     return str(date.day).zfill(2) + '/' + str(date.month).zfill(2)
 
+# display date as YYYY-MM-DD
+@register.filter
+def sub_date(date):
+    return date.isoformat()
+
 # build date string for url
 @register.filter
 def link_date(date):

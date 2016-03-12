@@ -25,6 +25,7 @@ class UserList(models.Model):
     list_date = models.DateField()
     list_cook = models.BooleanField(default=False)
     list_count = models.IntegerField(default=0)
+    list_cost = models.DecimalField(null=True, max_digits=5, decimal_places=2)
 
 
 # model for transfer logging

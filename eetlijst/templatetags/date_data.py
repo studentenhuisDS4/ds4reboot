@@ -37,3 +37,34 @@ def day_total(date):
 
     return int(num)
 
+# get cost if possible
+@register.filter
+def cost(date, id):
+
+    try:
+        cost = UserList.objects.get(user_id=id, list_date=date).list_cost
+
+    except UserList.DoesNotExist:
+        cost = 0
+
+    if not cost:
+        cost = 0
+
+    return cost
+
+# check if cost is entered
+@register.filter
+def cost_entered(date):
+
+    try:
+        date_entry = DateList.objects.get(date=date)
+
+        if date_entry.cost:
+            entered = True
+        else:
+            entered = False
+
+    except UserList.DoesNotExist:
+        entered = False
+
+    return entered

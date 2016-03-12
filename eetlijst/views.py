@@ -16,10 +16,30 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
     # build date array
     focus_date = dt.date(int(year), int(month), int(day))
     prev_monday = focus_date - dt.timedelta(days=focus_date.weekday())
-    next_sunday = prev_monday + dt.timedelta(days=6)
 
-    data_dates = DateList.objects.filter(date__gte=prev_monday, date__lte=next_sunday)
-    data_users = UserList.objects.filter(list_date__gte=prev_monday, list_date__lte=next_sunday)
+    # check if user has costs to fill
+    open_days = []
+    try:
+        open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False)
+
+        if open_costs:
+            user_open = True
+
+            for oc in open_costs:
+                open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Do').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
+
+        else:
+            user_open = False
+
+    except DateList.DoesNotExist:
+        user_open = False
+
+    # get open/closed status for week
+    try:
+        focus_open = DateList.objects.get(date=focus_date).open
+
+    except DateList.DoesNotExist:
+        focus_open = True
 
     day_names = ['Ma','Di','Wo','Do','Vr','Za','Zo']
     date_list = {}
@@ -27,10 +47,16 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
     for n in range(7):
         n_date = prev_monday + dt.timedelta(days=n)
 
+        try:
+            open = DateList.objects.get(date=n_date).open
+
+        except DateList.DoesNotExist:
+            open = True
+
         if n_date == focus_date:
-            date_list[n] = [day_names[n], n_date, True]
+            date_list[n] = [day_names[n], n_date, True, open]
         else:
-            date_list[n] = [day_names[n], n_date, False]
+            date_list[n] = [day_names[n], n_date, False, open]
 
     # get next/prev week
     week_p = focus_date - dt.timedelta(days=7)
@@ -59,10 +85,11 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
     context = {
         'breadcrumbs': ['eetlijst'],
         'user_list': user_list,
-        'data_users': data_users,
         'date_list': date_list,
-        'data_dates': data_dates,
         'focus_date': str(year) + '-' + str(month) + '-' + str(day),
+        'focus_open': focus_open,
+        'user_open': user_open,
+        'open_days': open_days,
         'date_nav': date_nav,
         'total_balance': total_balance,
     }
@@ -267,3 +294,129 @@ def enroll(request):
 
     return redirect(request.META.get('HTTP_REFERER'))
 
+
+# close eetlijst
+def close(request):
+
+    if request.method == 'POST':
+        if request.user.is_authenticated():
+
+            # get date from post
+            date = request.POST.get('close-date')
+
+            # get or create rows as necessary
+            date_entry, date_created = DateList.objects.get_or_create(date=date)
+
+            if date_entry.cook:
+
+                # check if cost is already entered
+                if not date_entry.cost:
+
+                    if date_entry.cook == request.user:
+
+                        # if open
+                        if date_entry.open == True:
+                            date_entry.open = False
+                            date_entry.close_time = timezone.now()
+                            date_entry.save()
+
+                        # if closed
+                        else:
+                            date_entry.open = True
+                            date_entry.close_time = None
+                            date_entry.save()
+
+                    else:
+                        return HttpResponse("Must be cook to close list.")
+
+                else:
+                    return HttpResponse("Cannot reopen list once cost is entered.")
+
+            else:
+                return HttpResponse("Cannot close list without cook.")
+
+
+        else:
+            return render(request, 'base/login_page.html')
+
+    else:
+        return HttpResponse("Method must be POST.")
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+# handle eetlijst cost input
+def cost(request):
+
+    if request.method == 'POST':
+        if request.user.is_authenticated():
+
+            # get date from post
+            date = request.POST.get('cost-date')
+
+            # validate form input
+            if request.POST.get('cost-amount') == '':
+                return HttpResponse("Must add amount.")
+            elif Decimal(request.POST.get('cost-amount')) < 0:
+                return HttpResponse("Amount must be positive.")
+            else:
+                cost = Decimal(round(Decimal(request.POST.get('cost-amount')),2))
+
+            # get or create rows as necessary
+            try:
+                date_entry = DateList.objects.get(date=date)
+
+            except DateList.DoesNotExist:
+                return HttpResponse("No vaild entry for date.")
+
+            try:
+                users_enrolled = UserList.objects.filter(list_date=date)
+
+            except UsereList.DoesNotExist:
+                return HttpResponse("No users signed up for selected date.")
+
+            if date_entry.cook:
+
+                # add cost to log
+                date_entry.cost = cost
+                date_entry.save()
+
+                # update housemate object for current user
+                h = Housemate.objects.get(user=request.user)
+                h.balance += cost
+                h.save()
+
+                # update housemate objects for users who signed up
+                huis = Housemate.objects.get(display_name='Huis')
+
+                remainder = huis.balance
+                split_cost = round((cost - remainder)/date_entry.num_eating,2)
+                huis.balance = date_entry.num_eating*split_cost - cost + remainder
+
+                huis.save()
+
+                # update userlist objects
+                for u in users_enrolled:
+                    h = Housemate.objects.get(user=u.user)
+
+                    h.balance -= u.list_count*split_cost
+                    u.list_cost = u.list_count*split_cost
+
+                    if u.list_cook:
+                        h.balance -= split_cost
+                        u.list_cost = cost - split_cost*(1+u.list_count)
+
+                    u.save()
+                    h.save()
+
+            else:
+                return HttpResponse("Cannot input cost without cook.")
+
+
+        else:
+            return render(request, 'base/login_page.html')
+
+    else:
+        return HttpResponse("Method must be POST.")
+
+    return redirect(request.META.get('HTTP_REFERER'))
