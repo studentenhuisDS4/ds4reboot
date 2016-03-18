@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+
+{% block title %} | Profiel{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+    <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+        <div class="uk-width-medium-7-10">
+            {% include 'user/profiel_form.html' %}
+        </div>
+        <div class="uk-width-medium-3-10">
+            {% include 'user/profiel_options.html' %}
+        </div>
+    </div>
+
+    {% else %}
+        {% include 'base/login_form.html' %}
+    {% endif %}
+
+{% endblock %}

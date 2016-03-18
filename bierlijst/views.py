@@ -214,7 +214,7 @@ def turf_item(request, user_id):
                 except ValueError:
                     return HttpResponse("Turf count must be numerical.")
 
-                if turf_type == 'bier' and not turf_count.is_integer():
+                if turf_type == 'bier' and not float(turf_count).is_integer():
                     return HttpResponse("Must turf whole beer.")
 
                 if turf_count >= 1000:

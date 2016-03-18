@@ -96,7 +96,7 @@ input[type='number'] {
 
 .form-large {
     width: 12em;
-    border-right: 1px dotted #ccc;
+    border-right: 1px dotted #bbb;
 }
 .form-large form {
     width: 12em;
@@ -104,7 +104,7 @@ input[type='number'] {
 
 .form-medium {
     width: 10em;
-    border-right: 1px dotted #ccc;
+    border-right: 1px dotted #bbb;
 }
 .form-medium form {
     width: 10em;
@@ -112,7 +112,7 @@ input[type='number'] {
 
 .form-small {
     width: 8em;
-    border-right: 1px dotted #ccc;
+    border-right: 1px dotted #bbb;
 }
 .form-small form {
     width: 8em;
@@ -120,8 +120,26 @@ input[type='number'] {
 
 .form-mini {
     width: 7em;
-    border-right: 1px dotted #ccc;
+    border-right: 1px dotted #bbb;
 }
 .form-mini form {
     width: 7em;
+}
+
+/* table styling */
+
+.table-dotted th, .table-dotted td {
+    border-right: 1px dotted #bbb;
+}
+
+.days-table {
+    max-width: 3.2em;
+}
+
+.names-table {
+    width: 4.5em;
+}
+
+.names-table-small {
+    width: 3em;
 }

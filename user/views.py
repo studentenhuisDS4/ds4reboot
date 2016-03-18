@@ -4,14 +4,24 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 
 
-# Create your views here.
 
+# display users index
 def index(request):
     return HttpResponse("Hello, world. You're at the users index.")
 
-def profile(request):
-    return HttpResponse("Hello, world. You're at the profile page.")
 
+# display profile page
+def profiel(request):
+
+    # build context object
+    context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+    }
+
+    return render(request, 'user/profiel.html', context)
+
+
+# handle requests from login form
 def login_user(request):
 
     if request.method == 'POST':
@@ -41,10 +51,12 @@ def login_user(request):
         return render(request, 'base/login_page.html', context)
 
 
+# handle logout requests
 def logout_user(request):
     logout(request)
     return redirect(request.META.get('HTTP_REFERER'))
 
+# login as 'huis'
 def login_huis(request):
     logout(request)
 

@@ -19,27 +19,39 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
 
     # check if user has costs to fill
     open_days = []
-    try:
-        open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False)
+    if request.user.is_authenticated():
+        try:
+            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False)
 
-        if open_costs:
-            user_open = True
+            if open_costs:
+                user_open = True
 
-            for oc in open_costs:
-                open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Do').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
+                for oc in open_costs:
+                    open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Do').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
 
-        else:
+            else:
+                user_open = False
+
+        except DateList.DoesNotExist:
             user_open = False
 
-    except DateList.DoesNotExist:
+    else:
         user_open = False
 
-    # get open/closed status for week
+
+    # get open/closed status for week and check for cook
     try:
         focus_open = DateList.objects.get(date=focus_date).open
+        cook = DateList.objects.get(date=focus_date).cook
+
+        if cook:
+            focus_cook = True
+        else:
+            focus_cook = False
 
     except DateList.DoesNotExist:
         focus_open = True
+        focus_cook = False
 
     day_names = ['Ma','Di','Wo','Do','Vr','Za','Zo']
     date_list = {}
@@ -87,6 +99,7 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
         'user_list': user_list,
         'date_list': date_list,
         'focus_date': str(year) + '-' + str(month) + '-' + str(day),
+        'focus_cook': focus_cook,
         'focus_open': focus_open,
         'user_open': user_open,
         'open_days': open_days,
@@ -175,7 +188,6 @@ def bal_transfer(request):
 
             current_user = int(request.user.id)
             other_user = request.POST.get('housemate')
-            amount = request.POST.get('amount')
 
              # validate form input
             if int(request.POST.get('housemate')) == 0:
@@ -400,7 +412,7 @@ def cost(request):
                     h = Housemate.objects.get(user=u.user)
 
                     h.balance -= u.list_count*split_cost
-                    u.list_cost = u.list_count*split_cost
+                    u.list_cost = -1*u.list_count*split_cost
 
                     if u.list_cook:
                         h.balance -= split_cost

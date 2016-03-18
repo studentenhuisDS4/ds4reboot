@@ -37,15 +37,15 @@ def index(request):
         try:
             data_date = DateList.objects.get(date=timezone.now())
 
-
             if data_date.cook:
-                eetlijst_info = [Housemate.objects.get(user_id=data_date.cook.id).display_name, data_date.num_eating, eating_with]
+
+                eetlijst_info = [Housemate.objects.get(user_id=data_date.cook.id).display_name, data_date.num_eating, eating_with, data_date.open]
 
             else:
-                eetlijst_info = ['Geen', data_date.num_eating, eating_with]
+                eetlijst_info = ['Geen', data_date.num_eating, eating_with, data_date.open]
 
         except DateList.DoesNotExist:
-            eetlijst_info = ['Geen', 0, 0]
+            eetlijst_info = ['Geen', 0, 0, True]
 
         today = timezone.now()
 
