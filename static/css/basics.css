@@ -128,12 +128,25 @@ input[type='number'] {
 
 /* table styling */
 
+.basic-table {
+    background: #eaeaea;
+    border: 1px solid #bbb;
+}
+
+.basic-table thead {
+    border-bottom: 2px solid #bbb;
+}
+
+.basic-table tfoot {
+    border-top: 2px solid #bbb;
+}
+
 .table-dotted th, .table-dotted td {
     border-right: 1px dotted #bbb;
 }
 
 .days-table {
-    max-width: 3.2em;
+    max-width: 3em;
 }
 
 .names-table {
@@ -142,4 +155,10 @@ input[type='number'] {
 
 .names-table-small {
     width: 3em;
+}
+
+/* page styling */
+.content-box {
+    background: #eaeaea;
+    border: 1px solid #bbb;
 }

@@ -1,8 +1,7 @@
 {% extends 'base/base.html' %}
 
-{% load balance_color display_date date_data %}
 
-{% block title %} | Eetlijst{% endblock %}
+{% block title %} | Thesau{% endblock %}
 
 {% block add_to_header %}
 <link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css">
@@ -14,16 +13,11 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10 uk-visible-large">
-            {% include 'eetlijst/table.html' %}
-        </div>
-        <div class="uk-width-medium-6-10 uk-hidden-large">
-            {% include 'eetlijst/table.html' %}
+            <div class="content-box">test</div>
+
         </div>
         <div class="uk-width-medium-3-10 uk-visible-large">
-            {% include 'eetlijst/options.html' %}
-        </div>
-        <div class="uk-width-medium-4-10 uk-hidden-large">
-            {% include 'eetlijst/options.html' %}
+            {% include 'thesau/options.html' %}
         </div>
     </div>
 
