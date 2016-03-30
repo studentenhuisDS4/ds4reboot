@@ -26,6 +26,7 @@ def login_user(request):
 
     if request.method == 'POST':
 
+        # get credentials from post and authenticate user
         username = request.POST['username']
         password = request.POST['password']
 

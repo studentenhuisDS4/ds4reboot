@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
 from user.models import Housemate
-from bierlijst.models import Turf, Boete
+from bierlijst.models import Turf, Boete, StreamingToken
 from django.shortcuts import render, redirect, get_list_or_404
 from django.http import HttpResponse
+from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Sum
 
@@ -231,6 +232,42 @@ def turf_item(request, user_id):
             if 'bier' in request.POST:
                 h.sum_bier += turf_count
                 h.total_bier += turf_count
+
+                # stream to plotly
+                # if not turf_user == 'huis':
+                #
+                #     # assign streaming token to user if necessary
+                #     if not StreamingToken.objects.filter(token_user_id=user_id):
+                #
+                #         s = StreamingToken.objects.filter(token_user_id=None).first()
+                #
+                #         s.token_user_id = turf_user
+                #         s.save()
+                #
+                #     # create plotly stream
+                #     traces = []
+                #
+                #     tokens = StreamingToken.objects.filter(token_user_id__isnull=False)
+                #     for t in tokens:
+                #         traces += [Scatter(x=[], y=[], mode='lines+markers',stream=dict(token=t.token), name=Housemate.objects.get(user_id=t.token_user).display_name)]
+                #
+                #
+                #     stream_id = StreamingToken.objects.get(token_user_id=user_id).token
+                #     data = Data(traces)
+                #
+                #     layout = Layout(
+                #         xaxis=dict(title='', showaxeslabels=False, showgrid=True),
+                #         yaxis=dict(title='', rangemode='nonnegative', autorange=True, showaxeslabels=False, showgrid=True),
+                #         showlegend=False,
+                #         margin=dict(t=10, r=10, b=30, l=30))
+                #     fig = Figure(data=data, layout=layout)
+                #     plotly_url = ply.plot(fig, filename='bierlijst-stream', auto_open=False, fileopt='extend')
+                #
+                #     st = ply.Stream(stream_id)
+                #     st.open()
+                #     st.write(dict(x=timezone.now(), y=int(h.total_bier)))
+                #     st.close()
+
 
             elif 'wwijn' in request.POST:
                 h.sum_wwijn += Decimal(turf_count)

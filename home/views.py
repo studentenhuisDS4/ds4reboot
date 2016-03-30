@@ -6,8 +6,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 
 
-# Create your views here.
-
+# display home page
 def index(request):
 
     if request.user.is_authenticated():
@@ -49,6 +48,7 @@ def index(request):
 
         today = timezone.now()
 
+        # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'user_info': user_info,

@@ -6,10 +6,12 @@ from django.db import models
 # model to account for turfing beer/wine
 class Turf(models.Model):
 
+    # user info
     turf_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     turf_to = models.CharField(max_length=30)
     turf_by = models.CharField(max_length=30)
 
+    # turf details
     turf_time = models.DateTimeField(default=timezone.now)
     turf_note = models.CharField(max_length=50, blank=True)
 
@@ -20,11 +22,21 @@ class Turf(models.Model):
 # model to account for boetes
 class Boete(models.Model):
 
+    # user info
     boete_user = models.ForeignKey(User, on_delete=models.CASCADE)
     boete_name = models.CharField(max_length=30)
 
+    # boete details
     created_by = models.CharField(max_length=30)
     created_time = models.DateTimeField(default=timezone.now)
 
     boete_count = models.IntegerField(default=1)
     boete_note = models.CharField(max_length=50)
+
+
+# model for plotly streaming tokens
+
+class StreamingToken(models.Model):
+
+    token = models.CharField(max_length=10)
+    token_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

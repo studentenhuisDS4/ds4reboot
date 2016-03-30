@@ -18,14 +18,17 @@ class Housemate(models.Model):
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     allergies = models.CharField(max_length=30, blank=True)
 
+    # store boete counts and status
     boetes_open = models.IntegerField(default=0)
     boetes_turfed = models.IntegerField(default=0)
     boetes_total = models.IntegerField(default=0)
 
+    # store bottle counts since last HR
     sum_bier = models.IntegerField(default=0)
     sum_wwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     sum_rwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
 
+    # store total bottle counts
     total_bier = models.IntegerField(default=0)
     total_wwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     total_rwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)

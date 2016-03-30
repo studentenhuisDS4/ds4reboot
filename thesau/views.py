@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 
-# view for relatively static contact page
+# view for thesau page
 def index(request):
 
     context = {

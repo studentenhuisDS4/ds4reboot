@@ -10,7 +10,6 @@ from decimal import Decimal
 
 
 # generate eetlijst view for current or defined date
-
 def index(request, year=timezone.now().year, month=timezone.now().month, day=timezone.now().day):
 
     # build date array
@@ -53,6 +52,7 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
         focus_open = True
         focus_cook = False
 
+    # get dates for selected week
     day_names = ['Ma','Di','Wo','Do','Vr','Za','Zo']
     date_list = {}
 
@@ -157,6 +157,7 @@ def add_ho(request):
             active_users = User.objects.filter(is_active=True)
             other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
 
+            # take care of remainder
             remainder = huis.balance
             split_cost = round((amount - remainder)/len(other_housemates),2)
             huis.balance = len(other_housemates)*split_cost - amount + remainder
