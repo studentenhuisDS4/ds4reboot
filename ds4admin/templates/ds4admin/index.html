@@ -1,11 +1,10 @@
 {% extends 'base/base.html' %}
 
-
-{% block title %} | Thesau{% endblock %}
+{% block title %} | Admin{% endblock %}
 
 {% block add_to_header %}
-<link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css">
-<script src="/static/js/components/datepicker.min.js"></script>
+<link rel="stylesheet" href="/static/css/components/tooltip.almost-flat.min.css">
+<script src="/static/js/components/tooltip.min.js"></script>
 {% endblock %}
 
 {% block body_block %}
@@ -13,11 +12,12 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
-            {% include 'thesau/add_item.html' %}
-            {% include 'thesau/item_log.html' %}
+
+
+
         </div>
-        <div class="uk-width-medium-3-10">
-            {% include 'thesau/options.html' %}
+        <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
+            {% include 'ds4admin/options.html' %}
         </div>
     </div>
 

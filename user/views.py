@@ -11,14 +11,25 @@ def index(request):
 
 
 # display profile page
-def profiel(request):
+def profile(request):
 
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
     }
 
-    return render(request, 'user/profiel.html', context)
+    return render(request, 'user/profile.html', context)
+
+
+# display settings page
+def settings(request):
+
+    # build context object
+    context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+    }
+
+    return render(request, 'user/settings.html', context)
 
 
 # handle requests from login form
@@ -36,7 +47,10 @@ def login_user(request):
             if user.is_active:
 
                 login(request, user)
-                return redirect(request.META.get('HTTP_REFERER'))
+                if '/user/login' in request.META.get('HTTP_REFERER'):
+                    return redirect('/')
+                else:
+                    return redirect(request.META.get('HTTP_REFERER'))
             else:
                 return HttpResponse("Your account is disabled.")
         else:

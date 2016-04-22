@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from user.models import Housemate
 from eetlijst.models import HOLog, Transfer, DateList, UserList
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils import timezone
 import datetime as dt
-from django.shortcuts import redirect
 from django.http import HttpResponse
 from decimal import Decimal
 

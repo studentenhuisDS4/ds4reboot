@@ -15,11 +15,14 @@ import plotly
 from ds4reboot.secret_settings import *
 
 # Set plotly credentials
-plotly.tools.set_credentials_file(username='damienallen', api_key='kf1rtj9u7l')
+# plotly.tools.set_credentials_file(username='damienallen', api_key='kf1rtj9u7l')
+
+# Google Cloud Messaging API
+GCM_APIKEY = 'AIzaSyBHuUNU6onuEIownjfTmZyjrTSFufKhHJg'
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Application definition
 
@@ -31,12 +34,14 @@ INSTALLED_APPS = [
     'eetlijst.apps.EetlijstConfig',
     'contact.apps.ContactConfig',
     'thesau.apps.ThesauConfig',
+    'ds4admin.apps.Ds4AdminConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'gcm',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -9,14 +9,21 @@ class Housemate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=12)
 
-    room_number = models.IntegerField(default=0)
+    # logistics
+    room_number = models.IntegerField(null=True)
     movein_date = models.DateField(default=timezone.now)
+    moveout_date = models.DateField(null=True)
 
+    # flag user for moveout (null=normal, false=ready for deletion, true=deleted)
+    moveout_set = models.NullBooleanField()
+
+    # phone numbers
     cell_phone = models.CharField(default='06-',max_length=50)
-    parent_phone = models.CharField(default='06-', max_length=50)
+    parent_phone = models.CharField(default='06-', max_length=50, blank=True)
 
+    # eetlijst related values
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    allergies = models.CharField(max_length=30, blank=True)
+    diet = models.CharField(max_length=30, blank=True)
 
     # store boete counts and status
     boetes_open = models.IntegerField(default=0)

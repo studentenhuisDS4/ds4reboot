@@ -1,0 +1,30 @@
+<div class="uk-panel uk-panel-box">
+    <h3 class="uk-panel-title">DS4 Admin</h3>
+    <hr>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-success" href="/admin/auth/user/add/"><i class="uk-icon-plus-circle"></i> Add huisgenoot</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1" href="/admin/"><i class="uk-icon-chain"></i> Django admin</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1" href="/thesau/"><i class="uk-icon-chain"></i> Thesau pagina</a></p>
+    <hr>
+
+    <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
+        <form class="uk-form" method="post" action="/ds4admin/remove/">
+            {% csrf_token %}
+
+            <div class="uk-form-row uk-grid uk-grid-small" style="padding-left: 10px">
+
+                <select name="housemate" class="uk-width-1-1" style="margin-bottom: 1em">
+                    <option value="0">Huisgenoot</option>
+                    {% for u in housemates %}
+                    <option value="{{ u.user_id }}">{{ u }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="uk-button uk-button-danger uk-width-1-1"><i class="uk-icon-minus-circle"></i> Verwijderen</a></button>
+
+
+            </div>
+
+        </form>
+    </div>
+
+</div>

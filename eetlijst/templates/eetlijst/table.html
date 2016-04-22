@@ -38,7 +38,7 @@
                 {% include 'eetlijst/signup_form.html' %}
             </td>
 
-            <td class="names-table uk-hidden-small">{{ u }}</td>
+            <td class="names-table uk-hidden-small">{{ u }}{% if u.diet %} <i class="uk-icon-exclamation-circle uk-icon-hover" data-uk-tooltip="{pos:'right'}" title="{{ u.diet }}"></i>{% endif %}</td>
             <td class="names-table-small uk-visible-small uk-text-small">{{ u }}</td>
             <td class="uk-text-center uk-hidden-small" style="width: 4em; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
             <td class="uk-text-center uk-text-small uk-visible-small" style="width: 3em; padding: 4px; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>

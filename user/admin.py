@@ -17,7 +17,8 @@ class HousematInline(admin.StackedInline):
     model = Housemate
     can_delete = False
     verbose_name_plural = 'Housemate Information'
-    exclude = ('sum_bier','sum_wwijn','sum_rwijn','total_bier','total_wwijn','total_rwijn', )
+    exclude = ('sum_bier','sum_wwijn','sum_rwijn','total_bier','total_wwijn','total_rwijn',
+               'boetes_open','boetes_turfed','boetes_total','moveout_date','moveout_set','balance')
 
 
 # define a new User admin

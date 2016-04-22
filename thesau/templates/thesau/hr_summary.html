@@ -1,0 +1,33 @@
+<table class="basic-table small-rows uk-table uk-table-hover">
+    <caption><h5 class="uk-text-muted" style="font-style:normal">HR overzicht</h5></caption>
+
+    <thead class="uk-h6">
+        <tr>
+            <th>Naam</th>
+            <th class="uk-text-center">Bier</th>
+            <th class="uk-text-center">W. Wijn</th>
+            <th class="uk-text-center">R. Wijn</th>
+            <th class="uk-text-center">Boetes <i class="uk-icon-info-circle uk-icon-hover" data-uk-tooltip title="Only boetes already turfed"></i></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td>Totaal</td>
+            <td class="uk-text-center">{{ totals.0 }}</td>
+            <td class="uk-text-center">{{ totals.1|floatformat:"-2" }}</td>
+            <td class="uk-text-center">{{ totals.2|floatformat:"-2" }}</td>
+            <td class="uk-text-center">{{ totals.3|floatformat:"-2" }}</td>
+        </tr>
+    </tfoot>
+    <tbody>
+        {% for u in user_list %}
+        <tr>
+            <td class="{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u }}</td>
+            <td class="uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_bier }}</td>
+            <td class="uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_wwijn|floatformat:"-2" }}</td>
+            <td class="uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_rwijn|floatformat:"-2" }}</td>
+            <td class="uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{% if u.user.username != 'huis' %}{{ u.boetes_turfed }}{% else %}-{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

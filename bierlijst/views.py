@@ -1,11 +1,14 @@
 from django.contrib.auth.models import User
 from user.models import Housemate
-from bierlijst.models import Turf, Boete, StreamingToken
-from django.shortcuts import render, redirect, get_list_or_404
+from bierlijst.models import Turf, Boete
+from thesau.models import BoetesReport
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Sum
+from gcm.models import get_device_model
+
 
 # import plotly.plotly as ply
 # import plotly.tools as tls
@@ -156,11 +159,16 @@ def turf_boete(request, type_wine, user_id):
 
         if type_wine == 'r' or type_wine == 'w':
 
+            # update housemate object
             h = Housemate.objects.get(user_id=user_id)
             h.boetes_open -= 1
             h.boetes_turfed += 1
             h.save()
 
+            # record type of wine
+            t, _ = BoetesReport.objects.get_or_create(type=type_wine, defaults={'boete_count': 0})
+            t.boete_count += 1
+            t.save()
 
             return redirect(request.META.get('HTTP_REFERER'))
 
@@ -233,6 +241,9 @@ def turf_item(request, user_id):
                 h.sum_bier += turf_count
                 h.total_bier += turf_count
 
+                device = get_device_model()
+                device.objects.all().send_message({'message':'my test message'})
+
                 # stream to plotly
                 # if not turf_user == 'huis':
                 #
@@ -289,3 +300,4 @@ def turf_item(request, user_id):
 
     else:
         return HttpResponse("Method must be POST.")
+

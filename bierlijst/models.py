@@ -35,8 +35,8 @@ class Boete(models.Model):
 
 
 # model for plotly streaming tokens
-
-class StreamingToken(models.Model):
-
-    token = models.CharField(max_length=10)
-    token_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+#
+# class StreamingToken(models.Model):
+#
+#     token = models.CharField(max_length=10)
+#     token_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
