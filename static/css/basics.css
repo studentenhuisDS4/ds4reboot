@@ -31,6 +31,19 @@ input[type='number'] {
     vertical-align: middle;
 }
 
+.tiny-rows thead th {
+    padding: 2px 4px;
+    vertical-align: middle;
+    border-bottom: 0;
+}
+
+.tiny-rows tbody td {
+    padding: 2px 4px;
+    vertical-align: middle;
+    border-bottom: 0;
+}
+
+
 .big-totals tfoot {
     font-size: 14px;
     font-style: normal;
@@ -161,4 +174,10 @@ input[type='number'] {
 .content-box {
     background: #eaeaea;
     border: 1px solid #bbb;
+}
+
+.tab-content {
+    background: #fff;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
 }

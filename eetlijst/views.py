@@ -92,6 +92,10 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
 
     total_balance += Housemate.objects.get(display_name='Huis').balance
 
+    # get most recent HO items and transfers
+    ho_list = HOLog.objects.all().order_by('-id')[:5]
+    tr_list = Transfer.objects.all().order_by('-id')[:5]
+
     # build context object
     context = {
         'breadcrumbs': ['eetlijst'],
@@ -104,6 +108,8 @@ def index(request, year=timezone.now().year, month=timezone.now().month, day=tim
         'open_days': open_days,
         'date_nav': date_nav,
         'total_balance': total_balance,
+        'ho_list': ho_list,
+        'tr_list': tr_list,
     }
 
     return render(request, 'eetlijst/index.html', context)
@@ -217,7 +223,7 @@ def bal_transfer(request):
             to_user.save()
 
             # add entry to transfer table
-            t = Transfer(user=request.user, from_user=from_user.user.username, to_user=to_user.user.username, amount=amount)
+            t = Transfer(user=request.user, from_user=from_user.user.housemate.display_name, to_user=to_user.user.housemate.display_name, amount=amount)
             t.save()
 
         else:

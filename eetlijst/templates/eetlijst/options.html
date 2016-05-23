@@ -91,6 +91,33 @@
         </form>
     </div>
 
+    <table class="tiny-rows uk-table uk-table-hover uk-text-small">
+
+        {% if not ho_list|length == 0 %}
+        <thead class="uk-h6 uk-text-small">
+            <tr>
+                <th>Datum</th>
+                <th>Naam</th>
+                <th>Bedrag</th>
+                <th>Omschrijving</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ho in ho_list %}
+            <tr>
+                <td>{{ ho.time|disp_date_string }}</td>
+                <td>{{ ho.user.housemate }}</td>
+                <td>{{ ho.amount }}</td>
+                <td>{{ ho.note }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% else %}
+        <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Nog geen HO.</td></tr>
+        {% endif %}
+
+    </table>
+
     <hr>
 
     <h6 class="uk-margin-remove uk-text-bold">Saldo overdracht</h6>
@@ -139,6 +166,33 @@
 
         </form>
     </div>
+
+    <table class="tiny-rows uk-table uk-table-hover uk-text-small">
+
+        {% if not tr_list|length == 0 %}
+        <thead class="uk-h6 uk-text-small">
+            <tr>
+                <th>Datum</th>
+                <th>Van</th>
+                <th>Naar</th>
+                <th>Omschrijving</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tr in tr_list %}
+            <tr>
+                <td>{{ tr.time|disp_date_string }}</td>
+                <td>{{ tr.from_user}}</td>
+                <td>{{ tr.to_user }}</td>
+                <td>{{ tr.amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% else %}
+        <tr><td class="uk-text-center uk-text-muted" style="padding:1em; border: 0;">Nog geen overdrachten.</td></tr>
+        {% endif %}
+
+    </table>
 
     {% endif %}
 

@@ -14,7 +14,7 @@
         <div class="uk-form-row">
             <div class="uk-button-group  uk-width-1-1">
                 <button class="uk-button uk-width-1-2" disabled>Bier: {{ user_info.sum_bier }}{% if request.user.id in medals %} <i class="uk-icon-circle{% if request.user.id == medals.0 %} gold-icon{% endif %}{% if request.user.id == medals.1 %} silver-icon{% endif %}{% if request.user.id == medals.2 %} bronze-icon{% endif %}"></i>{% endif %}</button>
-                <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.total_wijn }}</button>
+                <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.sum_wijn }}</button>
             </div>
         </div>
     </form>

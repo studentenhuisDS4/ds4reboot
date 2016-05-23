@@ -13,8 +13,34 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
-            {% include 'thesau/add_item.html' %}
-            {% include 'thesau/item_log.html' %}
+
+            <table class="basic-table small-rows uk-table uk-table-hover">
+                    <caption><h5 class="uk-text-muted" style="font-style:normal">HR archief</h5></caption>
+
+                    {% if not report_list|length == 0 %}
+                    <thead class="uk-h6">
+                        <tr>
+                            <th>Naam</th>
+                            <th>Thesau</th>
+                            <th>Datum</th>
+                            <th class="uk-text-center">Exporteren</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in report_list %}
+                        <tr>
+                            <td>{{ r.report_name }}</td>
+                            <td>{{ r.report_user.housemate }}</td>
+                            <td>{{ r.report_date }}</td>
+                            <td class="uk-text-center"><a href="/{{ r.report_path }}"><i class="uk-icon-file"></i> (xlsx)</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% else %}
+                    <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Nog geen HR.</td></tr>
+                    {% endif %}
+
+                </table>
         </div>
         <div class="uk-width-medium-3-10">
             {% include 'thesau/options.html' %}

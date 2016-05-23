@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from decimal import Decimal
 from django.db.models import Sum
+
 from gcm.models import get_device_model
 
 

@@ -12,7 +12,15 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
+                <li><a href=""><i class="uk-icon-users"></i> Huisgenooten</a></li>
+                <li><a href=""><i class="uk-icon-asterisk"></i> Permissies</a></li>
+            </ul>
 
+            <ul id="tab-container" class="uk-switcher tab-content">
+                <li>{% include 'ds4admin/housemates.html' %}</li>
+                <li>{% include 'ds4admin/permissions.html' %}</li>
+            </ul>
 
 
         </div>

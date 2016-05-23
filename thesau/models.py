@@ -31,21 +31,6 @@ class UserReport(models.Model):
     eetlijst_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
 
-# model for HR items
-class ItemsReport(models.Model):
-
-    submit_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    submit_time = models.DateTimeField(default=timezone.now)
-
-    approval = models.BooleanField(default=False)
-    open = models.BooleanField(default=True)
-    # reciept_photo =
-
-    type = models.CharField(max_length=30)
-    amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    note = models.CharField(max_length=50, blank=True)
-
-
 # model for HR boetes
 class BoetesReport(models.Model):
 

@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+from user.models import Housemate
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
@@ -7,18 +9,28 @@ from django.shortcuts import redirect
 
 # display users index
 def index(request):
-    return HttpResponse("Hello, world. You're at the users index.")
+    return redirect('/user/profiel/%s/' % (request.user.id))
 
 
 # display profile page
-def profile(request):
+def profile(request, user_id=None):
 
-    # build context object
-    context = {
-        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-    }
+    if user_id:
 
-    return render(request, 'user/profile.html', context)
+        # get list of active users sorted by move-in date
+        active_users = User.objects.filter(is_active=True)
+        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+
+        # build context object
+        context = {
+            'breadcrumbs': ['profiel'],
+            'housemates': housemates,
+            }
+
+        return render(request, 'user/profile.html', context)
+
+    else:
+        return redirect('/user/profiel/%s/' % (request.user.id))
 
 
 # display settings page

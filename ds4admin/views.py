@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from user.models import Housemate
 from eetlijst.models import HOLog
 from django.shortcuts import render, redirect
@@ -9,17 +9,46 @@ from django.utils import timezone
 # view for ds4 admin page
 def index(request):
 
-    # get list of active users sorted by move-in date
-    active_users = User.objects.filter(is_active=True)
-    housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+    if request.user.is_superuser:
 
-    # build context object
-    context = {
-        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'housemates': housemates,
-        }
+        # get list of active users sorted by move-in date
+        active_users = User.objects.filter(is_active=True)
+        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
 
-    return render(request, 'ds4admin/index.html', context)
+        # build context object
+        context = {
+            'breadcrumbs': ['admin'],
+            'housemates': housemates,
+            }
+
+        return render(request, 'ds4admin/index.html', context)
+
+    else:
+        return HttpResponse("Admin only area.")
+
+
+# handle requests to toggle user group
+def toggle_group(request, group_type, user_id):
+
+    u = User.objects.get(id=user_id)
+
+    if group_type == 'admin':
+        u.is_superuser ^= True
+        u.save()
+
+    elif group_type == 'thesau':
+
+        g = Group.objects.get(name='thesau')
+
+        if u.groups.filter(name='thesau').exists():
+            g.user_set.remove(u)
+        else:
+            g.user_set.add(u)
+
+    else:
+        return HttpResponse("Invalid group type.")
+
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # handle remove housemate post requests

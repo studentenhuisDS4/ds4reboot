@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from thesau.models import Report, ItemsReport, BoetesReport, UserReport
+from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
 from decimal import Decimal
 from openpyxl import Workbook
@@ -10,52 +10,50 @@ from openpyxl import Workbook
 # view for thesau page
 def index(request):
 
-    items_list = ItemsReport.objects.filter(open=True)
+    if request.user.groups.filter(name='Thesau').exists() or request.user.is_superuser:
 
-    # build context object
-    context = {
-        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'items_list': items_list,
-        }
-    return render(request, 'thesau/index.html', context)
+        # get reports archive
+        report_list = Report.objects.all()
+
+        # build context object
+        context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+            'report_list': report_list,
+            }
+        return render(request, 'thesau/index.html', context)
+
+    else:
+        return HttpResponse("Only accessible to thesaus and admins.")
 
 # view for HR page
 def hr(request):
 
-    # generate necessary user lists
-    active_users = User.objects.filter(is_active=True)
-    user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
-    moveout_list = Housemate.objects.filter(moveout_set=0).order_by('moveout_date')
+    if request.user.groups.filter(name='Thesau').exists() or request.user.is_superuser:
 
-    # calculate turf totals
-    totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
-              str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('boetes_turfed')).values())[0])]
+        # generate necessary user lists
+        active_users = User.objects.filter(is_active=True)
+        user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+        moveout_list = Housemate.objects.filter(moveout_set=0).order_by('moveout_date')
 
-    # build context object
-    context = {
-        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'user_list': user_list,
-        'moveout_list': moveout_list,
-        'totals': totals,
-        }
+        # calculate turf totals
+        totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
+                  str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
+                  str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
+                  str(list(user_list.aggregate(Sum('boetes_turfed')).values())[0])]
 
-    return render(request, 'thesau/hr.html', context)
+        # build context object
+        context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+            'user_list': user_list,
+            'moveout_list': moveout_list,
+            'boetes': [BoetesReport.objects.get(type='w').boete_count, BoetesReport.objects.get(type='r').boete_count],
+            'totals': totals,
+            }
 
+        return render(request, 'thesau/hr.html', context)
 
-# view for HR archive
-def hr_archive(request):
-
-    report_list = Report.objects.all()
-
-    # build context object
-    context = {
-        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'report_list': report_list,
-        }
-
-    return render(request, 'thesau/hr_archive.html', context)
+    else:
+        return HttpResponse("Only accessible to thesaus and admins.")
 
 
 # handle add item post requests

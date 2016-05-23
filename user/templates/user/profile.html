@@ -7,9 +7,21 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
-            {% include 'user/profile_form.html' %}
+            <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
+                <li><a href=""><i class="uk-icon-user"></i> Profiel</a></li>
+                <li><a href=""><i class="uk-icon-cog"></i> Bewerken</a></li>
+                <li><a href=""><i class="uk-icon-exclamation-triangle"></i> Notificaties</a></li>
+            </ul>
+
+            <ul id="tab-container" class="uk-switcher tab-content">
+                <li>{% include 'user/profile_view.html' %}</li>
+                <li>{% include 'user/profile_edit.html' %}</li>
+                <li>{% include 'user/notifications.html' %}</li>
+            </ul>
+
+
         </div>
-        <div class="uk-width-medium-3-10">
+        <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
             {% include 'user/profile_options.html' %}
         </div>
     </div>
