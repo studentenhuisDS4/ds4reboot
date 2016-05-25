@@ -18,8 +18,8 @@ class Housemate(models.Model):
     moveout_set = models.NullBooleanField()
 
     # phone numbers
-    cell_phone = models.CharField(default='06-',max_length=50)
-    parent_phone = models.CharField(default='06-', max_length=50, blank=True)
+    cell_phone = models.CharField(default='06',max_length=50)
+    parent_phone = models.CharField( max_length=50, blank=True)
 
     # eetlijst related values
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
