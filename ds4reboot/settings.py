@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import plotly
 from ds4reboot.secret_settings import *
 
 # Set plotly credentials
