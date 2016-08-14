@@ -438,3 +438,33 @@ def cost(request):
         return HttpResponse("Method must be POST.")
 
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+# view for ho log
+def ho_log(request):
+
+    # get list of turfed items
+    ho_list = HOLog.objects.order_by('-time')
+
+    # build context object
+    context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        'ho_list': ho_list
+    }
+
+    return render(request, 'eetlijst/ho_log.html', context)
+
+
+# view for transfer log
+def transfer_log(request):
+
+    # get list of turfed items
+    transfer_list = Transfer.objects.order_by('-time')
+
+    # build context object
+    context = {
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        'transfer_list': transfer_list
+    }
+
+    return render(request, 'eetlijst/transfer_log.html', context)

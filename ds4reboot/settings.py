@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import plotly
 from ds4reboot.secret_settings import *
 
 # Set plotly credentials
@@ -31,7 +30,6 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'bierlijst.apps.BierlijstConfig',
     'eetlijst.apps.EetlijstConfig',
-    'contact.apps.ContactConfig',
     'thesau.apps.ThesauConfig',
     'ds4admin.apps.Ds4AdminConfig',
     'django.contrib.admin',

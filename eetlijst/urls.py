@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^close/$', views.close, name='close'),
     url(r'^cost/$', views.cost, name='cost'),
     url(r'^ho/$', views.add_ho, name='ho'),
+    url(r'^ho/log/$', views.ho_log, name='ho log'),
     url(r'^transfer/$', views.bal_transfer, name='transfer'),
+    url(r'^transfer/log$', views.transfer_log, name='transfer log'),
     url(r'^([0-9]{4})/([0-9]{2})/([0-9]+)/$', views.index, name='index'),
 ]
