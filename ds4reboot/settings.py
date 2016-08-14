@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import plotly
 from ds4reboot.secret_settings import *
 
 # Set plotly credentials
@@ -79,17 +80,18 @@ WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'PORT': '3306',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'PORT': '5432',
         'NAME': 'ds4db',
         'USER': 'ds4db_user',
         'PASSWORD': 'eXnhnTVFdSd9',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
         'OPTIONS': {
           'autocommit': True,
         },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

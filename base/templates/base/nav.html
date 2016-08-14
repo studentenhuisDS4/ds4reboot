@@ -23,7 +23,7 @@
                         <li class=" uk-hidden-small"><a href="/user/huis">Veranderen naar 'Huis'</a></li>
                         <li class="uk-nav-divider  uk-hidden-small"></li>
                         {% endif %}
-                        <li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>
+                        {% comment %}<li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>{% endcomment %}
                         {% if request.user|is_admin %}<li><a href="/ds4admin"><i class="uk-icon-diamond"></i> Admin</a></li>{% endif %}
                         {% if request.user|is_thesau %}<li><a href="/thesau"><i class="uk-icon-university"></i> Thesau</a></li>{% endif %}
                         <li><a href="/user/logout"><i class="uk-icon-sign-out"></i> Uitloggen</a></li>
