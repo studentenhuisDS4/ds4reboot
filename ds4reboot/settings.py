@@ -28,7 +28,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
-    'home.apps.HomeConfig',
     'user.apps.UserConfig',
     'bierlijst.apps.BierlijstConfig',
     'eetlijst.apps.EetlijstConfig',

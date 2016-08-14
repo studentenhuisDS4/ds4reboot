@@ -17,11 +17,10 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^', include('home.urls')),
+    url(r'^', include('base.urls')),
     url(r'^user/', include('user.urls')),
     url(r'^bierlijst/', include('bierlijst.urls')),
     url(r'^eetlijst/', include('eetlijst.urls')),
-    url(r'^contact/', include('contact.urls')),
     url(r'^thesau/', include('thesau.urls')),
     url(r'^ds4admin/', include('ds4admin.urls')),
     url(r'^admin/', admin.site.urls),
