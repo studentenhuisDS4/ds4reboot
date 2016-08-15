@@ -6,7 +6,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 
 
-
 # display users index
 def index(request):
     return redirect('/user/profiel/%s/' % (request.user.id))
