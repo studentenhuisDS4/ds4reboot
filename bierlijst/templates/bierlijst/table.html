@@ -23,7 +23,7 @@
     </tfoot>
     <tbody>
         {% for u in user_list %}
-        <tr>
+        <tr id="user-{{ u.user_id }}">
             <td class="uk-margin-remove uk-hidden-small form-large">
                 {% include 'bierlijst/turf_form.html' %}
             </td>
@@ -33,10 +33,10 @@
             </td>
 
             <td class="{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u }}</td>
-            <td class="uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_bier }}</td>
-            <td class="uk-hidden-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_wijn|floatformat:"-2" }}</td>
-            <td class="uk-visible-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_wwijn|floatformat:"-2" }}</td>
-            <td class="uk-visible-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_rwijn|floatformat:"-2" }}</td>
+            <td class="sum-bier uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_bier }}</td>
+            <td class="sum-wijn uk-hidden-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_wijn|floatformat:"-2" }}</td>
+            <td class="sum-wwijn uk-visible-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_wwijn|floatformat:"-2" }}</td>
+            <td class="sum-rwijn uk-visible-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{{ u.sum_rwijn|floatformat:"-2" }}</td>
             <td class="uk-hidden-small uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}">{% if u.user.username != 'huis' %}{{ u.boetes_open }}{% else %}-{% endif %}</td>
         </tr>
         {% endfor %}

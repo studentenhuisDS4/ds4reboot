@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'PORT': '3306',
-        'ENGINE': 'django.db.backends.postgresql',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.mysql',
+        'PORT': '3306',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'PORT': '5432',
         'NAME': 'ds4db',
         'USER': 'ds4db_user',
         'PASSWORD': 'eXnhnTVFdSd9',
@@ -116,7 +116,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False # Use local time
+USE_TZ = True # Use local time
 
 
 # Static files (CSS, JavaScript, Images)

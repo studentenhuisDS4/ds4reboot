@@ -3,18 +3,16 @@ from user.models import Housemate
 from bierlijst.models import Turf, Boete
 from thesau.models import BoetesReport
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.utils import timezone
+from django.http import HttpResponse, JsonResponse
 from decimal import Decimal
 from django.db.models import Sum
-
+from django.core.paginator import Paginator
 from gcm.models import get_device_model
-
+import json
 
 # import plotly.plotly as ply
 # import plotly.tools as tls
 # from plotly.graph_objs import *
-
 
 # index view for bierlijst
 def index(request):
@@ -52,15 +50,17 @@ def index(request):
 
 
 # view for bierlijst log
-def show_log(request):
+def show_log(request, page=1):
 
     # get list of turfed items
-    turf_list = Turf.objects.order_by('-turf_time')
+    turf_list = Paginator(Turf.objects.order_by('-turf_time'), 20)
 
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'turf_list': turf_list
+        'turf_list': turf_list.page(page),
+        'pages': str(turf_list.num_pages),
+        'page_num': page
     }
 
     return render(request, 'bierlijst/log.html', context)
@@ -205,15 +205,9 @@ def turf_item(request, user_id):
     if request.method == 'POST':
         if request.user.is_authenticated():
 
-            # validate turf type
-            if 'bier' in request.POST:
-                turf_type = 'bier'
-            elif 'wwijn' in request.POST:
-                turf_type = 'wwijn'
-            elif 'rwijn' in request.POST:
-                turf_type = 'rwijn'
-            else:
-                turf_type = 'bier'
+            # Get user and turf type from POST
+            turf_user = User.objects.get(pk=user_id)
+            turf_type = request.POST.get('turf_type')
 
             if request.POST.get('count'):
 
@@ -222,70 +216,34 @@ def turf_item(request, user_id):
                     turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
                 except ValueError:
-                    return HttpResponse("Turf count must be numerical.")
+                    return HttpResponse(json.dumps({'result': 'Error: Turf count must be numerical.'}))
 
                 if turf_type == 'bier' and not float(turf_count).is_integer():
-                    return HttpResponse("Must turf whole beer.")
+                    return HttpResponse(json.dumps({'result': 'Error: Must turf whole beer.'}))
 
                 if turf_count >= 1000:
-                    return HttpResponse("Cannot turf more than 999 items.")
+                    return HttpResponse(json.dumps({'result': 'Cannot turf more than 999 items.'}))
 
             else:
                 turf_count = 1
 
-            turf_user = User.objects.get(pk=user_id)
+            print ('TURF | user: %s | type: %s | count: %s' % (turf_user, turf_type, turf_count))
 
             h = Housemate.objects.get(user_id=user_id)
 
             # add entry to database
-            if 'bier' in request.POST:
+            if turf_type == 'bier':
                 h.sum_bier += turf_count
                 h.total_bier += turf_count
 
-                device = get_device_model()
-                device.objects.all().send_message({'message':'my test message'})
+                # device = get_device_model()
+                # device.objects.all().send_message({'message':'my test message'})
 
-                # stream to plotly
-                # if not turf_user == 'huis':
-                #
-                #     # assign streaming token to user if necessary
-                #     if not StreamingToken.objects.filter(token_user_id=user_id):
-                #
-                #         s = StreamingToken.objects.filter(token_user_id=None).first()
-                #
-                #         s.token_user_id = turf_user
-                #         s.save()
-                #
-                #     # create plotly stream
-                #     traces = []
-                #
-                #     tokens = StreamingToken.objects.filter(token_user_id__isnull=False)
-                #     for t in tokens:
-                #         traces += [Scatter(x=[], y=[], mode='lines+markers',stream=dict(token=t.token), name=Housemate.objects.get(user_id=t.token_user).display_name)]
-                #
-                #
-                #     stream_id = StreamingToken.objects.get(token_user_id=user_id).token
-                #     data = Data(traces)
-                #
-                #     layout = Layout(
-                #         xaxis=dict(title='', showaxeslabels=False, showgrid=True),
-                #         yaxis=dict(title='', rangemode='nonnegative', autorange=True, showaxeslabels=False, showgrid=True),
-                #         showlegend=False,
-                #         margin=dict(t=10, r=10, b=30, l=30))
-                #     fig = Figure(data=data, layout=layout)
-                #     plotly_url = ply.plot(fig, filename='bierlijst-stream', auto_open=False, fileopt='extend')
-                #
-                #     st = ply.Stream(stream_id)
-                #     st.open()
-                #     st.write(dict(x=timezone.now(), y=int(h.total_bier)))
-                #     st.close()
-
-
-            elif 'wwijn' in request.POST:
+            elif turf_type == 'wwijn':
                 h.sum_wwijn += Decimal(turf_count)
                 h.total_wwijn += Decimal(turf_count)
 
-            elif 'rwijn' in request.POST:
+            elif turf_type =='rwijn':
                 h.sum_rwijn += Decimal(turf_count)
                 h.total_rwijn += Decimal(turf_count)
 
@@ -294,11 +252,9 @@ def turf_item(request, user_id):
             t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count, turf_type=turf_type)
             t.save()
 
-            return redirect(request.META.get('HTTP_REFERER'))
+            return HttpResponse(json.dumps({'result': 'Turf successful.'}))
 
         else:
-            return render(request, 'base/login_page.html')
+            return HttpResponse(json.dumps({'result': 'Error: User not authenticated.'}))
 
-    else:
-        return HttpResponse("Method must be POST.")
 
