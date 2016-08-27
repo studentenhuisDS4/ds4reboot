@@ -56,8 +56,12 @@ $(document).ready(function(){
             },
             success : function (json) {
                 $("#count-" + user_id).val('');
-                old_val = parseFloat($("#user-" + user_id + " .sum-" + turf_type).html());
-                $("#user-" + user_id + " .sum-" + turf_type).html(old_val + parseFloat(turf_count));
+                var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span");
+                sum_el.fadeOut(100, function () {
+                    old_val = parseFloat(sum_el.html());
+                    sum_el.html(old_val + parseFloat(turf_count));
+                });
+                sum_el.fadeIn(100);
             }
         });
     });

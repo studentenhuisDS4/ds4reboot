@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from decimal import Decimal
 from django.db.models import Sum
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from gcm.models import get_device_model
 import json
 
@@ -53,12 +53,19 @@ def index(request):
 def show_log(request, page=1):
 
     # get list of turfed items
-    turf_list = Paginator(Turf.objects.order_by('-turf_time'), 20)
+    turf_list = Paginator(Turf.objects.order_by('-turf_time'), 25)
+
+    # ensure page number is valid
+    try:
+        table_list = turf_list.page(page)
+    except EmptyPage:
+        table_list = turf_list.page(1)
+        page = 1
 
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'turf_list': turf_list.page(page),
+        'table_list': table_list,
         'pages': str(turf_list.num_pages),
         'page_num': page
     }
@@ -67,7 +74,7 @@ def show_log(request, page=1):
 
 
 # view for boetes including form submission
-def boetes(request):
+def boetes(request, page=1):
 
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
@@ -76,7 +83,14 @@ def boetes(request):
     # get lists of all boetes and users with open boetes
     open_boetes = Housemate.objects.filter(boetes_open__gt = 0, user__id__in = active_users).order_by('-boetes_open')
     num_boetes = str(list(open_boetes.aggregate(Sum('boetes_open')).values())[0])
-    boetes_list = Boete.objects.order_by('-created_time')
+    boetes_list = Paginator(Boete.objects.order_by('-created_time'), 10)
+
+    # ensure page number is valid
+    try:
+        table_list = boetes_list.page(page)
+    except EmptyPage:
+        table_list = boetes_list.page(1)
+        page = 1
 
     # build context object
     context = {
@@ -84,7 +98,9 @@ def boetes(request):
         'housemates': housemates,
         'open_boetes': open_boetes,
         'num_boetes': num_boetes,
-        'boetes_list': boetes_list,
+        'table_list': table_list,
+        'pages': str(boetes_list.num_pages),
+        'page_num': page
     }
 
     return render(request, 'bierlijst/boetes.html', context)

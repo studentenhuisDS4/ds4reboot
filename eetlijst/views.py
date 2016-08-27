@@ -6,6 +6,7 @@ from django.utils import timezone
 import datetime as dt
 from django.http import HttpResponse
 from decimal import Decimal
+from django.core.paginator import Paginator, EmptyPage
 
 
 # generate eetlijst view for current or defined date
@@ -441,30 +442,48 @@ def cost(request):
 
 
 # view for ho log
-def ho_log(request):
+def ho_log(request, page=1):
 
     # get list of turfed items
-    ho_list = HOLog.objects.order_by('-time')
+    ho_list = Paginator(HOLog.objects.order_by('-time'), 25)
+
+    # ensure page number is valid
+    try:
+        table_list = ho_list.page(page)
+    except EmptyPage:
+        table_list = ho_list.page(1)
+        page = 1
 
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'ho_list': ho_list
+        'table_list': table_list,
+        'pages': str(ho_list.num_pages),
+        'page_num': page
     }
 
     return render(request, 'eetlijst/ho_log.html', context)
 
 
 # view for transfer log
-def transfer_log(request):
+def transfer_log(request, page=1):
 
     # get list of turfed items
-    transfer_list = Transfer.objects.order_by('-time')
+    transfer_list = Paginator(Transfer.objects.order_by('-time'), 25)
+
+    # ensure page number is valid
+    try:
+        table_list = transfer_list.page(page)
+    except EmptyPage:
+        table_list = transfer_list.page(1)
+        page = 1
 
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'transfer_list': transfer_list
+        'table_list': table_list,
+        'pages': str(transfer_list.num_pages),
+        'page_num': page
     }
 
     return render(request, 'eetlijst/transfer_log.html', context)

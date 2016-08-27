@@ -1,6 +1,6 @@
 <table class="basic-table small-rows uk-table uk-table-hover">
-    <caption><h5 class="uk-text-muted" style="font-style:normal">Log HO</h5></caption>
-    {% if not transfer_list|length == 0 %}
+    <caption><h5 class="uk-text-muted" style="font-style:normal">Log overdrachten</h5></caption>
+    {% if not table_list.object_list|length == 0 %}
     <thead class="uk-h6">
         <tr>
             <th>Datum</th>
@@ -10,7 +10,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for i in transfer_list %}
+        {% for i in table_list.object_list %}
         <tr>
             <td>{{ i.time }}</td>
             <td>{{ i.from_user }}</td>
@@ -24,15 +24,12 @@
     {% endif %}
 </table>
 
-{% comment %}
+{% if table_list.has_other_pages %}
 <ul class="uk-pagination">
-    <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
-    <li class="uk-disabled"><span><i class="uk-icon-angle-left"></i></span></li>
-    <li class="uk-active"><span>1</span></li>
-    <li><a href="">2</a></li>
-    <li class="uk-disabled"><span>...</span></li>
-    <li><a href="">10</a></li>
-    <li><a href=""><i class="uk-icon-angle-right"></i></a></li>
-    <li><a href=""><i class="uk-icon-angle-double-right"></i></a></li>
+    <li {% if page_num == '1' %}class="uk-disabled"{% endif %}>{% if not page_num == '1' %}<a href="/eetlijst/transfer/log/{{ 1 }}"><i class="uk-icon-angle-double-left"></i></a>{% else %}<span><i class="uk-icon-angle-double-left"></i></span>{% endif %}</li>
+    <li {% if not table_list.has_previous %}class="uk-disabled"{% endif %}>{% if table_list.has_previous %}<a href="//eetlijst/transfer/log/{{ table_list.previous_page_number }}"><i class="uk-icon-angle-left"></i></a>{% else %}<span><i class="uk-icon-angle-left"></i></span>{% endif %}</li>
+    <li class="uk-disabled"><span>{{ page_num }}/{{ pages }}</span></li>
+    <li {% if not table_list.has_next %}class="uk-disabled"{% endif %}>{% if table_list.has_next %}<a href="/eetlijst/transfer/log/{{ table_list.next_page_number }}"><i class="uk-icon-angle-right"></i></a>{% else %}<span><i class="uk-icon-angle-right"></i></span>{% endif %}</li>
+    <li {% if page_num == pages %}class="uk-disabled"{% endif %}>{% if not page_num == pages %}<a href="/eetlijst/transfer/log/{{ pages }}"><i class="uk-icon-angle-double-right"></i></a>{% else %}<span><i class="uk-icon-angle-double-right"></i></span>{% endif %}</li>
 </ul>
-{% endcomment %}
+{% endif %}
