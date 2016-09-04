@@ -24,11 +24,8 @@
     <tbody>
         {% for u in user_list %}
         <tr id="user-{{ u.user_id }}">
-            <td class="uk-margin-remove uk-hidden-small form-large">
-                {% include 'bierlijst/turf_form.html' %}
-            </td>
 
-            <td class="uk-margin-remove uk-visible-small form-small">
+            <td class="uk-margin-remove form-small">
                 {% include 'bierlijst/turf_form.html' %}
             </td>
 

@@ -32,15 +32,16 @@ $(document).ready(function(){
     });
 
     // Prevent default form submit behavior
-    $(".turf-form").on('submit', function(event){
+    $(".turf-form,.profile-form").on('submit', function(event){
         event.preventDefault();
     });
 
+    // Set onclicks for turf buttons
     $(".btn-turf").click(function(){
 
         var user_id = $(this).attr("data-user");
         var turf_type = $(this).attr("data-type");
-        var turf_count = $("#count-" + user_id).val();
+        var turf_count = $(".count-" + user_id).val();
 
         if (turf_count === ''){
             turf_count = 1;
@@ -55,7 +56,7 @@ $(document).ready(function(){
                 console.log(json);
             },
             success : function (json) {
-                $("#count-" + user_id).val('');
+                $(".count-" + user_id).val('');
                 var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span");
                 sum_el.fadeOut(100, function () {
                     old_val = parseFloat(sum_el.html());
@@ -65,5 +66,7 @@ $(document).ready(function(){
             }
         });
     });
+
+
 
 });

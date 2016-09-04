@@ -16,14 +16,14 @@
 
             {% if user.is_authenticated %}
             <li class="uk-parent" data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
-                <a href="#"><strong>{{ request.user.username }}</strong> <i class="uk-icon-angle-down"></i></a>
+                <a href=""><strong>{{ request.user.username }}</strong> <i class="uk-icon-angle-down"></i></a>
                 <div class="uk-dropdown uk-dropdown-navbar">
                     <ul class="uk-nav uk-nav-navbar">
                         {% if request.user.username != 'huis' %}
                         <li class=" uk-hidden-small"><a href="/user/huis">Veranderen naar 'Huis'</a></li>
                         <li class="uk-nav-divider  uk-hidden-small"></li>
                         {% endif %}
-                        {% comment %}<li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>{% endcomment %}
+                        <li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>
                         {% if request.user|is_admin %}<li><a href="/ds4admin"><i class="uk-icon-diamond"></i> Admin</a></li>{% endif %}
                         {% if request.user|is_thesau %}<li><a href="/thesau"><i class="uk-icon-university"></i> Thesau</a></li>{% endif %}
                         <li><a href="/user/logout"><i class="uk-icon-sign-out"></i> Uitloggen</a></li>

@@ -179,7 +179,7 @@ def turf_boete(request, type_wine, user_id):
             # update housemate object
             h = Housemate.objects.get(user_id=user_id)
             h.boetes_open -= 1
-            h.boetes_turfed += 1
+            h.boetes_geturfd += 1
             h.save()
 
             # record type of wine
@@ -206,7 +206,7 @@ def reset_boetes(request):
 
         for h in Housemate.objects.all():
             h.boetes_open = 0
-            h.boetes_turfed = 0
+            h.boetes_geturfd = 0
             h.save()
 
         return HttpResponse("Boetes have been reset.")

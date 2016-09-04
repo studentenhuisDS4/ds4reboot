@@ -13,24 +13,71 @@ def index(request):
 
 # display profile page
 def profile(request, user_id=None):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            # Get user and turf type from POST
+                turf_user = User.objects.get(pk=user_id)
+                turf_type = request.POST.get('turf_type')
 
-    if user_id:
+                if request.POST.get('count'):
 
-        # get list of active users sorted by move-in date
-        active_users = User.objects.filter(is_active=True)
-        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+                    # validate count input
+                    try:
+                        turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
-        # build context object
-        context = {
-            'breadcrumbs': ['profiel'],
-            'housemates': housemates,
-            }
+                    except ValueError:
+                        return HttpResponse(json.dumps({'result': 'Error: Turf count must be numerical.'}))
 
-        return render(request, 'user/profile.html', context)
+                    if turf_type == 'bier' and not float(turf_count).is_integer():
+                        return HttpResponse(json.dumps({'result': 'Error: Must turf whole beer.'}))
+
+                    if turf_count >= 1000:
+                        return HttpResponse(json.dumps({'result': 'Cannot turf more than 999 items.'}))
+
+                else:
+                    turf_count = 1
+
+                print ('TURF | user: %s | type: %s | count: %s' % (turf_user, turf_type, turf_count))
+
+                h = Housemate.objects.get(user_id=user_id)
+
+                # add entry to database
+                if turf_type == 'bier':
+                    h.sum_bier += turf_count
+                    h.total_bier += turf_count
+
+                    # device = get_device_model()
+                    # device.objects.all().send_message({'message':'my test message'})
+
+                elif turf_type == 'wwijn':
+                    h.sum_wwijn += Decimal(turf_count)
+                    h.total_wwijn += Decimal(turf_count)
+
+                elif turf_type =='rwijn':
+                    h.sum_rwijn += Decimal(turf_count)
+                    h.total_rwijn += Decimal(turf_count)
+
+                h.save()
+
+                return HttpResponse(json.dumps({'result': 'Profile updated.'}))
+
+        else:
+            if not user_id:
+                user_id = request.user.id
+
+            # get requested user
+            profile_user = Housemate.objects.get(user_id=user_id)
+
+            # build context object
+            context = {
+                'breadcrumbs': ['profiel'],
+                'profile_user': profile_user
+                }
+
+            return render(request, 'user/profile.html', context)
 
     else:
-        return redirect('/user/profiel/%s/' % (request.user.id))
-
+            return render(request, 'base/login_page.html')
 
 # display settings page
 def settings(request):

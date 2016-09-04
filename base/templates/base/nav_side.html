@@ -1,7 +1,7 @@
  <div id="offcanvas" class="uk-offcanvas">
     <div class="uk-offcanvas-bar">
         <ul class="uk-nav uk-nav-offcanvas">
-            <li {% if request.get_full_path == '/' %}class="uk-active"{% endif %}><a href="/"><i class="uk-icon-home"></i> Home</a></li>
+            <li {% if request.get_full_path == '/' %}class="uk-active"{% endif %}><a href="/"><i class="uk-icon-home" style="width:2em"></i> Home</a></li>
             <li {% if '/bierlijst/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/bierlijst"><i class="uk-icon-beer" style="width:2em"></i> Bierlijst</a></li>
             <li {% if '/eetlijst/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/eetlijst"><i class="uk-icon-cutlery" style="width:2em"></i> Eetlijst</a></li>
             {% comment %}<li><a href="http://lentefeest.ds4.nl/"><i class="uk-icon-star" style="width:2em"></i> Lentefeest</a></li>{% endcomment %}

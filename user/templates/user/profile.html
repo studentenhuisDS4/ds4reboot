@@ -8,15 +8,28 @@
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
             <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
+                {% if profile_user.user.id == request.user.id %}
                 <li><a href=""><i class="uk-icon-user"></i> Profiel</a></li>
+                {% else %}
+                Je mag alleen je eigen profiel zien.
+                {% endif %}
+                {% comment %}
                 <li><a href=""><i class="uk-icon-cog"></i> Bewerken</a></li>
                 <li><a href=""><i class="uk-icon-exclamation-triangle"></i> Notificaties</a></li>
+                {% endcomment %}
             </ul>
 
             <ul id="tab-container" class="uk-switcher tab-content">
-                <li>{% include 'user/profile_view.html' %}</li>
+                {% if profile_user.user.id == request.user.id %}
+                <li>{% include 'user/profile_edit.html' %}</li>
+                {% else %}
+                Je mag alleen je eigen profiel zien.
+                {% endif %}
+
+                {% comment %}
                 <li>{% include 'user/profile_edit.html' %}</li>
                 <li>{% include 'user/notifications.html' %}</li>
+                {% endcomment %}
             </ul>
 
 

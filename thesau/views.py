@@ -39,7 +39,7 @@ def hr(request):
         totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
                   str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
                   str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-                  str(list(user_list.aggregate(Sum('boetes_turfed')).values())[0])]
+                  str(list(user_list.aggregate(Sum('boetes_geturfd')).values())[0])]
 
         # build context object
         context = {
@@ -101,7 +101,7 @@ def submit_hr(request):
     totals = [list(user_list.aggregate(Sum('sum_bier')).values())[0],
               list(user_list.aggregate(Sum('sum_wwijn')).values())[0],
               list(user_list.aggregate(Sum('sum_rwijn')).values())[0],
-              list(user_list.aggregate(Sum('boetes_turfed')).values())[0]]
+              list(user_list.aggregate(Sum('boetes_geturfd')).values())[0]]
 
     # get boete counts
     boetes_rwijn = BoetesReport.objects.get(type='r')
@@ -115,7 +115,7 @@ def submit_hr(request):
     ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn', 'Boetes'])
 
     for u in user_list:
-        ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_turfed])
+        ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd])
 
     ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3]])
 
@@ -163,13 +163,13 @@ def submit_hr(request):
         else:
             open_balance = 0
 
-        ur = UserReport(user=u.user, report=Report.objects.latest('id'), hr_bier=u.sum_bier, hr_wwijn=u.sum_wwijn, hr_rwijn=u.sum_rwijn, hr_boetes=u.boetes_turfed, eetlijst_balance=open_balance)
+        ur = UserReport(user=u.user, report=Report.objects.latest('id'), hr_bier=u.sum_bier, hr_wwijn=u.sum_wwijn, hr_rwijn=u.sum_rwijn, hr_boetes=u.boetes_geturfd, eetlijst_balance=open_balance)
         ur.save()
 
         u.sum_bier = 0
         u. sum_wwijn = 0
         u.sum_rwijn = 0
-        u.boetes_turfed = 0
+        u.boetes_geturfd = 0
 
         u.save()
 

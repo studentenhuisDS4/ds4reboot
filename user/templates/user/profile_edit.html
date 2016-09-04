@@ -1,15 +1,57 @@
-<div class="tab_content uk-grid uk-text-center" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+<div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+    <div class="uk-grid uk-container-center" style="max-width: 40em">
 
-    <div class="uk-width-3-3">
-        <table>
-            <tr>
+        <div class="uk-width-4-5 uk-container-center uk-padding-remove">
+            <h4 class="uk-text-muted">Wijzig profiel</h4>
+            <hr><br>
+        </div>
 
-            </tr>
-        </table>
+        <form class="profile-form uk-form uk-form-stacked uk-container-center uk-padding-remove uk-width-4-5">
+            {% with h=profile_user %}
+
+            <label class="uk-form-label" for="first-name">Voornaam:</label>
+            <input class="uk-width-1-1" type="text" name="first-name" value="{{ h.user.first_name }}" disabled><br><br>
+
+            <label class="uk-form-label" for="last-name">Achternaam:</label>
+            <input class="uk-width-1-1" type="text" name="last-name" value="{{ h.user.last_name }}" disabled><br><br>
+
+            <label class="uk-form-label" for="email">Email:</label>
+            <input class="uk-width-1-1" type="text" name="email" value="{{ h.user.email }}"><br><br>
+
+            <label class="uk-form-label" for="cell-phone">Cell:</label>
+            <input class="uk-width-1-1" type="text" name="cell-phone" value="{{ h.cell_phone }}"><br><br>
+
+            <label class="uk-form-label" for="parent-phone">Ouders:</label>
+            <input class="uk-width-1-1" type="text" name="parent-phone" value="{{ h.parent_phone }}"><br><br>
+
+            <label class="uk-form-label" for="diet">Diet:</label>
+            <input class="uk-width-1-1" type="text" name="diet" value="{{ h.diet }}"><br><br>
+
+            <button type="submit" name="profile-submit" value="user" class="uk-button uk-button-primary uk-float-right">Opslaan <i class="uk-icon-save"></i></button>
+
+            {% endwith %}
+        </form>
+
+        <div class="uk-width-4-5 uk-container-center uk-padding-remove uk-margin-large-top">
+            <h4 class="uk-text-muted">Wijzig wachtwoord</h4>
+            <hr><br>
+        </div>
+
+        <form class="uk-form uk-form-stacked uk-container-center uk-padding-remove uk-width-4-5" action="/">
+            {% with h=profile_user %}
+
+            <label class="uk-form-label" for="current-pass">Huidig wachtwoord:</label>
+            <input class="uk-width-1-1" type="text" name="current-pass"><br><br>
+
+            <label class="uk-form-label" for="new-pass">Nieuw wachtwoord:</label>
+            <input class="uk-width-1-1" type="text" name="new-pass"><br><br>
+
+            <label class="uk-form-label" for="verify-pass">Herhaal wachtwoord:</label>
+            <input class="uk-width-1-1" type="text" name="verify-pass"><br><br>
+
+            <button type="submit" name="profile-submit" value="user" class="uk-button uk-button-primary uk-float-right">Opslaan <i class="uk-icon-save"></i></button>
+            {% endwith %}
+        </form>
+
     </div>
-
-    <div class="uk-width-1-3">
-        <span class="uk-text-large">Totaal Geturfd</span>
-    </div>
-
 </div>

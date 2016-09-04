@@ -1,6 +1,6 @@
 <form class="turf-form uk-form uk-margin-remove uk-grid">
     <div class="uk-width-3-10" style="padding: 0px 5px 0px 0px;">
-        <input id="count-{{ u.user_id }}" type="number" inputmode="numeric" min="-999" max="999" step="any" class="uk-form-small">
+        <input class="uk-form-small count-{{ u.user_id }}" type="number" inputmode="numeric" min="-999" max="999" step="any">
     </div>
     <div class="uk-button-group uk-width-7-10 uk-padding-remove">
         <button data-user="{{ u.user_id }}" data-type="bier" class="btn-turf uk-button uk-button-small uk-width-3-5 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}"><i class="uk-icon-plus"></i></button>
