@@ -57,7 +57,7 @@ $(document).ready(function(){
             },
             success : function (json) {
                 $(".count-" + user_id).val('');
-                var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span");
+                var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");
                 sum_el.fadeOut(100, function () {
                     old_val = parseFloat(sum_el.html());
                     sum_el.html(old_val + parseFloat(turf_count));
