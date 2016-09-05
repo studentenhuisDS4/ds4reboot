@@ -232,24 +232,18 @@ def turf_item(request, user_id):
                     turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
                 except ValueError:
-                    messages.error(request, 'Error: Turf count must be numerical.')
-                    return redirect(request.META.get('HTTP_REFERER'))
-                    # return HttpResponse(json.dumps({'result': 'Error: Turf count must be numerical.'}))
+                    return HttpResponse(json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
 
                 if turf_type == 'bier' and not float(turf_count).is_integer():
-                    messages.error(request, 'Must turf whole beer.')
-                    return redirect(request.META.get('HTTP_REFERER'))
-                    # return HttpResponse(json.dumps({'result': 'Error: Must turf whole beer.'}))
+                    return HttpResponse(json.dumps({'result': 'Error: Je moet een hele bier turven.', 'status': 'failure'}))
 
                 if turf_count >= 1000:
-                    messages.error(request, 'Cannot turf more than 999 items.')
-                    return redirect(request.META.get('HTTP_REFERER'))
-                    # return HttpResponse(json.dumps({'result': 'Cannot turf more than 999 items.'}))
+                    return HttpResponse(json.dumps({'result': 'Error: Je moet minder dan 999 items turven.', 'status': 'failure'}))
 
             else:
                 turf_count = 1
 
-            print ('TURF | user: %s | type: %s | count: %s' % (turf_user, turf_type, turf_count))
+            # print ('TURF | user: %s | type: %s | count: %s' % (turf_user, turf_type, turf_count))
 
             h = Housemate.objects.get(user_id=user_id)
 
@@ -258,6 +252,9 @@ def turf_item(request, user_id):
                 h.sum_bier += turf_count
                 h.total_bier += turf_count
 
+                success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
+                success_message = success_message if turf_count == 1 else success_message.replace('bier', 'bieren')
+
                 # device = get_device_model()
                 # device.objects.all().send_message({'message':'my test message'})
 
@@ -265,20 +262,43 @@ def turf_item(request, user_id):
                 h.sum_wwijn += Decimal(turf_count)
                 h.total_wwijn += Decimal(turf_count)
 
+                success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+
             elif turf_type =='rwijn':
                 h.sum_rwijn += Decimal(turf_count)
                 h.total_rwijn += Decimal(turf_count)
+
+                success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
 
             h.save()
 
             t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count, turf_type=turf_type)
             t.save()
 
-            return HttpResponse(json.dumps({'result': 'Turf successful.'}))
+            return HttpResponse(json.dumps({'result': success_message, 'status': 'success'}))
 
         else:
-            messages.error(request, 'User not authenticated. Please log in again.')
-            return redirect(request.META.get('HTTP_REFERER'))
-            # return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.'}))
+            return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
 
 
+# handle turf post requests
+def list_medals(request):
+
+    if request.method == 'GET':
+        if request.user.is_authenticated():
+
+            # find medaled users
+            active_users = User.objects.filter(is_active=True)
+            user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
+            medals = []
+
+            for u in user_medals:
+                if u.sum_bier > 0:
+                    medals += [u.user_id]
+                else:
+                    medals += [0]
+
+            return HttpResponse(json.dumps({'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}}))
+
+        else:
+            return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))

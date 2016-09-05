@@ -14,27 +14,27 @@
         <tr>
             <td></td>
             <td>Totaal</td>
-            <td class="uk-text-center">{{ totals.0 }}</td>
-            <td class="uk-hidden-large uk-text-center">{{ totals.1|floatformat:"-2" }}</td>
-            <td class="uk-visible-large uk-text-center">{{ totals.2|floatformat:"-2" }}</td>
-            <td class="uk-visible-large uk-text-center">{{ totals.3|floatformat:"-2" }}</td>
-            <td class="uk-hidden-small uk-text-center">{{ totals.4|floatformat:"-2" }}</td>
+            <td id="total-bier" class="uk-text-center"><span>{{ totals.0 }}</span></td>
+            <td id="total-wijn" class="uk-hidden-large uk-text-center"><span>{{ totals.1|floatformat:"-2" }}</span></td>
+            <td id="total-wwijn" class="uk-visible-large uk-text-center"><span>{{ totals.2|floatformat:"-2" }}</span></td>
+            <td id="total-rwijn" class="uk-visible-large uk-text-center"><span>{{ totals.3|floatformat:"-2" }}</span></td>
+            <td class="uk-hidden-small uk-text-center"><span>{{ totals.4|floatformat:"-2" }}</span></td>
         </tr>
     </tfoot>
     <tbody>
         {% for u in user_list %}
-        <tr id="user-{{ u.user_id }}">
+        <tr id="user-{{ u.user_id }}" class="user-row">
 
             <td class="uk-margin-remove form-small">
                 {% include 'bierlijst/turf_form.html' %}
             </td>
 
-            <td class="{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}"><span>{{ u }}</span></td>
-            <td class="sum-bier uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}"><span>{{ u.sum_bier }}</span></td>
-            <td class="sum-wijn uk-hidden-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}"><span>{{ u.sum_wijn|floatformat:"-2" }}</span></td>
-            <td class="sum-wwijn uk-visible-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}"><span>{{ u.sum_wwijn|floatformat:"-2" }}</span></td>
-            <td class="sum-rwijn uk-visible-large uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}"><span>{{ u.sum_rwijn|floatformat:"-2" }}</span></td>
-            <td class="uk-hidden-small uk-text-center{% if u.user_id == medals.0 %} gold{% endif %}{% if u.user_id == medals.1 %} silver{% endif %}{% if u.user_id == medals.2 %} bronze{% endif %}"><span>{% if u.user.username != 'huis' %}{{ u.boetes_open }}{% else %}-{% endif %}</span></td>
+            <td class="medal"><span>{{ u }}</span></td>
+            <td class="sum-bier uk-text-center medal"><span>{{ u.sum_bier }}</span></td>
+            <td class="sum-wijn uk-hidden-large uk-text-center medal"><span>{{ u.sum_wijn|floatformat:"-2" }}</span></td>
+            <td class="sum-wwijn uk-visible-large uk-text-center medal"><span>{{ u.sum_wwijn|floatformat:"-2" }}</span></td>
+            <td class="sum-rwijn uk-visible-large uk-text-center medal"><span>{{ u.sum_rwijn|floatformat:"-2" }}</span></td>
+            <td class="uk-hidden-small uk-text-center medal"><span>{% if u.user.username != 'huis' %}{{ u.boetes_open }}{% else %}-{% endif %}</span></td>
         </tr>
         {% endfor %}
     </tbody>

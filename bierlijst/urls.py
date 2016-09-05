@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^boetes/turf/(?P<type_wine>\w+)/(?P<user_id>[0-9]+)/$', views.turf_boete, name='turf boetes'),
     url(r'^boetes/reset/$', views.reset_boetes, name='reset boetes'),
     url(r'^turf/(?P<user_id>[0-9]+)/$', views.turf_item, name='turf'),
+    url(r'^medals/$', views.list_medals, name='medals'),
 ]
