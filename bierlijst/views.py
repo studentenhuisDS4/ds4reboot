@@ -4,15 +4,13 @@ from bierlijst.models import Turf, Boete
 from thesau.models import BoetesReport
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
 from decimal import Decimal
 from django.db.models import Sum
 from django.core.paginator import Paginator, EmptyPage
 from gcm.models import get_device_model
 import json
 
-# import plotly.plotly as ply
-# import plotly.tools as tls
-# from plotly.graph_objs import *
 
 # index view for bierlijst
 def index(request):
@@ -123,13 +121,15 @@ def add_boete(request):
 
             # validate form input
             if count > 10 or count < 1:
-                return HttpResponse("Number of boetes must be between 1 and 10.")
-
+                messages.error(request, 'Number of boetes must be between 1 and 10.')
+                return redirect(request.META.get('HTTP_REFERER'))
             if note == '':
-                return HttpResponse("Must add reason.")
+                messages.error(request, 'Must add reason.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             if user_id == 0:
-                return HttpResponse("Must choose housemate.")
+                messages.error(request, 'Must choose housemate.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             # update housemate object
             h = Housemate.objects.get(user_id=user_id)
@@ -145,7 +145,7 @@ def add_boete(request):
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -187,10 +187,10 @@ def turf_boete(request, type_wine, user_id):
             t.boete_count += 1
             t.save()
 
-            return redirect(request.META.get('HTTP_REFERER'))
-
         else:
-            return HttpResponse("Invalid turf type.")
+            messages.error(request, 'Invalid turf type.')
+
+        return redirect(request.META.get('HTTP_REFERER'))
 
     else:
         return render(request, 'base/login_page.html')
@@ -201,7 +201,6 @@ def reset_boetes(request):
 
     if request.user.is_authenticated():
 
-
         Boete.objects.all().delete()
 
         for h in Housemate.objects.all():
@@ -209,7 +208,8 @@ def reset_boetes(request):
             h.boetes_geturfd = 0
             h.save()
 
-        return HttpResponse("Boetes have been reset.")
+        messages.error(request, 'Boetes have been reset.')
+        return redirect(request.META.get('HTTP_REFERER'))
 
     else:
         return render(request, 'base/login_page.html')
@@ -232,13 +232,19 @@ def turf_item(request, user_id):
                     turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
                 except ValueError:
-                    return HttpResponse(json.dumps({'result': 'Error: Turf count must be numerical.'}))
+                    messages.error(request, 'Error: Turf count must be numerical.')
+                    return redirect(request.META.get('HTTP_REFERER'))
+                    # return HttpResponse(json.dumps({'result': 'Error: Turf count must be numerical.'}))
 
                 if turf_type == 'bier' and not float(turf_count).is_integer():
-                    return HttpResponse(json.dumps({'result': 'Error: Must turf whole beer.'}))
+                    messages.error(request, 'Must turf whole beer.')
+                    return redirect(request.META.get('HTTP_REFERER'))
+                    # return HttpResponse(json.dumps({'result': 'Error: Must turf whole beer.'}))
 
                 if turf_count >= 1000:
-                    return HttpResponse(json.dumps({'result': 'Cannot turf more than 999 items.'}))
+                    messages.error(request, 'Cannot turf more than 999 items.')
+                    return redirect(request.META.get('HTTP_REFERER'))
+                    # return HttpResponse(json.dumps({'result': 'Cannot turf more than 999 items.'}))
 
             else:
                 turf_count = 1
@@ -271,6 +277,8 @@ def turf_item(request, user_id):
             return HttpResponse(json.dumps({'result': 'Turf successful.'}))
 
         else:
-            return HttpResponse(json.dumps({'result': 'Error: User not authenticated.'}))
+            messages.error(request, 'User not authenticated. Please log in again.')
+            return redirect(request.META.get('HTTP_REFERER'))
+            # return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.'}))
 
 

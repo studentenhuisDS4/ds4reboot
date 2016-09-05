@@ -2,8 +2,8 @@ from django.contrib.auth.models import User, Group
 from user.models import Housemate
 from eetlijst.models import HOLog
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.utils import timezone
+from django.contrib import messages
 
 
 # view for ds4 admin page
@@ -24,7 +24,8 @@ def index(request):
         return render(request, 'ds4admin/index.html', context)
 
     else:
-        return HttpResponse("Admin only area.")
+        messages.error(request, 'Admin only area.')
+        return redirect('/')
 
 
 # handle requests to toggle user group
@@ -46,7 +47,7 @@ def toggle_group(request, group_type, user_id):
             g.user_set.add(u)
 
     else:
-        return HttpResponse("Invalid group type.")
+        messages.error(request, 'Invalid group type.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -61,7 +62,7 @@ def remove_housemate(request):
             remove_id = int(request.POST.get('housemate'))
 
             if not remove_id:
-                return HttpResponse("Must specify housemate to be removed.")
+                messages.error(request, 'Must specify housemate to be removed.')
 
             else:
                 # update housemate object
@@ -102,6 +103,6 @@ def remove_housemate(request):
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))

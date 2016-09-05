@@ -32,6 +32,15 @@
 
         {% include 'base/nav.html' %}
 
+        {% if messages %}
+        {% for m in messages %}
+        <div class="uk-alert uk-alert-danger" data-uk-alert>
+            <a href="" class="uk-alert-close uk-close"></a>
+            <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+
         {% block body_block %}Failed to load page content.{% endblock %}
 
     </div>

@@ -11,8 +11,8 @@
         <tr>
             <td>{{ h }}</td>
 
-            <td class="uk-text-center">{% if h.user == request.user %}<i class="uk-icon-toggle-on text-muted"></i>{% else %}<a href="set/admin/{{ h.user_id }}"><i class="uk-icon-toggle-{% if h.user|is_admin %}on{% else %}off{% endif %}"></i></a>{% endif %}</td>
-            <td class="uk-text-center"><a href="set/thesau/{{ h.user_id }}"><i class="uk-icon-toggle-{% if h.user|is_thesau %}on{% else %}off{% endif %}"></i></a></td>
+            <td class="uk-text-center">{% if h.user == request.user %}<i class="uk-icon-toggle-on text-muted"></i>{% else %}<a href="set/admin/{{ h.user_id }}/"><i class="uk-icon-toggle-{% if h.user|is_admin %}on{% else %}off{% endif %}"></i></a>{% endif %}</td>
+            <td class="uk-text-center"><a href="set/thesau/{{ h.user_id }}/"><i class="uk-icon-toggle-{% if h.user|is_thesau %}on{% else %}off{% endif %}"></i></a></td>
 
         </tr>
         {% endfor %}

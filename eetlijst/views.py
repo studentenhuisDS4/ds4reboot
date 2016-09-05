@@ -4,9 +4,9 @@ from eetlijst.models import HOLog, Transfer, DateList, UserList
 from django.shortcuts import render, redirect
 from django.utils import timezone
 import datetime as dt
-from django.http import HttpResponse
 from decimal import Decimal
 from django.core.paginator import Paginator, EmptyPage
+from django.contrib import messages
 
 
 # generate eetlijst view for current or defined date
@@ -129,7 +129,7 @@ def goto_date(request):
         try:
             dt.date(int(sel_date[0:4]),int(sel_date[5:7]),int(sel_date[8:10]))
         except ValueError:
-            return HttpResponse("Invalid date.")
+            messages.error(request, 'Invalid date.')
 
         return redirect('/eetlijst/' + sel_date[0:10] + '/')
 
@@ -145,12 +145,14 @@ def add_ho(request):
 
              # validate form input
             if request.POST.get('amount') == '':
-                return HttpResponse("Must add amount.")
+                messages.error(request, 'Must add amount.')
+                return redirect(request.META.get('HTTP_REFERER'))
             else:
                 amount = Decimal(round(Decimal(request.POST.get('amount')),2))
 
             if note == '':
-                return HttpResponse("Must add description.")
+                messages.error(request, 'Must add description.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             # update housemate object for current user
             h = Housemate.objects.get(user_id=user_id)
@@ -182,7 +184,7 @@ def add_ho(request):
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -198,12 +200,14 @@ def bal_transfer(request):
 
              # validate form input
             if int(request.POST.get('housemate')) == 0:
-                return HttpResponse("Must choose housemate.")
-
+                messages.error(request, 'Must choose housemate.')
+                return redirect(request.META.get('HTTP_REFERER'))
             if request.POST.get('amount') == '':
-                return HttpResponse("Must add amount.")
+                messages.error(request, 'Must add amount.')
+                return redirect(request.META.get('HTTP_REFERER'))
             elif Decimal(request.POST.get('amount')) < 0:
-                return HttpResponse("Amount must be positive. Use arrow button instead.")
+                messages.error(request, 'Amount must be positive, use arrow button to choose direction.')
+                return redirect(request.META.get('HTTP_REFERER'))
             else:
                 amount = Decimal(round(Decimal(request.POST.get('amount')),2))
 
@@ -231,7 +235,7 @@ def bal_transfer(request):
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -258,7 +262,8 @@ def enroll(request):
 
             elif action == 'cook':
                 if date_entry.cook and not date_entry.cook == sel_user.user:
-                    return HttpResponse("There is already a cook.")
+                    messages.error(request, 'There is already a cook.')
+                    return redirect(request.META.get('HTTP_REFERER'))
                 elif date_entry.cook == sel_user.user:
                     user_entry.list_cook = False
                     date_entry.num_eating -= 1
@@ -279,7 +284,8 @@ def enroll(request):
                 user_entry.list_count = 0
 
                 if date_entry.cook and not date_entry.cook == sel_user.user:
-                    return HttpResponse("There is already a cook.")
+                    messages.error(request, 'There is already a cook.')
+                    return redirect(request.META.get('HTTP_REFERER'))
                 elif date_entry.cook == sel_user.user:
                     user_entry.list_cook = False
                     date_entry.num_eating -= 1
@@ -292,7 +298,8 @@ def enroll(request):
                     date_entry.num_eating += 1
 
             else:
-                return HttpResponse("Invalid submit button.")
+                messages.error(request, 'Invalid submit button.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             user_entry.timestamp = timezone.now()
             user_entry.save()
@@ -309,7 +316,7 @@ def enroll(request):
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -346,20 +353,23 @@ def close(request):
                             date_entry.save()
 
                     else:
-                        return HttpResponse("Must be cook to close list.")
+                        messages.error(request, 'Must be cook to close list.')
+                        return redirect(request.META.get('HTTP_REFERER'))
 
                 else:
-                    return HttpResponse("Cannot reopen list once cost is entered.")
+                    messages.error(request, 'Cannot reopen list once cost is entered.')
+                    return redirect(request.META.get('HTTP_REFERER'))
 
             else:
-                return HttpResponse("Cannot close list without cook.")
+                messages.error(request, 'Cannot close list without cook.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
 
         else:
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -375,9 +385,11 @@ def cost(request):
 
             # validate form input
             if request.POST.get('cost-amount') == '':
-                return HttpResponse("Must add amount.")
+                messages.error(request, 'Must add amount.')
+                return redirect(request.META.get('HTTP_REFERER'))
             elif Decimal(request.POST.get('cost-amount')) < 0:
-                return HttpResponse("Amount must be positive.")
+                messages.error(request, 'Amount must be positive.')
+                return redirect(request.META.get('HTTP_REFERER'))
             else:
                 cost = Decimal(round(Decimal(request.POST.get('cost-amount')),2))
 
@@ -386,13 +398,15 @@ def cost(request):
                 date_entry = DateList.objects.get(date=date)
 
             except DateList.DoesNotExist:
-                return HttpResponse("No vaild entry for date.")
+                messages.error(request, 'No vaild entry for date.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             try:
                 users_enrolled = UserList.objects.filter(list_date=date)
 
             except UsereList.DoesNotExist:
-                return HttpResponse("No users signed up for selected date.")
+                messages.error(request, 'No users signed up for selected date.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             if date_entry.cook:
 
@@ -429,14 +443,15 @@ def cost(request):
                     h.save()
 
             else:
-                return HttpResponse("Cannot input cost without cook.")
+                messages.error(request, 'Cannot input cost without cook.')
+                return redirect(request.META.get('HTTP_REFERER'))
 
 
         else:
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 

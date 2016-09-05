@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
+from django.contrib import messages
 from decimal import Decimal
 from openpyxl import Workbook
 
@@ -23,7 +24,8 @@ def index(request):
         return render(request, 'thesau/index.html', context)
 
     else:
-        return HttpResponse("Only accessible to thesaus and admins.")
+        messages.error(request, 'Only accessible to thesaus and admins.')
+        return redirect('/')
 
 # view for HR page
 def hr(request):
@@ -53,7 +55,8 @@ def hr(request):
         return render(request, 'thesau/hr.html', context)
 
     else:
-        return HttpResponse("Only accessible to thesaus and admins.")
+        messages.error(request, 'Only accessible to thesaus and admins.')
+        return redirect('/')
 
 
 # handle add item post requests
@@ -72,9 +75,13 @@ def add_item(request):
 
             if item_note == '':
                 return HttpResponse("Must add note.")
+                messages.error(request, '')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             if request.user.id == 0:
                 return HttpResponse("Must use non-house account.")
+                messages.error(request, '')
+                return redirect(request.META.get('HTTP_REFERER'))
 
             # add entry to boete table
             i = ItemsReport(submit_user=request.user, type=item_type, amount=item_amount, note=item_note)
@@ -84,7 +91,7 @@ def add_item(request):
             return render(request, 'base/login_page.html')
 
     else:
-        return HttpResponse("Method must be POST.")
+        messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -173,4 +180,4 @@ def submit_hr(request):
 
         u.save()
 
-    return redirect('/thesau')
+    return redirect('/thesau/')
