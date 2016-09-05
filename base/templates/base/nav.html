@@ -23,7 +23,8 @@
                         <li class=" uk-hidden-small"><a href="/user/huis">Veranderen naar 'Huis'</a></li>
                         <li class="uk-nav-divider  uk-hidden-small"></li>
                         {% endif %}
-                        <li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>
+                        {% comment %}<li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>{% endcomment %}
+                        <li><a href="/password_change/"><i class="uk-icon-lock"></i> Wijzig wachtwoord</a></li>
                         {% if request.user|is_admin %}<li><a href="/ds4admin"><i class="uk-icon-diamond"></i> Admin</a></li>{% endif %}
                         {% if request.user|is_thesau %}<li><a href="/thesau"><i class="uk-icon-university"></i> Thesau</a></li>{% endif %}
                         <li><a href="/user/logout"><i class="uk-icon-sign-out"></i> Uitloggen</a></li>
@@ -39,7 +40,7 @@
                         <div class="uk-form-row"><input type="text" name="username" placeholder="Username" class="uk-width-1-1"></div>
                         <div class="uk-form-row"><input type="password" name="password" placeholder="Password" class="uk-width-1-1"></div>
                         <div class="uk-form-row"><button type="submit" class="uk-button uk-button-primary uk-width-1-1">Log in</button></div>
-
+                        <div class="uk-form-row uk-text-center"><a href="/password_reset/">Wachtwoord vergeten?</a></div>
                     </form>
                 </div>
             </li>
