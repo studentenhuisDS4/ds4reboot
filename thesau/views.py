@@ -11,7 +11,7 @@ from openpyxl import Workbook
 # view for thesau page
 def index(request):
 
-    if request.user.groups.filter(name='Thesau').exists() or request.user.is_superuser:
+    if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # get reports archive
         report_list = Report.objects.all()
@@ -30,7 +30,7 @@ def index(request):
 # view for HR page
 def hr(request):
 
-    if request.user.groups.filter(name='Thesau').exists() or request.user.is_superuser:
+    if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # generate necessary user lists
         active_users = User.objects.filter(is_active=True)

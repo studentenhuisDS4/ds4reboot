@@ -14,7 +14,7 @@ def is_admin(user):
 @register.filter
 def is_thesau(user):
 
-    if user.groups.filter(name='Thesau').exists():
+    if user.groups.filter(name='thesau').exists():
         return True
 
     else:

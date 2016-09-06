@@ -86,9 +86,9 @@ DATABASES = {
         'USER': 'ds4db_user',
         'PASSWORD': 'eXnhnTVFdSd9',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'OPTIONS': {
-          'autocommit': True,
-        },
+        # 'OPTIONS': {
+        #   'autocommit': True,
+        # },
     }
 }
 
