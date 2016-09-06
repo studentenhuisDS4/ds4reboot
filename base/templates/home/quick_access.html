@@ -17,6 +17,7 @@
             <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.sum_wijn }}</button>
         </div>
     </div>
+    {% comment %}
     <hr>
 
     <form class="uk-form uk-margin-remove" method="post" action="/eetlijst/{% if eetlijst_info.0 == request.user.housemate.display_name %}close{% else %}enroll{% endif %}/">
@@ -53,6 +54,7 @@
 
     </form>
 
+
     <form class="uk-form-row" method="post" action="/eetlijst/enroll/">
         {% csrf_token %}
         <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
@@ -63,5 +65,5 @@
             <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
         </div>
     </form>
-
+    {% endcomment %}
 </div>
