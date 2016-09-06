@@ -42,24 +42,17 @@ def hr(request):
                   str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
                   str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
                   str(list(user_list.aggregate(Sum('boetes_geturfd')).values())[0])]
-        # get total boetes
-        if BoetesReport.objects.get(type='w').exists():
-            boete_w = BoetesReport.objects.get(type='w').boete_count
-        else:
-            boete_w = 0
 
-        if BoetesReport.objects.get(type='r').exists():
-            boete_r = BoetesReport.objects.get(type='r').boete_count
-        else:
-            boete_r = 0
+        # get boete counts
+        boetes_w = BoetesReport.objects.get_or_create(type='w', defaults={'count': 0})
+        boetes_r = BoetesReport.objects.get_or_create(type='w', defaults={'count': 0})
 
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'user_list': user_list,
             'moveout_list': moveout_list,
-            'boetes': [boete_w, boete_r],
-            'boetes': [boete_w, boete_r],
+            'boetes': [boetes_w.boete_count, boetes_r.boete_count],
             'totals': totals,
             }
 
