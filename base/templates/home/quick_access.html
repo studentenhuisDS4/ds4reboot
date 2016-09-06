@@ -51,16 +51,17 @@
             </div>
         </div>
 
-        <form class="uk-form-row" method="post" action="/eetlijst/enroll/">
-            {% csrf_token %}
-            <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
-            <input type="hidden" name="enroll-date" value="{{ focus_date }}">
-            <div class="uk-button-group  uk-width-1-1">
-                <button type="submit" name="enroll-action" value="{% if eetlijst_info.2 == 0 %}cook{% else %}swap{% endif %}" class="uk-button uk-width-1-2"{% if not eetlijst_info.0 == 'Geen' %} disabled{% endif %}><img src="/static/img/chefs_hat.png" alt="Cook:" style="margin-top: -2px;" /> {{ eetlijst_info.0 }}</button>
-                <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> {{ eetlijst_info.1 }}</button>
-                <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
-            </div>
-        </form>
-
     </form>
+
+    <form class="uk-form-row" method="post" action="/eetlijst/enroll/">
+        {% csrf_token %}
+        <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
+        <input type="hidden" name="enroll-date" value="{{ focus_date }}">
+        <div class="uk-button-group  uk-width-1-1">
+            <button type="submit" name="enroll-action" value="{% if eetlijst_info.2 == 0 %}cook{% else %}swap{% endif %}" class="uk-button uk-width-1-2"{% if not eetlijst_info.0 == 'Geen' %} disabled{% endif %}><img src="/static/img/chefs_hat.png" alt="Cook:" style="margin-top: -2px;" /> {{ eetlijst_info.0 }}</button>
+            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> {{ eetlijst_info.1 }}</button>
+            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
+        </div>
+    </form>
+
 </div>
