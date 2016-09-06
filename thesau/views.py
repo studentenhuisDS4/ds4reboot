@@ -43,12 +43,12 @@ def hr(request):
                   str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
                   str(list(user_list.aggregate(Sum('boetes_geturfd')).values())[0])]
         # get total boetes
-        if BoetesReport.objects.get(type='w'):
+        if BoetesReport.objects.get(type='w').exists():
             boete_w = BoetesReport.objects.get(type='w').boete_count
         else:
             boete_w = 0
 
-        if BoetesReport.objects.get(type='r'):
+        if BoetesReport.objects.get(type='r').exists():
             boete_r = BoetesReport.objects.get(type='r').boete_count
         else:
             boete_r = 0
