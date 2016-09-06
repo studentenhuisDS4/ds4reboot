@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <div class="uk-form-row" method="post" action="/eetlijst/enroll/">
+        <form class="uk-form-row" method="post" action="/eetlijst/enroll/">
             {% csrf_token %}
             <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
             <input type="hidden" name="enroll-date" value="{{ focus_date }}">
@@ -60,7 +60,7 @@
                 <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> {{ eetlijst_info.1 }}</button>
                 <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
             </div>
-        </div>
+        </form>
 
     </form>
 </div>
