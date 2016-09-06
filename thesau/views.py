@@ -44,15 +44,15 @@ def hr(request):
                   str(list(user_list.aggregate(Sum('boetes_geturfd')).values())[0])]
 
         # get boete counts
-        boetes_w = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
-        boetes_r = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
+        # boetes_w = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
+        # boetes_r = BoetesReport.objects.get_or_create(type='r', defaults={'boete_count': 0})
 
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'user_list': user_list,
             'moveout_list': moveout_list,
-            'boetes': [boetes_w.boete_count, boetes_r.boete_count],
+            'boetes': [BoetesReport.objects.get(type='w').boete_count, BoetesReport.objects.get(type='r').boete_count],
             'totals': totals,
             }
 
