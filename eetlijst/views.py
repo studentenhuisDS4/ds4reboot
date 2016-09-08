@@ -10,7 +10,13 @@ from django.contrib import messages
 
 
 # generate eetlijst view for current or defined date
-def index(request, year=timezone.now().year, month=timezone.now().month, day=timezone.now().day):
+def index(request, year=None, month=None, day=None):
+
+    # get current date if nothing specified
+    if not year or month or day:
+        year=timezone.now().year
+        month=timezone.now().month
+        day=timezone.now().day
 
     # build date array
     focus_date = dt.date(int(year), int(month), int(day))
