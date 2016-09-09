@@ -16,10 +16,6 @@ from ds4reboot.secret_settings import *
 # Set plotly credentials
 # plotly.tools.set_credentials_file(username='damienallen', api_key='kf1rtj9u7l')
 
-# Google Cloud Messaging API
-GCM_APIKEY = 'AIzaSyBHuUNU6onuEIownjfTmZyjrTSFufKhHJg'
-
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -71,26 +67,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ds4reboot.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'PORT': '3306',
-        'ENGINE': 'django.db.backends.postgresql',
-        'PORT': '5432',
-        'NAME': 'ds4db',
-        'USER': 'ds4db_user',
-        'PASSWORD': 'eXnhnTVFdSd9',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        # 'OPTIONS': {
-        #   'autocommit': True,
-        # },
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
