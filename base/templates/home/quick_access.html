@@ -1,24 +1,25 @@
-<div class="turf-form uk-panel uk-panel-box" style="margin-top:2em; background-color:rgba(255, 255, 255, 0.8);">
-    <form class="uk-form uk-margin-remove">
-        {% csrf_token %}
-        <input class="count-{{ request.user.id }}" type="hidden" name="count" value="1">
-        <div class="uk-form-row">
-            <button data-user="{{ request.user.id }}" data-type="bier" class="btn-turf uk-button uk-button-large uk-width-1-1 uk-button-primary uk-hidden-small"><i class="uk-icon-plus-circle"></i> Turf bier</button>
-            <div class="uk-button-group uk-width-1-1 uk-visible-small">
-                <button data-user="{{ request.user.id }}" data-type="bier" class="btn-turf uk-button uk-button-large uk-width-2-6 uk-button-primary"><i class="uk-icon-plus-circle"></i> Turf bier</button>
-                <a class="uk-button uk-button-large uk-width-2-6 uk-button-primary" href="bierlijst/"><i class="uk-icon-beer"></i> Bierlijst</a>
-                <a class="uk-button uk-button-large uk-width-2-6 uk-button-primary" href="eetlijst/"><i class="uk-icon-cutlery"></i> Eetlijst</a>
+<div class="uk-panel uk-panel-box" style="margin-top:2em; background-color:rgba(255, 255, 255, 0.8);">
+    <div class="turf-form">
+        <form class="uk-form uk-margin-remove">
+            {% csrf_token %}
+            <input class="count-{{ request.user.id }}" type="hidden" name="count" value="1">
+            <div class="uk-form-row">
+                <button data-user="{{ request.user.id }}" data-type="bier" class="btn-turf uk-button uk-button-large uk-width-1-1 uk-button-primary uk-hidden-small"><i class="uk-icon-plus-circle"></i> Turf bier</button>
+                <div class="uk-button-group uk-width-1-1 uk-visible-small">
+                    <button data-user="{{ request.user.id }}" data-type="bier" class="btn-turf uk-button uk-button-large uk-width-2-6 uk-button-primary"><i class="uk-icon-plus-circle"></i> Turf bier</button>
+                    <a class="uk-button uk-button-large uk-width-2-6 uk-button-primary" href="bierlijst/"><i class="uk-icon-beer"></i> Bierlijst</a>
+                    <a class="uk-button uk-button-large uk-width-2-6 uk-button-primary" href="eetlijst/"><i class="uk-icon-cutlery"></i> Eetlijst</a>
+                </div>
+            </div>
+        </form>
+
+        <div class="uk-form-row uk-margin-top" id="user-{{ request.user.id }}">
+            <div class="sum-bier uk-button-group  uk-width-1-1">
+                <button class="uk-button uk-width-1-2" disabled>Bier: <span>{{ user_info.sum_bier }}</span>{% if request.user.id in medals %} <i class="uk-icon-circle{% if request.user.id == medals.0 %} gold-icon{% endif %}{% if request.user.id == medals.1 %} silver-icon{% endif %}{% if request.user.id == medals.2 %} bronze-icon{% endif %}"></i>{% endif %}</button>
+                <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.sum_wijn }}</button>
             </div>
         </div>
-    </form>
-
-    <div class="uk-form-row uk-margin-top" id="user-{{ request.user.id }}">
-        <div class="sum-bier uk-button-group  uk-width-1-1">
-            <button class="uk-button uk-width-1-2" disabled>Bier: <span>{{ user_info.sum_bier }}</span>{% if request.user.id in medals %} <i class="uk-icon-circle{% if request.user.id == medals.0 %} gold-icon{% endif %}{% if request.user.id == medals.1 %} silver-icon{% endif %}{% if request.user.id == medals.2 %} bronze-icon{% endif %}"></i>{% endif %}</button>
-            <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.sum_wijn }}</button>
-        </div>
     </div>
-    {% comment %}
     <hr>
 
     <form class="uk-form uk-margin-remove" method="post" action="/eetlijst/{% if eetlijst_info.0 == request.user.housemate.display_name %}close{% else %}enroll{% endif %}/">
@@ -54,9 +55,8 @@
         </div>
 
     </form>
-
-
-    <form class="uk-form-row" method="post" action="/eetlijst/enroll/">
+    
+    <form class="uk-form-row uk-margin-top" method="post" action="/eetlijst/enroll/">
         {% csrf_token %}
         <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
         <input type="hidden" name="enroll-date" value="{{ focus_date }}">
@@ -66,5 +66,4 @@
             <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
         </div>
     </form>
-    {% endcomment %}
 </div>
