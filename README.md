@@ -2,7 +2,8 @@
 DS4 house website
 
 #### Explain front-end here
-- Bootstrap? Jquery mobile?
+- UI-kit
+- Jquery mobile
 
 #### Explain back-end here
 - PostgreSQL
