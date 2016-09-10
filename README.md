@@ -1,10 +1,10 @@
 # ds4reboot
 DS4 house website
 
-#### Explain front-end here #### 
+#### Explain front-end here
 - Bootstrap? Jquery mobile?
 
-#### Explain back-end here ####
+#### Explain back-end here
 - PostgreSQL
 - REST api
 - Django 
