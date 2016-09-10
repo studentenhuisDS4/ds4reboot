@@ -2,6 +2,10 @@
 
 {% block title %} | Home{% endblock %}
 
+{% block add_to_header %}
+<link rel="stylesheet" href="/static/css/background.css" />
+{% endblock %}
+
 {% block body_block %}
 
     <div class="uk-width-1-1 uk-clearfix" style="margin-top:2em; margin-bottom:2em; position: relative;">
@@ -11,7 +15,6 @@
             </div>
         </div>
         {% endif %}
-        <img src="/static/img/achtergrond.png" alt="">
     </div>
 
     {% if user.is_authenticated and request.user.username != 'huis' %}
@@ -34,7 +37,5 @@
         </div>
     </div>
     {% endif %}
-
-    <p class="uk-text-center uk-text-muted uk-hidden-small uk-margin-top"><i class="uk-icon-heart-o"></i> DS4</p>
 
 {% endblock %}
