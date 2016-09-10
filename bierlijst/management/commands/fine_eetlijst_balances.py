@@ -16,12 +16,12 @@ class Command(BaseCommand):
 
         for h in user_list:
             if h.balance < -30:
-                print 'Boete added for %s' % h.user
+                # print 'Boete added for %s' % h.user
                 # update housemate object
                 h.boetes_open += 1
                 h.boetes_total += 1
                 h.save()
 
                  # add entry to boete table
-                b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=User.objects.get(username='huis'), boete_count=1, boete_note='Saldo te laag.')
+                b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=User.objects.get(username='huis'), boete_count=1, boete_note='Eetlijst saldo te laag')
                 b.save()
