@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 from ds4reboot.secret_settings import *
 
+if not SECRET_APPS:
+    SECRET_APPS = []
+
 # Set plotly credentials
 # plotly.tools.set_credentials_file(username='damienallen', api_key='kf1rtj9u7l')
 
@@ -36,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gcm',
 ]
+
+INSTALLED_APPS += SECRET_APPS
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
