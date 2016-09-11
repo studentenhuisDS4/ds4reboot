@@ -2,6 +2,15 @@ from django.template.defaulttags import register
 from eetlijst.models import DateList, UserList
 import datetime as dt
 
+# retrieve value from 2D dictionary by tuple index
+@register.simple_tag
+def get_dict(dict, key_user, key_date):
+    tup_userdate = (key_user, key_date)
+    if dict.get(tup_userdate , 0 ):
+        return dict.get(tup_userdate , 0 )
+    else:
+        return 0
+
 # check if user is cook
 @register.filter
 def is_cook(date, id):
@@ -13,17 +22,6 @@ def is_cook(date, id):
         return 0
 
     return cook
-
-# check if user is eating with
-@register.filter
-def eating_with(date, id):
-    try:
-        eating = UserList.objects.get(user_id=id, list_date=date).list_count
-
-    except UserList.DoesNotExist:
-        return 0
-
-    return eating
 
 # get totals for each listed day
 @register.filter

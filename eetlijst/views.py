@@ -8,7 +8,6 @@ from decimal import Decimal
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib import messages
 
-
 # generate eetlijst view for current or defined date
 def index(request, year=None, month=None, day=None):
 
@@ -92,6 +91,14 @@ def index(request, year=None, month=None, day=None):
     active_users = User.objects.filter(is_active=True)
     user_list = Housemate.objects.filter(user__id__in=active_users).exclude(display_name = 'Huis').order_by('movein_date')
 
+    # combine date_list and database Userlist to reduce template tag queries
+    date_entries = {}
+    user_date_entries = {}
+    for date in date_list:
+        date_entries[date] = UserList.objects.filter(list_date=date_list[date][1])
+        for entry in date_entries[date]:
+            user_date_entries[ (entry.user_id, date_list[date][1]) ] = entry
+
     # calculate total balance
     total_balance = 0
     for u in user_list:
@@ -108,6 +115,7 @@ def index(request, year=None, month=None, day=None):
         'breadcrumbs': ['eetlijst'],
         'user_list': user_list,
         'date_list': date_list,
+        'user_date_entries': user_date_entries,
         'focus_date': str(year) + '-' + str(month) + '-' + str(day),
         'focus_cook': focus_cook,
         'focus_open': focus_open,
@@ -410,7 +418,7 @@ def cost(request):
             try:
                 users_enrolled = UserList.objects.filter(list_date=date)
 
-            except UsereList.DoesNotExist:
+            except UserList.DoesNotExist:
                 messages.error(request, 'No users signed up for selected date.')
                 return redirect(request.META.get('HTTP_REFERER'))
 
