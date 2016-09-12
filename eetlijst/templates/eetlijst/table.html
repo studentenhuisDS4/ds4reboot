@@ -25,7 +25,7 @@
         <tr>
             <td></td>
             <td>Totaal</td>
-            <td></td>
+            <td class="uk-text-center">{# total_balance #} </td>
             {% for n, d in date_list.items %}
             <td class="days-table {% if d.2 == False %}uk-visible-large {% endif %}uk-text-center">{{ d.1|day_total }}</td>
             {% endfor %}
@@ -40,19 +40,33 @@
 
             <td class="names-table uk-hidden-small">{{ u }}{% if u.diet %} <i class="uk-icon-exclamation-circle uk-icon-hover" data-uk-tooltip="{pos:'right'}" title="{{ u.diet }}"></i>{% endif %}</td>
             <td class="names-table-small uk-visible-small uk-text-small">{{ u }}</td>
-            <td class="uk-text-center uk-hidden-small" style="width: 4em; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
+            <td class="uk-text-center uk-hidden-small" style="width:4em;background-color:rgba( {{ u.balance|bal_color }} );"> {% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
             <td class="uk-text-center uk-text-small uk-visible-small" style="width: 3em; padding: 4px; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
-            {% for n, d in date_list.items %}
-                <td class="days-table {% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
-                    {% if not d.1|cost:u.user.id == 0 %}<span style="display: inline-block;">{{ d.1|cost:u.user.id }}</span>{% endif %}
-                    <span style="display: inline-block;">
-                    {% if not d.1|cost:u.user.id == 0 %}({% endif %}
-                    {% if d.1|is_cook:u.user.id %}<img src="/static/img/chefs_hat.png" alt="" style="{% if d.1|cost:u.user.id == 0 %}margin-top: -4px;{% else %}margin-top: -3px; width: 12px; height: 12px;{% endif %}" />{% endif %}
-                    {% if d.1|eating_with:u.user.id %}<i class="uk-icon-times{% if d.1|cost:u.user.id == 0 %} uk-icon-small{% endif %}"></i>{% if d.1|eating_with:u.user.id > 1 %}<span {% if not d.1|cost:u.user.id == 0 %}class="uk-text-small"{% endif %}>{{ d.1|eating_with:u.user.id }}</span>{% endif %}{% endif %}
-                    {% if not d.1|cost:u.user.id == 0 %}){% endif %}
-                    </span>
-                </td>
-            {% endfor %}
+
+                {% for n, d in date_list.items %}
+                    <td class="days-table {% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
+
+                    {# Implement dictionary lookup with tuple instead of query in template tag#}
+                    {% get_dict user_date_entries u.user.id d.1 as success %}
+
+                    {% if success != 0 %}
+                        {% if success.list_cost != None %}
+                        <span style="display: inline-block;"> {{ success.list_cost }} </span>
+                        {% endif %}
+                        <span style="display: inline-block;">
+                            {% if success.list_cost != None %} ( {% endif %}
+                            {% if success.list_cook != 0 %}<img src="/static/img/chefs_hat.png" alt="" style="{% if d.1|cost:u.user.id == 0 %}margin-top: -4px;{% else %}margin-top: -3px; width: 12px; height: 12px;{% endif %}" />{% endif %}
+                            {% if success.list_count > 0 %}
+                                <i class="uk-icon-times{% if success.list_cost == None %} uk-icon-small{% endif %}"></i>
+                                {% if success.list_count > 1 %}
+                                    <span {% if success.list_cost == None %} class="uk-text-small"{% endif %}>{{ success.list_count }}</span>
+                                {% endif %}
+                            {% endif %}
+                            {% if success.list_cost != None %} ) {% endif %}
+                        </span>
+                    {% endif %}
+                    </td>
+                {% endfor %}
         </tr>
         {% endfor %}
     </tbody>
