@@ -13,7 +13,7 @@ from django.contrib import messages
 def index(request, year=None, month=None, day=None):
 
     # get current date if nothing specified
-    if not year or month or day:
+    if not year or not month or not day:
         year=timezone.now().year
         month=timezone.now().month
         day=timezone.now().day
