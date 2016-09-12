@@ -334,7 +334,6 @@ def enroll(request, user_id):
             if date_entry.num_eating == 0:
                 date_entry.delete()
 
-            print render_to_string('eetlijst/table_cell.html') #, 'html-content': html
             return HttpResponse(json.dumps({'result': success_message, 'status': 'success'}))
         else:
             return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
