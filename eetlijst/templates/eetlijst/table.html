@@ -44,28 +44,7 @@
             <td class="uk-text-center uk-text-small uk-visible-small" style="width: 3em; padding: 4px; background-color:rgba({{ u.balance|bal_color }});">{% if u.balance > 0 %}+{% endif %}{{ u.balance }}</td>
 
                 {% for n, d in date_list.items %}
-                    <td class="days-table {% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
-
-                    {# Implement dictionary lookup with tuple instead of query in template tag#}
-                    {% get_dict user_date_entries u.user.id d.1 as success %}
-
-                    {% if success != 0 %}
-                        {% if success.list_cost != None %}
-                        <span style="display: inline-block;"> {{ success.list_cost }} </span>
-                        {% endif %}
-                        <span style="display: inline-block;">
-                            {% if success.list_cost != None %} ( {% endif %}
-                            {% if success.list_cook != 0 %}<img src="/static/img/chefs_hat.png" alt="" style="{% if d.1|cost:u.user.id == 0 %}margin-top: -4px;{% else %}margin-top: -3px; width: 12px; height: 12px;{% endif %}" />{% endif %}
-                            {% if success.list_count > 0 %}
-                                <i class="uk-icon-times{% if success.list_cost == None %} uk-icon-small{% endif %}"></i>
-                                {% if success.list_count > 1 %}
-                                    <span {% if success.list_cost == None %} class="uk-text-small"{% endif %}>{{ success.list_count }}</span>
-                                {% endif %}
-                            {% endif %}
-                            {% if success.list_cost != None %} ) {% endif %}
-                        </span>
-                    {% endif %}
-                    </td>
+                    {% include 'eetlijst/table_cell.html' %}
                 {% endfor %}
         </tr>
         {% endfor %}

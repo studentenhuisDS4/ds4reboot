@@ -56,7 +56,7 @@ $(document).ready(function(){
     }
 
     // Prevent default form submit behavior
-    $(".turf-form,.profile-form").on('submit', function(event){
+    $(".turf-form,.profile-form,.signup-form").on('submit', function(event){
         event.preventDefault();
     });
 
@@ -131,4 +131,68 @@ $(document).ready(function(){
         });
     });
 
+    // Set onclicks for signup buttons
+    $(".btn-signup").click(function(){
+
+        var user_id = $(this).attr("data-user");
+        var enroll_type = $(this).attr("data-type");
+        //var enroll_count = $(".count-" + user_id).val();
+        var enroll_date = $("input[name=enroll-date]").val();
+
+        /*if (enroll_count === ''){
+            enroll_count = 1;
+        }*/
+
+        $.ajax({
+            url: "/eetlijst/enroll/" + user_id + "/",
+            type: "POST",
+            data: {user_id:user_id, enroll_type: enroll_type, enroll_date: enroll_date},
+            dataType: "json",
+            context: this,
+            error: function (json) {
+                console.log(json);
+            },
+            success : function (json) {
+                if (json.status =='success') {
+                    UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
+
+                    /* // Update user value
+                    var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");
+                    sum_el.fadeOut(100, function () {
+                        old_val = parseFloat(sum_el.html());
+                        sum_el.html(old_val + parseFloat(turf_count));
+                    });
+                    sum_el.fadeIn(100);
+
+                    // Update total value
+                    var total_el = $("#total-" + turf_type + " span");
+                    total_el.fadeOut(100, function () {
+                        old_val = parseFloat(total_el.html());
+                        total_el.html(old_val + parseFloat(turf_count));
+                    });
+                    total_el.fadeIn(100);
+
+                    // Update wine totals
+                    if (turf_type == 'wwijn' || turf_type == 'rwijn') {
+                        var sum_wijn_el = $("#user-" + user_id + " .sum-wijn span:first");
+                        sum_wijn_el.fadeOut(100, function () {
+                            old_val = parseFloat(sum_wijn_el.html());
+                            sum_wijn_el.html(old_val + parseFloat(turf_count));
+                        });
+                        sum_wijn_el.fadeIn(100);
+                        var total_wijn_el = $("#total-wijn span");
+                        total_wijn_el.fadeOut(100, function () {
+                            old_val = parseFloat(total_wijn_el.html());
+                            total_wijn_el.html(old_val + parseFloat(turf_count));
+                        });
+                        total_wijn_el.fadeIn(100);
+
+                    }*/
+                } else {
+                    $(".count-" + user_id).val('');
+                    UIkit.notify("<i class='uk-icon-remove'></i> " + json.result, {status:'danger'});
+                }
+            }
+        });
+    });
 });
