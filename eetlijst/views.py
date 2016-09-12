@@ -9,7 +9,7 @@ from decimal import Decimal
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib import messages
 from django.template.loader import render_to_string
-import json
+from django.http import JsonResponse
 
 # generate eetlijst view for current or defined date
 def index(request, year=None, month=None, day=None):
@@ -277,30 +277,33 @@ def enroll(request, user_id):
             if enroll_type == 'signup':
                 user_entry.list_count += 1
                 date_entry.num_eating += 1
+                type_amount = user_entry.list_count
                 if user_entry.list_count == 1:
                     success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
                 else:
-                    success_message = '%s is %s keer ingeschreven.' % (str(enroll_user).capitalize(), int(date_entry.num_eating))
+                    success_message = '%s is %s keer ingeschreven.' % (str(enroll_user).capitalize(), int(user_entry.list_count))
             elif enroll_type == 'cook':
                 if date_entry.cook and not date_entry.cook == enroll_user.user:
-                    return HttpResponse(json.dumps({'result': 'There is already a cook.', 'status': 'success'}))
+                    return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'success'}))
                 elif date_entry.cook == enroll_user.user:
                     user_entry.list_cook = False
                     date_entry.num_eating -= 1
                     date_entry.cook = None
                     date_entry.signup_time = None
                     success_message = '%s kookt niet meer.' % (str(enroll_user).capitalize())
+                    type_amount = 0
                 else:
                     user_entry.list_cook = True
                     date_entry.signup_time = timezone.now()
                     date_entry.cook = enroll_user.user
                     date_entry.num_eating += 1
                     success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())
-
+                    type_amount = 1
             elif enroll_type == 'sponge':
                 date_entry.num_eating -= user_entry.list_count
                 user_entry.list_count = 0
-                success_message = '%s is uitgeschreven niet meer.' % (str(enroll_user).capitalize())
+                success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
+                type_amount = 0
 
             # TODO: 'swap' currently not implemented in template
             elif enroll_type == 'swap':
@@ -308,20 +311,22 @@ def enroll(request, user_id):
                 user_entry.list_count = 0
 
                 if date_entry.cook and not date_entry.cook == enroll_user.user:
-                    return HttpResponse(json.dumps({'result': 'There is already a cook.', 'status': 'success'}))
+                    return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'success'}))
                 elif date_entry.cook == enroll_user.user:
                     user_entry.list_cook = False
                     date_entry.num_eating -= 1
                     date_entry.cook = None
                     date_entry.signup_time = None
+                    type_amount = 0
                 else:
                     user_entry.list_cook = True
                     date_entry.signup_time = timezone.now()
                     date_entry.cook = enroll_user.user
                     date_entry.num_eating += 1
+                    type_amount = 1
 
             else:
-                return HttpResponse(json.dumps({'result': 'Invalid submit button.', 'status': 'success'}))
+                return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'success'}))
 
             user_entry.timestamp = timezone.now()
             user_entry.save()
@@ -334,9 +339,22 @@ def enroll(request, user_id):
             if date_entry.num_eating == 0:
                 date_entry.delete()
 
-            return HttpResponse(json.dumps({'result': success_message, 'status': 'success'}))
+            # collect json data for jquery to check
+            try:
+                type_amount
+            except:
+                type_amount = False
+
+            json_data = {'result': success_message,
+                         'status': 'success',
+                         'enroll_user': str(enroll_user),
+                         'enroll_date': str(enroll_date),
+                         'enroll_type': str(enroll_type),
+                         'enroll_amount': str(type_amount)}
+
+            return HttpResponse(JsonResponse(json_data))
         else:
-            return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            return HttpResponse(JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
     else:
         messages.error(request, 'Method must be POST.')
     return redirect(request.META.get('HTTP_REFERER'))

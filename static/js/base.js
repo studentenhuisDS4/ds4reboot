@@ -156,6 +156,10 @@ $(document).ready(function(){
                 if (json.status =='success') {
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
 
+                    // Update user-date value
+                    var sum_el = $("#user-" + user_id + " .date-" + enroll_date + " span:first");
+                    // Update total value
+
                     /* // Update user value
                     var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");
                     sum_el.fadeOut(100, function () {

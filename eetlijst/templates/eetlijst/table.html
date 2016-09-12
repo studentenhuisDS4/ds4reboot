@@ -33,7 +33,7 @@
     </tfoot>
     <tbody>
         {% for u in user_list %}
-        <tr>
+        <tr id="user-{{ u.user_id }}">
             <td class="uk-margin-remove form-small">
                 {% include 'eetlijst/signup_form.html' %}
             </td>

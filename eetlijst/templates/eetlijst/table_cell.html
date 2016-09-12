@@ -1,4 +1,4 @@
-<td class="days-table user-{{u.user_id}} date-{{d.1}} {% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
+<td class="days-table date-{{d.1|sub_date}} {% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
 
 {# Implement dictionary lookup with tuple instead of query in template tag#}
 {% get_dict user_date_entries u.user.id d.1 as success %}
