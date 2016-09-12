@@ -25,7 +25,7 @@
         <tr>
             <td></td>
             <td>Totaal</td>
-            <td class="uk-text-center">{{ total_balance }} </td>
+            <td class="uk-text-center">{# total_balance #} </td>
             {% for n, d in date_list.items %}
             <td class="days-table {% if d.2 == False %}uk-visible-large {% endif %}uk-text-center">{{ d.1|day_total }}</td>
             {% endfor %}
