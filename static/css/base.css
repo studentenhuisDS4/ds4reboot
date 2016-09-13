@@ -81,7 +81,6 @@ input[type='number'] {
     padding: 0px 10px;
 }
 
-
 /* CUSTOM STYLING */
 
 /* medal colors */
@@ -180,4 +179,11 @@ input[type='number'] {
     background: #fff;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
+}
+
+/* eetlijst table styling */
+/* make ajax styling easier ... well ... at least i hope so */
+
+.eetlijst-item-hidden{
+    display: none;
 }

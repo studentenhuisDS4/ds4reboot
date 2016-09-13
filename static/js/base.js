@@ -132,7 +132,7 @@ $(document).ready(function(){
     });
 
     // Set onclicks for signup buttons
-    $(".btn-signup").click(function(){
+    $(".btn-signup").click(function(event){
 
         var user_id = $(this).attr("data-user");
         var enroll_type = $(this).attr("data-type");
@@ -156,9 +156,45 @@ $(document).ready(function(){
                 if (json.status =='success') {
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
 
-                    // Update user-date value
-                    var sum_el = $("#user-" + user_id + " .date-" + enroll_date + " span:first");
                     // Update total value
+                    // TODO
+
+                    // Update user-date value
+                    if (enroll_type =='signup') {
+                        // Need to update cook span as well
+                        var cross_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-enroll");
+                        cross_el.removeClass('eetlijst-item-hidden');
+                        cross_el.fadeIn(100);
+                        if (json.enroll_amount > 1) {
+                            var count_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-count");
+                            count_el.fadeOut(100, function () {
+                                count_el.html(parseInt(json.enroll_amount));
+                            });
+                            count_el.fadeIn(100);
+                        }
+                    }
+                    else if (enroll_type =='cook') {
+                        // Need to update cook span as well
+                        var cook_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-cook");
+                        if (json.enroll_amount == 1){
+                            cook_el.fadeIn(100);
+                            $(".btn-signup.btn-cook:not([disabled])").attr('disabled',true);
+                            $(this).attr('disabled',false);
+                        }
+                        else{
+                            cook_el.fadeOut(100);
+                            $(".btn-signup:disabled").attr('disabled',false);
+                        }
+                    }
+                    else if (enroll_type =='sponge') {
+                        // Need to update cross and number span as well
+                        var unroll_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-enroll");
+                        unroll_el.fadeOut(100);
+                        var count_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-count");
+                        count_el.fadeOut(100);
+                        unroll_el.addClass('eetlijst-item-hidden');
+                        count_el.addClass('eetlijst-item-hidden');
+                    }
 
                     /* // Update user value
                     var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");

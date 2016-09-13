@@ -7,7 +7,7 @@
         {% if u.user_id == request.user.id %} uk-button-primary{% endif %}" {% if not focus_open %} disabled{% endif %}>
             <i class="uk-icon-times uk-icon-small"></i>
         </button>
-        <button data-user="{{ u.user_id }}" data-type="cook" class="btn-signup uk-button uk-button-small uk-width-1-3
+        <button data-user="{{ u.user_id }}" data-type="cook" class="btn-signup btn-cook uk-button uk-button-small uk-width-1-3
         {% if u.user_id == request.user.id %} uk-button-primary{% endif %}"
         {% if not focus_open %} disabled
         {% elif focus_cook and not focus_date|is_cook:u.user.id %} disabled{% endif %}>
