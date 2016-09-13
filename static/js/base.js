@@ -132,19 +132,14 @@ $(document).ready(function(){
     });
 
     // Set onclicks for signup buttons
-    $(".btn-signup").click(function(event){
+    $(".btn-signup").click(function(){
 
         var user_id = $(this).attr("data-user");
         var enroll_type = $(this).attr("data-type");
-        //var enroll_count = $(".count-" + user_id).val();
         var enroll_date = $("input[name=enroll-date]").val();
 
-        /*if (enroll_count === ''){
-            enroll_count = 1;
-        }*/
-
         $.ajax({
-            url: "/eetlijst/enroll/" + user_id + "/",
+            url: "/eetlijst/enroll/",
             type: "POST",
             data: {user_id:user_id, enroll_type: enroll_type, enroll_date: enroll_date},
             dataType: "json",
@@ -159,23 +154,30 @@ $(document).ready(function(){
                     // Update total value
                     // TODO
 
+                    row_id = ".user-" + user_id + " .date-" + enroll_date;
+
                     // Update user-date value
                     if (enroll_type =='signup') {
                         // Need to update cook span as well
-                        var cross_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-enroll");
-                        cross_el.removeClass('eetlijst-item-hidden');
-                        cross_el.fadeIn(100);
+                        var enroll_el = $(row_id + " .td-enroll");
+                        enroll_el.removeClass('eetlijst-item-hidden');
+                        enroll_el.fadeIn(100);
+
                         if (json.enroll_amount > 1) {
-                            var count_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-count");
+                            var count_el = $(row_id + " .td-count");
                             count_el.fadeOut(100, function () {
                                 count_el.html(parseInt(json.enroll_amount));
                             });
                             count_el.fadeIn(100);
                         }
+
+                        console.log('Found # td counts: ' + count_el.length);
+                        console.log('Found # td enrolls: ' + enroll_el.length);
                     }
                     else if (enroll_type =='cook') {
                         // Need to update cook span as well
-                        var cook_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-cook");
+                        var cook_el = $(row_id + " .td-cook");
+                        console.log('Found # td cooks: ' + cook_el.length);
                         if (json.enroll_amount == 1){
                             cook_el.fadeIn(100);
                             $(".btn-signup.btn-cook:not([disabled])").attr('disabled',true);
@@ -188,46 +190,16 @@ $(document).ready(function(){
                     }
                     else if (enroll_type =='sponge') {
                         // Need to update cross and number span as well
-                        var unroll_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-enroll");
+                        var unroll_el = $(row_id + " .td-enroll");
                         unroll_el.fadeOut(100);
-                        var count_el = $("#user-" + user_id + " .date-" + enroll_date + " .td-count");
+                        var count_el = $(row_id + " .td-count");
                         count_el.fadeOut(100);
                         unroll_el.addClass('eetlijst-item-hidden');
                         count_el.addClass('eetlijst-item-hidden');
+
+                        console.log('Found # td counts: ' + count_el.length);
+                        console.log('Found # td unrolls: ' + unroll_el.length);
                     }
-
-                    /* // Update user value
-                    var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");
-                    sum_el.fadeOut(100, function () {
-                        old_val = parseFloat(sum_el.html());
-                        sum_el.html(old_val + parseFloat(turf_count));
-                    });
-                    sum_el.fadeIn(100);
-
-                    // Update total value
-                    var total_el = $("#total-" + turf_type + " span");
-                    total_el.fadeOut(100, function () {
-                        old_val = parseFloat(total_el.html());
-                        total_el.html(old_val + parseFloat(turf_count));
-                    });
-                    total_el.fadeIn(100);
-
-                    // Update wine totals
-                    if (turf_type == 'wwijn' || turf_type == 'rwijn') {
-                        var sum_wijn_el = $("#user-" + user_id + " .sum-wijn span:first");
-                        sum_wijn_el.fadeOut(100, function () {
-                            old_val = parseFloat(sum_wijn_el.html());
-                            sum_wijn_el.html(old_val + parseFloat(turf_count));
-                        });
-                        sum_wijn_el.fadeIn(100);
-                        var total_wijn_el = $("#total-wijn span");
-                        total_wijn_el.fadeOut(100, function () {
-                            old_val = parseFloat(total_wijn_el.html());
-                            total_wijn_el.html(old_val + parseFloat(turf_count));
-                        });
-                        total_wijn_el.fadeIn(100);
-
-                    }*/
                 } else {
                     $(".count-" + user_id).val('');
                     UIkit.notify("<i class='uk-icon-remove'></i> " + json.result, {status:'danger'});

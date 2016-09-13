@@ -1,4 +1,6 @@
-<td class="days-table date-{{d.1|sub_date}} {% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
+<td class="days-table date-{{d.1|sub_date}}
+{% if d.2 == False %}uk-visible-large {% endif %}uk-text-small uk-text-center"
+    {% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
 
     {% get_dict user_date_entries u.user.id d.1 as success %}
 
@@ -7,14 +9,15 @@
     </span>
     <span style="display: inline-block;">
         {% if success.list_cost != None %} <span class="td-bracket"> ( </span> {% endif %}
-        <img class="td-cook {% if success == 0 or success.list_cook == 0 %} eetlijst-item-hidden {% endif %}"
+        <img class="td-cook
+        {% if success == 0 or success.list_cook == 0 %} eetlijst-item-hidden {% endif %}"
              src="/static/img/chefs_hat.png"
              alt=""
              style="{% if d.1|cost:u.user.id == 0 %} margin-top: -4px;{% else %}margin-top: -3px; width: 12px; height: 12px;{% endif %}" />
-        <i class=" td-enroll uk-icon-times
+        <i class="td-enroll uk-icon-times
         {% if success.list_count == 0 or success == 0 %} eetlijst-item-hidden {% endif %}
         {% if success.list_cost == None %} uk-icon-small{% endif %}" > </i>
-        <span class=" td-count
+        <span class="td-count
         {% if success.list_count == 0 %} eetlijst-item-hidden {% endif %}
         {% if success.list_cost == None %} uk-text-small {% endif %} ">
             {% if success.list_count > 1 %}

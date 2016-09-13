@@ -258,7 +258,7 @@ def bal_transfer(request):
 
 
 # handle eetlijst enrollment
-def enroll(request, user_id):
+def enroll(request):
 
     if request.method == 'POST':
         if request.user.is_authenticated():
