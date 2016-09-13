@@ -20,6 +20,8 @@ from ds4reboot.secret_settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
+if not SECRET_APPS:
+    SECRET_APPS = []
 
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
@@ -36,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'gcm',
 ]
+
+INSTALLED_APPS += SECRET_APPS
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
