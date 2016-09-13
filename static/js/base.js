@@ -136,7 +136,7 @@ $(document).ready(function(){
 
         var user_id = $(this).attr("data-user");
         var enroll_type = $(this).attr("data-type");
-        var enroll_date = $("input[name=enroll-date]").val();
+        var enroll_date = $(this).attr("data-date");
 
         $.ajax({
             url: "/eetlijst/enroll/",
@@ -152,7 +152,11 @@ $(document).ready(function(){
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
 
                     // Update total value
-                    // TODO
+                    var total_el = $('.total-date-' + enroll_date);
+                    total_el.fadeOut(100, function () {
+                        total_el.html(parseInt(json.total_amount));
+                    });
+                    total_el.fadeIn(100);
 
                     row_id = ".user-" + user_id + " .date-" + enroll_date;
 
@@ -170,14 +174,10 @@ $(document).ready(function(){
                             });
                             count_el.fadeIn(100);
                         }
-
-                        console.log('Found # td counts: ' + count_el.length);
-                        console.log('Found # td enrolls: ' + enroll_el.length);
                     }
                     else if (enroll_type =='cook') {
                         // Need to update cook span as well
                         var cook_el = $(row_id + " .td-cook");
-                        console.log('Found # td cooks: ' + cook_el.length);
                         if (json.enroll_amount == 1){
                             cook_el.fadeIn(100);
                             $(".btn-signup.btn-cook:not([disabled])").attr('disabled',true);
@@ -196,9 +196,6 @@ $(document).ready(function(){
                         count_el.fadeOut(100);
                         unroll_el.addClass('eetlijst-item-hidden');
                         count_el.addClass('eetlijst-item-hidden');
-
-                        console.log('Found # td counts: ' + count_el.length);
-                        console.log('Found # td unrolls: ' + unroll_el.length);
                     }
                 } else {
                     $(".count-" + user_id).val('');

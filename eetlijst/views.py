@@ -16,9 +16,10 @@ def index(request, year=None, month=None, day=None):
 
     # get current date if nothing specified
     if not year or not month or not day:
-        year=timezone.now().year
-        month=timezone.now().month
-        day=timezone.now().day
+        # bug solved; needed zero-pad to keep consistency in template context.focus_date
+        year=str(timezone.now().year).zfill(2)
+        month=str(timezone.now().month).zfill(2)
+        day=str(timezone.now().day).zfill(2)
 
     # build date array
     focus_date = dt.date(int(year), int(month), int(day))
@@ -350,7 +351,8 @@ def enroll(request):
                          'enroll_user': str(enroll_user),
                          'enroll_date': str(enroll_date),
                          'enroll_type': str(enroll_type),
-                         'enroll_amount': str(type_amount)}
+                         'enroll_amount': str(type_amount),
+                         'total_amount': str(date_entry.num_eating)}
 
             return HttpResponse(JsonResponse(json_data))
         else:
