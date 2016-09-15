@@ -131,4 +131,19 @@ $(document).ready(function(){
         });
     });
 
+    // Home page background
+    //var selectorBackground = $("#selector-background").html();
+    var baseBackground = "url(/static/img/background.svg)";
+    //
+    //$("body").css("background-image", baseBackground);
+
+    var gr = $(".GR");
+    console.log(gr);
+    gr.on("click", function() {
+
+        console.log('test');
+        $("body").css("background-image", "url(/static/img/background_gr.svg), " + baseBackground);
+
+    });
+
 });

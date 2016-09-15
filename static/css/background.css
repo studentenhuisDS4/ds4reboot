@@ -1,5 +1,5 @@
 body {
-    background:url('../img/background_blue.svg'), url('../img/background.svg');
+    background:url('../img/background.svg');
     background-position: no-repeat top left fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;

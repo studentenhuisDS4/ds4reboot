@@ -6,6 +6,12 @@
 <link rel="stylesheet" href="/static/css/background.css" />
 {% endblock %}
 
+{% block bg_block %}
+    <div id="selector-background" style="height: 100%; width: 100%; position: absolute; overflow: hidden; min-width: ">
+        {% include "home/svg/selector.html" %}
+    </div>
+{% endblock %}
+
 {% block body_block %}
 
     <div class="uk-width-1-1 uk-clearfix" style="margin-top:2em; margin-bottom:2em; position: relative;">

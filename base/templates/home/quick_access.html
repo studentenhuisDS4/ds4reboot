@@ -34,7 +34,7 @@
             {% elif eetlijst_info.2 == 0 %}
             <button type="submit" name="enroll-action" value="eat" class="uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small"><i class="uk-icon-plus-circle"></i> Mee eten</button>
             {% else %}
-            <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small"><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
+            <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small" disabled><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
             {% endif %}
             <div class="uk-button-group  uk-width-1-1 uk-visible-small">
                 {% if eetlijst_info.0 == request.user.housemate.display_name and not eetlijst_info.3 %}
@@ -47,7 +47,7 @@
                 <button type="submit" name="enroll-action" value="eat" class="uk-button uk-button-large uk-width-3-5 uk-button-success"><i class="uk-icon-plus-circle"></i> Mee eten</button>
                 <a class="uk-button uk-button-large uk-width-2-5 uk-button-success" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% else %}
-                <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-3-5 uk-button-danger"><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
+                <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-3-5 uk-button-danger" disabled><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
                 <a class="uk-button uk-button-large uk-width-2-5 uk-button-danger" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% endif %}
             </div>
