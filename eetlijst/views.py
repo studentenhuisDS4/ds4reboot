@@ -405,7 +405,7 @@ def cost(request):
                 messages.error(request, 'Amount must be positive.')
                 return redirect(request.META.get('HTTP_REFERER'))
             else:
-                cost = Decimal(round(Decimal(request.POST.get('cost-amount')),2))
+                cost_amount = Decimal(round(Decimal(request.POST.get('cost-amount')), 2))
 
             # get or create rows as necessary
             try:
@@ -414,10 +414,12 @@ def cost(request):
             except DateList.DoesNotExist:
                 messages.error(request, 'No vaild entry for date.')
                 return redirect(request.META.get('HTTP_REFERER'))
+            if date_entry.num_eating <= 1:
+                messages.error(request, "You can't cook for yourself moron. Well, you technically can. But not here. We don't allow it...  This is awkward.     Achievement: can't stop me #1")
+                return redirect(request.META.get('HTTP_REFERER'))
 
             try:
                 users_enrolled = UserList.objects.filter(list_date=date)
-
             except UserList.DoesNotExist:
                 messages.error(request, 'No users signed up for selected date.')
                 return redirect(request.META.get('HTTP_REFERER'))
@@ -425,20 +427,20 @@ def cost(request):
             if date_entry.cook:
 
                 # add cost to log
-                date_entry.cost = cost
+                date_entry.cost = cost_amount
                 date_entry.save()
 
                 # update housemate object for current user
                 h = Housemate.objects.get(user=request.user)
-                h.balance += cost
+                h.balance += cost_amount
                 h.save()
 
                 # update housemate objects for users who signed up
                 huis = Housemate.objects.get(display_name='Huis')
 
                 remainder = huis.balance
-                split_cost = round((cost - remainder)/date_entry.num_eating,2)
-                huis.balance = date_entry.num_eating*split_cost - cost + remainder
+                split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
+                huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
 
                 huis.save()
 
@@ -451,7 +453,7 @@ def cost(request):
 
                     if u.list_cook:
                         h.balance -= split_cost
-                        u.list_cost = cost - split_cost*(1+u.list_count)
+                        u.list_cost = cost_amount - split_cost*(1+u.list_count)
 
                     u.save()
                     h.save()
