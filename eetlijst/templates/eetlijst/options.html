@@ -50,7 +50,7 @@
     <hr>
     {% endif %}
 
-    <h6 class="uk-margin-remove uk-text-bold">Kosten op huis (<a href="/eetlijst/ho/log">log</a>)</h6>
+    <h6 class="uk-margin-remove uk-text-bold">Kosten op huis <span class="uk-text-muted">[{{ request.user.housemate.display_name|upper }}]</span> (<a href="/eetlijst/ho/log">log</a>)</h6>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
         <form class="uk-form" method="post" action="/eetlijst/ho/">
