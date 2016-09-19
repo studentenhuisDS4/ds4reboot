@@ -7,7 +7,7 @@
             <th class="uk-text-center">Nummer</th>
             <th class="uk-visible-large">Reden</th>
             <th>Tijd</th>
-            <th class="uk-visible-large uk-text-center">Verwijderen</th>
+            {% if request.user|is_thesau or request.user|is_admin %}<th class="uk-visible-large uk-text-center">Verwijderen</th>{% endif %}
         </tr>
     </thead>
     <tbody>
@@ -17,10 +17,12 @@
             <td class="uk-text-center">{{ b.boete_count }}</td>
             <td class="uk-visible-large">{{ b.boete_note }}</td>
             <td>{{ b.created_time }} ({{ b.created_by }})</td>
-            {% if b.id|can_del:b.boete_user_id %}
-            <td class="uk-visible-large uk-text-center"><a class="uk-text-danger" href="/bierlijst/boetes/remove/{{ b.id }}/"><i class="uk-icon-times-circle"></i></a></td>
-            {% else %}
-            <td class="uk-visible-large uk-text-center uk-text-muted"><i class="uk-icon-times-circle"></i></td>
+            {% if request.user|is_thesau or request.user|is_admin %}
+                {% if b.id|can_del:b.boete_user_id %}
+                <td class="uk-visible-large uk-text-center"><a class="uk-text-danger" href="/bierlijst/boetes/remove/{{ b.id }}/"><i class="uk-icon-times-circle"></i></a></td>
+                {% else %}
+                <td class="uk-visible-large uk-text-center uk-text-muted"><i class="uk-icon-times-circle"></i></td>
+                {% endif %}
             {% endif %}
         </tr>
         {% endfor %}

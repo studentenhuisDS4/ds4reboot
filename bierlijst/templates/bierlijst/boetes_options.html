@@ -3,7 +3,7 @@
     <hr>
 
     <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/bierlijst/"><i class="uk-icon-arrow-circle-left"></i> Terug naar bierlijst</a></p>
-
+    {% if request.user|is_thesau or request.user|is_admin %}
     <hr>
 
     <h6 class="uk-margin-remove uk-text-bold">Voeg een boete</h6>
@@ -34,5 +34,7 @@
 
         </form>
     </div>
+
+    {% endif %}
 
 </div>

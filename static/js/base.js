@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -204,4 +205,11 @@ $(document).ready(function(){
             }
         });
     });
+    // Submit form on datepicker change event
+    // Prevent event-trigger + page-reload loop by disabling default events
+    $('#eetlijst-datepick').on('change', function(event){
+        event.preventDefault();
+        $('#eetlijst-dateform').submit();
+    });
+
 });

@@ -27,8 +27,8 @@
         <input type="hidden" name="enroll-date" value="{{ focus_date }}">
         <input type="hidden" name="close-date" value="{{ focus_date }}">
         <div class="uk-form-row">
-            {% if eetlijst_info.0 == request.user.housemate.display_name and not eetlijst_info.3 %}
-            <button class="uk-button uk-button-large uk-width-1-1 uk-hidden-small" disabled><i class="uk-icon-smile-o"></i> Eet smakelijk!</button>
+            {% if not eetlijst_info.3 %}
+            <button class="uk-button uk-button-large uk-width-1-1 uk-hidden-small" disabled>Lijst gesloten!</button>
             {% elif eetlijst_info.0 == request.user.housemate.display_name %}
             <button type="submit" name="enroll-action" value="cook" class="uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small"><i class="uk-icon-shopping-cart"></i> Lijst sluiten</button>
             {% elif eetlijst_info.2 == 0 %}
@@ -37,8 +37,8 @@
             <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small"><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
             {% endif %}
             <div class="uk-button-group  uk-width-1-1 uk-visible-small">
-                {% if eetlijst_info.0 == request.user.housemate.display_name and not eetlijst_info.3 %}
-                <button class="uk-button uk-button-large uk-width-3-5" disabled><i class="uk-icon-smile-o"></i> Eet smakelijk!</button>
+                {% if not eetlijst_info.3 %}
+                <button class="uk-button uk-button-large uk-width-3-5" disabled>Lijst gesloten!</button>
                 <a class="uk-button uk-button-large uk-width-2-5" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% elif eetlijst_info.0 == request.user.housemate.display_name %}
                 <button type="submit" name="enroll-action" value="cook" class="uk-button uk-button-large uk-width-3-5 uk-button-danger"><i class="uk-icon-shopping-cart"></i> Lijst sluiten</button>

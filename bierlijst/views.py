@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from decimal import Decimal
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.core.paginator import Paginator, EmptyPage
 from gcm.models import get_device_model
 import json
@@ -79,8 +79,8 @@ def boetes(request, page=1):
     housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
 
     # get lists of all boetes and users with open boetes
-    open_boetes = Housemate.objects.filter(boetes_open__gt = 0, user__id__in = active_users).order_by('-boetes_open')
-    num_boetes = str(list(open_boetes.aggregate(Sum('boetes_open')).values())[0])
+    log_boetes = Housemate.objects.filter(Q(boetes_open__gt = 0) | Q(boetes_geturfd__gt = 0), user__id__in = active_users).order_by('-boetes_open')
+    num_boetes = str(list(log_boetes.filter(boetes_open__gt = 0).aggregate(Sum('boetes_open')).values())[0])
     boetes_list = Paginator(Boete.objects.order_by('-created_time'), 10)
 
     # ensure page number is valid
@@ -94,7 +94,7 @@ def boetes(request, page=1):
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'housemates': housemates,
-        'open_boetes': open_boetes,
+        'log_boetes': log_boetes,
         'num_boetes': num_boetes,
         'table_list': table_list,
         'pages': str(boetes_list.num_pages),
