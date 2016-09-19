@@ -183,10 +183,12 @@ $(document).ready(function(){
                             cook_el.fadeIn(100);
                             $(".btn-signup.btn-cook:not([disabled])").attr('disabled',true);
                             $(this).attr('disabled',false);
+                            $(".uk-icon-shopping-cart.date-" + enroll_date).fadeIn(100);
                         }
                         else{
                             cook_el.fadeOut(100);
                             $(".btn-signup:disabled").attr('disabled',false);
+                            $(".uk-icon-shopping-cart.date-" + enroll_date).fadeOut(100);
                         }
                     }
                     else if (enroll_type =='sponge') {

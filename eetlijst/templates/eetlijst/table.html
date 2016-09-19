@@ -8,13 +8,15 @@
             {% for n, d in date_list.items %}
             <th class="days-table {% if d.2 == False %}uk-visible-large {% endif %}uk-text-center"{% if d.3 == False %} style="background-color:rgba(187,187,221,0.5);"{% elif d.2 == True %} style="background-color:rgba(255,216,0,0.3);"{% endif %}>
                 <a href="{{ d.1|link_date }}">{{ d.0 }}</a>
-                {% if d.1|is_cook:request.user.id and not d.1|cost_entered %}
                 <form method="post" action="/eetlijst/close/" style="display: inline;">
                 {% csrf_token %}
                 <input type="hidden" name="close-date" value="{{ d.1|sub_date }}">
-                <button class="uk-button uk-button-mini uk-button-link uk-padding-remove"><i class="uk-icon-shopping-cart"></i></button>
+                <button class="uk-button uk-button-mini uk-button-link uk-padding-remove">
+                    <i class="uk-icon-shopping-cart date-{{ d.1|sub_date }}
+                        {% if not d.1|is_cook:request.user.id or d.1|cost_entered %} eetlijst-item-hidden {% endif %}">
+                    </i>
+                </button>
                 </form>
-                {% endif %}
                 <br>
                 <span class="uk-text-muted uk-text-small">{{ d.1|disp_date }}</span>
             </th>
