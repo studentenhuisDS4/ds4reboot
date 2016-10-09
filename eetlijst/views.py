@@ -372,13 +372,12 @@ def close(request):
 
                 else:
 
+                    if not date_entry.cook == request.user:
+                        messages.error(request, 'Must be cook to reopen list.')
+                        return redirect(request.META.get('HTTP_REFERER'))
+
                     # Reverse existing costs
                     cost_amount = -date_entry.cost
-
-                    # update housemate object for current user
-                    h = Housemate.objects.get(user=request.user)
-                    h.balance += cost_amount
-                    h.save()
 
                     # update housemate objects for users who signed up
                     huis = Housemate.objects.get(display_name='Huis')
@@ -387,7 +386,6 @@ def close(request):
                     split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
                     huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
 
-                    huis.save()
 
                     # update userlist objects
                     try:
@@ -408,6 +406,13 @@ def close(request):
 
                         u.save()
                         h.save()
+
+                    huis.save()
+
+                    # update housemate object for current user
+                    cook = Housemate.objects.get(user=request.user)
+                    cook.balance += cost_amount
+                    cook.save()
 
                     # add cost to log
                     date_entry.cost = None
