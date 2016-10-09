@@ -235,10 +235,10 @@ def turf_item(request, user_id):
                     return HttpResponse(json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
 
                 if turf_type == 'bier' and not float(turf_count).is_integer():
-                    return HttpResponse(json.dumps({'result': 'Error: Je moet een hele bier turven.', 'status': 'failure'}))
+                    return HttpResponse(json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
 
                 if turf_count >= 1000:
-                    return HttpResponse(json.dumps({'result': 'Error: Je moet minder dan 999 items turven.', 'status': 'failure'}))
+                    return HttpResponse(json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
 
             else:
                 turf_count = 1
@@ -253,7 +253,7 @@ def turf_item(request, user_id):
                 h.total_bier += turf_count
 
                 success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
-                success_message = success_message if turf_count == 1 else success_message.replace('bier', 'bieren')
+                success_message = success_message if turf_count == 1 else success_message.replace('bier', 'biertjes')
 
                 # device = get_device_model()
                 # device.objects.all().send_message({'message':'my test message'})

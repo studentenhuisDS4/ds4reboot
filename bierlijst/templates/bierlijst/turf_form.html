@@ -1,4 +1,5 @@
 <form class="turf-form uk-form uk-margin-remove uk-grid">
+    {% csrf_token %}
     <div class="uk-width-4-10" style="padding: 0px 5px 0px 0px;">
         <input class="uk-form-small count-{{ u.user_id }}" type="number" inputmode="numeric" min="-999" max="999" step="any">
     </div>
