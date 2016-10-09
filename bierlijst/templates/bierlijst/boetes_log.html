@@ -15,7 +15,7 @@
         <tr>
             <td>{{ b.boete_name }}</td>
             <td class="uk-text-center">{{ b.boete_count }}</td>
-            <td class="uk-visible-large">{{ b.boete_note }}</td>
+            <td class="uk-visible-large boete-note">{{ b.boete_note }}</td>
             <td>{{ b.created_time }} ({{ b.created_by }})</td>
             {% if request.user|is_thesau or request.user|is_admin %}
                 {% if b.id|can_del:b.boete_user_id %}
