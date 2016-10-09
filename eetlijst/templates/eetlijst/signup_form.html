@@ -10,7 +10,8 @@
         </button>
         <button type="submit" name="enroll-action" value="cook"
                 class="uk-button uk-button-small uk-width-1-3{% if u.user_id == request.user.id %} uk-button-primary{% endif %}"
-                {% if not focus_open %} disabled{% elif focus_cook and not focus_date|is_cook:u.user.id %} disabled{% endif %}>
+                {% if not focus_open or focus_cook and not focus_date|is_cook:u.user.id %}
+                style="background-color:#EAEAEA" disabled{% endif %}>
             <img src="/static/img/chefs_hat.png" alt="" style="margin-top: -2px;" />
         </button>
         <button type="submit" name="enroll-action" value="sponge"
