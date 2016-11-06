@@ -78,13 +78,11 @@ def add_item(request):
                 item_type = 'Overig'
 
             if item_note == '':
-                return HttpResponse("Must add note.")
-                messages.error(request, '')
+                messages.error(request, 'Must add note.')
                 return redirect(request.META.get('HTTP_REFERER'))
 
             if request.user.id == 0:
-                return HttpResponse("Must use non-house account.")
-                messages.error(request, '')
+                messages.error(request, 'Must use non-house account.')
                 return redirect(request.META.get('HTTP_REFERER'))
 
             # add entry to boete table

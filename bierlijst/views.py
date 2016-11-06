@@ -127,6 +127,10 @@ def add_boete(request):
                 messages.error(request, 'Must add reason.')
                 return redirect(request.META.get('HTTP_REFERER'))
 
+            elif len(note) > 100:
+                messages.error(request, 'Note must be less than 50 characters!')
+                return redirect(request.META.get('HTTP_REFERER'))
+
             if user_id == 0:
                 messages.error(request, 'Must choose housemate.')
                 return redirect(request.META.get('HTTP_REFERER'))
