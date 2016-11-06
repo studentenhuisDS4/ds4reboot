@@ -36,10 +36,27 @@
 
         {% if messages %}
         {% for m in messages %}
-        <div class="uk-alert uk-alert-danger" data-uk-alert>
-            <a href="" class="uk-alert-close uk-close"></a>
-            <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
-        </div>
+            {% if m.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <div class="uk-alert uk-alert-danger" data-uk-alert>
+                <a href="" class="uk-alert-close uk-close"></a>
+                <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+            </div>
+            {% elif m.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+            <div class="uk-alert uk-alert-warning" data-uk-alert>
+                <a href="" class="uk-alert-close uk-close"></a>
+                <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+            </div>
+            {% elif m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <div class="uk-alert uk-alert-success" data-uk-alert>
+                <a href="" class="uk-alert-close uk-close"></a>
+                <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+            </div>
+            {% elif m.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+            <div class="uk-alert" data-uk-alert>
+                <a href="" class="uk-alert-close uk-close"></a>
+                <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+            </div>
+            {% endif %}
         {% endfor %}
         {% endif %}
 
