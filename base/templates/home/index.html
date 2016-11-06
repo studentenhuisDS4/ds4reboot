@@ -7,9 +7,16 @@
 {% endblock %}
 
 {% block bg_block %}
-    <div id="selector-background" style="height: 100%; width: 100%; position: absolute; overflow: hidden; min-width: ">
+<div id="bg-container" class="uk-hidden-small">
+    <div id="bg-wrapper">
+        <div id="base-background">
+            {% include "home/svg/background.html" %}
+        </div>
+        <div id="selector-background">
         {% include "home/svg/selector.html" %}
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block body_block %}

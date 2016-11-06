@@ -30,9 +30,7 @@
 
 <body class="uk-height-1-1">
 
-    {% block bg_block %}{% endblock %}
-
-    <div class="uk-container uk-container-center uk-margin-bottom">
+    <div class="uk-container uk-container-center">
 
         {% include 'base/nav.html' %}
 
@@ -50,6 +48,8 @@
     </div>
 
     {% include 'base/nav_side.html' %}
+
+    {% block bg_block %}{% endblock %}
 
 </body>
 

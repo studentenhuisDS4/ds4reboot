@@ -142,7 +142,7 @@ $(document).ready(function(){
     gr.on("click", function() {
 
         console.log('test');
-        $("body").css("background-image", "url(/static/img/background_gr.svg), " + baseBackground);
+        // $("body").css("background-image", "url(/static/img/background_gr.svg), " + baseBackground);
 
     });
 
