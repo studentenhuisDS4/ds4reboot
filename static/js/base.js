@@ -150,6 +150,7 @@ $(document).ready(function(){
             },
             success : function (json) {
                 if (json.status =='success') {
+                    console.log('bpp');
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
 
                     // Update total value
@@ -207,11 +208,72 @@ $(document).ready(function(){
             }
         });
     });
+
+     // Set onclicks for signup buttons
+    $(".btn-signup-home").click(function(){
+
+        var user_id = $(this).attr("data-user");
+        var enroll_type = $(this).attr("data-type");
+        var enroll_date = $(this).attr("data-date");
+
+        $.ajax({
+            url: "/eetlijst/enroll/",
+            type: "POST",
+            data: {user_id:user_id, enroll_type: enroll_type, enroll_date: enroll_date},
+            dataType: "json",
+            context: this,
+            error: function (json) {
+                console.log(json);
+            },
+            success : function (json) {
+                if (json.status =='success') {
+                    UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
+
+                    // Update total value
+                    var total_el = $('.eating-number');
+                    total_el.fadeOut(100, function () {
+                        total_el.html(parseInt(json.total_amount));
+                    });
+                    total_el.fadeIn(100);
+
+                    // Update signup/unenroll
+                    var span_sign_text = $('.home-quick-signup');
+                    var but_signup = $('.btn-signup-home');
+                    var but_colored = $('.but_colored');            // The buttons which the color needs to be toggled
+                    if (enroll_type == 'signup'){
+                        span_sign_text.fadeOut(100, function () {
+                            span_sign_text.html(' Uitschrijven');
+                        });
+                        span_sign_text.fadeIn(100);
+                        // Update signup type
+                        but_signup.attr('data-type','sponge');
+                        // Update row color
+                        but_colored.removeClass('uk-button-success');
+                        but_colored.addClass('uk-button-danger');
+                    }
+                    else if (enroll_type == 'sponge') {
+                        span_sign_text.fadeOut(100, function () {
+                            span_sign_text.html(' Mee eten');
+                        });
+                        span_sign_text.fadeIn(100);
+                        // Update signup type
+                        but_signup.attr('data-type','signup');
+                        // Update row color
+                        but_colored.addClass('uk-button-success');
+                        but_colored.removeClass('uk-button-danger');
+                    }
+                } else {
+                    $(".count-" + user_id).val('');
+                    UIkit.notify("<i class='uk-icon-remove'></i> " + json.result, {status:'danger'});
+                }
+            }
+        });
+    });
+
     // Submit form on datepicker change event
     // Prevent event-trigger + page-reload loop by disabling default events
     $('#eetlijst-datepick').on('change', function(event){
         event.preventDefault();
         $('#eetlijst-dateform').submit();
     });
-
 });

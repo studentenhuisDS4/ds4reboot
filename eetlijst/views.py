@@ -262,10 +262,18 @@ def bal_transfer(request):
 def enroll(request):
 
     if request.method == 'POST':
-        if request.user.is_authenticated():
-
-            # Get user and turf type from POST
+        # Get user and turf type from POST
+        breakOff = False
+        try:
             user_id = request.POST.get('user_id')
+        except:
+            breakOff = True
+
+        if user_id is None:
+            return HttpResponse(JsonResponse(
+                {'result': 'Error: finding user resulted in error.','status': 'Failure'}))
+
+        if request.user.is_authenticated():
             enroll_user = Housemate.objects.get(user_id=user_id)
             enroll_date = request.POST.get('enroll_date')
             enroll_type = request.POST.get('enroll_type')
