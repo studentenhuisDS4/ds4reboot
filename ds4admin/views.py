@@ -7,21 +7,87 @@ from django.contrib import messages
 
 
 # view for ds4 admin page
-def index(request):
+def balance(request):
 
     if request.user.is_superuser:
 
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
-        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+        inactive_users = User.objects.filter(is_active=False)
+        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis')\
+            .order_by('movein_date')
+        inactive_housemates = Housemate.objects.filter(user__id__in = inactive_users)\
+            .filter(moveout_set=None).order_by('movein_date')
+
+        huis_balance = Housemate.objects.get(display_name = 'Huis').balance
+
+        active_balance = 0
+        for h in housemates:
+            active_balance += h.balance
+
+        inactive_balance = 0
+        for h in inactive_housemates:
+            inactive_balance += h.balance
+
+        overall_balance = active_balance + inactive_balance + huis_balance
 
         # build context object
         context = {
             'breadcrumbs': ['admin'],
             'housemates': housemates,
+            'inactive': inactive_housemates,
+            'active_balance': active_balance,
+            'inactive_balance': inactive_balance,
+            'remainder': huis_balance,
+            'overall_balance': overall_balance,
             }
 
-        return render(request, 'ds4admin/index.html', context)
+        return render(request, 'ds4admin/balance.html', context)
+
+    else:
+        messages.error(request, 'Admin only area.')
+        return redirect('/')
+
+
+# view for huisgenooten tab
+def housemates(request):
+
+    if request.user.is_superuser:
+
+        # get list of active users sorted by move-in date
+        active_users = User.objects.filter(is_active=True)
+        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis')\
+            .order_by('movein_date')
+
+        # build context object
+        context = {
+            'breadcrumbs': ['admin'],
+            'housemates': housemates,
+        }
+
+        return render(request, 'ds4admin/housemates.html', context)
+
+    else:
+        messages.error(request, 'Admin only area.')
+        return redirect('/')
+
+# view for permissionstab
+def permissions(request):
+
+    if request.user.is_superuser:
+
+        # get list of active users sorted by move-in date
+        active_users = User.objects.filter(is_active=True)
+        housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis')\
+            .order_by('movein_date')
+
+        # build context object
+        context = {
+            'breadcrumbs': ['admin'],
+            'housemates': housemates,
+        }
+
+        return render(request, 'ds4admin/permissions.html', context)
 
     else:
         messages.error(request, 'Admin only area.')
