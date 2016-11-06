@@ -158,7 +158,18 @@ input[type='number'] {
     border-right: 1px solid #ddd;
 }
 
-/* icon-styling */
+/* eetlijst table styling */
+
+/* make ajax styling easier ... well, has to prove itself yet. */
+.eetlijst-item-hidden {
+    display: none;
+}
+
+.eetlijst-cook-bg:disabled {
+    background-color:#EAEAEA
+}
+
+/* bierlijst table styling */
 
 .bierlijst-dropdown{
     background-color: #FEFEfE;
