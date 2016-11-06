@@ -1,13 +1,8 @@
-body {
-    background-size: cover;
-}
-
 #bg-container {
     position: absolute;
     overflow: hidden;
     top: 0;
     left: 0;
-    z-index: -100;
     width: 100%;
     height: 100%;
     background: #fff;
@@ -20,13 +15,21 @@ body {
     margin-top: 50px;
 }
 
-#selector-background, #base-background {
+#selector {
+    opacity: 0;
+}
+
+#selector-background {
+    z-index: 100;
+}
+
+.svg-bg {
     position: absolute;
     width: 100%;
     bottom: 0;
 }
 
-#selector-background svg, #base-background svg {
+.svg-bg svg {
     height: 100%;
     width: 100%;
 }

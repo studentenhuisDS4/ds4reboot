@@ -9,10 +9,16 @@
 {% block bg_block %}
 <div id="bg-container" class="uk-hidden-small">
     <div id="bg-wrapper">
-        <div id="base-background">
+        <div id="base-background" class="svg-bg">
             {% include "home/svg/background.html" %}
         </div>
-        <div id="selector-background">
+        <div id="dark-background" class="svg-bg" style="display: none;">
+            {% include "home/svg/dark_background.html" %}
+        </div>
+        <div id="blue-background" class="svg-bg">
+            {% include "home/svg/blue_background.html" %}
+        </div>
+        <div id="selector-background" class="svg-bg">
         {% include "home/svg/selector.html" %}
         </div>
     </div>

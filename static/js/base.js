@@ -132,18 +132,36 @@ $(document).ready(function(){
     });
 
     // Home page background
-    //var selectorBackground = $("#selector-background").html();
-    var baseBackground = "url(/static/img/background.svg)";
-    //
-    //$("body").css("background-image", baseBackground);
-
     var gr = $(".GR");
-    console.log(gr);
+    var kitchen = $(".kitchen");
+    var achterhuis = $(".achterhuis");
+    var schuur = $(".schuur");
+    var tropen = $(".tropen");
+    var light = $(".light");
+
     gr.on("click", function() {
-
-        console.log('test');
-        // $("body").css("background-image", "url(/static/img/background_gr.svg), " + baseBackground);
-
+        console.log('gr');
     });
+
+    kitchen.on("click", function() {
+        console.log('kitchen');
+    });
+
+    achterhuis.on("click", function() {
+        console.log('achterhuis');
+    });
+
+    schuur.on("click", function() {
+        console.log('schuur');
+    });
+
+    tropen.on("mouseover", function() {
+        console.log('tropen');
+    });
+
+    light.on("mouseover", function() {
+        console.log('light');
+    });
+
 
 });
