@@ -160,6 +160,10 @@ input[type='number'] {
     display: none;
 }
 
+.eetlijst-cook-bg:disabled {
+    background-color:#EAEAEA
+}
+
 /* bierlijst table styling */
 
 .bierlijst-dropdown{
