@@ -21,48 +21,54 @@
     </div>
     <hr>
 
-    <form class="uk-form uk-margin-remove" method="post" action="/eetlijst/{% if eetlijst_info.0 == request.user.housemate.display_name %}close{% else %}enroll{% endif %}/">
+    <div class="uk-form uk-margin-remove">
         {% csrf_token %}
-        <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
-        <input type="hidden" name="enroll-date" value="{{ focus_date }}">
-        <input type="hidden" name="close-date" value="{{ focus_date }}">
         <div class="uk-form-row">
-            {% if eetlijst_info.0 == request.user.housemate.display_name and not eetlijst_info.3 %}
-            <button class="uk-button uk-button-large uk-width-1-1 uk-hidden-small" disabled><i class="uk-icon-smile-o"></i> Eet smakelijk!</button>
-            {% elif eetlijst_info.0 == request.user.housemate.display_name %}
-            <button type="submit" name="enroll-action" value="cook" class="uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small"><i class="uk-icon-shopping-cart"></i> Lijst sluiten</button>
+            {% if not eetlijst_info.3 %}
+            <button class="uk-button uk-button-large uk-width-1-1 uk-hidden-small" disabled>Lijst gesloten!</button>
             {% elif eetlijst_info.2 == 0 %}
-            <button type="submit" name="enroll-action" value="eat" class="uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small"><i class="uk-icon-plus-circle"></i> Mee eten</button>
+            <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
+                     class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small">
+                <i class="uk-icon-plus-circle"></i>
+                <span class="home-quick-signup"> Mee eten</span>
+            </button>
             {% else %}
-            <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small"><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
+            <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small">
+                <i class="uk-icon-minus-circle"></i>
+                <span class="home-quick-signup"> Uitschrijven</span>
+            </button>
             {% endif %}
             <div class="uk-button-group  uk-width-1-1 uk-visible-small">
-                {% if eetlijst_info.0 == request.user.housemate.display_name and not eetlijst_info.3 %}
-                <button class="uk-button uk-button-large uk-width-3-5" disabled><i class="uk-icon-smile-o"></i> Eet smakelijk!</button>
-                <a class="uk-button uk-button-large uk-width-2-5" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
-                {% elif eetlijst_info.0 == request.user.housemate.display_name %}
-                <button type="submit" name="enroll-action" value="cook" class="uk-button uk-button-large uk-width-3-5 uk-button-danger"><i class="uk-icon-shopping-cart"></i> Lijst sluiten</button>
-                <a class="uk-button uk-button-large uk-width-2-5 uk-button-danger" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                {% if not eetlijst_info.3 %}
+                <button class="signup-icon uk-button uk-button-large uk-width-3-5" disabled>Lijst gesloten!</button>
+                <a class="signup-icon uk-button uk-button-large uk-width-2-5" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% elif eetlijst_info.2 == 0 %}
-                <button type="submit" name="enroll-action" value="eat" class="uk-button uk-button-large uk-width-3-5 uk-button-success"><i class="uk-icon-plus-circle"></i> Mee eten</button>
-                <a class="uk-button uk-button-large uk-width-2-5 uk-button-success" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-success">
+                    <i class="signup-icon uk-icon-plus-circle"></i>
+                    <span class="home-quick-signup"> Mee eten</span>
+                </button>
+                <a class="but_colored uk-button uk-button-large uk-width-2-5 uk-button-success" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% else %}
-                <button type="submit" name="enroll-action" value="sponge" class="uk-button uk-button-large uk-width-3-5 uk-button-danger"><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
-                <a class="uk-button uk-button-large uk-width-2-5 uk-button-danger" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-danger">
+                    <i class="signup-icon uk-icon-minus-circle"></i>
+                    <span class="home-quick-signup"> Uitschrijven</span>
+                </button>
+                <a class="but_colored uk-button uk-button-large uk-width-2-5 uk-button-danger" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% endif %}
             </div>
         </div>
 
-    </form>
+    </div>
     
-    <form class="uk-form-row uk-margin-top" method="post" action="/eetlijst/enroll/">
+    <div class="uk-form-row uk-margin-top">
         {% csrf_token %}
-        <input type="hidden" name="enroll-user" value="{{ request.user.id }}">
-        <input type="hidden" name="enroll-date" value="{{ focus_date }}">
         <div class="uk-button-group  uk-width-1-1">
-            <button type="submit" name="enroll-action" value="{% if eetlijst_info.2 == 0 %}cook{% else %}swap{% endif %}" class="uk-button uk-width-1-2"{% if not eetlijst_info.0 == 'Geen' %} disabled{% endif %}><img src="/static/img/chefs_hat.png" alt="Cook:" style="margin-top: -2px;" /> {{ eetlijst_info.0 }}</button>
-            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> {{ eetlijst_info.1 }}</button>
+            <button class="uk-button uk-width-1-2" disabled><img src="/static/img/chefs_hat.png" alt="Cook:" style="margin-top: -2px;" /> {{ eetlijst_info.0 }}</button>
+            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> <span class="eating-number">{{ eetlijst_info.1 }}</span></button>
             <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
         </div>
-    </form>
+    </div>
 </div>

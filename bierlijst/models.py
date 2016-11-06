@@ -31,7 +31,7 @@ class Boete(models.Model):
     created_time = models.DateTimeField(default=timezone.now)
 
     boete_count = models.IntegerField(default=1)
-    boete_note = models.CharField(max_length=50)
+    boete_note = models.CharField(max_length=100)
 
 
 # model for plotly streaming tokens

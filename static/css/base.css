@@ -53,35 +53,6 @@ input[type='number'] {
     padding: 4px 8px;
 }
 
-.bierlijst-dropdown {
-    margin-top: 4px;
-    width: 100%;
-    padding: 3px 5px 0px 5px;
-    white-space: nowrap;
-}
-
-.bierlijst-dropdown button {
-    border: 0;
-    padding: 5px 0px 0px 15px;
-    margin: 0;
-    background: none;
-    width: 100%;
-    text-align: left;
-}
-
-.bierlijst-dropdown button:hover {
-    background: #39f;
-    color: #fff;
-    cursor: pointer;
-    cursor: hand;
-}
-
-.bierlijst-dropdown li {
-    margin-left: 0px;
-    padding: 0px 10px;
-}
-
-
 /* CUSTOM STYLING */
 
 /* medal colors */
@@ -170,6 +141,11 @@ input[type='number'] {
     width: 3em;
 }
 
+.boete-note {
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
 /* page styling */
 .content-box {
     background: #eaeaea;
@@ -180,4 +156,48 @@ input[type='number'] {
     background: #fff;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
+}
+
+/* eetlijst table styling */
+
+/* make ajax styling easier ... well, has to prove itself yet. */
+.eetlijst-item-hidden {
+    display: none;
+}
+
+.eetlijst-cook-bg:disabled {
+    background-color:#EAEAEA
+}
+
+/* bierlijst table styling */
+
+.bierlijst-dropdown{
+    background-color: #FEFEfE;
+    border-color: #DADADA;
+    padding: 0;
+    margin: auto;
+    margin-left: 7px;
+    width: auto;
+}
+
+.bierlijst-dropdown button {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+}
+
+.wine-icon:hover {
+    background-color: #DDDDDD;
+    color: #fff;
+    cursor: pointer;
+    cursor: hand;
+}
+
+.wine-icon {
+    min-width: 32px;
+    width: 32px;
+    height: 33px;
+    padding: 5px;
+    padding-top: 6px;
 }

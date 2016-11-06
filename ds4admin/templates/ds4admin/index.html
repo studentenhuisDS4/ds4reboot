@@ -10,18 +10,35 @@
 {% block body_block %}
 
     {% if user.is_authenticated %}
-    <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+    <div class="uk-grid uk-padding-remove" style="position:relative;">
         <div class="uk-width-medium-7-10">
-            <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
-                <li><a href=""><i class="uk-icon-users"></i> Huisgenooten</a></li>
-                <li><a href=""><i class="uk-icon-asterisk"></i> Permissies</a></li>
+            <ul class="uk-tab uk-tab-grid">
+
+                <li class="uk-hidden-small uk-width-1-3{% if request.resolver_match.url_name == 'housemates' %} uk-active{% endif %}">
+                    <a href="{% url 'housemates' %}"><i class="uk-icon-users"></i> Huisgenoten</a>
+                </li>
+                <li class="uk-hidden-small uk-width-1-3{% if request.resolver_match.url_name == 'balance' %} uk-active"{% endif %}">
+                    <a href="{% url 'balance' %}"><i class="uk-icon-balance-scale"></i> Balance</a>
+                </li>
+                <li class="uk-hidden-small uk-width-1-3{% if request.resolver_match.url_name == 'permissions' %} uk-active"{% endif %}">
+                    <a href="{% url 'permissions' %}"><i class="uk-icon-asterisk"></i> Permissies</a>
+                </li>
+
+                <li class="uk-visible-small uk-text-small {% if request.resolver_match.url_name == 'housemates' %} uk-active{% endif %}">
+                    <a href="{% url 'housemates' %}">Huisgenoten</a>
+                </li>
+                <li class="uk-visible-small uk-text-small uk-width-1-3{% if request.resolver_match.url_name == 'balance' %} uk-active"{% endif %}">
+                    <a href="{% url 'balance' %}">Balance</a>
+                </li>
+                <li class="uk-visible-small uk-text-small uk-width-1-3{% if request.resolver_match.url_name == 'permissions' %} uk-active"{% endif %}">
+                    <a href="{% url 'permissions' %}">Permissies</a>
+                </li>
+
             </ul>
 
-            <ul id="tab-container" class="uk-switcher tab-content">
-                <li>{% include 'ds4admin/housemates.html' %}</li>
-                <li>{% include 'ds4admin/permissions.html' %}</li>
-            </ul>
-
+            <div class="tab-content"{% if request.resolver_match.url_name == 'balance' %} style="border-bottom: 1px solid #ddd;"{% endif %}>
+                {% block content_block %}{% endblock %}
+            </div>
 
         </div>
         <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
