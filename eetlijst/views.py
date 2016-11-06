@@ -295,7 +295,7 @@ def enroll(request):
                         success_message = '%s is %s keer ingeschreven.' % (str(enroll_user).capitalize(), int(user_entry.list_count))
                 else:
                     # TODO: restyle instead of suggesting to refresh
-                    return HttpResponse(JsonResponse({'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+                    return HttpResponse(JsonResponse({'result': 'Can''t perform action. The list is already closed. Please refresh page.', 'status': 'failure'}))
             elif enroll_type == 'sponge':
                 date_entry.num_eating -= user_entry.list_count
                 user_entry.list_count = 0
