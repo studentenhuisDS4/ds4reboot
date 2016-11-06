@@ -371,7 +371,56 @@ def close(request):
                         return redirect(request.META.get('HTTP_REFERER'))
 
                 else:
-                    messages.error(request, 'Cannot reopen list once cost is entered.')
+
+                    if not date_entry.cook == request.user:
+                        messages.error(request, 'Must be cook to reopen list.')
+                        return redirect(request.META.get('HTTP_REFERER'))
+
+                    # Reverse existing costs
+                    cost_amount = -date_entry.cost
+
+                    # update housemate objects for users who signed up
+                    huis = Housemate.objects.get(display_name='Huis')
+
+                    remainder = huis.balance
+                    split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
+                    huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
+
+
+                    # update userlist objects
+                    try:
+                        users_enrolled = UserList.objects.filter(list_date=date_entry.date)
+                    except UserList.DoesNotExist:
+                        messages.error(request, 'No users signed up for selected date.')
+                        return redirect(request.META.get('HTTP_REFERER'))
+
+                    for u in users_enrolled:
+                        h = Housemate.objects.get(user=u.user)
+
+                        h.balance -= u.list_count*split_cost
+
+                        if u.list_cook:
+                            h.balance -= split_cost
+
+                        u.list_cost = None
+
+                        u.save()
+                        h.save()
+
+                    huis.save()
+
+                    # update housemate object for current user
+                    cook = Housemate.objects.get(user=request.user)
+                    cook.balance += cost_amount
+                    cook.save()
+
+                    # add cost to log
+                    date_entry.cost = None
+                    date_entry.open = True
+                    date_entry.close_time = None
+                    date_entry.save()
+
+                    messages.info(request, 'List re-opened, costs have been refunded.')
                     return redirect(request.META.get('HTTP_REFERER'))
 
             else:
