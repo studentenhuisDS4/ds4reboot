@@ -270,8 +270,9 @@ def enroll(request):
             breakOff = True
 
         if user_id is None:
+            # TODO: Should not occur without debug
             return HttpResponse(JsonResponse(
-                {'result': 'Error: finding user resulted in error.','status': 'Failure'}))
+                {'result': 'Error: Could not find requested user.', 'status': 'failure'}))
 
         if request.user.is_authenticated():
             enroll_user = Housemate.objects.get(user_id=user_id)
@@ -287,13 +288,27 @@ def enroll(request):
                 user_entry.list_count += 1
                 date_entry.num_eating += 1
                 type_amount = user_entry.list_count
-                if user_entry.list_count == 1:
-                    success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
+                if date_entry.open:
+                    if user_entry.list_count == 1:
+                        success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
+                    else:
+                        success_message = '%s is %s keer ingeschreven.' % (str(enroll_user).capitalize(), int(user_entry.list_count))
                 else:
-                    success_message = '%s is %s keer ingeschreven.' % (str(enroll_user).capitalize(), int(user_entry.list_count))
+                    # TODO: restyle instead of suggesting to refresh
+                    return HttpResponse(JsonResponse({'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+            elif enroll_type == 'sponge':
+                date_entry.num_eating -= user_entry.list_count
+                user_entry.list_count = 0
+                if date_entry.open:
+                    success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
+                    type_amount = 0
+                else:
+                    # TODO: restyle instead of suggesting to refresh
+                    return HttpResponse(JsonResponse(
+                        {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
             elif enroll_type == 'cook':
                 if date_entry.cook and not date_entry.cook == enroll_user.user:
-                    return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'success'}))
+                    return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'failure'}))
                 elif date_entry.cook == enroll_user.user:
                     user_entry.list_cook = False
                     date_entry.num_eating -= 1
@@ -308,34 +323,8 @@ def enroll(request):
                     date_entry.num_eating += 1
                     success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())
                     type_amount = 1
-            elif enroll_type == 'sponge':
-                date_entry.num_eating -= user_entry.list_count
-                user_entry.list_count = 0
-                success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
-                type_amount = 0
-
-            # TODO: 'swap' currently not implemented in template
-            elif enroll_type == 'swap':
-                date_entry.num_eating -= user_entry.list_count
-                user_entry.list_count = 0
-
-                if date_entry.cook and not date_entry.cook == enroll_user.user:
-                    return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'success'}))
-                elif date_entry.cook == enroll_user.user:
-                    user_entry.list_cook = False
-                    date_entry.num_eating -= 1
-                    date_entry.cook = None
-                    date_entry.signup_time = None
-                    type_amount = 0
-                else:
-                    user_entry.list_cook = True
-                    date_entry.signup_time = timezone.now()
-                    date_entry.cook = enroll_user.user
-                    date_entry.num_eating += 1
-                    type_amount = 1
-
             else:
-                return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'success'}))
+                return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'}))
 
             user_entry.timestamp = timezone.now()
             user_entry.save()
@@ -487,6 +476,9 @@ def cost(request):
                 return redirect(request.META.get('HTTP_REFERER'))
             elif Decimal(request.POST.get('cost-amount')) < 0:
                 messages.error(request, 'Amount must be positive.')
+                return redirect(request.META.get('HTTP_REFERER'))
+            elif Decimal(request.POST.get('cost-amount')) > 999:
+                messages.error(request, 'Amount must less than 999 euro''s.')
                 return redirect(request.META.get('HTTP_REFERER'))
             else:
                 cost_amount = Decimal(round(Decimal(request.POST.get('cost-amount')), 2))

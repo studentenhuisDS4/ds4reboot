@@ -28,22 +28,34 @@
             <button class="uk-button uk-button-large uk-width-1-1 uk-hidden-small" disabled>Lijst gesloten!</button>
             {% elif eetlijst_info.2 == 0 %}
             <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
-                     class="btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small"><i class="uk-icon-plus-circle"></i> Mee eten</button>
+                     class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small">
+                <i class="uk-icon-plus-circle"></i>
+                <span class="home-quick-signup"> Mee eten</span>
+            </button>
             {% else %}
             <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
-                    class="btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small"><i class="uk-icon-minus-circle"></i> Uitschrijven</button>
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small">
+                <i class="uk-icon-minus-circle"></i>
+                <span class="home-quick-signup"> Uitschrijven</span>
+            </button>
             {% endif %}
             <div class="uk-button-group  uk-width-1-1 uk-visible-small">
                 {% if not eetlijst_info.3 %}
-                <button class="uk-button uk-button-large uk-width-3-5" disabled>Lijst gesloten!</button>
-                <a class="uk-button uk-button-large uk-width-2-5" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                <button class="signup-icon uk-button uk-button-large uk-width-3-5" disabled>Lijst gesloten!</button>
+                <a class="signup-icon uk-button uk-button-large uk-width-2-5" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% elif eetlijst_info.2 == 0 %}
                 <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
-                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-success"><i class="uk-icon-plus-circle"></i><span class="home-quick-signup"> Mee eten</span></button>
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-success">
+                    <i class="signup-icon uk-icon-plus-circle"></i>
+                    <span class="home-quick-signup"> Mee eten</span>
+                </button>
                 <a class="but_colored uk-button uk-button-large uk-width-2-5 uk-button-success" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% else %}
                 <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
-                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-danger"><i class="uk-icon-minus-circle"></i><span class="home-quick-signup"> Uitschrijven</span></button>
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-danger">
+                    <i class="signup-icon uk-icon-minus-circle"></i>
+                    <span class="home-quick-signup"> Uitschrijven</span>
+                </button>
                 <a class="but_colored uk-button uk-button-large uk-width-2-5 uk-button-danger" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
                 {% endif %}
             </div>

@@ -239,6 +239,7 @@ $(document).ready(function(){
                     // Update signup/unenroll
                     var span_sign_text = $('.home-quick-signup');
                     var but_signup = $('.btn-signup-home');
+                    var icon_signup = $('.signup-icon');
                     var but_colored = $('.but_colored');            // The buttons which the color needs to be toggled
                     if (enroll_type == 'signup'){
                         span_sign_text.fadeOut(100, function () {
@@ -250,6 +251,8 @@ $(document).ready(function(){
                         // Update row color
                         but_colored.removeClass('uk-button-success');
                         but_colored.addClass('uk-button-danger');
+                        icon_signup.removeClass('uk-icon-plus-circle');
+                        icon_signup.addClass('uk-icon-minus-circle');
                     }
                     else if (enroll_type == 'sponge') {
                         span_sign_text.fadeOut(100, function () {
@@ -259,8 +262,10 @@ $(document).ready(function(){
                         // Update signup type
                         but_signup.attr('data-type','signup');
                         // Update row color
-                        but_colored.addClass('uk-button-success');
                         but_colored.removeClass('uk-button-danger');
+                        but_colored.addClass('uk-button-success');
+                        icon_signup.removeClass('uk-icon-minus-circle');
+                        icon_signup.addClass('uk-icon-plus-circle');
                     }
                 } else {
                     $(".count-" + user_id).val('');
