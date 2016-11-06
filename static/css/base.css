@@ -141,6 +141,11 @@ input[type='number'] {
     width: 3em;
 }
 
+.boete-note {
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
 /* page styling */
 .content-box {
     background: #eaeaea;
