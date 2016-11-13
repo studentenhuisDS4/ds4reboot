@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^huisgenoten/$', views.housemates, name='housemates'),
     url(r'^balance/$', views.balance, name='balance'),
     url(r'^permissies/$', views.permissions, name='permissions'),
+    url(r'^permissies/set/(?P<group_type>\w+)/(?P<user_id>[0-9]+)/$', views.toggle_group, name='toggle group'),
     url(r'^remove/$', views.remove_housemate, name='remove housemate'),
-    url(r'^set/(?P<group_type>\w+)/(?P<user_id>[0-9]+)/$', views.toggle_group, name='toggle group'),
+
 ]
