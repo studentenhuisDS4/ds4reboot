@@ -150,7 +150,6 @@ $(document).ready(function(){
             },
             success : function (json) {
                 if (json.status =='success') {
-                    console.log('bpp');
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
 
                     // Update total value
@@ -184,7 +183,13 @@ $(document).ready(function(){
                             cook_el.fadeIn(100);
                             $(".btn-signup.btn-cook:not([disabled])").attr('disabled',true);
                             $(this).attr('disabled',false);
-                            $(".uk-icon-shopping-cart.date-" + enroll_date).fadeIn(100);
+                            // If user is cook add shopping cart
+                            if (json.login_user == user_id) {
+                                $(".uk-icon-shopping-cart.date-" + enroll_date).fadeIn(100);
+                            }
+                            else {
+                                $(".uk-icon-shopping-cart.date-" + enroll_date).fadeOut(100);
+                            }
                         }
                         else{
                             cook_el.fadeOut(100);
