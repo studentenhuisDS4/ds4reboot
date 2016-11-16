@@ -501,38 +501,51 @@ def cost(request):
                 return redirect(request.META.get('HTTP_REFERER'))
 
             if date_entry.cook:
+                try:
+                    if date_entry.cost is None:
+                        # add cost to log
+                        print(date_entry.cost)
+                        print(cost_amount)
+                        date_entry.cost = cost_amount
+                        print(date_entry.cost)
+                    else:
+                        messages.error(request, 'Server received cost fill-in for eetlijst, which has been previously multiple times.')
+                        raise AssertionError
 
-                # add cost to log
-                date_entry.cost = cost_amount
-                date_entry.save()
+                    # update housemate object for current user
+                    h = Housemate.objects.get(user=request.user)
+                    h.balance += cost_amount
 
-                # update housemate object for current user
-                h = Housemate.objects.get(user=request.user)
-                h.balance += cost_amount
-                h.save()
+                    # update housemate objects for users who signed up
+                    huis = Housemate.objects.get(display_name='Huis')
 
-                # update housemate objects for users who signed up
-                huis = Housemate.objects.get(display_name='Huis')
+                    remainder = huis.balance
+                    split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
+                    huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
 
-                remainder = huis.balance
-                split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
-                huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
-
-                huis.save()
-
-                # update userlist objects
-                for u in users_enrolled:
-                    h = Housemate.objects.get(user=u.user)
-
-                    h.balance -= u.list_count*split_cost
-                    u.list_cost = -1*u.list_count*split_cost
-
-                    if u.list_cook:
-                        h.balance -= split_cost
-                        u.list_cost = cost_amount - split_cost*(1+u.list_count)
-
-                    u.save()
+                    # Seperately save
+                    date_entry.save()
                     h.save()
+                    huis.save()
+
+                    # update userlist objects
+                    for u in users_enrolled:
+                        h = Housemate.objects.get(user=u.user)
+
+                        h.balance -= u.list_count*split_cost
+                        u.list_cost = -1*u.list_count*split_cost
+
+                        if u.list_cook:
+                            h.balance -= split_cost
+                            u.list_cost = cost_amount - split_cost*(1+u.list_count)
+
+                        u.save()
+                        h.save()
+
+                    h = Housemate.objects.get(user=request.user)
+
+                except:
+                    messages.error(request, 'Server internal error during calculation of cost.')
 
             else:
                 messages.error(request, 'Cannot input cost without cook.')
