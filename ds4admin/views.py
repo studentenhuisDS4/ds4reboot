@@ -4,6 +4,7 @@ from eetlijst.models import HOLog
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
+from decimal import Decimal
 import datetime as dt
 
 
@@ -18,7 +19,7 @@ def balance(request):
         housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
-            .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
+            .filter(moveout_set=False).order_by('movein_date').exclude(display_name='Admin')
 
         huis_balance = Housemate.objects.get(display_name='Huis').balance
         active_balance = 0
@@ -158,17 +159,14 @@ def remove_housemate(request):
             else:
                 # update housemate object
                 h = Housemate.objects.get(user_id=remove_id)
-                h.moveout_set = False
+                h.moveout_set = True
                 h.moveout_date = timezone.now()
                 remaining_balance = h.balance
-                # h.balance = 0
-                h.save()
 
                 u = h.user
                 u.is_active = False
-                u.save()
 
-                #update housemate objects for other users
+                # Update housemate objects for other users
                 huis = Housemate.objects.get(display_name='Huis')
                 amount = -1 * remaining_balance
 
@@ -177,17 +175,21 @@ def remove_housemate(request):
 
                 # take care of remainder
                 remainder = huis.balance
-                split_cost = round((amount - remainder)/len(other_housemates),2)
+                print(remainder)
+                print(amount)
+                split_cost = Decimal(round((amount - remainder)/len(other_housemates),2))
                 huis.balance = len(other_housemates)*split_cost - amount + remainder
+                print(huis.balance)
+                # add log entry to eating list ho table
+                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
 
-                huis.save()
-
+                # Save all database tables
                 for o in other_housemates:
                     o.balance -= split_cost
                     o.save()
-
-                # add entry to ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
+                h.save()
+                u.save()
+                huis.save()
                 ho.save()
 
         else:
@@ -212,7 +214,7 @@ def activate_housemate(request):
                 activate_id = None
 
             try:
-                activate_date = int(request.POST.get('activate_date'))
+                activate_date = request.POST.get('activate_date')
             except TypeError:
                 activate_date = None
 
@@ -225,37 +227,14 @@ def activate_housemate(request):
                 h = Housemate.objects.get(user_id=activate_id)
 
                 # TODO: Consider setting inactivation date instead of move-out date
-                h.moveout_set = False
+                h.moveout_set = None
                 h.moveout_date = timezone.now()
-                remaining_balance = h.balance
-                # h.balance = 0
                 h.save()
 
                 u = h.user
                 u.is_active = True
+
                 u.save()
-
-                # update housemate objects for other users
-                huis = Housemate.objects.get(display_name='Huis')
-                amount = -1 * remaining_balance
-
-                active_users = User.objects.filter(is_active=True)
-                other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
-
-                # take care of remainder
-                remainder = huis.balance
-                split_cost = round((amount - remainder) / len(other_housemates), 2)
-                huis.balance = len(other_housemates) * split_cost - amount + remainder
-
-                huis.save()
-
-                for o in other_housemates:
-                    o.balance -= split_cost
-                    o.save()
-
-                # add entry to ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
-                ho.save()
 
         else:
             return render(request, 'base/login_page.html')
@@ -278,7 +257,8 @@ def deactivate_housemate(request):
                 deactivate_id = None
 
             try:
-                deactivate_date = int(request.POST.get('deactivate_date'))
+                deactivate_date = request.POST.get('deactivate_date')
+                print(deactivate_date)
             except TypeError:
                 deactivate_date = None
 
@@ -289,39 +269,16 @@ def deactivate_housemate(request):
             else:
                 # update housemate object
                 h = Housemate.objects.get(user_id=deactivate_id)
+                h.moveout_set = False
 
                 # TODO: Consider setting inactivation date instead of move-out date
-                h.moveout_set = False
                 h.moveout_date = timezone.now()
-                remaining_balance = h.balance
-                # h.balance = 0
                 h.save()
 
                 u = h.user
                 u.is_active = False
+
                 u.save()
-
-                # update housemate objects for other users
-                huis = Housemate.objects.get(display_name='Huis')
-                amount = -1 * remaining_balance
-
-                active_users = User.objects.filter(is_active=True)
-                other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
-
-                # take care of remainder
-                remainder = huis.balance
-                split_cost = round((amount - remainder) / len(other_housemates), 2)
-                huis.balance = len(other_housemates) * split_cost - amount + remainder
-
-                huis.save()
-
-                for o in other_housemates:
-                    o.balance -= split_cost
-                    o.save()
-
-                # add entry to ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
-                ho.save()
 
         else:
             return render(request, 'base/login_page.html')
