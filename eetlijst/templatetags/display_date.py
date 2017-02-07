@@ -26,6 +26,11 @@ def link_date(date):
 # check if date is selected
 @register.filter
 def current_date(date):
-    for n, d in date.items():
-        if d[2] == True:
-            return str(d[1]).replace('-','/')
+    try:
+        date.items()
+    except AttributeError as e:
+        return str(date).replace('-', '/')
+    else:
+        for n, d in date.items():
+            if d[2] == True:
+                return str(d[1]).replace('-','/')
