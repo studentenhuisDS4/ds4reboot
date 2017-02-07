@@ -29,13 +29,13 @@
             {% elif eetlijst_info.2 == 0 %}
             <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
                      class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small">
-                <i class="uk-icon-plus-circle"></i>
+                <i class="signup-icon uk-icon-plus-circle"></i>
                 <span class="home-quick-signup"> Mee eten</span>
             </button>
             {% else %}
             <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
                     class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small">
-                <i class="uk-icon-minus-circle"></i>
+                <i class="signup-icon uk-icon-minus-circle"></i>
                 <span class="home-quick-signup"> Uitschrijven</span>
             </button>
             {% endif %}

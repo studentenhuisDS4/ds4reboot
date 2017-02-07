@@ -343,7 +343,11 @@ def enroll(request):
             except:
                 type_amount = False
 
+            # Can be practical for cook sign-in
+            signed_in_user = request.user.id
+
             json_data = {'result': success_message,
+                         'login_user': signed_in_user,
                          'status': 'success',
                          'enroll_user': str(enroll_user),
                          'enroll_date': str(enroll_date),
