@@ -1,10 +1,13 @@
 from django.contrib.auth.models import User, Group
 from user.models import Housemate
 from eetlijst.models import HOLog
+from thesau.models import Report
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
-import datetime as dt
+from decimal import Decimal
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 # view for ds4 admin page
@@ -18,7 +21,7 @@ def balance(request):
         housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
-            .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
+            .filter(moveout_set=False).order_by('movein_date').exclude(display_name='Admin')
 
         huis_balance = Housemate.objects.get(display_name='Huis').balance
         active_balance = 0
@@ -158,36 +161,75 @@ def remove_housemate(request):
             else:
                 # update housemate object
                 h = Housemate.objects.get(user_id=remove_id)
-                h.moveout_set = False
+                h.moveout_set = True
                 h.moveout_date = timezone.now()
-                remaining_balance = h.balance
-                # h.balance = 0
-                h.save()
 
+                remaining_balance = h.balance
+
+                # So Django Authentication gives correct message (disabled account)
                 u = h.user
                 u.is_active = False
-                u.save()
 
-                #update housemate objects for other users
+                # Update housemate objects for other users
                 huis = Housemate.objects.get(display_name='Huis')
                 amount = -1 * remaining_balance
 
-                active_users = User.objects.filter(is_active=True)
+                active_users = User.objects.filter(is_active=True).exclude(id=remove_id)
                 other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
 
-                # take care of remainder
+                # Get old remainder and optimally calculate split cost to remove this housemate
                 remainder = huis.balance
-                split_cost = round((amount - remainder)/len(other_housemates),2)
-                huis.balance = len(other_housemates)*split_cost - amount + remainder
+                split_cost = Decimal(round((amount - remainder)/len(other_housemates), 2))
 
-                huis.save()
+                # Calculate the remainder for the house
+                huis.balance = Decimal(len(other_housemates))*split_cost - Decimal(amount) + remainder
 
+                # overall_balance = active_balance + inactive_balance + huis_balance
+
+                # add log entry to eating list ho table
+                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
+
+                # Render email to send summary
+                last_hr_date = Report.objects.latest('report_date').report_date # Assume housemate already lived here
+                curr_date = timezone.now().date()
+
+                # Force float by introducing comma: 93.0
+                est_hr_perc = round((curr_date - last_hr_date).days / 93.0 * 100, 2)    # Assume 31 * 3 days for HR
+
+                if est_hr_perc > 100:
+                    est_hr_perc = 100
+
+                full_name = u.first_name + " " + u.last_name
+                msg_html = render_to_string('email/thesau_mail_dynamic.html',
+                                            {'full_name': full_name,
+                                             'balance': str(h.balance),
+                                             'beers': str(h.total_bier),
+                                             'red_wine': str(h.sum_rwijn),
+                                             'white_wine': str(h.sum_wwijn),
+                                             'fine_wine': str(h.boetes_open),
+                                             'fine_wine_turfed': str(h.boetes_geturfd),
+                                             'move_in_date': str(h.movein_date),
+                                             'move_out_date': str(h.moveout_date.date()),
+                                             'last_hr_date': str(last_hr_date),
+                                             'est_hr_perc': str(est_hr_perc)
+                                             })
+                send_mail(
+                    'DS4 housemate moved out - site report',
+                    full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
+                    'studentenhuis@gmail.com',
+                    ['thesau@ds4.nl, president@ds4.nl'],
+                    html_message=msg_html,
+                    fail_silently=False,
+                )
+
+                # Perform all required update operations
+                h.balance = 0.00
                 for o in other_housemates:
                     o.balance -= split_cost
                     o.save()
-
-                # add entry to ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
+                h.save()
+                u.save()
+                huis.save()
                 ho.save()
 
         else:
@@ -212,7 +254,7 @@ def activate_housemate(request):
                 activate_id = None
 
             try:
-                activate_date = int(request.POST.get('activate_date'))
+                activate_date = request.POST.get('activate_date')
             except TypeError:
                 activate_date = None
 
@@ -225,37 +267,14 @@ def activate_housemate(request):
                 h = Housemate.objects.get(user_id=activate_id)
 
                 # TODO: Consider setting inactivation date instead of move-out date
-                h.moveout_set = False
+                h.moveout_set = None
                 h.moveout_date = timezone.now()
-                remaining_balance = h.balance
-                # h.balance = 0
                 h.save()
 
                 u = h.user
                 u.is_active = True
+
                 u.save()
-
-                # update housemate objects for other users
-                huis = Housemate.objects.get(display_name='Huis')
-                amount = -1 * remaining_balance
-
-                active_users = User.objects.filter(is_active=True)
-                other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
-
-                # take care of remainder
-                remainder = huis.balance
-                split_cost = round((amount - remainder) / len(other_housemates), 2)
-                huis.balance = len(other_housemates) * split_cost - amount + remainder
-
-                huis.save()
-
-                for o in other_housemates:
-                    o.balance -= split_cost
-                    o.save()
-
-                # add entry to ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
-                ho.save()
 
         else:
             return render(request, 'base/login_page.html')
@@ -278,7 +297,8 @@ def deactivate_housemate(request):
                 deactivate_id = None
 
             try:
-                deactivate_date = int(request.POST.get('deactivate_date'))
+                deactivate_date = request.POST.get('deactivate_date')
+                print(deactivate_date)
             except TypeError:
                 deactivate_date = None
 
@@ -289,39 +309,16 @@ def deactivate_housemate(request):
             else:
                 # update housemate object
                 h = Housemate.objects.get(user_id=deactivate_id)
+                h.moveout_set = False
 
                 # TODO: Consider setting inactivation date instead of move-out date
-                h.moveout_set = False
                 h.moveout_date = timezone.now()
-                remaining_balance = h.balance
-                # h.balance = 0
                 h.save()
 
                 u = h.user
                 u.is_active = False
+
                 u.save()
-
-                # update housemate objects for other users
-                huis = Housemate.objects.get(display_name='Huis')
-                amount = -1 * remaining_balance
-
-                active_users = User.objects.filter(is_active=True)
-                other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
-
-                # take care of remainder
-                remainder = huis.balance
-                split_cost = round((amount - remainder) / len(other_housemates), 2)
-                huis.balance = len(other_housemates) * split_cost - amount + remainder
-
-                huis.save()
-
-                for o in other_housemates:
-                    o.balance -= split_cost
-                    o.save()
-
-                # add entry to ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
-                ho.save()
 
         else:
             return render(request, 'base/login_page.html')
