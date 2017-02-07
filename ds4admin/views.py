@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User, Group
 from user.models import Housemate
 from eetlijst.models import HOLog
+from thesau.models import Report
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 from decimal import Decimal
-import datetime as dt
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 # view for ds4 admin page
@@ -161,10 +163,10 @@ def remove_housemate(request):
                 h = Housemate.objects.get(user_id=remove_id)
                 h.moveout_set = True
                 h.moveout_date = timezone.now()
-                h.balance = 0.00
 
                 remaining_balance = h.balance
 
+                # So Django Authentication gives correct message (disabled account)
                 u = h.user
                 u.is_active = False
 
@@ -177,17 +179,51 @@ def remove_housemate(request):
 
                 # Get old remainder and optimally calculate split cost to remove this housemate
                 remainder = huis.balance
-                split_cost = Decimal(round((amount - remainder)/len(other_housemates),2))
+                split_cost = Decimal(round((amount - remainder)/len(other_housemates), 2))
 
                 # Calculate the remainder for the house
-                huis.balance = len(other_housemates)*split_cost - amount + remainder
+                huis.balance = Decimal(len(other_housemates))*split_cost - Decimal(amount) + remainder
 
                 # overall_balance = active_balance + inactive_balance + huis_balance
 
                 # add log entry to eating list ho table
                 ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
 
-                # Save all database tables
+                # Render email to send summary
+                last_hr_date = Report.objects.latest('report_date').report_date # Assume housemate already lived here
+                curr_date = timezone.now().date()
+
+                # Force float by introducing comma: 93.0
+                est_hr_perc = round((curr_date - last_hr_date).days / 93.0 * 100, 2)    # Assume 31 * 3 days for HR
+
+                if est_hr_perc > 100:
+                    est_hr_perc = 100
+
+                full_name = u.first_name + " " + u.last_name
+                msg_html = render_to_string('email/thesau_mail_dynamic.html',
+                                            {'full_name': full_name,
+                                             'balance': str(h.balance),
+                                             'beers': str(h.total_bier),
+                                             'red_wine': str(h.sum_rwijn),
+                                             'white_wine': str(h.sum_wwijn),
+                                             'fine_wine': str(h.boetes_open),
+                                             'fine_wine_turfed': str(h.boetes_geturfd),
+                                             'move_in_date': str(h.movein_date),
+                                             'move_out_date': str(h.moveout_date.date()),
+                                             'last_hr_date': str(last_hr_date),
+                                             'est_hr_perc': str(est_hr_perc)
+                                             })
+                send_mail(
+                    'DS4 housemate moved out - site report',
+                    full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
+                    'studentenhuis@gmail.com',
+                    ['thesau@ds4.nl, president@ds4.nl'],
+                    html_message=msg_html,
+                    fail_silently=False,
+                )
+
+                # Perform all required update operations
+                h.balance = 0.00
                 for o in other_housemates:
                     o.balance -= split_cost
                     o.save()
