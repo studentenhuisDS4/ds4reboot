@@ -161,6 +161,8 @@ def remove_housemate(request):
                 h = Housemate.objects.get(user_id=remove_id)
                 h.moveout_set = True
                 h.moveout_date = timezone.now()
+                h.balance = 0.00
+
                 remaining_balance = h.balance
 
                 u = h.user
@@ -170,16 +172,18 @@ def remove_housemate(request):
                 huis = Housemate.objects.get(display_name='Huis')
                 amount = -1 * remaining_balance
 
-                active_users = User.objects.filter(is_active=True)
+                active_users = User.objects.filter(is_active=True).exclude(id=remove_id)
                 other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
 
-                # take care of remainder
+                # Get old remainder and optimally calculate split cost to remove this housemate
                 remainder = huis.balance
-                print(remainder)
-                print(amount)
                 split_cost = Decimal(round((amount - remainder)/len(other_housemates),2))
+
+                # Calculate the remainder for the house
                 huis.balance = len(other_housemates)*split_cost - amount + remainder
-                print(huis.balance)
+
+                # overall_balance = active_balance + inactive_balance + huis_balance
+
                 # add log entry to eating list ho table
                 ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
 
