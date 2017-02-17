@@ -129,6 +129,7 @@ def toggle_group(request, group_type, user_id):
 
     if group_type == 'admin':
         u.is_superuser ^= True
+        u.is_staff ^= True
         u.save()
 
     elif group_type == 'thesau':
