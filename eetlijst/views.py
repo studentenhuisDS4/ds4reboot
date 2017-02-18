@@ -268,6 +268,7 @@ def enroll(request):
             user_id = request.POST.get('user_id')
         except:
             breakOff = True
+            user_id = None
 
         if user_id is None:
             # TODO: Should not occur without debug
@@ -388,6 +389,19 @@ def close(request):
                             date_entry.close_time = timezone.now()
                             date_entry.save()
 
+                            # Build up allergy string
+                            userlist_entries = UserList.objects.filter(list_date=date)
+                            allergy_status = ""
+
+                            for userlist_entry in userlist_entries:
+                                h = Housemate.objects.get(id=userlist_entry.user_id)
+                                if h.diet:
+                                    allergy_status += h.display_name + " requires: " + h.diet.upper() + ". "
+
+                            # Inform cook about allergy
+                            if allergy_status:
+                                messages.warning(request, allergy_status)
+
                         # if closed
                         else:
                             date_entry.open = True
@@ -413,7 +427,6 @@ def close(request):
                     remainder = huis.balance
                     split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
                     huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
-
 
                     # update userlist objects
                     try:
