@@ -253,11 +253,15 @@ def turf_item(request, user_id):
 
             # add entry to database
             if turf_type == 'bier':
-                h.sum_bier += turf_count
-                h.total_bier += turf_count
+                if h.sum_bier+turf_count >= 0:
+                    h.sum_bier += turf_count
+                    h.total_bier += turf_count
 
-                success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
-                success_message = success_message if turf_count == 1 else success_message.replace('bier', 'biertjes')
+                    success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
+                    success_message = success_message if turf_count == 1 else success_message.replace('bier', 'biertjes')
+                else:
+                    success_message = 'Je kan geen negatief aantal biertjes hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
                 # device = get_device_model()
                 # device.objects.all().send_message({'message':'my test message'})
