@@ -35,7 +35,7 @@ def index(request, year=None, month=None, day=None):
                 user_open = True
 
                 for oc in open_costs:
-                    open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Do').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
+                    open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
 
             else:
                 user_open = False
@@ -177,7 +177,7 @@ def add_ho(request):
             h.balance += amount
             h.save()
 
-            #update housemate objects for other users
+            # update housemate objects for other users
             huis = Housemate.objects.get(display_name='Huis')
 
             active_users = User.objects.filter(is_active=True)
