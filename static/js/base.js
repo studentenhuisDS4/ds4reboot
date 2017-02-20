@@ -52,6 +52,7 @@ $(document).ready(function(){
                 $("#user-" + medals.silver + " .medal").addClass("silver");
                 $("#user-" + medals.bronze + " .medal").addClass("bronze");
 
+                // The following only works for the quick access bar on home page
             }
         });
     }
