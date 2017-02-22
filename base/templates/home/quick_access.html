@@ -12,10 +12,10 @@
             </div>
         </form>
 
-        <div class="uk-form-row uk-margin-top" id="user-{{ request.user.id }}">
+        <div class="uk-form-row uk-margin-top user-{{ request.user.id }}">
             <div class="sum-bier uk-button-group uk-width-1-1">
-                <button class="uk-button uk-width-1-2" disabled>Bier: <span>{{ user_info.sum_bier }}</span>{% if request.user.id in medals %} <i class="uk-icon-circle{% if request.user.id == medals.0 %} gold-icon{% endif %}{% if request.user.id == medals.1 %} silver-icon{% endif %}{% if request.user.id == medals.2 %} bronze-icon{% endif %}"></i>{% endif %}</button>
-                <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.sum_wijn }}</button>
+                <button class="uk-button uk-width-1-2" disabled>Bier: <span>{{ user_info.sum_bier }}</span>{% if request.user.id in medals %} <i class="uk-icon-circle medal-quick{% if request.user.id == medals.0 %} gold-icon{% endif %}{% if request.user.id == medals.1 %} silver-icon{% endif %}{% if request.user.id == medals.2 %} bronze-icon{% endif %}"></i>{% endif %}</button>
+                <button class="uk-button uk-width-1-2" disabled>Wijn: <span>{{ user_info.sum_wijn }}</span></button>
             </div>
         </div>
     </div>
