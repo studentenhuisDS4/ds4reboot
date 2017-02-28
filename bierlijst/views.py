@@ -8,7 +8,7 @@ from django.contrib import messages
 from decimal import Decimal
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator, EmptyPage
-from gcm.models import get_device_model
+# from gcm.models import get_device_model
 import json
 
 

@@ -5,3 +5,8 @@ bierlijst_API_test_request.xml
 commands_django.txt
 ds4reboot/secret_settings.py
 python
+ds4db_dump_22-2-2016.json
+ds4db_dumpert.json
+dump_2016_09_09-backup.json
+dump_2016_09_09-backup2.json
+dump_2016_09_09.json
