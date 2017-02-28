@@ -29,7 +29,8 @@ class Housemate(models.Model):
 
     # store boete counts and status
     boetes_open = models.IntegerField(default=0)
-    boetes_geturfd = models.IntegerField(default=0)
+    boetes_geturfd_rwijn = models.IntegerField(default=0)
+    boetes_geturfd_wwijn = models.IntegerField(default=0)
     boetes_total = models.IntegerField(default=0)
 
     # store bottle counts since last HR
