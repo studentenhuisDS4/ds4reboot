@@ -24,7 +24,8 @@ def index(request):
               str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0] + list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('boetes_open')).values())[0])]
+              str(list(user_list.aggregate(Sum('boetes_open')).values())[0]),
+              str(list(user_list.aggregate(Sum('boetes_total')).values())[0])]
 
     # find medaled users
     user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
