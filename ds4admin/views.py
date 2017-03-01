@@ -18,7 +18,9 @@ def balance(request):
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
         inactive_users = User.objects.filter(is_active=False)
-        housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
+        housemates = Housemate.objects.filter(user__id__in=active_users)\
+            .exclude(display_name='Huis') \
+            .exclude(display_name='Admin') \
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
             .filter(moveout_set=False).order_by('movein_date').exclude(display_name='Admin')
@@ -65,7 +67,9 @@ def housemates(request):
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
         inactive_users = User.objects.filter(is_active=False)
-        housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
+        housemates = Housemate.objects.filter(user__id__in=active_users)\
+            .exclude(display_name='Huis') \
+            .exclude(display_name='Admin') \
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
             .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
@@ -97,7 +101,9 @@ def permissions(request):
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
         inactive_users = User.objects.filter(is_active=False)
-        housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
+        housemates = Housemate.objects.filter(user__id__in=active_users)\
+            .exclude(display_name='Huis') \
+            .exclude(display_name='Admin') \
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
             .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
