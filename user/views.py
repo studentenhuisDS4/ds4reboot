@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from django.contrib import messages
+import json
 
 
 # display users index
@@ -16,7 +17,30 @@ def index(request):
 def profile(request, user_id=None):
     if request.user.is_authenticated():
         if request.method == 'POST':
-            return HttpResponse(json.dumps({'result': 'Profile updated.'}))
+            try:
+                if request.POST.get("profile-edit-type", "") == "profile":
+                    messages.success(request, 'Profielaanpassing aangevraagd.')
+                elif request.POST.get("profile-edit-type", "") == "password":
+                    messages.success(request, 'Wachtwoordaanpassing aangevraagd.')
+                else:
+                    messages.error(request, 'Wrong profile editing type or unknown editing request.')
+            except:
+                messages.error(request, 'Form didn''t validate before performing the requested profile update.')
+
+            if not user_id:
+                user_id = request.user.id
+
+            # get requested user
+            profile_user = Housemate.objects.get(user_id=user_id)
+
+            # build context object
+            context = {
+                'breadcrumbs': ['profiel'],
+                'profile_user': profile_user
+                }
+
+            return render(request, 'user/profile.html', context)
+            # return HttpResponse(json.dumps({'result': 'Profile updated.'}))
 
         else:
             if not user_id:
@@ -32,19 +56,19 @@ def profile(request, user_id=None):
                 }
 
             return render(request, 'user/profile.html', context)
-
     else:
-            return render(request, 'base/login_page.html')
+        return render(request, 'base/login_page.html')
 
-# display settings page
+# display settings page -- disabled for now
 def settings(request):
+    return redirect('/user/profiel/%s/' % request.user.id)
 
-    # build context object
-    context = {
-        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-    }
-
-    return render(request, 'user/settings.html', context)
+    # # build context object
+    # context = {
+    #     'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+    # }
+    #
+    # return render(request, 'user/settings.html', context)
 
 
 # handle requests from login form

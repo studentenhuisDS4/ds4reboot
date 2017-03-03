@@ -6,8 +6,11 @@
             <hr><br>
         </div>
 
-        <form class="profile-form uk-form uk-form-stacked uk-container-center uk-padding-remove uk-width-4-5">
+        <form class="profile-form uk-form uk-form-stacked uk-container-center uk-padding-remove uk-width-4-5" action="{{ request.path }}" method="POST">
             {% with h=profile_user %}
+            {% csrf_token %}
+
+            <input type="hidden" name="profile-edit-type" value="profile" />
 
             <label class="uk-form-label" for="first-name">Voornaam:</label>
             <input class="uk-width-1-1" type="text" name="first-name" value="{{ h.user.first_name }}" disabled><br><br>
@@ -22,10 +25,12 @@
             <input class="uk-width-1-1" type="text" name="cell-phone" value="{{ h.cell_phone }}"><br><br>
 
             <label class="uk-form-label" for="parent-phone">Ouders:</label>
-            <input class="uk-width-1-1" type="text" name="parent-phone" value="{{ h.parent_phone }}"><br><br>
+            <input class="uk-width-1-1" type="text" name="parent-phone" value="{{ h.parent_phone }}"
+            {% if h.user.id == 2 %} disabled {% endif %}><br><br>
 
             <label class="uk-form-label" for="diet">Diet:</label>
-            <input class="uk-width-1-1" type="text" name="diet" value="{{ h.diet }}"><br><br>
+            <input class="uk-width-1-1" type="text" name="diet" value="{{ h.diet }}"
+            {% if h.user.id == 2 %} disabled {% endif %}><br><br>
 
             <button type="submit" name="profile-submit" value="user" class="uk-button uk-button-primary uk-float-right">Opslaan <i class="uk-icon-save"></i></button>
 
@@ -37,21 +42,32 @@
             <hr><br>
         </div>
 
-        <form class="uk-form uk-form-stacked uk-container-center uk-padding-remove uk-width-4-5" action="/">
-            {% with h=profile_user %}
+        {% if profile_user.user.id == 2 %}
+            <div class="uk-alert uk-alert-warning uk-align-center">
+                <span class="uk-align-right uk-text-small">Dit wachtwoord kan niet aangepast worden!</span>
+            </div>
+        {% else %}
 
-            <label class="uk-form-label" for="current-pass">Huidig wachtwoord:</label>
-            <input class="uk-width-1-1" type="text" name="current-pass"><br><br>
+            <form class="uk-form uk-form-stacked uk-container-center uk-padding-remove uk-width-4-5" action="{{ request.path }}" method="POST">
+                {% with h=profile_user %}
+                {% csrf_token %}
 
-            <label class="uk-form-label" for="new-pass">Nieuw wachtwoord:</label>
-            <input class="uk-width-1-1" type="text" name="new-pass"><br><br>
+                <input type="hidden" name="profile-edit-type" value="password" />
 
-            <label class="uk-form-label" for="verify-pass">Herhaal wachtwoord:</label>
-            <input class="uk-width-1-1" type="text" name="verify-pass"><br><br>
+                <label class="uk-form-label" for="current-pass">Huidig wachtwoord:</label>
+                <input class="uk-width-1-1" type="password" name="current-pass"><br><br>
 
-            <button type="submit" name="profile-submit" value="user" class="uk-button uk-button-primary uk-float-right">Opslaan <i class="uk-icon-save"></i></button>
-            {% endwith %}
-        </form>
+                <label class="uk-form-label" for="new-pass">Nieuw wachtwoord:</label>
+                <input class="uk-width-1-1" type="password" name="new-pass"><br><br>
+
+                <label class="uk-form-label" for="verify-pass">Herhaal wachtwoord:</label>
+                <input class="uk-width-1-1" type="password" name="verify-pass"><br><br>
+
+                <button type="submit" name="profile-submit" value="user" class="uk-button uk-button-primary uk-float-right">Opslaan <i class="uk-icon-save"></i></button>
+                {% endwith %}
+            </form>
+
+        {% endif %}
 
     </div>
 </div>
