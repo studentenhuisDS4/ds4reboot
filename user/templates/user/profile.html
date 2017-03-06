@@ -2,6 +2,14 @@
 
 {% block title %} | Profiel{% endblock %}
 
+{% block add_to_header %}
+<!-- FormValidation CSS file -->
+<link rel="stylesheet" href="/static/formvalidation/css/formValidation.min.css">
+<!-- FormValidation plugin and the class supports validating Semantic form -->
+<script src="/static/formvalidation/js/formValidation.min.js"></script>
+<script src="/static/formvalidation/js/framework/uikit.min.js"></script>
+{% endblock %}
+
 {% block body_block %}
 
     {% if user.is_authenticated %}
