@@ -19,13 +19,80 @@ def profile(request, user_id=None):
         if request.method == 'POST':
             try:
                 if request.POST.get("profile-edit-type", "") == "profile":
-                    messages.success(request, 'Profielaanpassing aangevraagd.')
+
+                    # Assume client side validation has succeeded
+                    email = request.POST.get("email", "")
+                    cellphone = request.POST.get("cellphone", "")
+                    parentphone = request.POST.get("parentphone", "")
+                    diet = request.POST.get("diet","")
+
+                    # Define user to be changed
+                    if request.user.id == user_id or user_id == None:
+                        user = request.user
+                    else:
+                        user = User.objects.get(id=user_id)
+                        if user is None:
+                            messages.error(request, 'Gebruiker-profiel is niet bekend.')
+
+                    if email == "" and user.email != "":
+                        messages.warning(request, 'Email verwijderd.')
+                    if cellphone == "" and user.housemate.cell_phone != "":
+                        messages.warning(request, 'Telefoonnummer verwijderd.')
+                    if parentphone == "" and user.housemate.parent_phone != "":
+                        messages.warning(request, 'Telefoonnummer ouders verwijderd.')
+                    if diet == "" and user.housemate.diet != "":
+                        messages.warning(request, 'Diet verwijderd.')
+
+                    user.email = email
+                    user.housemate.cell_phone = cellphone
+                    user.housemate.parent_phone = parentphone
+                    user.housemate.diet = diet
+                    user.housemate.save()
+                    user.save()
+
+                    messages.success(request, 'Profielaanpassing voor ' +
+                                     user.first_name + ' geslaagd.')
+
                 elif request.POST.get("profile-edit-type", "") == "password":
-                    messages.success(request, 'Wachtwoordaanpassing aangevraagd.')
+                    current_pass = request.POST.get("current-pass", "")
+                    new_pass = request.POST.get("new-pass", "")
+                    verify_pass = request.POST.get("verify-pass", "")
+
+                    if len(current_pass) == 0 and len(current_pass) > 5:
+                        messages.error(request, 'Huidig wachtwoord is niet lang genoeg of niet gegeven.')
+                    elif len(new_pass) == 0 and len(new_pass) > 5:
+                        messages.error(request, 'Nieuw wachtwoord is niet lang genoeg of niet gegeven.')
+                    elif len(verify_pass) == 0 and len(verify_pass) > 5:
+                        messages.error(request, 'Nieuw (herhaald) wachtwoord is niet lang genoeg of niet gegeven.')
+                    elif new_pass != verify_pass:
+                        messages.error(request, 'Nieuw (herhaald) wachtwoord is niet goed herhaald.')
+                    elif current_pass == new_pass or current_pass == verify_pass:
+                        messages.error(request, 'Nieuw, of herhaald wachtwoord is hetzelfde als het huidige wachtwoord.')
+                    else:
+                        # Define user to be changed
+                        if request.user.id == user_id or user_id == None:
+                            user = request.user
+                        else:
+                            user = User.objects.get(id=user_id)
+
+                        if user is not None:
+                            # Authenticate current password
+                            user_auth = authenticate(username=user.username, password=current_pass)
+                            if user_auth is not None:
+                                user_auth.set_password(new_pass)
+                                messages.success(request, 'Wachtwoord succesvol aangepast voor ' +
+                                                 user_auth.first_name + '.')
+                                user_auth.save()
+                            else:
+                                messages.error(request, 'Het huidige wachtwoord voor ' +
+                                               user.first_name + ' is onjuist.')
+                        else:
+                            messages.error(request, 'Gebruiker-profiel is niet bekend.')
+
                 else:
                     messages.error(request, 'Wrong profile editing type or unknown editing request.')
-            except:
-                messages.error(request, 'Form didn''t validate before performing the requested profile update.')
+            except Exception as e:
+                messages.error(request, 'Het formulier kon niet succesvol gevalideerd worden. ' + str(e))
 
             if not user_id:
                 user_id = request.user.id
