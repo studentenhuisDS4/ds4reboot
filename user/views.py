@@ -70,7 +70,7 @@ def profile(request, user_id=None):
                         messages.error(request, 'Nieuw, of herhaald wachtwoord is hetzelfde als het huidige wachtwoord.')
                     else:
                         # Define user to be changed
-                        if request.user.id == user_id or user_id == None:
+                        if request.user.id == user_id or user_id is None:
                             user = request.user
                         else:
                             user = User.objects.get(id=user_id)
