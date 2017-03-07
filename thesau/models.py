@@ -38,24 +38,33 @@ class BoetesReport(models.Model):
     type = models.CharField(max_length=30)
     boete_count = models.IntegerField(default=0)
 
+# model for ABN MT940 uploads
+class MutationsFiles(models.Model):
+
+    # hr data
+    report_id = models.IntegerField(default=None)
+    # upload data
+    upload_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    upload_date = models.DateField(default=timezone.now)
+    # file data
+    file = models.FileField(upload_to='bank_uploads/%Y/%m/%d')
 
 # model for parsed ABN MT940 uploads
-class AbnMutationsParsed(models.Model):
+class MutationsParsed(models.Model):
+
+    # hr data
     report_id = models.IntegerField(default=None)
+    # unparsed original data
+    mutation_file = models.ForeignKey(MutationsFiles, on_delete=models.CASCADE)
+    # parsed mutations
     start_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     end_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     source_IBAN = IBANField(enforce_database_constraint=True, unique=False)
-    report_date = models.DateField(null=True)
+    mutation_date = models.DateField(null=True)
 
 
-# model for ABN MT940 uploads
-class ABNMutations(models.Model):
 
-    # basic data
-    report_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    report_id = models.IntegerField(default=None)
-    report_date = models.DateField(default=timezone.now)
-    report_path = models.CharField(default=None, max_length=50)
+
 
 
 

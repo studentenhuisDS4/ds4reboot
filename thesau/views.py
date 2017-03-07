@@ -1,12 +1,18 @@
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
+from django.template import RequestContext
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from thesau.models import MutationsFiles
+from thesau.forms import MutationsUploadForm
 from django.utils import timezone
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
 from django.contrib import messages
 from decimal import Decimal
 from openpyxl import Workbook
+import datetime
 
 # view for thesau page
 def index(request):
@@ -15,17 +21,23 @@ def index(request):
 
         # get reports archive
         report_list = Report.objects.all()
+        latest_report = Report.objects.latest(field_name='report_date')
+        HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'report_list': report_list,
+            'latest_HR': latest_report,
+            'current_date': timezone.now().date,
+            'duration_HR': HR_day_difference
             }
         return render(request, 'thesau/index.html', context)
 
     else:
         messages.error(request, 'Only accessible to thesaus and admins.')
         return redirect('/')
+
 
 # view for HR page
 def hr(request):
@@ -185,6 +197,46 @@ def submit_hr(request):
     return redirect('/thesau/')
 
 
-def parse_static_hr():
+def bank_mutations(request):
+    if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
-    return
+        # get reports archive
+        latest_report = Report.objects.latest(field_name='report_date')
+        HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
+
+        # build context object
+        context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+            'latest_HR': latest_report,
+            'current_date': timezone.now().date,
+            'duration_HR': HR_day_difference
+        }
+
+        return render(request, 'thesau/bank_mutations.html', context)
+
+    else:
+        messages.error(request, 'Only accessible to thesaus and admins.')
+        return redirect('/')
+
+def bank_mutationss(request):
+    # Handle file upload
+    if request.method == 'POST':
+        form = MutationsUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_file = MutationsFiles(file = request.FILES['file'])
+            new_file.save()
+
+            # Redirect to the document list after POST
+            return HttpResponseRedirect('/thesau/')
+    else:
+        form = MutationsUploadForm() # A empty, unbound form
+
+    # Load documents for the list page
+    documents = MutationsFiles.objects.all()
+
+    # Render list page with the documents and the form
+    return render_to_response(
+        'thesau/bank_mutationss.html',
+        {'documents': documents, 'form': form},
+        context_instance=RequestContext(request)
+    )
