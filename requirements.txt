@@ -4,3 +4,5 @@ django-rest-framwework=3.4.6
 psycopg2==2.6.2
 gunicorn==19.6.0
 openpyxl==2.3.5
+mt-940=4.5
+django-iban-field==0.8

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import models
+from django_iban.fields import IBANField
 
 
 # model for thesau reports
@@ -36,4 +37,25 @@ class BoetesReport(models.Model):
 
     type = models.CharField(max_length=30)
     boete_count = models.IntegerField(default=0)
+
+
+# model for parsed ABN MT940 uploads
+class AbnMutationsParsed(models.Model):
+    report_id = models.IntegerField(default=None)
+    start_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    end_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    source_IBAN = IBANField(enforce_database_constraint=True, unique=False)
+    report_date = models.DateField(null=True)
+
+
+# model for ABN MT940 uploads
+class ABNMutations(models.Model):
+
+    # basic data
+    report_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    report_id = models.IntegerField(default=None)
+    report_date = models.DateField(default=timezone.now)
+    report_path = models.CharField(default=None, max_length=50)
+
+
 

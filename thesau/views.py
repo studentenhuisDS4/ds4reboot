@@ -183,3 +183,8 @@ def submit_hr(request):
         u.save()
 
     return redirect('/thesau/')
+
+
+def parse_static_hr():
+
+    return
