@@ -19,3 +19,9 @@ Insert data fixture from any dump (now called dumpABC.json):
 Run 'python manage.py loaddata dumpABC.json'
 
 In case of errors, save the dump file in ANSI type (not UTF-16, this has a wrong starting byte).
+
+---------------------
+Dumping database. Execute
+ python manage.py dumpdata --exclude contenttypes > fixture.json
+
+ Don't forget to save in ANSI format (through Notepad for example)
