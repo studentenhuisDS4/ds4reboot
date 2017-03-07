@@ -2,6 +2,7 @@
     <h2>{{ profile_user }}</h2>
     <span class="uk-text-muted">{{ profile_user.movein_date }}</span>
     <hr>
+    {% if request.user.is_superuser %}
     <h4>Selecteer andere huisgenoot</h4>
     <form id="profile-selector">
         <select class="uk-width-1-1 uk-form-small">
@@ -13,6 +14,11 @@
             {% endfor %}
         </select>
     </form>
+    {% else %}
+    <span class="uk-text-muted uk-text-small">
+        Alleen als admin kun je andere profielen bekijken.
+    </span>
+    {% endif %}
 </div>
 
 <script>
