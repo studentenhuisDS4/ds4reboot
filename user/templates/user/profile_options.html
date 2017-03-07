@@ -3,10 +3,10 @@
     <span class="uk-text-muted">{{ profile_user.movein_date }}</span>
     <hr>
     <h4>Selecteer andere huisgenoot</h4>
-    <form action="{{ request.path }}" method="get">
-        <select name="housemate" class="uk-width-1-1 uk-form-small">
-            <option value="0" selected="true" disabled>Huisgenoot</option>
-            {% for u in user_list %}
+    <form id="profile-selector">
+        <select class="uk-width-1-1 uk-form-small">
+            <option value="0" selected="true" disabled>{{ profile_user.user.first_name}}</option>
+            {% for u in active_users %}
             {% if not u == request.user.housemate %}
             <option value="{{ u.user_id }}">{{ u }}</option>
             {% endif %}
@@ -14,3 +14,14 @@
         </select>
     </form>
 </div>
+
+<script>
+$(document).ready(function() {
+    $("#profile-selector").on('change', function (event) {
+        event.preventDefault();
+        $form = $(this);
+        $select = $form.find('select');
+        window.location.replace("/user/profiel/" + $select.val() + "/");
+    });
+});
+</script>
