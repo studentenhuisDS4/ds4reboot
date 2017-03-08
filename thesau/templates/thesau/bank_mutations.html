@@ -3,6 +3,12 @@
 {% block title %} | Thesau{% endblock %}
 
 {% block add_to_header %}
+<!-- FormValidation CSS file -->
+<link rel="stylesheet" href="/static/formvalidation/css/formValidation.min.css">
+<!-- FormValidation plugin and the class supports validating Semantic form -->
+<script src="/static/formvalidation/js/formValidation.min.js"></script>
+<script src="/static/formvalidation/js/framework/uikit.min.js"></script>
+
 <link rel="stylesheet" href="/static/css/components/tooltip.almost-flat.min.css">
 <script src="/static/js/components/tooltip.min.js"></script>
 {% endblock %}
@@ -12,7 +18,7 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
-
+            {% include 'thesau/bank_mutations_upload.html' %}
         </div>
         <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
             {% include 'thesau/bank_options.html' %}

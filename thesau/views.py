@@ -1,10 +1,6 @@
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from django.shortcuts import render, redirect, render_to_response
-from django.template import RequestContext
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from thesau.models import MutationsFiles
+from django.shortcuts import render, redirect
 from thesau.forms import MutationsUploadForm
 from django.utils import timezone
 from thesau.models import Report, BoetesReport, UserReport
@@ -197,7 +193,7 @@ def submit_hr(request):
     return redirect('/thesau/')
 
 
-def bank_mutations(request):
+def bank_mutations_old(request):
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # get reports archive
@@ -218,25 +214,20 @@ def bank_mutations(request):
         messages.error(request, 'Only accessible to thesaus and admins.')
         return redirect('/')
 
-def bank_mutationss(request):
+def bank_mutations(request):
     # Handle file upload
     if request.method == 'POST':
         form = MutationsUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            new_file = MutationsFiles(file = request.FILES['file'])
-            new_file.save()
-
-            # Redirect to the document list after POST
-            return HttpResponseRedirect('/thesau/')
+            form.save()
+            return redirect('hr bank mutations')
+        else:
+            messages.error('Upload could not be successfully verified.')
     else:
-        form = MutationsUploadForm() # A empty, unbound form
-
-    # Load documents for the list page
-    documents = MutationsFiles.objects.all()
+        form = MutationsUploadForm()  # A empty, unbound form
 
     # Render list page with the documents and the form
-    return render_to_response(
-        'thesau/bank_mutationss.html',
-        {'documents': documents, 'form': form},
-        context_instance=RequestContext(request)
-    )
+    return render(request, 'thesau/bank_mutations.html', {
+        'form': form
+    })
+

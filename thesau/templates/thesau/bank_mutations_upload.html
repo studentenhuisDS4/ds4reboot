@@ -1,0 +1,70 @@
+<form id="sta-upload" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload</button>
+</form>
+
+<p><a href="{% url 'hr bank mutations' %}">Return to home</a></p>
+
+<script>
+    $(document).ready(function() {
+        $('#sta-upload')
+            .formValidation({
+                framework: 'uikit',
+                icon: {
+                    valid: 'uk-icon-check',
+                    invalid: 'uk-icon-times',
+                    validating: 'uk-icon-refresh'
+                },
+                fields: {
+                    'sta-file': {
+                        validators: {
+                            file: {
+                                extension: 'sta',
+                                maxSize: 1024 * 1024,
+                                message: 'The file must be in .sta format and must not exceed 1MB in size'
+                            }
+                        }
+                    },
+                    'new-pass': {
+                        validators: {
+                            nonEmpty: {
+                                message: 'The new password is required.'
+                            },
+                            identical: {
+                                field: 'verify-pass',
+                                message: 'The password and its confirm are not the same.'
+                            },
+                            stringLength: {
+                                min: 6,
+                                message: 'The password must be longer than 5 characters.'
+                            },
+                            different: {
+                                field: 'current-pass',
+                                message: 'The new password must be different.'
+                            }
+                        }
+                    },
+                    'verify-pass': {
+                        validators: {
+                            nonEmpty: {
+                                message: 'The new password must be confirmed.'
+                            },
+                            identical: {
+                                field: 'new-pass',
+                                message: 'The password and its confirm are not the same.'
+                            },
+                            stringLength: {
+                                min: 6,
+                                message: 'The password must be longer than 5 characters.'
+                            },
+                            different: {
+                                field: 'current-pass',
+                                message: 'The new password must be different.'
+                            }
+                        }
+                    }
+                }
+            });
+    })
+</script>
