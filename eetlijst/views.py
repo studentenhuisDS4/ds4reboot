@@ -29,13 +29,16 @@ def index(request, year=None, month=None, day=None):
     open_days = []
     if request.user.is_authenticated():
         try:
-            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False)
+            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by('date')
 
             if open_costs:
                 user_open = True
 
                 for oc in open_costs:
-                    open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
+                    # url_date = oc.date.isoformat().replace('-','/')
+                    open_days += [[oc.date.isoformat(),
+                                   oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo'),
+                                   oc.date]]
 
             else:
                 user_open = False
@@ -45,7 +48,6 @@ def index(request, year=None, month=None, day=None):
 
     else:
         user_open = False
-
 
     # get open/closed status for week and check for cook
     try:
