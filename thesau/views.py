@@ -63,41 +63,6 @@ def hr(request):
         return redirect('/')
 
 
-# handle add item post requests
-def add_item(request):
-
-    if request.method == 'POST':
-        if request.user.is_authenticated():
-
-            # get data from POST
-            item_type = request.POST.get('type')
-            item_note = request.POST.get('note')
-            item_amount = Decimal(round(Decimal(request.POST.get('amount')),2))
-
-            if item_type == '':
-                item_type = 'Overig'
-
-            if item_note == '':
-                messages.error(request, 'Must add note.')
-                return redirect(request.META.get('HTTP_REFERER'))
-
-            if request.user.id == 0:
-                messages.error(request, 'Must use non-house account.')
-                return redirect(request.META.get('HTTP_REFERER'))
-
-            # add entry to boete table
-            i = ItemsReport(submit_user=request.user, type=item_type, amount=item_amount, note=item_note)
-            i.save()
-
-        else:
-            return render(request, 'base/login_page.html')
-
-    else:
-        messages.error(request, 'Method must be POST.')
-
-    return redirect(request.META.get('HTTP_REFERER'))
-
-
 # generate XLSX file and commit changes
 def submit_hr(request):
 
