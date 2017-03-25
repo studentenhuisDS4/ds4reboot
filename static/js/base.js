@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
-
     function getCookie(name) {
+        console.log('Cookie requested');
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
@@ -25,7 +25,7 @@ $(document).ready(function(){
     }
 
     $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
+        beforeSend: function(xhr,settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
@@ -286,4 +286,69 @@ $(document).ready(function(){
         event.preventDefault();
         $('#eetlijst-dateform').submit();
     });
+
+    $('#sta-upload')
+        .formValidation({
+            framework: 'uikit',
+            icon: {
+                valid: 'uk-icon-check',
+                invalid: 'uk-icon-times',
+                validating: 'uk-icon-refresh'
+            },
+            fields: {
+                'sta-file': {
+                    validators: {
+                        file: {
+                            extension: 'sta',
+                            maxSize: 1024 * 1024,
+                            message: 'The file must be in .sta format and must not exceed 1MB in size'
+                        }
+                    }
+                }
+            }
+        });
+
+    // // Mutations upload form
+    // var progressbar = $("#progressbar"),
+    //     bar         = progressbar.find('.uk-progress-bar'),
+    //     settings    = {
+    //     action: '/thesau/bank_mutations/', // upload url
+    //
+    //     allow : '*.(sta)', // allow only images,
+    //
+    //     beforeSend: function(xhr) {
+    //         // We don't need to check method (right?)
+    //         if (!this.crossDomain) {
+    //             xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    //         }
+    //     },
+    //
+    //     loadstart: function() {
+    //         bar.css("width", "0%").text("0%");
+    //         progressbar.removeClass("uk-hidden");
+    //     },
+    //
+    //     error: function () {
+    //         alert('Error occurred during uploading.');
+    //     },
+    //
+    //     progress: function(percent) {
+    //         percent = Math.ceil(percent);
+    //         bar.css("width", percent+"%").text(percent+"%");
+    //     },
+    //
+    //     allcomplete: function(response) {
+    //
+    //         bar.css("width", "100%").text("100%");
+    //
+    //         setTimeout(function(){
+    //             progressbar.addClass("uk-hidden");
+    //         }, 250);
+    //         UIkit.notify("<i class='uk-icon-check'></i> Upload completed.", {status:'success'});
+    //     }
+    // };
+    //
+    // var select = UIkit.uploadSelect($("#id_sta_file"), settings),
+    //     drop   = UIkit.uploadDrop($("#upload-drop"), settings);
+
 });

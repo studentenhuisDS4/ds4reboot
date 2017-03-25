@@ -11,7 +11,7 @@
     <div class="uk-grid uk-container-center" style="max-width: 40em">
 
         <div class="uk-width-4-5 uk-container-center uk-padding-remove">
-            <h4 class="uk-text-muted">Upload mutaties</h4>
+            <h4 class="uk-text-muted">Verwerk mutaties</h4>
             <hr><br>
         </div>
         {% if 1 == 0 %}
@@ -31,11 +31,10 @@
             <form id="sta-upload" class="uk-form uk-form-horizontal uk-container-center uk-padding-remove uk-width-4-5" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="uk-form-row">
-                    <label class="uk-form-label" for="sta-file">Select mutations file:
-                        <i class="uk-icon-exclamation-circle uk-icon-hover" data-uk-tooltip="{pos:'right'}" title="MT940 bestandsformaat (*.sta)."></i>
-                    </label>
+                    <label class="uk-form-label" for="sta-file">Select mutations file (.sta):</label>
                     <div class="uk-form-controls">
                         {{ form.sta_file }}
+{#                            <button class="uk-button">Select .sta file</button>#}
                     </div>
                 </div>
                 <div class="uk-form-row">

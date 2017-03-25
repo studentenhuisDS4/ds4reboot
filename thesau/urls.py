@@ -6,7 +6,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^bank_mutationss/$', views.bank_mutations, name='hr bank mutations'),
+    url(r'^bank_mutations/$', views.bank_mutations, name='hr bank mutations'),
     url(r'^hr/$', views.hr, name='hr'),
     url(r'^hr/report/$', views.hr, name='hr report index'),
     url(r'^hr/report/([0-9])/$', views.hr, name='hr report'),

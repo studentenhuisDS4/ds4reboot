@@ -1,0 +1,42 @@
+<h6 class="uk-margin-remove uk-text-bold">Huidige mutatie-uploads</h6>
+<table class="tiny-rows uk-table uk-table-hover uk-text-small">
+    {% if not mut_files|length == 0 %}
+    <thead class="uk-h6 uk-text-small">
+        <tr>
+            <th>Datum</th>
+            <th>Nieuwe Mutaties</th>
+            <th>Door</th>
+            <th>Geselecteerd</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mut_file in mut_files %}
+        <tr>
+            <td>{{ mut_file.uploaded_at|disp_date_string }}</td>
+            <td>{{ mut_file.num_mutations }}</td>
+            <td>{{ mut_file.upload_user.housemate }}</td>
+            <td>{% if mut_file.applied %}
+                <a class="uk-text-danger" href="">
+                    <i class="uk-icon-close-circle" title="Verwerkt, maar nog niet gebruikt bestand."></i>
+                </a>
+                {% else %}
+                <a class="uk-text-success" href="">
+                    <i class="uk-icon-check-circle" title="Verwerkt, maar nog niet gebruikt bestand."></i>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td>-</td>
+        <td>Totaal: 0</td>
+        <td>-</td>
+        <td>-</td>
+    </tr>
+    </tfoot>
+    {% else %}
+    <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Geen mutatiebestanden ge-upload.</td></tr>
+    {% endif %}
+</table>

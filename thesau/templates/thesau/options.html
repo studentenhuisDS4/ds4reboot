@@ -2,25 +2,15 @@
     <h3 class="uk-panel-title">Thesau</h3>
     <hr>
 
-    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/thesau/hr/"><i class="uk-icon-book"></i> Lijsten resetten</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="{% url 'hr' %}"><i class="uk-icon-book"></i> Lijsten resetten</a></p>
     <p><a class="uk-button uk-button-large uk-width-1-1" disabled><i class="uk-icon-bank"></i> Biertelling</a></p>
-    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/thesau/bank_mutationss/"><i class="uk-icon-bank"></i> Bank-mutaties uploaden</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="{% url 'hr bank mutations' %}"><i class="uk-icon-bank"></i> Bank-mutaties</a></p>
     <p><a class="uk-button uk-button-large uk-width-1-1" disabled><i class="uk-icon-sticky-note"></i> Bonnetjes controleren</a></p>
     <p><a class="uk-button uk-button-large uk-width-1-1" disabled><i class="uk-icon-bar-chart"></i> HO overzicht</a></p>
     <p><a class="uk-button uk-button-large uk-width-1-1" disabled><i class="uk-icon-line-chart"></i> Cashflow overzicht</a></p>
 
     <hr>
-    <h6 class="uk-margin-remove uk-text-bold">HR status</h6>
-    <div class="uk-grid">
-        <span class="uk-text-small uk-width-6-10">Laatste HR datum:</span>
-        <span class="uk-text-small uk-width-4-10">{{ latest_HR.report_date }}</span>
-        <span class="uk-text-small uk-width-6-10">Huidige datum:</span>
-        <span class="uk-text-small uk-width-4-10">{{ current_date }}</span>
-        <span class="uk-text-small uk-width-6-10">
-            Aantal HR dagen: <i class="uk-icon-exclamation-circle uk-icon-hover" data-uk-tooltip="{pos:'bottom '}" title="Inclusief vandaag."></i>
-        </span>
-        <span class="uk-text-small uk-width-4-10">{{ duration_HR }}</span>
-    </div>
+    {% include 'thesau/options_HR_status.html' %}
 
     <hr>
     <h6 class="uk-margin-remove uk-text-bold">Bankrekening</h6>

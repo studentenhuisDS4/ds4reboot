@@ -43,26 +43,33 @@ class BoetesReport(models.Model):
 class MutationsFile(models.Model):
 
     # hr data
-    report_id = models.IntegerField(default=None)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
     description = models.CharField(max_length=255, blank=True)
     # upload data
     upload_user = models.ForeignKey(User, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     # file data
     sta_file = models.FileField(upload_to='bank_uploads/%Y/%m/%d')
+    num_mutations = models.IntegerField(default=0)
+    num_duplicates = models.IntegerField(default=0)
+    applied = models.BooleanField(default=False)
+    # finance data
+    opening_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    closing_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
 
 
 # model for parsed ABN MT940 uploads
 class MutationsParsed(models.Model):
 
     # hr data
-    report_id = models.IntegerField(default=None)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
     # unparsed original data
     mutation_file = models.ForeignKey(MutationsFile, on_delete=models.CASCADE)
     # parsed mutations
     start_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     end_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     source_IBAN = IBANField(enforce_database_constraint=True, unique=False)
+    dest_IBAN = IBANField(enforce_database_constraint=True, unique=False)
     mutation_date = models.DateField(null=True)
 
 
