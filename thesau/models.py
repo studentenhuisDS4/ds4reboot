@@ -12,7 +12,7 @@ class Report(models.Model):
     report_name = models.CharField(max_length=30)
     report_date = models.DateField(default=timezone.now)
     report_path = models.CharField(max_length=50)
-
+    report_closed = models.BooleanField(default=False)
 
 # model for report data
 class UserReport(models.Model):

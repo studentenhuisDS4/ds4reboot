@@ -225,7 +225,7 @@ def bank_mutations(request):
                             T_sum_amounts_post += amount
 
                         # Generate open balance from close balance - difference
-                        open_amount = mt940.models.Amount(str(T_close_bal.amount.amount - T_sum_amounts_post),
+                        open_amount = mt940.models.Amount(str(bal2dec(T_close_bal) - T_sum_amounts_post),
                                                              status='C',
                                                              currency=T_close_bal.amount.currency)
                         T_open_bal = mt940.models.Balance(amount=open_amount,
@@ -236,44 +236,54 @@ def bank_mutations(request):
                         print('Closing balance: ' + str(T_close_bal))
 
                         # Initialize variables
-                        T_sum_amounts_pre = Decimal(0.00)
                         T_sum_amounts_post = Decimal(0.00)
                         num_duplicate_mut = 0
 
+                        # Loop through transactions
                         for t in T:
                             amount = t.data['amount'].amount
                             t_date = t.data['entry_date']
-
                             T_sum_amounts_pre = T_sum_amounts_post
                             T_sum_amounts_post += amount
 
+                            t_start_bal = T_sum_amounts_pre + bal2dec(T_open_bal)
+                            t_end_bal = T_sum_amounts_post + bal2dec(T_open_bal)
+
                             # Check if there are duplicate entries
                             # TODO improve duplicate checking
+                            # TODO check for transactions outside HR period
+                            # (check previous HR report date and check with todays date)
                             mut_duplicates = MutationsParsed.objects.filter(mutation_date=t_date,
                                                                             source_IBAN='NL25INGB0002744573',
                                                                             dest_IBAN='NL25INGB0002744573',
-                                                                            start_balance=T_sum_amounts_pre,
-                                                                            end_balance=T_sum_amounts_post
-                                                                            )
+                                                                            start_balance=t_start_bal,
+                                                                            end_balance=t_end_bal)
                             # Skip duplicate mutation
                             if len(mut_duplicates) > 0:
                                 num_duplicate_mut += 1
                                 continue
                             else:
                                 MutParsed = MutationsParsed(report=latest_report,
-                                                start_balance=T_sum_amounts_pre,
-                                                end_balance=T_sum_amounts_post,
+                                                start_balance=t_start_bal,
+                                                end_balance=t_end_bal,
                                                 source_IBAN='NL25INGB0002744573',
                                                 dest_IBAN='NL25INGB0002744573',
                                                 mutation_date=t_date,
                                                 mutation_file=MutFile)
                                 MutParsed.save()
 
+
+                        MutFile.opening_balance = bal2dec(T_open_bal)
+                        MutFile.closing_balance = bal2dec(T_close_bal)
                         MutFile.num_mutations = len(T) - num_duplicate_mut
                         MutFile.num_duplicates = num_duplicate_mut
-                        MutFile.save()
 
-                        messages.success(request, 'Bestand ge-upload .')
+                        if MutFile.num_mutations == 0:
+                            MutFile.delete()
+                            messages.warning(request, 'Bestand bevatte geen nieuwe mutaties en is genegeerd.')
+                        else:
+                            MutFile.save()
+                            messages.success(request, 'Bestand ge-upload.')
                     except Exception as e:
                         print(str(e))
                         messages.error(request, 'File processing (partially) failed.')
@@ -313,3 +323,6 @@ def parse_transactions(file):
     transactions.parse(data)
 
     return transactions
+
+def bal2dec(bal):
+    return bal.amount.amount

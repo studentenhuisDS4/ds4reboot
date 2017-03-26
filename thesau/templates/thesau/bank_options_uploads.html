@@ -6,7 +6,7 @@
             <th>Datum</th>
             <th>Nieuwe Mutaties</th>
             <th>Door</th>
-            <th>Geselecteerd</th>
+            <th>Selecteren</th>
         </tr>
     </thead>
     <tbody>
@@ -16,12 +16,15 @@
             <td>{{ mut_file.num_mutations }}</td>
             <td>{{ mut_file.upload_user.housemate }}</td>
             <td>{% if mut_file.applied %}
+                <a class="uk-text-primary" href="">
+                    <i class="uk-icon-close-circle" title="Deselecteer dit bestand."></i>
+                </a>
                 <a class="uk-text-danger" href="">
-                    <i class="uk-icon-close-circle" title="Verwerkt, maar nog niet gebruikt bestand."></i>
+                    <i class="uk-icon-minus-square" title="Verwijder dit bestand."></i>
                 </a>
                 {% else %}
                 <a class="uk-text-success" href="">
-                    <i class="uk-icon-check-circle" title="Verwerkt, maar nog niet gebruikt bestand."></i>
+                    <i class="uk-icon-plus-square" title="Verwerkt en gebruikt bestand."></i>
                 </a>
                 {% endif %}
             </td>
