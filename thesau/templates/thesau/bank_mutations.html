@@ -42,8 +42,22 @@
                 {% include 'thesau/bank_options.html' %}
             </div>
         </div>
+
+        <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+            <div class="uk-width-medium-7-10">
+                <ul class="uk-tab" data-uk-tab="{connect:'#tab-container2', animation: 'fade'}">
+                    <li><a href=""><i class="uk-icon-user"></i> Mutaties uploaden</a></li>
+                    <li><a href=""><i class="uk-icon-user"></i> Mutaties selecteren</a></li>
+                    <li><a href=""><i class="uk-icon-user"></i> Mutaties verwerken</a></li>
+                </ul>
+
+                <ul id="tab-container2" class="uk-switcher tab-content">
+                    <li>{% include 'thesau/bank_mutations_upload.html' %}</li>
+                    <li>{% include 'thesau/bank_mutations_select.html' %}</li>
+                    <li>{% include 'thesau/bank_mutations_process.html' %}</li>
+                </ul>
+            </div>
     {% else %}
         {% include 'base/login_form.html' %}
     {% endif %}
-
 {% endblock %}

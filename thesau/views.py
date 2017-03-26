@@ -202,14 +202,12 @@ def bank_mutations_change(request, type, file_id):
                 ParsedMuts = MutationsParsed.objects.filter(mutation_file=MutFile)
                 if type == 'select':
                     MutFile.applied = True
-                    ParsedMuts.applied = True
-                    ParsedMuts.save()
+                    ParsedMuts.update(applied=True)
                     MutFile.save()
                     messages.success(request, 'Mutation file is applied.')
                 elif type == 'unselect':
                     MutFile.applied = False
-                    ParsedMuts.applied = False
-                    ParsedMuts.save()
+                    ParsedMuts.update(applied=False)
                     MutFile.save()
                     messages.success(request, 'Mutation file is unapplied.')
                 elif type == 'delete':
@@ -219,8 +217,8 @@ def bank_mutations_change(request, type, file_id):
                         messages.warning(request, 'Mutation file and associated mutations are deleted.')
                     except Exception as e:
                         messages.error(request, 'Could not delete mutation file: ' + str(e))
-            except:
-                messages.error(request, 'Mutation file could not be altered.')
+            except Exception as e:
+                messages.error(request, 'Mutation file could not be altered.' + str(e))
 
             return redirect('/thesau/bank_mutations/')
         else:
@@ -337,6 +335,7 @@ def bank_mutations(request):
         HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
         mut_files = MutationsFile.objects.filter(report=latest_report)
         used_mut_files = mut_files.exclude(applied=False)
+        applied_muts = MutationsParsed.objects.filter(report=latest_report, applied=True)
 
         total_used_mutations = 0
         for used_mut_file in used_mut_files:
@@ -349,6 +348,7 @@ def bank_mutations(request):
             'current_date': timezone.now().date,
             'duration_HR': HR_day_difference,
             'mut_files': mut_files,
+            'applied_muts': applied_muts,
             'num_used_mut': total_used_mutations,
             'form': form
         }

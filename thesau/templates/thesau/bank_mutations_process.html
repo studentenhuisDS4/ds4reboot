@@ -14,39 +14,14 @@
             <h4 class="uk-text-muted">Verwerk mutaties</h4>
             <hr><br>
         </div>
-        {% if 1 == 0 %}
-            <form enctype="multipart/form-data" method="post">
-                {% csrf_token %}
-                <div id="upload-drop" class="uk-placeholder uk-text-center">
-                    <i class="uk-icon-cloud-upload"></i>
-                    Drop .sta bestand hier of
-                    <a class="uk-form-file" style="padding:0px;">selecteer bestand{{ form.sta_file }}</a>
-                </div>
-
-                <div id="progressbar" class="uk-progress uk-hidden">
-                    <div class="uk-progress-bar" style="width: 0%;">...</div>
-                </div>
-            </form>
-        {% else %}
-            <form id="sta-upload" class="uk-form uk-form-horizontal uk-container-center uk-padding-remove uk-width-4-5" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="uk-form-row">
-                    <label class="uk-form-label" for="sta-file">Select mutations file (.sta):</label>
-                    <div class="uk-form-controls">
-                        {{ form.sta_file }}
-{#                            <button class="uk-button">Select .sta file</button>#}
-                    </div>
-                </div>
-                <div class="uk-form-row">
-                    <label class="uk-form-label" for="description">Description:</label>
-                    <div class="uk-form-controls uk-width-4-5">
-                        <input type="hidden" name="description"> {{ form.description }}
-                    </div>
-                </div>
-                <div class="uk-form-row">
-                    <button type="submit">Upload</button>
-                </div>
-            </form>
-        {% endif %}
+        {% for mut in applied_muts %}
+            <div class="uk-width-4-5 uk-container-center uk-padding-remove">
+                {{ mut.start_balance}}
+                to
+                {{ mut.end_balance }}
+                at
+                {{ mut.mutation_date }}
+            </div>
+        {% endfor %}
     </div>
 </div>

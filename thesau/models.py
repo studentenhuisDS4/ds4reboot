@@ -74,6 +74,8 @@ class MutationsParsed(models.Model):
     mutation_date = models.DateField(null=True)
     # mutation influence
     applied = models.BooleanField(default=False)
+    # label_type = models.
+    # label_person = models.
 
 
 
