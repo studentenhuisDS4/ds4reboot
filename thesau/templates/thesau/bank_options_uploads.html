@@ -16,14 +16,14 @@
             <td>{{ mut_file.num_mutations }}</td>
             <td>{{ mut_file.upload_user.housemate }}</td>
             <td>{% if mut_file.applied %}
-                <a class="uk-text-primary" href="">
-                    <i class="uk-icon-close-circle" title="Deselecteer dit bestand."></i>
+                <a class="uk-text-warning" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
+                    <i class="uk-icon-minus-square" title="Deselecteer dit bestand."></i>
                 </a>
-                <a class="uk-text-danger" href="">
-                    <i class="uk-icon-minus-square" title="Verwijder dit bestand."></i>
+                <a class="uk-text-danger" href="{% url 'bank mutations' %}change/delete/{{ mut_file.id }}">
+                    <i class="uk-icon-trash" title="Verwijder dit bestand."></i>
                 </a>
                 {% else %}
-                <a class="uk-text-success" href="">
+                <a class="uk-text-success" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}">
                     <i class="uk-icon-plus-square" title="Verwerkt en gebruikt bestand."></i>
                 </a>
                 {% endif %}
@@ -34,7 +34,7 @@
     <tfoot>
     <tr>
         <td>-</td>
-        <td>Totaal: 0</td>
+        <td>Totaal: {{ num_used_mut }}</td>
         <td>-</td>
         <td>-</td>
     </tr>

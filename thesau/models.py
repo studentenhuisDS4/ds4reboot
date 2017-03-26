@@ -65,12 +65,15 @@ class MutationsParsed(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
     # unparsed original data
     mutation_file = models.ForeignKey(MutationsFile, on_delete=models.CASCADE)
-    # parsed mutations
+    # parsed mutation
     start_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     end_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    transfer_type = models.CharField(default='D',max_length=1)
     source_IBAN = IBANField(enforce_database_constraint=True, unique=False)
     dest_IBAN = IBANField(enforce_database_constraint=True, unique=False)
     mutation_date = models.DateField(null=True)
+    # mutation influence
+    applied = models.BooleanField(default=False)
 
 
 

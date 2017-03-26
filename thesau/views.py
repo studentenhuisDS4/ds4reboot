@@ -193,6 +193,44 @@ def submit_hr(request):
 
     return redirect('/thesau/')
 
+
+def bank_mutations_change(request, type, file_id):
+    if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
+        if request.method == 'GET':
+            try:
+                MutFile = MutationsFile.objects.get(id=file_id)
+                ParsedMuts = MutationsParsed.objects.filter(mutation_file=MutFile)
+                if type == 'select':
+                    MutFile.applied = True
+                    ParsedMuts.applied = True
+                    ParsedMuts.save()
+                    MutFile.save()
+                    messages.success(request, 'Mutation file is applied.')
+                elif type == 'unselect':
+                    MutFile.applied = False
+                    ParsedMuts.applied = False
+                    ParsedMuts.save()
+                    MutFile.save()
+                    messages.success(request, 'Mutation file is unapplied.')
+                elif type == 'delete':
+                    try:
+                        ParsedMuts.delete()
+                        MutFile.delete()
+                        messages.warning(request, 'Mutation file and associated mutations are deleted.')
+                    except Exception as e:
+                        messages.error(request, 'Could not delete mutation file: ' + str(e))
+            except:
+                messages.error(request, 'Mutation file could not be altered.')
+
+            return redirect('/thesau/bank_mutations/')
+        else:
+            messages.error(request, 'Method must be GET.')
+    else:
+        messages.error(request, 'Only accessible to thesaus and admins.')
+
+    return redirect('/')
+
+
 def bank_mutations(request):
 
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
@@ -250,9 +288,11 @@ def bank_mutations(request):
                             t_end_bal = T_sum_amounts_post + bal2dec(T_open_bal)
 
                             # Check if there are duplicate entries
-                            # TODO improve duplicate checking
                             # TODO check for transactions outside HR period
                             # (check previous HR report date and check with todays date)
+
+                            # TODO improve duplicate checking
+                            # find IBAN source and destination if possible
                             mut_duplicates = MutationsParsed.objects.filter(mutation_date=t_date,
                                                                             source_IBAN='NL25INGB0002744573',
                                                                             dest_IBAN='NL25INGB0002744573',
@@ -269,9 +309,9 @@ def bank_mutations(request):
                                                 source_IBAN='NL25INGB0002744573',
                                                 dest_IBAN='NL25INGB0002744573',
                                                 mutation_date=t_date,
-                                                mutation_file=MutFile)
+                                                mutation_file=MutFile,
+                                                applied=False)
                                 MutParsed.save()
-
 
                         MutFile.opening_balance = bal2dec(T_open_bal)
                         MutFile.closing_balance = bal2dec(T_close_bal)
@@ -296,6 +336,11 @@ def bank_mutations(request):
         # get reports archive
         HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
         mut_files = MutationsFile.objects.filter(report=latest_report)
+        used_mut_files = mut_files.exclude(applied=False)
+
+        total_used_mutations = 0
+        for used_mut_file in used_mut_files:
+            total_used_mutations += used_mut_file.num_mutations
 
         # build context object
         context = {
@@ -304,6 +349,7 @@ def bank_mutations(request):
             'current_date': timezone.now().date,
             'duration_HR': HR_day_difference,
             'mut_files': mut_files,
+            'num_used_mut': total_used_mutations,
             'form': form
         }
 
