@@ -18,7 +18,7 @@ def index(request):
 
         # get reports archive
         report_list = Report.objects.all()
-        latest_report = Report.objects.latest(field_name='report_date')
+        latest_report = get_latest_report(request.user.id)
         HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
         # build context object
@@ -53,15 +53,15 @@ def hr(request):
                   str(list(user_list.aggregate(Sum('boetes_geturfd')).values())[0])]
 
         # get boete counts
-        # boetes_w = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
-        # boetes_r = BoetesReport.objects.get_or_create(type='r', defaults={'boete_count': 0})
+        boetes_w = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
+        boetes_r = BoetesReport.objects.get_or_create(type='r', defaults={'boete_count': 0})
 
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'user_list': user_list,
             'moveout_list': moveout_list,
-            'boetes': [BoetesReport.objects.get(type='w').boete_count, BoetesReport.objects.get(type='r').boete_count],
+            'boetes': [boetes_w[0].boete_count, boetes_r[0].boete_count],
             'totals': totals,
             }
 
@@ -122,8 +122,8 @@ def submit_hr(request):
               list(user_list.aggregate(Sum('boetes_geturfd')).values())[0]]
 
     # get boete counts
-    boetes_rwijn = BoetesReport.objects.get(type='r')
-    boetes_wwijn = BoetesReport.objects.get(type='w')
+    boetes_rwijn = BoetesReport.objects.get_or_create(type='r', defaults={'boete_count': 0})
+    boetes_wwijn = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
 
     # make workbook and select active worksheet
     wb = Workbook()
@@ -234,7 +234,7 @@ def bank_mutations(request):
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         form = MutationsUploadForm(request.POST, request.FILES)  # A empty, unbound form
-        latest_report = Report.objects.latest(field_name='report_date')
+        latest_report = get_latest_report(request.user.id)
 
         # Handle file upload
         if request.method == 'POST':
@@ -244,15 +244,21 @@ def bank_mutations(request):
 
                     # Fill data for to process file upload
                     MutFile = MutationsFile(sta_file=request.FILES['sta_file'],
-                                                     description=form_data['description'],
-                                                     report=latest_report,
-                                                     upload_user=request.user)
+                                            description=form_data['description'],
+                                            report=latest_report,
+                                            upload_user=request.user)
                     # Process the file and make sure the path is defined
                     MutFile.save()
 
                     # Process and parse data of MT940 file
                     try:
+
+                        # Parse transactions
                         T = parse_transactions(MutFile.sta_file.path)
+                        T_open_date = T[-1].t.data['entry_date']
+                        T_close_date = T[0].t.data['entry_date']
+                        MutFile.opening_date = T_open_date
+                        MutFile.closing_date = T_close_date
                         T_close_bal = T.data['final_closing_balance']
 
                         T_sum_amounts_post = Decimal(0.00)
@@ -262,11 +268,11 @@ def bank_mutations(request):
 
                         # Generate open balance from close balance - difference
                         open_amount = mt940.models.Amount(str(bal2dec(T_close_bal) - T_sum_amounts_post),
-                                                             status='C',
-                                                             currency=T_close_bal.amount.currency)
+                                                          status='C',
+                                                          currency=T_close_bal.amount.currency)
                         T_open_bal = mt940.models.Balance(amount=open_amount,
-                                                              status='C',
-                                                              date=T[0].data['entry_date'])
+                                                          status='C',
+                                                          date=T[0].data['entry_date'])
 
                         print('Opening balance: ' + str(T_open_bal))
                         print('Closing balance: ' + str(T_close_bal))
@@ -347,7 +353,7 @@ def bank_mutations(request):
             'latest_HR': latest_report,
             'current_date': timezone.now().date,
             'duration_HR': HR_day_difference,
-            'mut_files': mut_files,
+            'mut_files': mut_files.order_by('id'),
             'applied_muts': applied_muts,
             'num_used_mut': total_used_mutations,
             'form': form
@@ -369,6 +375,18 @@ def parse_transactions(file):
     transactions.parse(data)
 
     return transactions
+
+# An extended version of get_or_create with latest filter
+def get_latest_report(user_id):
+
+    if len(Report.objects.all()) == 0:
+        latest_report = Report(report_user_id=user_id,
+                               report_date=datetime.date.today())
+        latest_report.save()
+    else:
+        latest_report = Report.objects.latest(field_name='report_date')
+
+    return latest_report
 
 def bal2dec(bal):
     return bal.amount.amount

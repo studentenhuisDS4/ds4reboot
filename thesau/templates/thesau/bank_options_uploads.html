@@ -3,8 +3,8 @@
     {% if not mut_files|length == 0 %}
     <thead class="uk-h6 uk-text-small">
         <tr>
+            <th>Mutaties</th>
             <th>Datum</th>
-            <th>Nieuwe Mutaties</th>
             <th>Door</th>
             <th>Selecteren</th>
         </tr>
@@ -12,19 +12,16 @@
     <tbody>
         {% for mut_file in mut_files %}
         <tr>
-            <td>{{ mut_file.uploaded_at|disp_date_string }}</td>
             <td>{{ mut_file.num_mutations }}</td>
+            <td>{{ mut_file.uploaded_at|disp_date_string }}</td>
             <td>{{ mut_file.upload_user.housemate }}</td>
             <td>{% if mut_file.applied %}
-                <a class="uk-text-warning" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
-                    <i class="uk-icon-minus-square" title="Deselecteer dit bestand."></i>
-                </a>
-                <a class="uk-text-danger" href="{% url 'bank mutations' %}change/delete/{{ mut_file.id }}">
-                    <i class="uk-icon-trash" title="Verwijder dit bestand."></i>
+                <a class="uk-text-primary" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
+                    <i class="uk-icon-toggle-on" title="Deselecteer dit bestand."></i>
                 </a>
                 {% else %}
-                <a class="uk-text-success" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}">
-                    <i class="uk-icon-plus-square" title="Verwerkt en gebruikt bestand."></i>
+                <a class="uk-text-primary" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}">
+                    <i class="uk-icon-toggle-off" title="Verwerkt, ongebruikt bestand."></i>
                 </a>
                 {% endif %}
             </td>
@@ -33,8 +30,8 @@
     </tbody>
     <tfoot>
     <tr>
-        <td>-</td>
         <td>Totaal: {{ num_used_mut }}</td>
+        <td>-</td>
         <td>-</td>
         <td>-</td>
     </tr>

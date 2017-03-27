@@ -1,0 +1,132 @@
+<div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+    <div class="uk-grid uk-container-center" style="max-width: 40em">
+
+        <div class="uk-width-4-5 uk-container-center uk-padding-remove">
+            <h4 class="uk-text-muted">Overzicht mutatiebestanden</h4>
+            <hr>
+            <table class="uk-table uk-table-hover">
+                {% if not mut_files|length == 0 %}
+                <thead class="uk-h6">
+                    <tr>
+                        <th>Mutaties</th>
+                        <th>€-voor</th>
+                        <th>€-na</th>
+                        <th>Startdatum</th>
+                        <th>Einddatum</th>
+                        <th>Geupload</th>
+                        <th>Door</th>
+                        <th>Bestand</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mut_file in mut_files %}
+                    <tr>
+                        <td>{{ mut_file.num_mutations }}</td>
+                        <td>€{{ mut_file.opening_balance }}</td>
+                        <td>€{{ mut_file.closing_balance}}</td>
+                        <td></td>
+                        <td></td>
+                        <td><span class="uk-text-small">{{ mut_file.uploaded_at|disp_date_string }}</span> </td>
+                        <td>{{ mut_file.upload_user.housemate }}</td>
+                        <td>{% if mut_file.applied %}
+                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
+                                <i class="uk-icon-toggle-on" title="Deselecteer dit bestand."></i>
+                            </a>
+                            {% else %}
+                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}">
+                                <i class="uk-icon-toggle-off" title="Verwerkt, ongebruikt bestand."></i>
+                            </a>
+                            {% endif %}
+                            <a class="uk-text-danger" href="{% url 'bank mutations' %}change/delete/{{ mut_file.id }}">
+                                <i class="uk-icon-trash" title="Verwijder dit bestand."></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <!-- This is an anchor toggling an upload modal -->
+                            <a class="uk-text-success" href="#upload-overlay" data-uk-modal>
+                                <i class="uk-icon-plus-square" title="Upload nieuw bestand."></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><span class="uk-text-bold">Totaal:</span></td>
+                        <td><span class="uk-text-bold">Balans:</span> (voor)</td>
+                        <td><span class="uk-text-bold">Balans:</span> (na)</td>
+                        <td><span class="uk-text-bold">Datum:</span> (eerste)</td>
+                        <td><span class="uk-text-bold">Datum:</span> (laatste)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>{{ num_used_mut }}</td>
+                        <td>€0.00</td>
+                        <td>€0.00</td>
+                        <td>18 maart</td>
+                        <td>19 april</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+                {% else %}
+                <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Geen mutatiebestanden ge-upload.</td></tr>
+                {% endif %}
+            </table>
+            {% if warnings.overlap_files %}
+            <div class="uk-alert uk-alert-warning">
+                <i class="uk-icon-warning"></i>
+                There are overlapping mutation files! <span class="uk-text-bold">(Not recommended)</span>
+            </div>
+            {% endif %}
+            {% if warnings.negative_balance%}
+            <div class="uk-alert uk-alert-warning">
+                <i class="uk-icon-warning"></i>
+                The final account balance is negative! <span class="uk-text-bold">(Not recommended)</span>
+            </div>
+            {% endif %}
+            {% if warnings.overlap_prev_period%}
+            <div class="uk-alert uk-alert-warning">
+                <i class="uk-icon-warning"></i>
+                Mutations overlap previous HR period! Mutations only available when not processed previously.
+            </div>
+            {% endif %}
+            {% if errors.no_uploaded_files%}
+            <div class="uk-alert uk-alert-danger">
+                <i class="uk-icon-close"></i>
+                No mutation files have been uploaded.
+            </div>
+            {% elif errors.no_applied_files %}
+            <div class="uk-alert uk-alert-danger">
+                <i class="uk-icon-warning"></i>
+                No mutation files have been applied.
+            </div>
+            {% else %}
+            <div class="uk-alert uk-alert-success">
+                <i class="uk-icon-check"></i>
+                No warnings or errors to report.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- This is the upload modal -->
+    <div id="upload-overlay" class="uk-modal">
+        <div class="uk-modal-dialog">
+            <a class="uk-modal-close uk-close"></a>
+            {% include 'thesau/bank_mutations_upload.html' %}
+        </div>
+    </div>
+</div>

@@ -56,6 +56,8 @@ class MutationsFile(models.Model):
     # finance data
     opening_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
     closing_balance = models.DecimalField(default=0, decimal_places=2, max_digits=8)
+    opening_date = models.DateField(null=True)
+    closing_date = models.DateField(null=True)
 
 
 # model for parsed ABN MT940 uploads
