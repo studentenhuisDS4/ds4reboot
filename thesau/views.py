@@ -18,7 +18,7 @@ def index(request):
 
         # get reports archive
         report_list = Report.objects.all()
-        latest_report = get_latest_report(request.user.id)
+        latest_report = get_latest_report(request.user)
         HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
         # build context object
@@ -142,13 +142,13 @@ def submit_hr(request):
     ws2.title ='Geturfd Boetes'
 
     ws2.append(['W. Wijn', 'R. Wijn'])
-    ws2.append([boetes_wwijn.boete_count, boetes_rwijn.boete_count])
+    ws2.append([boetes_wwijn[0].boete_count, boetes_rwijn[0].boete_count])
 
     # reset boetes count
-    boetes_wwijn.boete_count = 0
-    boetes_rwijn.boete_count = 0
-    boetes_wwijn.save()
-    boetes_rwijn.save()
+    boetes_wwijn[0].boete_count = 0
+    boetes_rwijn[0].boete_count = 0
+    boetes_wwijn[0].save()
+    boetes_rwijn[0].save()
 
     if moveout_list:
         ws3 = wb.create_sheet()
@@ -168,8 +168,13 @@ def submit_hr(request):
 
     wb.save(path)
 
-    # create report entry in database
-    r = Report(report_user=request.user, report_name='HR %s %s' % (months[date.month], date.year), report_date=date, report_path=path)
+    # get report entry in database or create it
+    r = get_latest_report(request.user)
+    r.report_name = 'HR %s %s' % (months[date.month], date.year)
+    r.report_date = date
+    r.report_path = path
+    r.report_closed = True
+    # r = Report(report_user=request.user, report_name='HR %s %s' % (months[date.month], date.year), report_date=date, report_path=path)
     r.save()
 
     report_users = user_list | moveout_list
@@ -234,7 +239,7 @@ def bank_mutations(request):
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         form = MutationsUploadForm(request.POST, request.FILES)  # A empty, unbound form
-        latest_report = get_latest_report(request.user.id)
+        latest_report = get_latest_report(request.user)
 
         # Handle file upload
         if request.method == 'POST':
@@ -377,11 +382,12 @@ def parse_transactions(file):
     return transactions
 
 # An extended version of get_or_create with latest filter
-def get_latest_report(user_id):
+def get_latest_report(user):
 
-    if len(Report.objects.all()) == 0:
-        latest_report = Report(report_user_id=user_id,
-                               report_date=datetime.date.today())
+    if len(Report.objects.exclude(report_closed=True)) == 0:
+        latest_report = Report(report_user=user,
+                               report_date=datetime.date.today(),
+                               report_closed=False)
         latest_report.save()
     else:
         latest_report = Report.objects.latest(field_name='report_date')
