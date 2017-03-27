@@ -257,11 +257,10 @@ def bank_mutations(request):
 
                     # Process and parse data of MT940 file
                     try:
-
                         # Parse transactions
                         T = parse_transactions(MutFile.sta_file.path)
-                        T_open_date = T[-1].t.data['entry_date']
-                        T_close_date = T[0].t.data['entry_date']
+                        T_close_date = T[-1].data['entry_date']
+                        T_open_date = T[0].data['entry_date']
                         MutFile.opening_date = T_open_date
                         MutFile.closing_date = T_close_date
                         T_close_bal = T.data['final_closing_balance']

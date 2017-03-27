@@ -4,8 +4,7 @@
         <div class="uk-width-4-5 uk-container-center uk-padding-remove">
             <h4 class="uk-text-muted">Overzicht mutatiebestanden</h4>
             <hr>
-            <table class="uk-table uk-table-hover">
-                {% if not mut_files|length == 0 %}
+            <table class="uk-table uk-table-hover uk-hidden-small">
                 <thead class="uk-h6">
                     <tr>
                         <th>Mutaties</th>
@@ -19,14 +18,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if not mut_files|length == 0 %}
                     {% for mut_file in mut_files %}
                     <tr>
                         <td>{{ mut_file.num_mutations }}</td>
                         <td>€{{ mut_file.opening_balance }}</td>
                         <td>€{{ mut_file.closing_balance}}</td>
-                        <td></td>
-                        <td></td>
-                        <td><span class="uk-text-small">{{ mut_file.uploaded_at|disp_date_string }}</span> </td>
+                        <td><span class="uk-text-small">{{ mut_file.opening_date|disp_date_string}}</span></td>
+                        <td><span class="uk-text-small">{{ mut_file.closing_date|disp_date_string}}</span></td>
+                        <td><span class="uk-text-small">{{ mut_file.uploaded_at|disp_date_string }}</span></td>
                         <td>{{ mut_file.upload_user.housemate }}</td>
                         <td>{% if mut_file.applied %}
                             <a class="uk-text-primary" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
@@ -43,14 +43,15 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    {% endif %}
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                         <td>
                             <!-- This is an anchor toggling an upload modal -->
                             <a class="uk-text-success" href="#upload-overlay" data-uk-modal>
@@ -81,10 +82,10 @@
                         <td></td>
                     </tr>
                 </tfoot>
-                {% else %}
-                <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Geen mutatiebestanden ge-upload.</td></tr>
-                {% endif %}
             </table>
+            <div class="uk-visible-small">
+                This overview is currently only visible on bigger screen. Sorry :(
+            </div>
             {% if warnings.overlap_files %}
             <div class="uk-alert uk-alert-warning">
                 <i class="uk-icon-warning"></i>
