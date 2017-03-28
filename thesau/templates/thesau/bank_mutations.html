@@ -27,17 +27,18 @@
         <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
             <div class="uk-width-medium-7-10">
                 <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
-                    <li><a href=""><i class="uk-icon-search"></i> Overzicht </a></li>
-                    <li><a href=""><i class="uk-icon-upload"></i> Mutaties uploaden</a></li>
+                    <li><a href=""><i class="uk-icon-search"></i> Mutatie uploads </a></li>
                 </ul>
 
                 <ul id="tab-container" class="uk-switcher tab-content">
                     <li>{% include 'thesau/bank_mutations_overview.html' %}</li>
-                    <li>{% include 'thesau/bank_mutations_upload.html' %}</li>
                 </ul>
             </div>
             <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
                 {% include 'thesau/bank_options.html' %}
+            </div>
+            <div class="uk-width-medium-7-10" style="margin-top: 2.5em;">
+                {% include 'thesau/bank_mutations_result.html' %}
             </div>
         </div>
     {% else %}

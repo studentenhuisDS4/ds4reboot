@@ -44,45 +44,9 @@
                     </tr>
                     {% endfor %}
                     {% endif %}
-                    <tr>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>
-                            <!-- This is an anchor toggling an upload modal -->
-                            <a class="uk-text-success" href="#upload-overlay" data-uk-modal>
-                                <i class="uk-icon-plus-square" title="Upload nieuw bestand."></i>
-                            </a>
-                        </td>
-                    </tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td><span class="uk-text-bold">Totaal:</span></td>
-                        <td><span class="uk-text-bold">Balans:</span> (voor)</td>
-                        <td><span class="uk-text-bold">Balans:</span> (na)</td>
-                        <td><span class="uk-text-bold">Datum:</span> (eerste)</td>
-                        <td><span class="uk-text-bold">Datum:</span> (laatste)</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>{{ num_used_mut }}</td>
-                        <td>€0.00</td>
-                        <td>€0.00</td>
-                        <td>18 maart</td>
-                        <td>19 april</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tfoot>
             </table>
+
             <div class="uk-visible-small">
                 This overview is currently only visible on bigger screen. Sorry :(
             </div>
@@ -121,6 +85,7 @@
             </div>
             {% endif %}
         </div>
+
     </div>
 
     <!-- This is the upload modal -->
