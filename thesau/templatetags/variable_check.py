@@ -7,6 +7,7 @@ def exist(var):
     except NameError:
         return False
     else:
+        print('var is: '+ str(var))
         if var is None:
             return False
         else:

@@ -86,7 +86,12 @@
                 </tfoot>
             </table>
 
-            {% include 'thesau/bank_mutations_problems.html' %}
+            <div class="uk-hidden-small">
+                {% include 'thesau/bank_mutations_problems.html' %}
+            </div>
+            <div class="uk-visible-small">
+                {% include 'thesau/bank_mutations_problems_small.html' %}
+            </div>
         </div>
 
     </div>

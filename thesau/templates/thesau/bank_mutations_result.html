@@ -23,12 +23,12 @@
                 <tbody>
                     <tr>
                         <td>
-                            {{ num_used_mut }}
+                            {{ muts_used }}
                         </td>
-                        <td>€0.00</td>
-                        <td>€0.00</td>
-                        <td class="uk-text-small">18 maart</td>
-                        <td class="uk-text-small">19 april</td>
+                        <td>€{{ balance_start }}</td>
+                        <td>€{{ balance_end }}</td>
+                        <td class="uk-text-small">{{ date_begin|disp_date_string }}</td>
+                        <td class="uk-text-small">{{ date_end|disp_date_string }}</td>
                     </tr>
                 </tbody>
             </table>

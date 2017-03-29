@@ -247,7 +247,8 @@ def bank_mutations_upload(request, form, latest_report):
             MutFile = MutationsFile(sta_file=request.FILES['sta_file'],
                                     description=form_data['description'],
                                     report=latest_report,
-                                    upload_user=request.user)
+                                    upload_user=request.user,
+                                    applied=True)
             # Process the file and make sure the path is defined
             MutFile.save()
 
@@ -261,6 +262,7 @@ def bank_mutations_upload(request, form, latest_report):
                 MutFile.closing_date = T_close_date
                 T_close_bal = T.data['final_closing_balance']
 
+                T_sum_amounts_pre = Decimal(0.00)
                 T_sum_amounts_post = Decimal(0.00)
                 for t in T:
                     amount = t.data['amount'].amount
@@ -285,6 +287,7 @@ def bank_mutations_upload(request, form, latest_report):
                 for t in T:
                     amount = t.data['amount'].amount
                     t_date = t.data['entry_date']
+
                     T_sum_amounts_pre = T_sum_amounts_post
                     T_sum_amounts_post += amount
 
@@ -314,7 +317,7 @@ def bank_mutations_upload(request, form, latest_report):
                                                     dest_IBAN='NL25INGB0002744573',
                                                     mutation_date=t_date,
                                                     mutation_file=MutFile,
-                                                    applied=False)
+                                                    applied=True)
                         MutParsed.save()
 
                 MutFile.opening_balance = bal2dec(T_open_bal)
@@ -333,7 +336,7 @@ def bank_mutations_upload(request, form, latest_report):
                 messages.error(request, 'File processing (partially) failed.')
                 MutFile.delete()
 
-            return HttpResponseRedirect(reverse("thesau.views.bank_mutations"))
+            return HttpResponseRedirect("/thesau/bank_mutations/")
     except Exception as e:
         messages.error(request, 'File uploading (partially) failed.')
 
@@ -354,11 +357,42 @@ def bank_mutations(request):
         HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
         mut_files = MutationsFile.objects.filter(report=latest_report)
         used_mut_files = mut_files.exclude(applied=False)
-        applied_muts = MutationsParsed.objects.filter(report=latest_report, applied=True)
+        muts_applied = MutationsParsed.objects.filter(report=latest_report, applied=True)
+
+        if len(muts_applied)>0:
+            date_begin = muts_applied.earliest('mutation_date').mutation_date
+            date_end = muts_applied.latest('mutation_date').mutation_date
+            mut_begin = MutationsParsed.objects.filter(mutation_date=date_begin).earliest('id')
+            mut_end = MutationsParsed.objects.filter(mutation_date=date_end).latest('id')
+            bal_begin = mut_begin.start_balance
+            bal_end = mut_end.end_balance
+        else:
+            date_begin = None
+            date_end = None
+            bal_begin = '?'
+            bal_end = '?'
+
+        # build up warnings and errors
+        warnings = dict()
+        errors = dict()
 
         total_used_mutations = 0
         for used_mut_file in used_mut_files:
             total_used_mutations += used_mut_file.num_mutations
+            if used_mut_file.num_duplicates !=0:
+                try:
+                    warnings['overlap_files'] += 1
+                except:
+                    warnings['overlap_files'] = 1
+            if used_mut_file.closing_balance < Decimal(0.00):
+                warnings['negative_balance'] = True
+            if used_mut_file.opening_date < latest_report.report_date:
+                warnings['overlap_prev_hr'] = True
+
+        if len(mut_files) == 0:
+            errors['no_uploaded_files'] = True
+        elif len(used_mut_files) == 0:
+            errors['no_applied_files'] = True
 
         # build context object
         context = {
@@ -367,9 +401,15 @@ def bank_mutations(request):
             'current_date': timezone.now().date,
             'duration_HR': HR_day_difference,
             'mut_files': mut_files.order_by('id'),
-            'applied_muts': applied_muts,
-            'num_used_mut': total_used_mutations,
-            'form': form
+            'muts_used': total_used_mutations,
+            'muts_applied': muts_applied,
+            'balance_start': bal_begin,
+            'balance_end': bal_end,
+            'date_begin': date_begin,
+            'date_end': date_end,
+            'form': form,
+            'warnings': warnings,
+            'errors': errors,
         }
 
         # Render list page with the documents and the form

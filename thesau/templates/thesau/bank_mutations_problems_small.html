@@ -1,0 +1,21 @@
+{% if warnings and errors %}
+    <div class="uk-alert uk-alert-danger">
+        <i class="uk-icon-close"></i>
+        Warnings and errors: see problems tab.
+    </div>
+{% elif warnings %}
+    <div class="uk-alert uk-alert-warning">
+        <i class="uk-icon-warning"></i>
+        There are warnings.
+    </div>
+{% elif errors %}
+    <div class="uk-alert uk-alert-alert">
+        <i class="uk-icon-check"></i>
+        Error(s) must be solved before continuing.
+    </div>
+{% else %}
+     <div class="uk-alert uk-alert-success">
+        <i class="uk-icon-check"></i>
+        No errors or warnings. You can proceed.
+    </div>
+{% endif %}

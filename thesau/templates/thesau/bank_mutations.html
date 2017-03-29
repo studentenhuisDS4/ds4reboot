@@ -31,18 +31,29 @@
                         Mut<span class="uk-hidden-small">atie</span><span class="uk-visible-small">.</span>
                         uploads</a>
                     </li>
-                    {% if errors|exist or warnings|exist %}
+                    {% if errors or warnings %}
                         <li class="uk-width-1-4 uk-text-center">
                             <a><i class="uk-icon-warning"></i>
-                                <span class="uk-hidden-small">Problemen</span>
-                                <span class="uk-visible-small uk-text-small">Problemen</span>
+                                <span class="uk-hidden-small">Problems</span>
+                                <span class="uk-visible-small uk-text-small">Problems</span>
                             </a>
                         </li>
                     {% endif %}
                 </ul>
                 <ul id="tab-container" class="uk-switcher tab-content">
                     <li>{% include 'thesau/bank_mutations_uploads.html' %}</li>
-                    <li>{% include 'thesau/bank_mutations_uploads.html' %}</li>
+                    <li>
+                        <div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+                            <div class="uk-grid uk-container-center" style="max-width: 40em">
+
+                                <div class="uk-container-left uk-padding-remove uk-width-1-1">
+                                    <h4 class="uk-text-muted">Errors and warnings</h4>
+                                    <hr>
+                                    {% include 'thesau/bank_mutations_problems.html' %}
+                                </div>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
 
                 <br/>
