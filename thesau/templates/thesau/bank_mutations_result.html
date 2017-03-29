@@ -1,24 +1,37 @@
-<div class="uk-width-4-5 uk-container-center uk-padding-remove">
-    <h4 class="uk-text-muted">Resultaten mutatiebestanden</h4>
-    <hr>
-    <table class="uk-table uk-table-hover uk-hidden-small">
-        <thead class="uk-h6">
-            <tr>
-                <td><span class="uk-text-bold">Totaal:</span></td>
-                <td><span class="uk-text-bold">Balans:</span> (voor)</td>
-                <td><span class="uk-text-bold">Balans:</span> (na)</td>
-                <td><span class="uk-text-bold">Datum:</span> (eerste)</td>
-                <td><span class="uk-text-bold">Datum:</span> (laatste)</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ num_used_mut }}</td>
-                <td>€0.00</td>
-                <td>€0.00</td>
-                <td>18 maart</td>
-                <td>19 april</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+    <div class="uk-grid uk-container-center" style="max-width: 40em">
+
+        <div class="uk-container-left uk-padding-remove uk-width-1-1">
+            <h4 class="uk-text-muted">Resultaten</h4>
+            <hr>
+            <table class="uk-table">
+                <thead class="uk-h6">
+                    <tr>
+                        <td>
+                            <span class="uk-text-bold">
+                                Totaal:
+                                <i class="uk-icon-exclamation-circle" data-uk-tooltip="{pos:'bottom'}"
+                                   title="Aantal verwerkte mutaties"></i>
+                            </span>
+                        </td>
+                        <td><span class="uk-text-bold">Balans:</span> (voor)</td>
+                        <td><span class="uk-text-bold">Balans:</span> (na)</td>
+                        <td><span class="uk-text-bold">Datum:</span> (begin)</td>
+                        <td><span class="uk-text-bold">Datum:</span> (eind)</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            {{ num_used_mut }}
+                        </td>
+                        <td>€0.00</td>
+                        <td>€0.00</td>
+                        <td class="uk-text-small">18 maart</td>
+                        <td class="uk-text-small">19 april</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

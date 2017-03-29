@@ -1,0 +1,63 @@
+<div class="uk-hidden-small">
+    {% if warnings|exist %}
+        {% if warnings.overlap_files %}
+        <div class="uk-alert uk-alert-warning">
+            <i class="uk-icon-warning"></i>
+            There are overlapping mutation files! <span class="uk-text-bold">(Not recommended)</span>
+        </div>
+        {% endif %}
+        {% if warnings.negative_balance%}
+        <div class="uk-alert uk-alert-warning">
+            <i class="uk-icon-warning"></i>
+            The final account balance is negative! <span class="uk-text-bold">(Not recommended)</span>
+        </div>
+        {% endif %}
+        {% if warnings.overlap_prev_period%}
+        <div class="uk-alert uk-alert-warning">
+            <i class="uk-icon-warning"></i>
+            Mutations overlap previous HR period! Mutations only available when not processed previously.
+        </div>
+        {% endif %}
+    {% elif errors|exist %}
+        {% if errors.no_uploaded_files%}
+        <div class="uk-alert uk-alert-danger">
+            <i class="uk-icon-close"></i>
+            No mutation files have been uploaded.
+        </div>
+        {% elif errors.no_applied_files %}
+        <div class="uk-alert uk-alert-danger">
+            <i class="uk-icon-warning"></i>
+            No mutation files have been applied.
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="uk-alert uk-alert-success">
+            <i class="uk-icon-check"></i>
+            No warnings or errors to report.
+        </div>
+    {% endif %}
+</div>
+
+<div class="uk-visible-small">
+    {% if warnings|exist and errors|exist %}
+        <div class="uk-alert uk-alert-alert">
+            <i class="uk-icon-check"></i>
+            There are warnings and errors! Solve the errors to proceed.
+        </div>
+    {% elif warnings|exist %}
+        <div class="uk-alert uk-alert-warning">
+            <i class="uk-icon-check"></i>
+            There are warnings.
+        </div>
+    {% elif errors|exist %}
+        <div class="uk-alert uk-alert-alert">
+            <i class="uk-icon-check"></i>
+            Error(s) must be solved before continueing.
+        </div>
+    {% else %}
+         <div class="uk-alert uk-alert-success">
+            <i class="uk-icon-check"></i>
+            No errors or warnings. You can proceed.
+        </div>
+    {% endif %}
+</div>

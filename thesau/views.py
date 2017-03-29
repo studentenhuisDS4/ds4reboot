@@ -1,15 +1,17 @@
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.shortcuts import render, redirect
-from thesau.forms import MutationsUploadForm
+from django.http import HttpResponseRedirect
 from django.utils import timezone
+from django.contrib import messages
+from django.core.urlresolvers import reverse
+from thesau.forms import MutationsUploadForm
 from thesau.models import Report, BoetesReport, UserReport, MutationsFile, MutationsParsed
 from user.models import Housemate
-from django.contrib import messages
 from decimal import Decimal
 from openpyxl import Workbook
 import datetime
-import mt940, pprint
+import mt940
 
 # view for thesau page
 def index(request):
@@ -234,112 +236,119 @@ def bank_mutations_change(request, type, file_id):
     return redirect('/')
 
 
+def bank_mutations_upload(request, form, latest_report):
+
+    # Handle file upload
+    try:
+        if form.is_valid():
+            form_data = form.cleaned_data
+
+            # Fill data for to process file upload
+            MutFile = MutationsFile(sta_file=request.FILES['sta_file'],
+                                    description=form_data['description'],
+                                    report=latest_report,
+                                    upload_user=request.user)
+            # Process the file and make sure the path is defined
+            MutFile.save()
+
+            # Process and parse data of MT940 file
+            try:
+                # Parse transactions
+                T = parse_transactions(MutFile.sta_file.path)
+                T_close_date = T[-1].data['entry_date']
+                T_open_date = T[0].data['entry_date']
+                MutFile.opening_date = T_open_date
+                MutFile.closing_date = T_close_date
+                T_close_bal = T.data['final_closing_balance']
+
+                T_sum_amounts_post = Decimal(0.00)
+                for t in T:
+                    amount = t.data['amount'].amount
+                    T_sum_amounts_post += amount
+
+                # Generate open balance from close balance - difference
+                open_amount = mt940.models.Amount(str(bal2dec(T_close_bal) - T_sum_amounts_post),
+                                                  status='C',
+                                                  currency=T_close_bal.amount.currency)
+                T_open_bal = mt940.models.Balance(amount=open_amount,
+                                                  status='C',
+                                                  date=T[0].data['entry_date'])
+
+                print('Opening balance: ' + str(T_open_bal))
+                print('Closing balance: ' + str(T_close_bal))
+
+                # Initialize variables
+                T_sum_amounts_post = Decimal(0.00)
+                num_duplicate_mut = 0
+
+                # Loop through transactions
+                for t in T:
+                    amount = t.data['amount'].amount
+                    t_date = t.data['entry_date']
+                    T_sum_amounts_pre = T_sum_amounts_post
+                    T_sum_amounts_post += amount
+
+                    t_start_bal = T_sum_amounts_pre + bal2dec(T_open_bal)
+                    t_end_bal = T_sum_amounts_post + bal2dec(T_open_bal)
+
+                    # Check if there are duplicate entries
+                    # TODO check for transactions outside HR period
+                    # (check previous HR report date and check with todays date)
+
+                    # TODO improve duplicate checking
+                    # find IBAN source and destination if possible
+                    mut_duplicates = MutationsParsed.objects.filter(mutation_date=t_date,
+                                                                    source_IBAN='NL25INGB0002744573',
+                                                                    dest_IBAN='NL25INGB0002744573',
+                                                                    start_balance=t_start_bal,
+                                                                    end_balance=t_end_bal)
+                    # Skip duplicate mutation
+                    if len(mut_duplicates) > 0:
+                        num_duplicate_mut += 1
+                        continue
+                    else:
+                        MutParsed = MutationsParsed(report=latest_report,
+                                                    start_balance=t_start_bal,
+                                                    end_balance=t_end_bal,
+                                                    source_IBAN='NL25INGB0002744573',
+                                                    dest_IBAN='NL25INGB0002744573',
+                                                    mutation_date=t_date,
+                                                    mutation_file=MutFile,
+                                                    applied=False)
+                        MutParsed.save()
+
+                MutFile.opening_balance = bal2dec(T_open_bal)
+                MutFile.closing_balance = bal2dec(T_close_bal)
+                MutFile.num_mutations = len(T) - num_duplicate_mut
+                MutFile.num_duplicates = num_duplicate_mut
+
+                if MutFile.num_mutations == 0:
+                    MutFile.delete()
+                    messages.warning(request, 'Bestand bevatte geen nieuwe mutaties en is genegeerd.')
+                else:
+                    MutFile.save()
+                    messages.success(request, 'Bestand ge-upload.')
+            except Exception as e:
+                print(str(e))
+                messages.error(request, 'File processing (partially) failed.')
+                MutFile.delete()
+
+            return HttpResponseRedirect(reverse("thesau.views.bank_mutations"))
+    except Exception as e:
+        messages.error(request, 'File uploading (partially) failed.')
+
 def bank_mutations(request):
 
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
-        form = MutationsUploadForm(request.POST, request.FILES)  # A empty, unbound form
+        # A empty form which is loaded in background DOM
         latest_report = get_latest_report(request.user)
 
-        # Handle file upload
         if request.method == 'POST':
-            try:
-                if form.is_valid():
-                    form_data = form.cleaned_data
-
-                    # Fill data for to process file upload
-                    MutFile = MutationsFile(sta_file=request.FILES['sta_file'],
-                                            description=form_data['description'],
-                                            report=latest_report,
-                                            upload_user=request.user)
-                    # Process the file and make sure the path is defined
-                    MutFile.save()
-
-                    # Process and parse data of MT940 file
-                    try:
-                        # Parse transactions
-                        T = parse_transactions(MutFile.sta_file.path)
-                        T_close_date = T[-1].data['entry_date']
-                        T_open_date = T[0].data['entry_date']
-                        MutFile.opening_date = T_open_date
-                        MutFile.closing_date = T_close_date
-                        T_close_bal = T.data['final_closing_balance']
-
-                        T_sum_amounts_post = Decimal(0.00)
-                        for t in T:
-                            amount = t.data['amount'].amount
-                            T_sum_amounts_post += amount
-
-                        # Generate open balance from close balance - difference
-                        open_amount = mt940.models.Amount(str(bal2dec(T_close_bal) - T_sum_amounts_post),
-                                                          status='C',
-                                                          currency=T_close_bal.amount.currency)
-                        T_open_bal = mt940.models.Balance(amount=open_amount,
-                                                          status='C',
-                                                          date=T[0].data['entry_date'])
-
-                        print('Opening balance: ' + str(T_open_bal))
-                        print('Closing balance: ' + str(T_close_bal))
-
-                        # Initialize variables
-                        T_sum_amounts_post = Decimal(0.00)
-                        num_duplicate_mut = 0
-
-                        # Loop through transactions
-                        for t in T:
-                            amount = t.data['amount'].amount
-                            t_date = t.data['entry_date']
-                            T_sum_amounts_pre = T_sum_amounts_post
-                            T_sum_amounts_post += amount
-
-                            t_start_bal = T_sum_amounts_pre + bal2dec(T_open_bal)
-                            t_end_bal = T_sum_amounts_post + bal2dec(T_open_bal)
-
-                            # Check if there are duplicate entries
-                            # TODO check for transactions outside HR period
-                            # (check previous HR report date and check with todays date)
-
-                            # TODO improve duplicate checking
-                            # find IBAN source and destination if possible
-                            mut_duplicates = MutationsParsed.objects.filter(mutation_date=t_date,
-                                                                            source_IBAN='NL25INGB0002744573',
-                                                                            dest_IBAN='NL25INGB0002744573',
-                                                                            start_balance=t_start_bal,
-                                                                            end_balance=t_end_bal)
-                            # Skip duplicate mutation
-                            if len(mut_duplicates) > 0:
-                                num_duplicate_mut += 1
-                                continue
-                            else:
-                                MutParsed = MutationsParsed(report=latest_report,
-                                                start_balance=t_start_bal,
-                                                end_balance=t_end_bal,
-                                                source_IBAN='NL25INGB0002744573',
-                                                dest_IBAN='NL25INGB0002744573',
-                                                mutation_date=t_date,
-                                                mutation_file=MutFile,
-                                                applied=False)
-                                MutParsed.save()
-
-                        MutFile.opening_balance = bal2dec(T_open_bal)
-                        MutFile.closing_balance = bal2dec(T_close_bal)
-                        MutFile.num_mutations = len(T) - num_duplicate_mut
-                        MutFile.num_duplicates = num_duplicate_mut
-
-                        if MutFile.num_mutations == 0:
-                            MutFile.delete()
-                            messages.warning(request, 'Bestand bevatte geen nieuwe mutaties en is genegeerd.')
-                        else:
-                            MutFile.save()
-                            messages.success(request, 'Bestand ge-upload.')
-                    except Exception as e:
-                        print(str(e))
-                        messages.error(request, 'File processing (partially) failed.')
-                        MutFile.delete()
-
-                        # Count transactions and duplications
-            except Exception as e:
-                messages.error(request, 'File uploading (partially) failed.')
+            form = MutationsUploadForm(request.POST, request.FILES)
+            return bank_mutations_upload(request, form, latest_report)
+        else:
+            form = MutationsUploadForm()
 
         # get reports archive
         HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
@@ -369,6 +378,7 @@ def bank_mutations(request):
         messages.error(request, 'Only accessible to thesaus and admins.')
         return redirect('/')
 
+
 def parse_transactions(file):
     with open(file) as f:
         data = f.read()
@@ -379,6 +389,7 @@ def parse_transactions(file):
     transactions.parse(data)
 
     return transactions
+
 
 # An extended version of get_or_create with latest filter
 def get_latest_report(user):
@@ -392,6 +403,7 @@ def get_latest_report(user):
         latest_report = Report.objects.latest(field_name='report_date')
 
     return latest_report
+
 
 def bal2dec(bal):
     return bal.amount.amount

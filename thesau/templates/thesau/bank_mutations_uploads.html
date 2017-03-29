@@ -1,0 +1,101 @@
+<div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+    <div class="uk-grid uk-container-center" style="max-width: 40em">
+
+        <div class="uk-container-left uk-padding-remove uk-width-1-1">
+            <h4 class="uk-text-muted">Uploads bank</h4>
+            <hr>
+            <table class="uk-table uk-table-hover">
+                <thead class="uk-h6">
+                    <tr>
+                        <th>Mutaties</th>
+                        <th class="uk-hidden-small">€ na</th>
+                        <th class="uk-visible-small">Bedragen</th>
+                        <th class="uk-hidden-small">€ na</th>
+                        <th>
+                            <span class="uk-hidden-large">Periode</span>
+                            <span class="uk-visible-large">Startdatum</span>
+                        </th>
+                        <th class="uk-visible-large">Einddatum</th>
+                        <th class="uk-hidden-small">Geupload</th>
+                        <th class="uk-hidden-small">Door</th>
+                        <th>Bestand</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if not mut_files|length == 0 %}
+                    {% for mut_file in mut_files %}
+                    <tr>
+                        <td>{{ mut_file.num_mutations }}</td>
+                        <td><span class="uk-hidden-small">€{{ mut_file.opening_balance }}</span>
+                            <span class="uk-visible-small uk-text-small">€{{ mut_file.opening_balance }}</span>
+                            <span class="uk-visible-small">
+                                -
+                                <br/>
+                                <span class="uk-text-small">€{{ mut_file.closing_balance}}</span>
+                            </span>
+                        </td>
+                        <td class="uk-hidden-small">€{{ mut_file.closing_balance}}</td>
+                        <td>
+                            <span class="uk-text-small">{{ mut_file.opening_date|disp_date_string}}</span>
+                            <span class="uk-hidden-large">
+                                -
+                                <br/>
+                                <span class="uk-text-small">{{ mut_file.closing_date|disp_date_string}}</span>
+                            </span>
+                        </td>
+                        <td class="uk-visible-large">
+                            <span class="uk-text-small">{{ mut_file.closing_date|disp_date_string}}</span>
+                        </td>
+                        <td class="uk-hidden-small">
+                            <span class="uk-text-small">{{ mut_file.uploaded_at|disp_date_string }}</span>
+                        </td>
+                        <td class="uk-hidden-small">{{ mut_file.upload_user.housemate }}</td>
+                        <td>{% if mut_file.applied %}
+                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
+                                <i class="uk-icon-toggle-on" title="Deselecteer dit bestand."></i>
+                            </a>
+                            {% else %}
+                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}">
+                                <i class="uk-icon-toggle-off" title="Verwerkt, ongebruikt bestand."></i>
+                            </a>
+                            {% endif %}
+                            <a class="uk-text-danger" href="{% url 'bank mutations' %}change/delete/{{ mut_file.id }}">
+                                <i class="uk-icon-trash" title="Verwijder dit bestand."></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td class="uk-hidden-small">-</td>
+                        <td class="uk-hidden-small">-</td>
+                        <td class="uk-hidden-small">-</td>
+                        <td class="uk-hidden-small uk-hidden-medium">-</td>
+                        <td>
+                            <!-- This is an anchor toggling an upload modal -->
+                            <a class="uk-text-success" href="#upload-overlay" data-uk-modal>
+                                <i class="uk-icon-plus-square" title="Upload nieuw bestand."></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            {% include 'thesau/bank_mutations_problems.html' %}
+        </div>
+
+    </div>
+
+    <!-- This is the upload modal -->
+    <div id="upload-overlay" class="uk-modal">
+        <div class="uk-modal-dialog">
+            <a class="uk-modal-close uk-close"></a>
+            {% include 'thesau/bank_mutations_upload.html' %}
+        </div>
+    </div>
+</div>

@@ -1,9 +1,8 @@
 from django.template.defaulttags import register
-import datetime as dt
 
 
 # display date as DD Month
 @register.filter
 def disp_date_string(date):
-    months = {1: 'januari', 2: 'februari', 3: 'maart', 4: 'april', 5: 'mei', 6: 'juni', 7: 'juli', 8: 'augustus', 9: 'september', 10: 'oktober', 11: 'november', 12: 'december'}
+    months = {1: 'jan.', 2: 'feb.', 3: 'mar.', 4: 'apr.', 5: 'mei', 6: 'juni', 7: 'juli', 8: 'aug.', 9: 'sept.', 10: 'okt.', 11: 'nov.', 12: 'dec.'}
     return str(date.day).zfill(2) + ' ' + months[date.month]
