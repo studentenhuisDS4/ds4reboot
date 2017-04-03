@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.contrib import messages
-from django.core.urlresolvers import reverse
+from django.core.files import File
 from thesau.forms import MutationsUploadForm
 from thesau.models import Report, BoetesReport, UserReport, MutationsFile, MutationsParsed
 from user.models import Housemate
@@ -18,16 +18,23 @@ def index(request):
 
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
-        # get reports archive
         report_list = Report.objects.all()
-        latest_report = get_latest_report(request.user)
-        HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
+
+        # Get active and last closed report
+        current_open_report = get_open_report(request.user)
+        latest_report = get_latest_closed_report()
+        if latest_report is None:
+            last_HR_date = current_open_report.report_date
+            HR_day_difference = (datetime.date.today() - last_HR_date).days + 1
+        else:
+            last_HR_date = latest_report.report_date
+            HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'report_list': report_list,
-            'latest_HR': latest_report,
+            'last_HR_date': last_HR_date,
             'current_date': timezone.now().date,
             'duration_HR': HR_day_difference
             }
@@ -166,17 +173,22 @@ def submit_hr(request):
     date = timezone.now()
     months = {1: 'januari', 2: 'februari', 3: 'maart', 4: 'april', 5: 'mei', 6: 'juni', 7: 'juli', 8: 'augustus', 9: 'september', 10: 'oktober', 11: 'november', 12: 'december'}
 
-    path = 'static/hr_reports/HR_%s_%s.xlsx' % (date.year, months[date.month])
-
+    # Save contents, so they are available as ContentType
+    path = 'media/hr_reports/HR_temp.xlsx'
     wb.save(path)
 
+    f = open(path, 'rb')
+    xlsx_file = File(f)
+
+    # Relocate file so it is available in the database
+    r_file_name = 'HR_%s_%s.xlsx' % (date.year, months[date.month])
+
     # get report entry in database or create it
-    r = get_latest_report(request.user)
+    r = get_open_report(request.user)
     r.report_name = 'HR %s %s' % (months[date.month], date.year)
     r.report_date = date
-    r.report_path = path
+    r.report_file.save(r_file_name, xlsx_file)
     r.report_closed = True
-    # r = Report(report_user=request.user, report_name='HR %s %s' % (months[date.month], date.year), report_date=date, report_path=path)
     r.save()
 
     report_users = user_list | moveout_list
@@ -236,7 +248,7 @@ def bank_mutations_change(request, type, file_id):
     return redirect('/')
 
 
-def bank_mutations_upload(request, form, latest_report):
+def bank_mutations_upload(request, form, current_open_report):
 
     # Handle file upload
     try:
@@ -246,7 +258,7 @@ def bank_mutations_upload(request, form, latest_report):
             # Fill data for to process file upload
             MutFile = MutationsFile(sta_file=request.FILES['sta_file'],
                                     description=form_data['description'],
-                                    report=latest_report,
+                                    report=current_open_report,
                                     upload_user=request.user,
                                     applied=True)
             # Process the file and make sure the path is defined
@@ -269,12 +281,14 @@ def bank_mutations_upload(request, form, latest_report):
                     T_sum_amounts_post += amount
 
                 # Generate open balance from close balance - difference
-                open_amount = mt940.models.Amount(str(bal2dec(T_close_bal) - T_sum_amounts_post),
-                                                  status='C',
-                                                  currency=T_close_bal.amount.currency)
-                T_open_bal = mt940.models.Balance(amount=open_amount,
-                                                  status='C',
-                                                  date=T[0].data['entry_date'])
+                open_amount = mt940.models.\
+                    Amount(str(bal2dec(T_close_bal) - T_sum_amounts_post),
+                           status='C',
+                           currency=T_close_bal.amount.currency)
+                T_open_bal = mt940.models.\
+                    Balance(amount=open_amount,
+                            status='C',
+                            date=T[0].data['entry_date'])
 
                 print('Opening balance: ' + str(T_open_bal))
                 print('Closing balance: ' + str(T_close_bal))
@@ -300,17 +314,19 @@ def bank_mutations_upload(request, form, latest_report):
 
                     # TODO improve duplicate checking
                     # find IBAN source and destination if possible
-                    mut_duplicates = MutationsParsed.objects.filter(mutation_date=t_date,
-                                                                    source_IBAN='NL25INGB0002744573',
-                                                                    dest_IBAN='NL25INGB0002744573',
-                                                                    start_balance=t_start_bal,
-                                                                    end_balance=t_end_bal)
+                    mut_duplicates = MutationsParsed.objects.\
+                        filter(mutation_date=t_date,
+                               source_IBAN='NL25INGB0002744573',
+                               dest_IBAN='NL25INGB0002744573',
+                               start_balance=t_start_bal,
+                               end_balance=t_end_bal)
+
                     # Skip duplicate mutation
                     if len(mut_duplicates) > 0:
                         num_duplicate_mut += 1
                         continue
                     else:
-                        MutParsed = MutationsParsed(report=latest_report,
+                        MutParsed = MutationsParsed(report=current_open_report,
                                                     start_balance=t_start_bal,
                                                     end_balance=t_end_bal,
                                                     source_IBAN='NL25INGB0002744573',
@@ -340,26 +356,33 @@ def bank_mutations_upload(request, form, latest_report):
     except Exception as e:
         messages.error(request, 'File uploading (partially) failed.')
 
+
 def bank_mutations(request):
 
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
-        # A empty form which is loaded in background DOM
-        latest_report = get_latest_report(request.user)
+        # Get active and last closed report
+        current_open_report = get_open_report(request.user)
+        latest_report = get_latest_closed_report()
+        if latest_report is None:
+            last_HR_date = current_open_report.report_date
+            HR_day_difference = (datetime.date.today() - current_open_report.report_date).days + 1
+        else:
+            last_HR_date = latest_report.report_date
+            HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
         if request.method == 'POST':
             form = MutationsUploadForm(request.POST, request.FILES)
-            return bank_mutations_upload(request, form, latest_report)
+            return bank_mutations_upload(request, form, current_open_report)
         else:
+            # A empty form which is loaded in background DOM
             form = MutationsUploadForm()
 
-        # get reports archive
-        HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
-        mut_files = MutationsFile.objects.filter(report=latest_report)
+        mut_files = MutationsFile.objects.filter(report=current_open_report)
         used_mut_files = mut_files.exclude(applied=False)
-        muts_applied = MutationsParsed.objects.filter(report=latest_report, applied=True)
+        muts_applied = MutationsParsed.objects.filter(report=current_open_report, applied=True)
 
-        if len(muts_applied)>0:
+        if len(muts_applied) > 0:
             date_begin = muts_applied.earliest('mutation_date').mutation_date
             date_end = muts_applied.latest('mutation_date').mutation_date
             mut_begin = MutationsParsed.objects.filter(mutation_date=date_begin).earliest('id')
@@ -386,8 +409,9 @@ def bank_mutations(request):
                     warnings['overlap_files'] = 1
             if used_mut_file.closing_balance < Decimal(0.00):
                 warnings['negative_balance'] = True
-            if used_mut_file.opening_date < latest_report.report_date:
-                warnings['overlap_prev_hr'] = True
+            if last_HR_date is not None:
+                if used_mut_file.opening_date < last_HR_date:
+                    warnings['overlap_prev_hr'] = True
 
         if len(mut_files) == 0:
             errors['no_uploaded_files'] = True
@@ -397,7 +421,7 @@ def bank_mutations(request):
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-            'latest_HR': latest_report,
+            'last_HR_date': last_HR_date,
             'current_date': timezone.now().date,
             'duration_HR': HR_day_difference,
             'mut_files': mut_files.order_by('id'),
@@ -431,18 +455,32 @@ def parse_transactions(file):
     return transactions
 
 
-# An extended version of get_or_create with latest filter
-def get_latest_report(user):
+# An extended version of get_or_create with latest filter to get last closed report
+def get_latest_closed_report():
 
-    if len(Report.objects.exclude(report_closed=True)) == 0:
-        latest_report = Report(report_user=user,
-                               report_date=datetime.date.today(),
-                               report_closed=False)
-        latest_report.save()
+    # Make sure an open report is generated
+    closed_reports = Report.objects.filter(report_closed=True)
+    if len(closed_reports):
+        return closed_reports.latest(field_name='report_date')
     else:
-        latest_report = Report.objects.latest(field_name='report_date')
+        return None
 
-    return latest_report
+
+def get_open_report(user):
+    # There must be at least one open reports
+    open_reports = Report.objects.exclude(report_closed=True)
+    if len(open_reports) == 0:
+        open_report = Report(report_user=user,
+                             report_closed=False)
+        open_report.save()
+        print(type(open_report.report_date))
+        print('yo')
+        return open_report
+    elif len(open_reports) == 1:
+        return open_reports[0]
+    else:
+        # There may not be more than one open report
+        raise AssertionError
 
 
 def bal2dec(bal):

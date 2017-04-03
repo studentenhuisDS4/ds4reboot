@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import models
 from django_iban.fields import IBANField
+import datetime
 
 
 # model for thesau reports
@@ -10,8 +11,8 @@ class Report(models.Model):
     # basic data
     report_user = models.ForeignKey(User, on_delete=models.CASCADE)
     report_name = models.CharField(max_length=30)
-    report_date = models.DateField(default=timezone.now)
-    report_path = models.CharField(max_length=50)
+    report_date = models.DateField(auto_now_add=True)
+    report_file = models.FileField(upload_to='hr_reports/%Y/%m/%d')
     report_closed = models.BooleanField(default=False)
 
 # model for report data
