@@ -30,13 +30,37 @@ def index(request):
             last_HR_date = latest_report.report_date
             HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
+        # Stats for result bar
+        mut_files = MutationsFile.objects.filter(report=current_open_report)
+        muts_applied = MutationsParsed.objects.filter(report=current_open_report, applied=True)
+
+        if len(muts_applied) > 0:
+            date_begin = muts_applied.earliest('mutation_date').mutation_date
+            date_end = muts_applied.latest('mutation_date').mutation_date
+            mut_begin = MutationsParsed.objects.filter(mutation_date=date_begin).earliest('id')
+            mut_end = MutationsParsed.objects.filter(mutation_date=date_end).latest('id')
+            bal_begin = mut_begin.start_balance
+            bal_end = mut_end.end_balance
+        else:
+            date_begin = None
+            date_end = None
+            bal_begin = '?'
+            bal_end = '?'
+
+        total_used_mutations = len(muts_applied)
+
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'report_list': report_list,
             'last_HR_date': last_HR_date,
             'current_date': timezone.now().date,
-            'duration_HR': HR_day_difference
+            'duration_HR': HR_day_difference,
+            'muts_used': total_used_mutations,
+            'balance_start': bal_begin,
+            'balance_end': bal_end,
+            'date_begin': date_begin,
+            'date_end': date_end,
             }
         return render(request, 'thesau/index.html', context)
 
@@ -402,7 +426,7 @@ def bank_mutations(request):
         total_used_mutations = 0
         for used_mut_file in used_mut_files:
             total_used_mutations += used_mut_file.num_mutations
-            if used_mut_file.num_duplicates !=0:
+            if used_mut_file.num_duplicates != 0:
                 try:
                     warnings['overlap_files'] += 1
                 except:
@@ -473,8 +497,6 @@ def get_open_report(user):
         open_report = Report(report_user=user,
                              report_closed=False)
         open_report.save()
-        print(type(open_report.report_date))
-        print('yo')
         return open_report
     elif len(open_reports) == 1:
         return open_reports[0]
