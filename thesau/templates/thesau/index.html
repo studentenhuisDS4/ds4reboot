@@ -36,7 +36,7 @@
                         <td>{{ r.report_user.housemate }}</td>
                         <td>{{ r.report_date }}</td>
                         <td class="uk-text-center"><i class="uk-icon-check"></i> </td>
-                        <td class="uk-text-center"><a href="/{{ r.report_file }}"><i class="uk-icon-file"></i> (xlsx)</a></td>
+                        <td class="uk-text-center"><a href="../media/{{ r.report_file }}"><i class="uk-icon-file"></i> (xlsx)</a></td>
                         {% else %}
                         <td class="uk-text-muted">N.v.t.</td>
                         <td class="uk-text-muted">({{ r.report_user.housemate }})</td>

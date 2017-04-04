@@ -1,9 +1,6 @@
 from django.contrib.auth.models import User
-from django.utils import timezone
 from django.db import models
 from django_iban.fields import IBANField
-import datetime
-
 
 # model for thesau reports
 class Report(models.Model):

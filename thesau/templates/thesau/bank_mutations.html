@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 
 {% load display_date %}
+{% load math_op %}
 
 {% block title %} | Thesau{% endblock %}
 
@@ -39,6 +40,14 @@
                             </a>
                         </li>
                     {% endif %}
+{#                    {% if not errors %}#}
+{#                        <li class="uk-width-1-4 uk-text-center">#}
+{#                            <a><i class="uk-icon-warning"></i>#}
+{#                                <span class="uk-hidden-small">Overzicht</span>#}
+{#                                <span class="uk-visible-small uk-text-small">Overzicht</span>#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    {% endif %}#}
                 </ul>
                 <ul id="tab-container" class="uk-switcher tab-content">
                     <li>{% include 'thesau/bank_mutations_uploads.html' %}</li>
@@ -62,7 +71,12 @@
                     <li class="uk-width-1-4 uk-text-center"><a><i class="uk-icon-list"></i> HR overzicht</a></li>
                 </ul>
                 <ul id="tab-overview" class="uk-switcher tab-content">
-                    <li>{% include 'thesau/bank_mutations_result.html' %}</li>
+                    <li>
+                    {% include 'thesau/bank_mutations_result.html' %}
+                    {% if not errors %}
+                        {% include 'thesau/bank_mutations_table.html' %}
+                    {% endif %}
+                    </li>
                 </ul>
             </div>
             <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
