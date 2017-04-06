@@ -210,27 +210,27 @@ def remove_housemate(request):
                     est_hr_perc = 100
 
                 full_name = u.first_name + " " + u.last_name
-                msg_html = render_to_string('email/thesau_mail_dynamic.html',
-                                            {'full_name': full_name,
-                                             'balance': str(h.balance),
-                                             'beers': str(h.total_bier),
-                                             'red_wine': str(h.sum_rwijn),
-                                             'white_wine': str(h.sum_wwijn),
-                                             'fine_wine': str(h.boetes_open),
-                                             'fine_wine_turfed': str(h.boetes_geturfd_rwijn+h.boetes_geturfd_wwijn),
-                                             'move_in_date': str(h.movein_date),
-                                             'move_out_date': str(h.moveout_date.date()),
-                                             'last_hr_date': str(last_hr_date),
-                                             'est_hr_perc': str(est_hr_perc)
-                                             })
-                send_mail(
-                    'DS4 housemate moved out - site report',
-                    full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
-                    'studentenhuis@gmail.com',
-                    ['thesau@ds4.nl, president@ds4.nl'],
-                    html_message=msg_html,
-                    fail_silently=False,
-                )
+                # msg_html = render_to_string('email/thesau_mail_dynamic.html',
+                #                             {'full_name': full_name,
+                #                              'balance': str(h.balance),
+                #                              'beers': str(h.total_bier),
+                #                              'red_wine': str(h.sum_rwijn),
+                #                              'white_wine': str(h.sum_wwijn),
+                #                              'fine_wine': str(h.boetes_open),
+                #                              'fine_wine_turfed': str(h.boetes_geturfd_rwijn+h.boetes_geturfd_wwijn),
+                #                              'move_in_date': str(h.movein_date),
+                #                              'move_out_date': str(h.moveout_date.date()),
+                #                              'last_hr_date': str(last_hr_date),
+                #                              'est_hr_perc': str(est_hr_perc)
+                #                              })
+                # send_mail(
+                #     'DS4 housemate moved out - site report',
+                #     full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
+                #     'studentenhuis@gmail.com',
+                #     ['thesau@ds4.nl, president@ds4.nl'],
+                #     html_message=msg_html,
+                #     fail_silently=False,
+                # )
 
                 # Perform all required update operations
                 sum = 0
