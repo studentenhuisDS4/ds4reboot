@@ -21,7 +21,7 @@ def balance(request):
         housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
-            .filter(moveout_set=False).order_by('movein_date').exclude(display_name='Admin')
+            .exclude(moveout_set=True).order_by('movein_date').exclude(display_name='Admin')
 
         huis_balance = Housemate.objects.get(display_name='Huis').balance
         active_balance = 0
@@ -68,7 +68,7 @@ def housemates(request):
         housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
-            .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
+            .exclude(moveout_set=True).order_by('movein_date').exclude(display_name='Admin')
 
         year = str(timezone.now().year).zfill(2)
         month = str(timezone.now().month).zfill(2)
@@ -100,7 +100,7 @@ def permissions(request):
         housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')\
             .order_by('movein_date')
         inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
-            .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
+            .exclude(moveout_set=True).order_by('movein_date').exclude(display_name='Admin')
 
         year = str(timezone.now().year).zfill(2)
         month = str(timezone.now().month).zfill(2)
