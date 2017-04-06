@@ -13,6 +13,7 @@ from openpyxl import Workbook
 import datetime
 import mt940
 
+
 # view for thesau page
 def index(request):
 
@@ -23,6 +24,8 @@ def index(request):
         # Get active and last closed report
         current_open_report = get_open_report(request.user)
         latest_report = get_latest_closed_report()
+
+        # If no closed HR report exist, assume creation day as last HR end
         if latest_report is None:
             last_HR_date = current_open_report.report_date
             HR_day_difference = (datetime.date.today() - last_HR_date).days + 1
@@ -31,7 +34,6 @@ def index(request):
             HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
 
         # Stats for result bar
-        mut_files = MutationsFile.objects.filter(report=current_open_report)
         muts_applied = MutationsParsed.objects.filter(report=current_open_report, applied=True)
 
         if len(muts_applied) > 0:
@@ -277,11 +279,11 @@ def bank_mutations_upload(request, form, current_open_report):
     # Handle file upload
     try:
         if form.is_valid():
-            form_data = form.cleaned_data
+            # form_data = form.cleaned_data
 
             # Fill data for to process file upload
             MutFile = MutationsFile(sta_file=request.FILES['sta_file'],
-                                    description=form_data['description'],
+                                    # description=form_data['description'],
                                     report=current_open_report,
                                     upload_user=request.user,
                                     applied=True)
@@ -314,8 +316,8 @@ def bank_mutations_upload(request, form, current_open_report):
                             status='C',
                             date=T[0].data['entry_date'])
 
-                print('Opening balance: ' + str(T_open_bal))
-                print('Closing balance: ' + str(T_close_bal))
+                # print('Opening balance: ' + str(T_open_bal))
+                # print('Closing balance: ' + str(T_close_bal))
 
                 # Initialize variables
                 T_sum_amounts_post = Decimal(0.00)
@@ -332,16 +334,42 @@ def bank_mutations_upload(request, form, current_open_report):
                     t_start_bal = T_sum_amounts_pre + bal2dec(T_open_bal)
                     t_end_bal = T_sum_amounts_post + bal2dec(T_open_bal)
 
+                    # Extract source and dest. IBAN
+                    t_details = t.data['transaction_details']
+                    t_IBAN = find_between(t_details, '/IBAN/', '/')
+                    t_NAME = find_between(t_details, '/NAME/', '/')
+                    t_INFO = find_between(t_details, '/REMI/', '/')
+
+                    # No parsing ocurred, check for BEA pin transaction
+                    if t_IBAN == "":
+                        try:
+                            t_IBAN = 'NL89ABNA0479039860'
+                            t_INFO = t_details
+                            t_NAME = "#!Could not parse name!#"
+                            if t_details.find('BEA') != -1 and t_details.find('NR') != -1:
+                                pin_details = t_details.split("   ")
+                                if pin_details[0] == 'BEA':
+                                    pin_split = pin_details[2].split(' ')
+                                    pin_time = pin_split[0]
+                                    pin_info = find_between(pin_details[2], pin_time + ' ', 'PAS')
+                                    t_NAME = 'PIN'
+                                    t_INFO = pin_info + ' @' + pin_time + ' ' + pin_details[1]
+                            else:
+                                # Test if ABN string is found, then bank transaction
+                                if t_details.find('ABN AMRO BANK N.V.') != -1:
+                                    t_INFO = "Interne bank transactie"
+                                    t_NAME = "ABN AMRO BANK N.V."
+                        except Exception as e:
+                            print('Problem: ' + t_details + ' Exc: ' + str(e))
+
                     # Check if there are duplicate entries
                     # TODO check for transactions outside HR period
                     # (check previous HR report date and check with todays date)
 
-                    # TODO improve duplicate checking
-                    # find IBAN source and destination if possible
-                    mut_duplicates = MutationsParsed.objects.\
+                    mut_duplicates = MutationsParsed.objects. \
                         filter(mutation_date=t_date,
-                               source_IBAN='NL25INGB0002744573',
-                               dest_IBAN='NL25INGB0002744573',
+                               source_IBAN=t_IBAN,
+                               dest_IBAN='NL89ABNA0479039860',
                                start_balance=t_start_bal,
                                end_balance=t_end_bal)
 
@@ -353,8 +381,10 @@ def bank_mutations_upload(request, form, current_open_report):
                         MutParsed = MutationsParsed(report=current_open_report,
                                                     start_balance=t_start_bal,
                                                     end_balance=t_end_bal,
-                                                    source_IBAN='NL25INGB0002744573',
-                                                    dest_IBAN='NL25INGB0002744573',
+                                                    source_IBAN=t_IBAN,
+                                                    dest_IBAN='NL89ABNA0479039860',
+                                                    source_name=t_NAME,
+                                                    mutation_info=t_INFO,
                                                     mutation_date=t_date,
                                                     mutation_file=MutFile,
                                                     applied=True)
@@ -450,7 +480,7 @@ def bank_mutations(request):
             'duration_HR': HR_day_difference,
             'mut_files': mut_files.order_by('id'),
             'muts_used': total_used_mutations,
-            'muts_applied': muts_applied,
+            'muts_applied': muts_applied.order_by('mutation_date'),
             'balance_start': bal_begin,
             'balance_end': bal_end,
             'date_begin': date_begin,
@@ -507,3 +537,12 @@ def get_open_report(user):
 
 def bal2dec(bal):
     return bal.amount.amount
+
+
+def find_between(s, first, last):
+    try:
+        start = s.index(first) + len(first)
+        end = s.index(last, start)
+        return s[start:end]
+    except ValueError:
+        return ""

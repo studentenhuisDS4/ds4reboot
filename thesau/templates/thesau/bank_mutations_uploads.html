@@ -50,15 +50,15 @@
                         </td>
                         <td class="uk-hidden-small">{{ mut_file.upload_user.housemate }}</td>
                         <td>{% if mut_file.applied %}
-                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}">
+                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/unselect/{{ mut_file.id }}/">
                                 <i class="uk-icon-toggle-on" title="Deselecteer dit bestand."></i>
                             </a>
                             {% else %}
-                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}">
+                            <a class="uk-text-primary" href="{% url 'bank mutations' %}change/select/{{ mut_file.id }}/">
                                 <i class="uk-icon-toggle-off" title="Verwerkt, ongebruikt bestand."></i>
                             </a>
                             {% endif %}
-                            <a class="uk-text-danger" href="{% url 'bank mutations' %}change/delete/{{ mut_file.id }}">
+                            <a class="uk-text-danger" href="{% url 'bank mutations' %}change/delete/{{ mut_file.id }}/">
                                 <i class="uk-icon-trash" title="Verwijder dit bestand."></i>
                             </a>
                         </td>
@@ -78,7 +78,7 @@
                         <td>
                             <!-- This is an anchor toggling an upload modal -->
                             <a class="uk-text-success" href="#upload-overlay" data-uk-modal>
-                                <i class="uk-icon-plus-square" title="Upload nieuw bestand."></i>
+                                <i class="uk-icon-medium uk-icon-plus-square" title="Upload nieuw bestand."></i>
                             </a>
                         </td>
                     </tr>

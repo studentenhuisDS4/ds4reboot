@@ -6,4 +6,4 @@ from thesau.models import MutationsFile
 class MutationsUploadForm(forms.ModelForm):
     class Meta:
         model = MutationsFile
-        fields = ('sta_file', 'description', )
+        fields = ('sta_file', )

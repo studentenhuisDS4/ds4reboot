@@ -2,37 +2,51 @@
     <div class="uk-grid uk-container-center" style="max-width: 40em">
 
         <div class="uk-container-left uk-padding-remove uk-width-1-1">
-            <table class="basic-table small-rows uk-table uk-table-hover">
+            <table class="basic-table small-rows uk-table uk-table-hover" style="table-layout: fixed;">
                 <caption><h4 class="uk-text-muted">Geselecteerde mutaties</h4></caption>
 
                 <thead class="uk-h6">
                     <tr>
                         <th class="uk-hidden-small">€ voor</th>
                         <th class="uk-hidden-small">€ na</th>
-                        <th class="uk-text-right">€</th>
+                        <th class="uk-text-right">Bedrag (€)</th>
                         <th>Datum</th>
-                        <th class="uk-hidden-small">Geupload</th>
-                        <th class="uk-hidden-small">Door</th>
+                        <th>Door</th>
+                        <th class="uk-hidden-small">Info</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if not muts_applied|length == 0 %}
                     {% for mut in muts_applied %}
                     <tr>
-                        <td><span class="uk-hidden-small">€{{ mut.start_balance }}</span></td>
-                        <td><span class="uk-hidden-small">€{{ mut.end_balance }}</span></td>
-                        <td class="uk-text-right">€
+                        <td class="uk-hidden-small"><span>€{{ mut.start_balance }}</span></td>
+                        <td class="uk-hidden-small"><span>€{{ mut.end_balance }}</span></td>
+                        <td class="uk-text-right uk-text-nowrap">€
                             {% autoescape off %}
                             {{ mut.start_balance|subtract:mut.end_balance }}
                             {% endautoescape %}
                         </td>
-                        <td><span class="uk-text-small">{{ mut.mutation_date|disp_date_string}}</span></td>
-                        <td>
-                            <span class="uk-text-small uk-hidden-small">
-                            {{ mut.mutation_file.uploaded_at|disp_date_string}}
+                        <td class="uk-text-small">
+                            <span class="uk-text-nowrap">
+                                {{ mut.mutation_date|disp_date_string}}
                             </span>
                         </td>
-                        <td class="uk-hidden-small">{{ mut.mutation_file.upload_user.housemate }}</td>
+                        <td class="uk-text-truncate">
+                            <span class="uk-text-small"
+                                  data-uk-tooltip
+                                  title="NAAM: {{ mut.source_name}} </br> IBAN: {{ mut.source_IBAN }}">
+                                {% if mut.source_name == 'PIN' %}
+                                <i class="uk-icon-credit-card"></i>
+                                {% endif %}
+                                {{ mut.source_name }}
+                            </span>
+                        </td>
+                        <td class="uk-text-truncate uk-hidden-small">
+                            <span class="uk-text-small"
+                                  data-uk-tooltip
+                                  title="{{ mut.mutation_info }}">{{ mut.mutation_info }}
+                            </span>
+                        </td>
                     </tr>
                     {% endfor %}
                     {% endif %}
