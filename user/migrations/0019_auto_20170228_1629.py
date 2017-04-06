@@ -22,4 +22,12 @@ class Migration(migrations.Migration):
             name='boetes_geturfd_wwijn',
             field=models.IntegerField(default=0),
         ),
+        migrations.RemoveField(
+            model_name='housemate',
+            name='activate_date',
+        ),
+        migrations.RemoveField(
+            model_name='housemate',
+            name='inactivate_date',
+        ),
     ]
