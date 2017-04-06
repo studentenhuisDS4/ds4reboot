@@ -23,7 +23,7 @@
     </tfoot>
     <tbody>
         {% for u in user_list %}
-        <tr id="user-{{ u.user_id }}" class="user-row">
+        <tr class="user-{{ u.user_id }} user-row">
 
             <td class="uk-margin-remove form-small">
                 {% include 'bierlijst/turf_form.html' %}

@@ -252,6 +252,7 @@ def turf_item(request, user_id):
             h = Housemate.objects.get(user_id=user_id)
 
             # add entry to database
+            new_value = 0
             if turf_type == 'bier':
                 if h.sum_bier+turf_count >= 0:
                     h.sum_bier += turf_count
@@ -263,6 +264,10 @@ def turf_item(request, user_id):
                     success_message = 'Je kan geen negatief aantal biertjes hebben.'
                     return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
+                new_value = h.sum_bier
+                new_value_total = h.total_bier
+
+                # GCM testing (old)
                 # device = get_device_model()
                 # device.objects.all().send_message({'message':'my test message'})
 
@@ -272,18 +277,24 @@ def turf_item(request, user_id):
 
                 success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
 
+                new_value = h.sum_wwijn
+                new_value_total = h.total_wwijn
             elif turf_type =='rwijn':
                 h.sum_rwijn += Decimal(turf_count)
                 h.total_rwijn += Decimal(turf_count)
 
                 success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
 
+                new_value = h.sum_rwijn
+                new_value_total = h.total_rwijn
+
             h.save()
 
             t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count, turf_type=turf_type)
             t.save()
 
-            return HttpResponse(json.dumps({'result': success_message, 'status': 'success'}))
+            return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
+                                            'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
 
         else:
             return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
