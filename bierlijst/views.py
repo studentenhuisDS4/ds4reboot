@@ -254,7 +254,7 @@ def turf_item(request, user_id):
             # add entry to database
             new_value = 0
             if turf_type == 'bier':
-                if h.sum_bier+turf_count >= 0:
+                if h.sum_bier + turf_count >= 0:
                     h.sum_bier += turf_count
                     h.total_bier += turf_count
 
@@ -272,16 +272,24 @@ def turf_item(request, user_id):
                 # device.objects.all().send_message({'message':'my test message'})
 
             elif turf_type == 'wwijn':
-                h.sum_wwijn += Decimal(turf_count)
-                h.total_wwijn += Decimal(turf_count)
+                if h.sum_wwijn + turf_count >= 0:
+                    h.sum_wwijn += Decimal(turf_count)
+                    h.total_wwijn += Decimal(turf_count)
 
-                success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+                    success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+                else:
+                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
                 new_value = h.sum_wwijn
                 new_value_total = h.total_wwijn
             elif turf_type =='rwijn':
-                h.sum_rwijn += Decimal(turf_count)
-                h.total_rwijn += Decimal(turf_count)
+                if h.sum_rwijn + turf_count >= 0:
+                    h.sum_rwijn += Decimal(turf_count)
+                    h.total_rwijn += Decimal(turf_count)
+                else:
+                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
                 success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
 
