@@ -171,30 +171,33 @@ def remove_housemate(request):
                 h.moveout_set = True
                 h.moveout_date = timezone.now()
 
-                remaining_balance = h.balance
-
                 # So Django Authentication gives correct message (disabled account)
                 u = h.user
                 u.is_active = False
 
-                # Update housemate objects for other users
+                # Get required database objects
                 huis = Housemate.objects.get(display_name='Huis')
-                amount = -1 * remaining_balance
+                active_users = User.objects\
+                    .filter(is_active=True)\
+                    .exclude(id=remove_id)\
+                    .exclude(username='huis') \
+                    .exclude(username='admin')
 
-                active_users = User.objects.filter(is_active=True).exclude(id=remove_id)
-                other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
+                # Get coupled housemates
+                other_housemates = Housemate.objects.filter(user__id__in=active_users)
 
                 # Get old remainder and optimally calculate split cost to remove this housemate
                 remainder = huis.balance
-                split_cost = Decimal(round((amount - remainder)/len(other_housemates), 2))
+
+                split_cost = Decimal(round((h.balance + remainder)/len(other_housemates), 2))
+                total_diff = len(active_users) * split_cost
+                new_remainder = -(total_diff - h.balance)
 
                 # Calculate the remainder for the house
-                huis.balance = Decimal(len(other_housemates))*split_cost - Decimal(amount) + remainder
-
-                # overall_balance = active_balance + inactive_balance + huis_balance
+                huis.balance += new_remainder
 
                 # add log entry to eating list ho table
-                ho = HOLog(user=h.user, amount=remaining_balance, note='Verhuizen')
+                ho = HOLog(user=h.user, amount=h.balance, note='Verhuizen')
 
                 # Render email to send summary
                 last_hr_date = Report.objects.latest('report_date').report_date # Assume housemate already lived here
@@ -224,17 +227,18 @@ def remove_housemate(request):
                     'DS4 housemate moved out - site report',
                     full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
                     'studentenhuis@gmail.com',
-                    ['davidzwa@gmail.com'],
-                    # ['thesau@ds4.nl, president@ds4.nl'],
+                    ['thesau@ds4.nl, president@ds4.nl'],
                     html_message=msg_html,
                     fail_silently=False,
                 )
 
                 # Perform all required update operations
-                # h.balance = 0.00, this is moved to HR page
+                sum = 0
                 for o in other_housemates:
-                    o.balance -= split_cost
+                    o.balance += split_cost
+                    sum += o.balance
                     o.save()
+
                 h.save()
                 u.save()
                 huis.save()
