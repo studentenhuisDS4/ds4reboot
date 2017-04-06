@@ -6,9 +6,9 @@
     <h4>Selecteer andere huisgenoot</h4>
     <form id="profile-selector">
         <select class="uk-width-1-1 uk-form-small">
-            <option value="0" selected="true" disabled>{{ profile_user.user.first_name}}</option>
+            <option value="0" selected="true" disabled>{{ profile_user}}</option>
             {% for u in active_users %}
-            <option value="{{ u.user_id }}">{{ u.user.first_name }}</option>
+            <option value="{{ u.user_id }}">{{ u }}</option>
             {% endfor %}
         </select>
     </form>
