@@ -98,7 +98,7 @@ $(document).ready(function(){
                     var sum_el = $(".user-" + user_id + " .sum-" + turf_type + " span");
                     sum_el.fadeOut(100, function () {
                         old_val = parseFloat(sum_el.html());
-                        sum_el.html(json.new_value);
+                        sum_el.html(parseFloat(json.new_value).toFixed());
                     });
                     sum_el.fadeIn(100);
 
