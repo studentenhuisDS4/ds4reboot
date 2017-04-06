@@ -40,7 +40,7 @@
             <td class="sum-rwijn uk-visible-large uk-text-center medal"><span>{{ u.sum_rwijn|floatformat:"-2" }}</span></td>
             <td class="uk-hidden-small uk-text-center medal">
                 <span>
-                    {% if u.user.username != 'huis' %}{{ u.boetes_open }}
+                    {% if u.user.username != 'huis' %}{{ u.boetes_geturfd_rwijn|add:u.boetes_geturfd_wwijn }}
                     <span class="uk-text-small uk-text-muted"> van {{ u.boetes_open }} </span>
                     {% else %}
                     -
