@@ -41,7 +41,7 @@
             <td class="uk-hidden-small uk-text-center medal">
                 <span>
                     {% if u.user.username != 'huis' %}{{ u.boetes_open }}
-                    <span class="uk-text-small uk-text-muted"> van {{ u.boetes_total }} </span>
+                    <span class="uk-text-small uk-text-muted"> van {{ u.boetes_open }} </span>
                     {% else %}
                     -
                     {% endif %}
