@@ -12,14 +12,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
+        migrations.RenameField(
             model_name='housemate',
-            name='activate_date',
-            field=models.DateField(null=True),
+            old_name='boetes_geturfd',
+            new_name='boetes_geturfd_rwijn',
         ),
         migrations.AddField(
             model_name='housemate',
-            name='inactivate_date',
-            field=models.DateField(null=True),
+            name='boetes_geturfd_wwijn',
+            field=models.IntegerField(default=0),
         ),
     ]
