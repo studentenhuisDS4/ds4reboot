@@ -4,7 +4,7 @@
     <thead class="uk-h6">
         <tr>
             <th>Naam</th>
-            <th class="uk-text-center">Nummer</th>
+            <th class="uk-text-center">Aantal</th>
             <th class="uk-visible-large">Reden</th>
             <th>Tijd</th>
             {% if request.user|is_thesau or request.user|is_admin %}<th class="uk-visible-large uk-text-center">Verwijderen</th>{% endif %}
@@ -34,10 +34,33 @@
 
 {% if table_list.has_other_pages %}
 <ul class="uk-pagination">
-    <li {% if page_num == '1' %}class="uk-disabled"{% endif %}>{% if not page_num == '1' %}<a href="/bierlijst/boetes/{{ 1 }}"><i class="uk-icon-angle-double-left"></i></a>{% else %}<span><i class="uk-icon-angle-double-left"></i></span>{% endif %}</li>
-    <li {% if not table_list.has_previous %}class="uk-disabled"{% endif %}>{% if table_list.has_previous %}<a href="/bierlijst/boetes/{{ table_list.previous_page_number }}"><i class="uk-icon-angle-left"></i></a>{% else %}<span><i class="uk-icon-angle-left"></i></span>{% endif %}</li>
+    <li {% if page_num == '1' %}class="uk-disabled"{% endif %}>
+        {% if not page_num == '1' %}
+        <a href="/bierlijst/boetes/{{ 1 }}"><i class="uk-icon-angle-double-left"></i></a>
+        {% else %}
+        <span><i class="uk-icon-angle-double-left"></i></span>
+        {% endif %}
+    </li>
+    <li {% if not table_list.has_previous %}class="uk-disabled"{% endif %}>
+        {% if table_list.has_previous %}
+        <a href="/bierlijst/boetes/{{ table_list.previous_page_number }}"><i class="uk-icon-angle-left"></i></a>
+        {% else %}
+        <span><i class="uk-icon-angle-left"></i></span>
+        {% endif %}
+    </li>
     <li class="uk-disabled"><span>{{ page_num }}/{{ pages }}</span></li>
-    <li {% if not table_list.has_next %}class="uk-disabled"{% endif %}>{% if table_list.has_next %}<a href="/bierlijst/boetes/{{ table_list.next_page_number }}"><i class="uk-icon-angle-right"></i></a>{% else %}<span><i class="uk-icon-angle-right"></i></span>{% endif %}</li>
-    <li {% if page_num == pages %}class="uk-disabled"{% endif %}>{% if not page_num == pages %}<a href="/bierlijst/boetes/{{ pages }}"><i class="uk-icon-angle-double-right"></i></a>{% else %}<span><i class="uk-icon-angle-double-right"></i></span>{% endif %}</li>
+    <li {% if not table_list.has_next %}class="uk-disabled"{% endif %}>
+        {% if table_list.has_next %}
+        <a href="/bierlijst/boetes/{{ table_list.next_page_number }}"><i class="uk-icon-angle-right"></i></a>
+        {% else %}<span><i class="uk-icon-angle-right"></i></span>
+        {% endif %}
+    </li>
+    <li {% if page_num == pages %}class="uk-disabled"{% endif %}>
+        {% if not page_num == pages %}
+        <a href="/bierlijst/boetes/{{ pages }}"><i class="uk-icon-angle-double-right"></i></a>
+        {% else %}
+        <span><i class="uk-icon-angle-double-right"></i></span>
+        {% endif %}
+    </li>
 </ul>
 {% endif %}

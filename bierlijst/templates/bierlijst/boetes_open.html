@@ -5,7 +5,8 @@
         <tr>
             <th>Naam</th>
             <th class="uk-text-center">Open boetes</th>
-            <th class="uk-hidden-small uk-text-center">Geturfd boetes</th>
+            <th class="uk-hidden-small uk-text-center">Geturfde rode-wijn boetes</th>
+            <th class="uk-hidden-small uk-text-center">Geturfde witte-wijn boetes</th>
             <th class="uk-text-center">Turf Boetes</th>
         </tr>
     </thead>
@@ -15,7 +16,8 @@
         <tr>
             <td>{{ b }}</td>
             <td class="uk-text-center">{{ b.boetes_open }}</td>
-            <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd }}</td>
+            <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd_rwijn }}</td>
+            <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd_wwijn }}</td>
             <td class="uk-text-center">
                 <div class="uk-button-group">
                     <a href="/bierlijst/boetes/turf/w/{{ b.user_id }}/" class="uk-button uk-button-mini uk-button-primary uk-width-1-2">W. Wijn</a>

@@ -77,10 +77,11 @@ def boetes(request, page=1):
 
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
-    housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+    housemates = Housemate.objects.filter(user__id__in = active_users).\
+        exclude(display_name='Admin').exclude(display_name = 'Huis').order_by('movein_date')
 
     # get lists of all boetes and users with open boetes
-    log_boetes = Housemate.objects.filter(Q(boetes_open__gt = 0) | Q(boetes_geturfd__gt = 0), user__id__in = active_users).order_by('-boetes_open')
+    log_boetes = Housemate.objects.filter(Q(boetes_open__gt = 0), user__id__in = active_users).order_by('-boetes_open')
     num_boetes = str(list(log_boetes.filter(boetes_open__gt = 0).aggregate(Sum('boetes_open')).values())[0])
     boetes_list = Paginator(Boete.objects.order_by('-created_time'), 10)
 
@@ -184,12 +185,17 @@ def turf_boete(request, type_wine, user_id):
             # update housemate object
             h = Housemate.objects.get(user_id=user_id)
             h.boetes_open -= 1
-            h.boetes_geturfd += 1
-            h.save()
+            if type_wine == 'r':
+                h.boetes_geturfd_rwijn += 1
+            else:
+                h.boetes_geturfd_wwijn += 1
 
             # record type of wine
             t, _ = BoetesReport.objects.get_or_create(type=type_wine, defaults={'boete_count': 0})
             t.boete_count += 1
+
+            # save the updated tables
+            h.save()
             t.save()
 
         else:

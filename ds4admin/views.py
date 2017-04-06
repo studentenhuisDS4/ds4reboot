@@ -208,7 +208,7 @@ def remove_housemate(request):
                                              'red_wine': str(h.sum_rwijn),
                                              'white_wine': str(h.sum_wwijn),
                                              'fine_wine': str(h.boetes_open),
-                                             'fine_wine_turfed': str(h.boetes_geturfd),
+                                             'fine_wine_turfed': str(h.boetes_geturfd_rwijn+h.boetes_geturfd_wwijn),
                                              'move_in_date': str(h.movein_date),
                                              'move_out_date': str(h.moveout_date.date()),
                                              'last_hr_date': str(last_hr_date),
@@ -218,13 +218,14 @@ def remove_housemate(request):
                     'DS4 housemate moved out - site report',
                     full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
                     'studentenhuis@gmail.com',
-                    ['thesau@ds4.nl, president@ds4.nl'],
+                    ['davidzwa@gmail.com'],
+                    # ['thesau@ds4.nl, president@ds4.nl'],
                     html_message=msg_html,
                     fail_silently=False,
                 )
 
                 # Perform all required update operations
-                h.balance = 0.00
+                # h.balance = 0.00, this is moved to HR page
                 for o in other_housemates:
                     o.balance -= split_cost
                     o.save()
