@@ -41,7 +41,8 @@
             <td class="uk-hidden-small uk-text-center medal">
                 <span>
                     {% if u.user.username != 'huis' %}{{ u.boetes_geturfd_rwijn|add:u.boetes_geturfd_wwijn }}
-                    <span class="uk-text-small uk-text-muted"> van {{ u.boetes_open }} </span>
+                    <span class="uk-text-small uk-text-muted"> van
+                        {{ u.boetes_geturfd_rwijn|add:u.boetes_geturfd_wwijn|add:u.boetes_open }} </span>
                     {% else %}
                     -
                     {% endif %}
