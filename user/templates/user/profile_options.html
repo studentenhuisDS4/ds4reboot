@@ -8,9 +8,7 @@
         <select class="uk-width-1-1 uk-form-small">
             <option value="0" selected="true" disabled>{{ profile_user.user.first_name}}</option>
             {% for u in active_users %}
-            {% if not u == request.user.housemate %}
-            <option value="{{ u.user_id }}">{{ u }}</option>
-            {% endif %}
+            <option value="{{ u.user_id }}">{{ u.user.first_name }}</option>
             {% endfor %}
         </select>
     </form>
