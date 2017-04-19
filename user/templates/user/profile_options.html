@@ -1,4 +1,31 @@
 <div class="uk-panel uk-panel-box">
     <h2>{{ profile_user }}</h2>
     <span class="uk-text-muted">{{ profile_user.movein_date }}</span>
+    <hr>
+    {% if request.user.is_superuser %}
+    <h4>Selecteer andere huisgenoot</h4>
+    <form id="profile-selector">
+        <select class="uk-width-1-1 uk-form-small">
+            <option value="0" selected="true" disabled>{{ profile_user}}</option>
+            {% for u in active_users %}
+            <option value="{{ u.user_id }}">{{ u }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    {% else %}
+    <span class="uk-text-muted uk-text-small">
+        Alleen als admin kun je andere profielen bekijken.
+    </span>
+    {% endif %}
 </div>
+
+<script>
+$(document).ready(function() {
+    $("#profile-selector").on('change', function (event) {
+        event.preventDefault();
+        $form = $(this);
+        $select = $form.find('select');
+        window.location.replace("/user/profiel/" + $select.val() + "/");
+    });
+});
+</script>

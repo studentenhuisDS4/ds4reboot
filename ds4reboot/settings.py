@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gcm',
+    # 'gcm',
 ]
 
 INSTALLED_APPS += SECRET_APPS

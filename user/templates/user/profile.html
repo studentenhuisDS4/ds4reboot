@@ -28,7 +28,9 @@
             </ul>
 
             <ul id="tab-container" class="uk-switcher tab-content">
-                {% if profile_user.user.id == request.user.id or user.is_staff %}
+                {% if user.id == 2 or user.id == 1 %}
+                <li>{% include 'user/profile_edit_noaccess.html' %}</li>
+                {% elif profile_user.user.id == request.user.id or user.is_staff %}
                 <li>{% include 'user/profile_edit.html' %}</li>
                 {% else %}
                 <li>{% include 'user/profile_edit_noaccess.html' %}</li>
@@ -43,10 +45,12 @@
 
         </div>
         <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
-            {% if profile_user.user.id == request.user.id or user.is_staff %}
-            {% include 'user/profile_options.html' %}
+            {% if user.id == 2 or user.id == 1 %}
+                {% include 'user/profile_options_noaccess.html' %}
+            {% elif profile_user.user.id == request.user.id or user.is_staff %}
+                {% include 'user/profile_options.html' %}
             {% else %}
-            {% include 'user/profile_options_noaccess.html' %}
+                {% include 'user/profile_options_noaccess.html' %}
             {%  endif %}
         </div>
     </div>

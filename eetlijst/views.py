@@ -29,13 +29,16 @@ def index(request, year=None, month=None, day=None):
     open_days = []
     if request.user.is_authenticated():
         try:
-            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False)
+            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by('date')
 
             if open_costs:
                 user_open = True
 
                 for oc in open_costs:
-                    open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
+                    # url_date = oc.date.isoformat().replace('-','/')
+                    open_days += [[oc.date.isoformat(),
+                                   oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo'),
+                                   oc.date]]
 
             else:
                 user_open = False
@@ -45,7 +48,6 @@ def index(request, year=None, month=None, day=None):
 
     else:
         user_open = False
-
 
     # get open/closed status for week and check for cook
     try:
@@ -268,6 +270,7 @@ def enroll(request):
             user_id = request.POST.get('user_id')
         except:
             breakOff = True
+            user_id = None
 
         if user_id is None:
             # TODO: Should not occur without debug
@@ -388,6 +391,19 @@ def close(request):
                             date_entry.close_time = timezone.now()
                             date_entry.save()
 
+                            # Build up allergy string
+                            userlist_entries = UserList.objects.filter(list_date=date)
+                            allergy_status = ""
+
+                            for userlist_entry in userlist_entries:
+                                h = Housemate.objects.get(id=userlist_entry.user_id)
+                                if h.diet:
+                                    allergy_status += h.display_name + " requires: " + h.diet.upper() + ". "
+
+                            # Inform cook about allergy
+                            if allergy_status:
+                                messages.warning(request, allergy_status)
+
                         # if closed
                         else:
                             date_entry.open = True
@@ -413,7 +429,6 @@ def close(request):
                     remainder = huis.balance
                     split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
                     huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
-
 
                     # update userlist objects
                     try:

@@ -45,12 +45,21 @@ $(document).ready(function(){
             },
             success : function (json) {
                 var medals = json.medals;
-                $(".medal").removeClass("gold");
-                $(".medal").removeClass("silver");
-                $(".medal").removeClass("bronze");
-                $("#user-" + medals.gold + " .medal").addClass("gold");
-                $("#user-" + medals.silver + " .medal").addClass("silver");
-                $("#user-" + medals.bronze + " .medal").addClass("bronze");
+                $(".medal").removeClass("gold")
+                    .removeClass("silver")
+                    .removeClass("bronze");
+                $(".user-" + medals.gold + " .medal").addClass("gold");
+                $(".user-" + medals.silver + " .medal").addClass("silver");
+                $(".user-" + medals.bronze + " .medal").addClass("bronze");
+
+                $(".medal-quick").removeClass("gold-icon")
+                    .removeClass("silver-icon")
+                    .removeClass("bronze-icon");
+                // Also make medals work on quick access, inefficient for now
+                // console.log($(".user-" + medals.bronze + " .medal-quick"));
+                $(".user-" + medals.gold + " .medal-quick").addClass("gold-icon");
+                $(".user-" + medals.silver + " .medal-quick").addClass("silver-icon");
+                $(".user-" + medals.bronze + " .medal-quick").addClass("bronze-icon");
 
             }
         });
@@ -87,10 +96,10 @@ $(document).ready(function(){
                     $(".count-" + user_id).val('');
 
                     // Update user value
-                    var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");
+                    var sum_el = $(".user-" + user_id + " .sum-" + turf_type + " span");
                     sum_el.fadeOut(100, function () {
                         old_val = parseFloat(sum_el.html());
-                        sum_el.html(old_val + parseFloat(turf_count));
+                        sum_el.html(parseFloat(json.new_value).toFixed());
                     });
                     sum_el.fadeIn(100);
 
@@ -98,13 +107,13 @@ $(document).ready(function(){
                     var total_el = $("#total-" + turf_type + " span");
                     total_el.fadeOut(100, function () {
                         old_val = parseFloat(total_el.html());
-                        total_el.html(old_val + parseFloat(turf_count));
+                        total_el.html(json.new_value_total);
                     });
                     total_el.fadeIn(100);
 
                     // Update wine totals
                     if (turf_type == 'wwijn' || turf_type == 'rwijn') {
-                        var sum_wijn_el = $("#user-" + user_id + " .sum-wijn span:first");
+                        var sum_wijn_el = $(".user-" + user_id + " .sum-wijn span");
                         sum_wijn_el.fadeOut(100, function () {
                             old_val = parseFloat(sum_wijn_el.html());
                             sum_wijn_el.html(old_val + parseFloat(turf_count));

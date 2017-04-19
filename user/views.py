@@ -10,6 +10,7 @@ import json
 
 # display users index
 def index(request):
+
     return redirect('/user/profiel/%s/' % (request.user.id))
 
 
@@ -70,7 +71,7 @@ def profile(request, user_id=None):
                         messages.error(request, 'Nieuw, of herhaald wachtwoord is hetzelfde als het huidige wachtwoord.')
                     else:
                         # Define user to be changed
-                        if request.user.id == user_id or user_id == None:
+                        if request.user.id == user_id or user_id is None:
                             user = request.user
                         else:
                             user = User.objects.get(id=user_id)
@@ -115,11 +116,14 @@ def profile(request, user_id=None):
 
             # get requested user
             profile_user = Housemate.objects.get(user_id=user_id)
+            active_users = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin')\
+                .exclude(moveout_set=True)
 
             # build context object
             context = {
                 'breadcrumbs': ['profiel'],
-                'profile_user': profile_user
+                'profile_user': profile_user,
+                'active_users': active_users
                 }
 
             return render(request, 'user/profile.html', context)

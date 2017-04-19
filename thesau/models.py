@@ -24,7 +24,8 @@ class UserReport(models.Model):
     hr_rwijn = models.DecimalField(default=0, decimal_places=2, max_digits=8)
 
     # store boetes
-    hr_boetes = models.IntegerField(default=0)
+    hr_boete_rwijn = models.IntegerField(default=0)
+    hr_boete_wwijn = models.IntegerField(default=0)
 
     # eetlijst balance (moving out)
     eetlijst_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)

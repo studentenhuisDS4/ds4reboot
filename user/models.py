@@ -12,8 +12,6 @@ class Housemate(models.Model):
     # logistics
     room_number = models.IntegerField(null=True)
     movein_date = models.DateField(default=timezone.now)
-    inactivate_date = models.DateField(null=True)
-    activate_date = models.DateField(null=True)
     moveout_date = models.DateField(null=True)
 
     # flag user for moveout (null=normal, false=ready for deletion, true=deleted)
@@ -29,7 +27,8 @@ class Housemate(models.Model):
 
     # store boete counts and status
     boetes_open = models.IntegerField(default=0)
-    boetes_geturfd = models.IntegerField(default=0)
+    boetes_geturfd_rwijn = models.IntegerField(default=0)
+    boetes_geturfd_wwijn = models.IntegerField(default=0)
     boetes_total = models.IntegerField(default=0)
 
     # store bottle counts since last HR
