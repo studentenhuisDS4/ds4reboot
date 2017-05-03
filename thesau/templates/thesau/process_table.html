@@ -1,0 +1,120 @@
+<div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+    <div class="uk-grid uk-container-center" style="max-width: 40em">
+
+        <div class="uk-container-left uk-padding-remove uk-width-1-1">
+            <table class="small-rows uk-table uk-table-hover" style="table-layout: fixed;">
+                <caption><h4 class="uk-text-muted">Onverwerkte mutaties</h4></caption>
+
+                <thead class="uk-h6">
+                    <tr>
+{#                        <th class="uk-hidden-small">€ voor</th>#}
+{#                        <th class="uk-hidden-small">€ na</th>#}
+                        <th class="uk-text-right">Bedrag (€)</th>
+                        <th>Datum</th>
+                        <th>Label</th>
+                        <th>Door</th>
+                        <th class="uk-hidden-small">Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if not muts_applied|length == 0 %}
+                    {% for mut in muts_applied %}
+                    <tr>
+{#                        <td class="uk-hidden-small"><span>€{{ mut.start_balance }}</span></td>#}
+{#                        <td class="uk-hidden-small"><span>€{{ mut.end_balance }}</span></td>#}
+                        <td class="uk-text-right uk-text-nowrap">€
+                            {% autoescape off %}
+                            {{ mut.start_balance|subtract:mut.end_balance }}
+                            {% endautoescape %}
+                        </td>
+                        <td class="uk-text-small">
+                            <span class="uk-text-nowrap">
+                                {{ mut.mutation_date|disp_date_string}}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="uk-button uk-button-mini" type="button">
+                                <i class="uk-icon-forward"></i>
+                            </button>
+                            <button class="uk-button uk-button-mini" type="button">
+                                <strong>HR</strong>
+                            </button>
+                            <button class="uk-button uk-button-mini" type="button" data-uk-tooltip title="Commissie">
+                                <i class="uk-icon-users"></i>
+                            </button>
+                        </td>
+                        <td class="uk-text-truncate">
+                            <span class="uk-text-small"
+                                  data-uk-tooltip
+                                  title="NAAM: {{ mut.source_name}} </br> IBAN: {{ mut.source_IBAN }}">
+                                {% if mut.source_name == 'PIN' %}
+                                <i class="uk-icon-credit-card"></i>
+                                {% endif %}
+                                {{ mut.source_name }}
+                            </span>
+                        </td>
+                        <td class="uk-text-truncate uk-hidden-small">
+                            <span class="uk-text-small"
+                                  data-uk-tooltip
+                                  title="{{ mut.mutation_info }}">{{ mut.mutation_info }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <table class="basic-table small-rows uk-table uk-table-hover" style="table-layout: fixed;">
+                <caption><h4 class="uk-text-muted">Verwerkte mutaties</h4></caption>
+
+                <thead class="uk-h6">
+                    <tr>
+{#                        <th class="uk-hidden-small">€ voor</th>#}
+{#                        <th class="uk-hidden-small">€ na</th>#}
+                        <th class="uk-text-right">Bedrag (€)</th>
+                        <th>Datum</th>
+                        <th>Door</th>
+                        <th class="uk-hidden-small">Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if not muts_applied|length == 0 %}
+                    {% for mut in muts_applied %}
+                    <tr>
+{#                        <td class="uk-hidden-small"><span>€{{ mut.start_balance }}</span></td>#}
+{#                        <td class="uk-hidden-small"><span>€{{ mut.end_balance }}</span></td>#}
+                        <td class="uk-text-right uk-text-nowrap">€
+                            {% autoescape off %}
+                            {{ mut.start_balance|subtract:mut.end_balance }}
+                            {% endautoescape %}
+                        </td>
+                        <td class="uk-text-small">
+                            <span class="uk-text-nowrap">
+                                {{ mut.mutation_date|disp_date_string}}
+                            </span>
+                        </td>
+                        <td class="uk-text-truncate">
+                            <span class="uk-text-small"
+                                  data-uk-tooltip
+                                  title="NAAM: {{ mut.source_name}} </br> IBAN: {{ mut.source_IBAN }}">
+                                {% if mut.source_name == 'PIN' %}
+                                <i class="uk-icon-credit-card"></i>
+                                {% endif %}
+                                {{ mut.source_name }}
+                            </span>
+                        </td>
+                        <td class="uk-text-truncate uk-hidden-small">
+                            <span class="uk-text-small"
+                                  data-uk-tooltip
+                                  title="{{ mut.mutation_info }}">{{ mut.mutation_info }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="uk-panel uk-panel-box">
+    <h3 class="uk-panel-title">Thesau / HR</h3>
+
+    <hr>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary"
+          href="/thesau/"><i class="uk-icon-arrow-circle-left"></i> Terug</a>
+    </p>
+    <p><button class="uk-button uk-button-large uk-width-1-1 uk-button-default"
+    disabled>
+        1 - Uploaden <i class="uk-icon-cloud-upload"></i></button>
+    </p>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-success"
+          href="/thesau/process/">2 - Verwerken <i class="uk-icon-forward"></i></a>
+    </p>
+
+    <hr>
+    {% include 'thesau/mutations_options_uploads.html' %}
+
+    {% include 'thesau/options_HR_status.html' %}
+
+</div>

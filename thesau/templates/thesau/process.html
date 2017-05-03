@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+
+{% load display_date %}
+{% load math_op %}
+
+{% block title %} | Thesau{% endblock %}
+
+{% block add_to_header %}
+<!-- FormValidation CSS file -->
+<link rel="stylesheet" href="/static/formvalidation/css/formValidation.min.css">
+<!-- FormValidation plugin and the class supports validating Semantic form -->
+<script src="/static/formvalidation/js/formValidation.min.js"></script>
+<script src="/static/formvalidation/js/framework/uikit.min.js"></script>
+<!-- UIkit CSS and JS -->
+<link rel="stylesheet" href="/static/css/components/tooltip.almost-flat.min.css">
+<link rel="stylesheet" href="/static/css/components/upload.min.css">
+<link rel="stylesheet" href="/static/css/components/progress.min.css">
+<link rel="stylesheet" href="/static/css/components/placeholder.min.css">
+<link rel="stylesheet" href="/static/css/components/form-file.min.css">
+<script src="/static/js/components/tooltip.min.js"></script>
+<script src="/static/js/components/upload.min.js"></script>
+
+{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+        <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+            <div class="uk-width-medium-7-10">
+               <ul class="uk-tab" data-uk-tab="{connect:'#tab-overview', animation: 'fade'}">
+                    <li class="uk-width-1-4 uk-text-center"><a><i class="uk-icon-list"></i> HR overzicht</a></li>
+                </ul>
+                <ul id="tab-overview" class="uk-switcher tab-content">
+                    <li>
+                    {% if not errors %}
+                        {% include 'thesau/process_table.html' %}
+                    {% endif %}
+                    </li>
+                </ul>
+            </div>
+            <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
+                {% include 'thesau/process_options.html' %}
+            </div>
+
+        </div>
+    {% else %}
+        {% include 'base/login_form.html' %}
+    {% endif %}
+{% endblock %}

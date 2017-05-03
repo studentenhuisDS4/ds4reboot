@@ -50,7 +50,7 @@
 {#                    {% endif %}#}
                 </ul>
                 <ul id="tab-container" class="uk-switcher tab-content">
-                    <li>{% include 'thesau/bank_mutations_uploads.html' %}</li>
+                    <li>{% include 'thesau/mutations_uploads.html' %}</li>
                     <li>
                         <div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
                             <div class="uk-grid uk-container-center" style="max-width: 40em">
@@ -58,7 +58,7 @@
                                 <div class="uk-container-left uk-padding-remove uk-width-1-1">
                                     <h4 class="uk-text-muted">Errors and warnings</h4>
                                     <hr>
-                                    {% include 'thesau/bank_mutations_problems.html' %}
+                                    {% include 'thesau/mutations_problems.html' %}
                                 </div>
                             </div>
                         </div>
@@ -72,15 +72,15 @@
                 </ul>
                 <ul id="tab-overview" class="uk-switcher tab-content">
                     <li>
-                    {% include 'thesau/bank_mutations_result.html' %}
+                    {% include 'thesau/mutations_result.html' %}
                     {% if not errors %}
-                        {% include 'thesau/bank_mutations_table.html' %}
+                        {% include 'thesau/mutations_table.html' %}
                     {% endif %}
                     </li>
                 </ul>
             </div>
             <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
-                {% include 'thesau/bank_options.html' %}
+                {% include 'thesau/mutations_options.html' %}
             </div>
 
         </div>

@@ -470,7 +470,93 @@ def bank_mutations(request):
         }
 
         # Render list page with the documents and the form
-        return render(request, 'thesau/bank_mutations.html', context)
+        return render(request, 'thesau/mutations.html', context)
+    else:
+        messages.error(request, 'Only accessible to thesaus and admins.')
+        return redirect('/')
+
+
+def process(request):
+
+    if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
+
+        # Get active and last closed report
+        current_open_report = get_open_report(request.user)
+        latest_report = get_latest_closed_report()
+        if latest_report is None:
+            last_HR_date = current_open_report.report_date
+            HR_day_difference = (datetime.date.today() - current_open_report.report_date).days + 1
+        else:
+            last_HR_date = latest_report.report_date
+            HR_day_difference = (datetime.date.today() - latest_report.report_date).days + 1
+
+        if request.method == 'POST':
+            form = MutationsUploadForm(request.POST, request.FILES)
+            return bank_mutations_upload(request, form, current_open_report)
+        else:
+            # A empty form which is loaded in background DOM
+            form = MutationsUploadForm()
+
+        mut_files = MutationsFile.objects.filter(report=current_open_report)
+        used_mut_files = mut_files.exclude(applied=False)
+        muts_applied = MutationsParsed.objects.filter(report=current_open_report, applied=True)
+
+        if len(muts_applied) > 0:
+            date_begin = muts_applied.earliest('mutation_date').mutation_date
+            date_end = muts_applied.latest('mutation_date').mutation_date
+            mut_begin = MutationsParsed.objects.filter(mutation_date=date_begin).earliest('id')
+            mut_end = MutationsParsed.objects.filter(mutation_date=date_end).latest('id')
+            bal_begin = mut_begin.start_balance
+            bal_end = mut_end.end_balance
+        else:
+            date_begin = None
+            date_end = None
+            bal_begin = '?'
+            bal_end = '?'
+
+        # build up warnings and errors
+        warnings = dict()
+        errors = dict()
+
+        total_used_mutations = 0
+        for used_mut_file in used_mut_files:
+            total_used_mutations += used_mut_file.num_mutations
+            if used_mut_file.num_duplicates != 0:
+                try:
+                    warnings['overlap_files'] += 1
+                except:
+                    warnings['overlap_files'] = 1
+            if used_mut_file.closing_balance < Decimal(0.00):
+                warnings['negative_balance'] = True
+            if last_HR_date is not None:
+                if used_mut_file.opening_date < last_HR_date:
+                    warnings['overlap_prev_hr'] = True
+
+        if len(mut_files) == 0:
+            errors['no_uploaded_files'] = True
+        elif len(used_mut_files) == 0:
+            errors['no_applied_files'] = True
+
+        # build context object
+        context = {
+            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+            'last_HR_date': last_HR_date,
+            'current_date': timezone.now().date,
+            'duration_HR': HR_day_difference,
+            'mut_files': mut_files.order_by('id'),
+            'muts_used': total_used_mutations,
+            'muts_applied': muts_applied.order_by('mutation_date'),
+            'balance_start': bal_begin,
+            'balance_end': bal_end,
+            'date_begin': date_begin,
+            'date_end': date_end,
+            'form': form,
+            'warnings': warnings,
+            'errors': errors,
+        }
+
+        # Render list page with the documents and the form
+        return render(request, 'thesau/process.html', context)
     else:
         messages.error(request, 'Only accessible to thesaus and admins.')
         return redirect('/')

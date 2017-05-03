@@ -1,0 +1,31 @@
+<h6 class="uk-margin-remove uk-text-bold">Verwerkte mutaties</h6>
+<table class="tiny-rows uk-table uk-table-hover uk-text-small">
+    {% if not mut_files|length == 0 %}
+    <thead class="uk-h6 uk-text-small">
+        <tr>
+            <th>Mutaties</th>
+            <th>Verantw. geld</th>
+            <th>Onverantw.</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mut_file in mut_files %}
+        <tr>
+            <td> x / X </td>
+            <td> €xx.xx </td>
+            <td> €xx.xx </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td>Totaal: {{ num_used_mut }}</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+    </tr>
+    </tfoot>
+    {% else %}
+    <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Geen mutatiebestanden ge-upload.</td></tr>
+    {% endif %}
+</table>
