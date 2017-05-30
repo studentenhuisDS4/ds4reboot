@@ -100,7 +100,6 @@ $(document).ready(function(){
                         old_val = parseFloat(sum_el.html());
                         sum_el.html(parseFloat(json.new_value));
                     });
-                    console.log(parseFloat(json.new_value));
                     sum_el.fadeIn(100);
 
                     // Update total value
