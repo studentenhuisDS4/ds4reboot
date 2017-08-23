@@ -16,7 +16,7 @@ import json
 def index(request):
 
     # get list of active users sorted by move-in date
-    active_users = User.objects.filter(is_active=True)
+    active_users = User.objects.filter(is_active=True).exclude(username='admin')
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
 
     # calculate turf totals
@@ -254,12 +254,11 @@ def turf_item(request, user_id):
             else:
                 turf_count = 1
 
-            # print ('TURF | user: %s | type: %s | count: %s' % (turf_user, turf_type, turf_count))
-
             h = Housemate.objects.get(user_id=user_id)
 
             # add entry to database
             new_value = 0
+            sum_type = ''
             if turf_type == 'bier':
                 if h.sum_bier + turf_count >= 0:
                     h.sum_bier += turf_count
@@ -272,11 +271,7 @@ def turf_item(request, user_id):
                     return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
                 new_value = h.sum_bier
-                new_value_total = h.total_bier
-
-                # GCM testing (old)
-                # device = get_device_model()
-                # device.objects.all().send_message({'message':'my test message'})
+                sum_type = 'sum_bier'
 
             elif turf_type == 'wwijn':
                 if h.sum_wwijn + turf_count >= 0:
@@ -289,7 +284,7 @@ def turf_item(request, user_id):
                     return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
                 new_value = h.sum_wwijn
-                new_value_total = h.total_wwijn
+                sum_type = 'sum_wwijn'
             elif turf_type =='rwijn':
                 if h.sum_rwijn + turf_count >= 0:
                     h.sum_rwijn += Decimal(turf_count)
@@ -301,9 +296,13 @@ def turf_item(request, user_id):
                 success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
 
                 new_value = h.sum_rwijn
-                new_value_total = h.total_rwijn
+                sum_type = 'sum_rwijn'
 
             h.save()
+            if sum_type != '':
+                new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
+            else:
+                return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
 
             t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count, turf_type=turf_type)
             t.save()
