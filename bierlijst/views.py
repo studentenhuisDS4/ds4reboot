@@ -16,7 +16,7 @@ import json
 def index(request):
 
     # get list of active users sorted by move-in date
-    active_users = User.objects.filter(is_active=True)
+    active_users = User.objects.filter(is_active=True).exclude(username='admin')
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
 
     # calculate turf totals
