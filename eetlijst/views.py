@@ -182,22 +182,40 @@ def add_ho(request):
             # update housemate objects for other users
             huis = Housemate.objects.get(display_name='Huis')
 
+            # Admin exclude are to be sure, admin shouldn't be active
             active_users = User.objects.filter(is_active=True)
-            other_housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis')
+            inactive_users = User.objects.filter(is_active=None)
+            active_housemates = Housemate.objects.filter(user__id__in=active_users)\
+                .exclude(display_name='Huis') \
+                .exclude(display_name='Admin')
 
             # take care of remainder
             remainder = huis.balance
-            split_cost = round((amount - remainder)/len(other_housemates),2)
-            huis.balance = len(other_housemates)*split_cost - amount + remainder
+            split_cost = round((amount - remainder)/len(active_housemates), 2)
+            huis.balance = len(active_housemates)*split_cost - amount + remainder
 
             huis.save()
 
-            for o in other_housemates:
+            for o in active_housemates:
                 o.balance -= split_cost
                 o.save()
 
+            inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
+                .exclude(display_name='Huis') \
+                .exclude(display_name='Admin')
+
+            active_balance = 0
+            for h in active_housemates:
+                active_balance += h.balance
+
+            inactive_balance = 0
+            for h in inactive_housemates:
+                inactive_balance += h.balance
+
+            overall_balance = active_balance + inactive_balance + huis.balance
+
             # add entry to ho table
-            ho = HOLog(user=h.user, amount=amount, note=note)
+            ho = HOLog(user=h.user, amount=amount, note=note, total_balance=overall_balance)
             ho.save()
 
         else:
@@ -523,10 +541,7 @@ def cost(request):
                 try:
                     if date_entry.cost is None:
                         # add cost to log
-                        print(date_entry.cost)
-                        print(cost_amount)
                         date_entry.cost = cost_amount
-                        print(date_entry.cost)
                     else:
                         messages.error(request, 'Server received cost fill-in for eetlijst, which has been previously multiple times.')
                         raise AssertionError

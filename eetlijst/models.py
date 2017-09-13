@@ -47,3 +47,4 @@ class HOLog(models.Model):
     time = models.DateTimeField(default=timezone.now)
     amount = models.DecimalField(max_digits=4, decimal_places=2)
     note = models.CharField(max_length=20)  # types: ho, transfer, dinner
+    total_balance = models.DecimalField(default=0, decimal_places=2, max_digits=4)
