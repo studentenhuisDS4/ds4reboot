@@ -18,12 +18,16 @@
             <td id="total-wijn" class="uk-hidden-large uk-text-center"><span>{{ totals.1|floatformat:"-2" }}</span></td>
             <td id="total-wwijn" class="uk-visible-large uk-text-center"><span>{{ totals.2|floatformat:"-2" }}</span></td>
             <td id="total-rwijn" class="uk-visible-large uk-text-center"><span>{{ totals.3|floatformat:"-2" }}</span></td>
-            <td class="uk-hidden-small uk-text-center"><span>{{ totals.4|floatformat:"-2" }}</span></td>
+            <td class="uk-hidden-small uk-text-center">
+                <span>{{ totals.4|floatformat:"-2" }}
+                    <span class="uk-text-small uk-text-muted"> van {{ totals.5|floatformat:"-2" }}</span>
+                </span>
+            </td>
         </tr>
     </tfoot>
     <tbody>
         {% for u in user_list %}
-        <tr id="user-{{ u.user_id }}" class="user-row">
+        <tr class="user-{{ u.user_id }} user-row">
 
             <td class="uk-margin-remove form-small">
                 {% include 'bierlijst/turf_form.html' %}
@@ -34,7 +38,16 @@
             <td class="sum-wijn uk-hidden-large uk-text-center medal"><span>{{ u.sum_wijn|floatformat:"-2" }}</span></td>
             <td class="sum-wwijn uk-visible-large uk-text-center medal"><span>{{ u.sum_wwijn|floatformat:"-2" }}</span></td>
             <td class="sum-rwijn uk-visible-large uk-text-center medal"><span>{{ u.sum_rwijn|floatformat:"-2" }}</span></td>
-            <td class="uk-hidden-small uk-text-center medal"><span>{% if u.user.username != 'huis' %}{{ u.boetes_open }}{% else %}-{% endif %}</span></td>
+            <td class="uk-hidden-small uk-text-center medal">
+                <span>
+                    {% if u.user.username != 'huis' %}{{ u.boetes_geturfd_rwijn|add:u.boetes_geturfd_wwijn }}
+                    <span class="uk-text-small uk-text-muted"> van
+                        {{ u.boetes_geturfd_rwijn|add:u.boetes_geturfd_wwijn|add:u.boetes_open }} </span>
+                    {% else %}
+                    -
+                    {% endif %}
+                </span>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

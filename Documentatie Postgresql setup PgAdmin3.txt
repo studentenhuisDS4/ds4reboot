@@ -1,0 +1,21 @@
+Open pgAdmin 3
+Create database (preferrably named 'ds4db')
+Make sure a database is added with default settings (preferrably called ds4db and connect to it)
+Open psql console (for entering commands into postgresql)
+
+Add the user 'ds4db' with your password (preferrably randomized).
+Store the password in secret_settings.py or whatever matching server password storage.
+To add user, type following into psql:
+	CREATE USER ds4db_user WITH PASSWORD 'RaNdOmPaSsWoRd';
+Make sure that all privilages are set for this user as follows:
+	GRANT ALL PRIVILEGES ON DATABASE ds4db TO ds4db_user
+Quit psql with '\q'
+
+Perform django database migration as follows:
+Run 'python manage.py migrate' (this assumes you have pulled the website from github to a local folder)
+Now you have an empty database.
+
+Insert data fixture from any dump (now called dumpABC.json):
+Run 'python manage.py loaddata dumpABC.json'
+
+In case of errors, save the dump file in ANSI type (not UTF-16, this has a wrong starting byte).

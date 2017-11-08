@@ -1,6 +1,5 @@
 $(document).ready(function(){
 
-
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -45,12 +44,21 @@ $(document).ready(function(){
             },
             success : function (json) {
                 var medals = json.medals;
-                $(".medal").removeClass("gold");
-                $(".medal").removeClass("silver");
-                $(".medal").removeClass("bronze");
-                $("#user-" + medals.gold + " .medal").addClass("gold");
-                $("#user-" + medals.silver + " .medal").addClass("silver");
-                $("#user-" + medals.bronze + " .medal").addClass("bronze");
+                $(".medal").removeClass("gold")
+                    .removeClass("silver")
+                    .removeClass("bronze");
+                $(".user-" + medals.gold + " .medal").addClass("gold");
+                $(".user-" + medals.silver + " .medal").addClass("silver");
+                $(".user-" + medals.bronze + " .medal").addClass("bronze");
+
+                $(".medal-quick").removeClass("gold-icon")
+                    .removeClass("silver-icon")
+                    .removeClass("bronze-icon");
+                // Also make medals work on quick access, inefficient for now
+                // console.log($(".user-" + medals.bronze + " .medal-quick"));
+                $(".user-" + medals.gold + " .medal-quick").addClass("gold-icon");
+                $(".user-" + medals.silver + " .medal-quick").addClass("silver-icon");
+                $(".user-" + medals.bronze + " .medal-quick").addClass("bronze-icon");
 
             }
         });
@@ -87,10 +95,10 @@ $(document).ready(function(){
                     $(".count-" + user_id).val('');
 
                     // Update user value
-                    var sum_el = $("#user-" + user_id + " .sum-" + turf_type + " span:first");
+                    var sum_el = $(".user-" + user_id + " .sum-" + turf_type + " span");
                     sum_el.fadeOut(100, function () {
                         old_val = parseFloat(sum_el.html());
-                        sum_el.html(old_val + parseFloat(turf_count));
+                        sum_el.html(parseFloat(json.new_value));
                     });
                     sum_el.fadeIn(100);
 
@@ -98,29 +106,47 @@ $(document).ready(function(){
                     var total_el = $("#total-" + turf_type + " span");
                     total_el.fadeOut(100, function () {
                         old_val = parseFloat(total_el.html());
-                        total_el.html(old_val + parseFloat(turf_count));
+                        total_el.html(parseFloat(json.new_value_total));
                     });
                     total_el.fadeIn(100);
 
-                    // Update wine totals
+                    // Update wine totals (medium view class only views sum)
                     if (turf_type == 'wwijn' || turf_type == 'rwijn') {
-                        var sum_wijn_el = $("#user-" + user_id + " .sum-wijn span:first");
-                        sum_wijn_el.fadeOut(100, function () {
-                            old_val = parseFloat(sum_wijn_el.html());
-                            sum_wijn_el.html(old_val + parseFloat(turf_count));
+                        var sum_wijn_el = $(".user-" + user_id + " .sum-wijn span");
+                        sum_wijn_el.fadeOut(100, function() {
+                            var new_sum_val = parseFloat(sum_wijn_el.html()) + parseFloat(turf_count);
+                            sum_wijn_el.html(parseFloat(new_sum_val));
                         });
                         sum_wijn_el.fadeIn(100);
+
                         var total_wijn_el = $("#total-wijn span");
-                        total_wijn_el.fadeOut(100, function () {
-                            old_val = parseFloat(total_wijn_el.html());
-                            total_wijn_el.html(old_val + parseFloat(turf_count));
+                        var total_val_both = parseFloat(total_wijn_el.html()) + parseFloat(turf_count);
+                        total_wijn_el.fadeOut(100, function() {
+                            total_wijn_el.html(parseFloat(total_val_both));
                         });
                         total_wijn_el.fadeIn(100);
 
-                        // Warn if partial wine bottle
-                        if (parseFloat(total_wijn_el.html()) % 1 != 0) {
-                            UIkit.notify("<i class='uk-icon-warning'></i> Er is geen hele fles wijn geturfd!", {status:'warning'});
+                        // Check total value (of specific turf type and of both turf types)
+                        if (json.new_value_total % 1.0 != 0.0)
+                        {
+                            if (turf_type == 'rwijn') {
+                                UIkit.notify("<i class='uk-icon-warning'></i> Er is geen hele fles rode wijn geturfd!", {status:'warning'});
+                            }
+                            else if (turf_type == 'wwijn') {
+                                UIkit.notify("<i class='uk-icon-warning'></i> Er is geen hele fles witte wijn geturfd!", {status:'warning'});
+                            }
                         }
+                        else if ( total_val_both % 1.0 != 0.0 )
+                        {
+                            // Inverse of previous if statement, current turf type is whole, other type must be partial.
+                            if (turf_type == 'rwijn') {
+                                UIkit.notify("<i class='uk-icon-warning'></i> Er is geen hele fles witte wijn geturfd!", {status: 'warning'});
+                            }
+                            else if (turf_type == 'wwijn') {
+                                UIkit.notify("<i class='uk-icon-warning'></i> Er is geen hele fles rode wijn geturfd!", {status: 'warning'});
+                            }
+                        }
+
                     } else {
                         update_medals();
                     }
@@ -150,7 +176,6 @@ $(document).ready(function(){
             },
             success : function (json) {
                 if (json.status =='success') {
-                    console.log('bpp');
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status:'success'});
 
                     // Update total value
@@ -184,7 +209,13 @@ $(document).ready(function(){
                             cook_el.fadeIn(100);
                             $(".btn-signup.btn-cook:not([disabled])").attr('disabled',true);
                             $(this).attr('disabled',false);
-                            $(".uk-icon-shopping-cart.date-" + enroll_date).fadeIn(100);
+                            // If user is cook add shopping cart
+                            if (json.login_user == user_id) {
+                                $(".uk-icon-shopping-cart.date-" + enroll_date).fadeIn(100);
+                            }
+                            else {
+                                $(".uk-icon-shopping-cart.date-" + enroll_date).fadeOut(100);
+                            }
                         }
                         else{
                             cook_el.fadeOut(100);

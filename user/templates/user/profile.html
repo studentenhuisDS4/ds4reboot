@@ -2,16 +2,24 @@
 
 {% block title %} | Profiel{% endblock %}
 
+{% block add_to_header %}
+<!-- FormValidation CSS file -->
+<link rel="stylesheet" href="/static/formvalidation/css/formValidation.min.css">
+<!-- FormValidation plugin and the class supports validating Semantic form -->
+<script src="/static/formvalidation/js/formValidation.min.js"></script>
+<script src="/static/formvalidation/js/framework/uikit.min.js"></script>
+{% endblock %}
+
 {% block body_block %}
 
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
             <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
-                {% if profile_user.user.id == request.user.id %}
+                {% if profile_user.user.id == request.user.id or user.is_staff %}
                 <li><a href=""><i class="uk-icon-user"></i> Profiel</a></li>
                 {% else %}
-                Je mag alleen je eigen profiel zien.
+                <li><a href="" class="uk-text-muted"><i class="uk-icon-user"></i> Profiel</a></li>
                 {% endif %}
                 {% comment %}
                 <li><a href=""><i class="uk-icon-cog"></i> Bewerken</a></li>
@@ -20,10 +28,12 @@
             </ul>
 
             <ul id="tab-container" class="uk-switcher tab-content">
-                {% if profile_user.user.id == request.user.id %}
+                {% if user.id == 2 or user.id == 1 %}
+                <li>{% include 'user/profile_edit_noaccess.html' %}</li>
+                {% elif profile_user.user.id == request.user.id or user.is_staff %}
                 <li>{% include 'user/profile_edit.html' %}</li>
                 {% else %}
-                Je mag alleen je eigen profiel zien.
+                <li>{% include 'user/profile_edit_noaccess.html' %}</li>
                 {% endif %}
 
                 {% comment %}
@@ -35,7 +45,13 @@
 
         </div>
         <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
-            {% include 'user/profile_options.html' %}
+            {% if user.id == 2 or user.id == 1 %}
+                {% include 'user/profile_options_noaccess.html' %}
+            {% elif profile_user.user.id == request.user.id or user.is_staff %}
+                {% include 'user/profile_options.html' %}
+            {% else %}
+                {% include 'user/profile_options_noaccess.html' %}
+            {%  endif %}
         </div>
     </div>
 

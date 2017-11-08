@@ -8,7 +8,7 @@ from django.contrib import messages
 from decimal import Decimal
 from django.db.models import Sum, Q
 from django.core.paginator import Paginator, EmptyPage
-from gcm.models import get_device_model
+# from gcm.models import get_device_model
 import json
 
 
@@ -16,7 +16,7 @@ import json
 def index(request):
 
     # get list of active users sorted by move-in date
-    active_users = User.objects.filter(is_active=True)
+    active_users = User.objects.filter(is_active=True).exclude(username='admin')
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
 
     # calculate turf totals
@@ -24,7 +24,8 @@ def index(request):
               str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0] + list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('boetes_open')).values())[0])]
+              str(list(user_list.aggregate(Sum('boetes_open')).values())[0]),
+              str(list(user_list.aggregate(Sum('boetes_total')).values())[0])]
 
     # find medaled users
     user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
@@ -76,10 +77,11 @@ def boetes(request, page=1):
 
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
-    housemates = Housemate.objects.filter(user__id__in = active_users).exclude(display_name = 'Huis').order_by('movein_date')
+    housemates = Housemate.objects.filter(user__id__in = active_users).\
+        exclude(display_name='Admin').exclude(display_name = 'Huis').order_by('movein_date')
 
     # get lists of all boetes and users with open boetes
-    log_boetes = Housemate.objects.filter(Q(boetes_open__gt = 0) | Q(boetes_geturfd__gt = 0), user__id__in = active_users).order_by('-boetes_open')
+    log_boetes = Housemate.objects.filter(Q(boetes_open__gt = 0), user__id__in = active_users).order_by('-boetes_open')
     num_boetes = str(list(log_boetes.filter(boetes_open__gt = 0).aggregate(Sum('boetes_open')).values())[0])
     boetes_list = Paginator(Boete.objects.order_by('-created_time'), 10)
 
@@ -183,12 +185,17 @@ def turf_boete(request, type_wine, user_id):
             # update housemate object
             h = Housemate.objects.get(user_id=user_id)
             h.boetes_open -= 1
-            h.boetes_geturfd += 1
-            h.save()
+            if type_wine == 'r':
+                h.boetes_geturfd_rwijn += 1
+            else:
+                h.boetes_geturfd_wwijn += 1
 
             # record type of wine
             t, _ = BoetesReport.objects.get_or_create(type=type_wine, defaults={'boete_count': 0})
             t.boete_count += 1
+
+            # save the updated tables
+            h.save()
             t.save()
 
         else:
@@ -247,39 +254,61 @@ def turf_item(request, user_id):
             else:
                 turf_count = 1
 
-            # print ('TURF | user: %s | type: %s | count: %s' % (turf_user, turf_type, turf_count))
-
             h = Housemate.objects.get(user_id=user_id)
 
             # add entry to database
+            new_value = 0
+            sum_type = ''
             if turf_type == 'bier':
-                h.sum_bier += turf_count
-                h.total_bier += turf_count
+                if h.sum_bier + turf_count >= 0:
+                    h.sum_bier += turf_count
+                    h.total_bier += turf_count
 
-                success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
-                success_message = success_message if turf_count == 1 else success_message.replace('bier', 'biertjes')
+                    success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
+                    success_message = success_message if turf_count == 1 else success_message.replace('bier', 'biertjes')
+                else:
+                    success_message = 'Je kan geen negatief aantal biertjes hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
-                # device = get_device_model()
-                # device.objects.all().send_message({'message':'my test message'})
+                new_value = h.sum_bier
+                sum_type = 'sum_bier'
 
             elif turf_type == 'wwijn':
-                h.sum_wwijn += Decimal(turf_count)
-                h.total_wwijn += Decimal(turf_count)
+                if h.sum_wwijn + turf_count >= 0:
+                    h.sum_wwijn += Decimal(turf_count)
+                    h.total_wwijn += Decimal(turf_count)
 
-                success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+                    success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+                else:
+                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
+                new_value = h.sum_wwijn
+                sum_type = 'sum_wwijn'
             elif turf_type =='rwijn':
-                h.sum_rwijn += Decimal(turf_count)
-                h.total_rwijn += Decimal(turf_count)
+                if h.sum_rwijn + turf_count >= 0:
+                    h.sum_rwijn += Decimal(turf_count)
+                    h.total_rwijn += Decimal(turf_count)
+                else:
+                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
                 success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
 
+                new_value = h.sum_rwijn
+                sum_type = 'sum_rwijn'
+
             h.save()
+            if sum_type != '':
+                new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
+            else:
+                return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
 
             t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count, turf_type=turf_type)
             t.save()
 
-            return HttpResponse(json.dumps({'result': success_message, 'status': 'success'}))
+            return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
+                                            'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
 
         else:
             return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))

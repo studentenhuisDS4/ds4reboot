@@ -29,13 +29,16 @@ def index(request, year=None, month=None, day=None):
     open_days = []
     if request.user.is_authenticated():
         try:
-            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False)
+            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by('date')
 
             if open_costs:
                 user_open = True
 
                 for oc in open_costs:
-                    open_days += [[oc.date.isoformat(), oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Do').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo')]]
+                    # url_date = oc.date.isoformat().replace('-','/')
+                    open_days += [[oc.date.isoformat(),
+                                   oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo'),
+                                   oc.date]]
 
             else:
                 user_open = False
@@ -45,7 +48,6 @@ def index(request, year=None, month=None, day=None):
 
     else:
         user_open = False
-
 
     # get open/closed status for week and check for cook
     try:
@@ -177,7 +179,7 @@ def add_ho(request):
             h.balance += amount
             h.save()
 
-            #update housemate objects for other users
+            # update housemate objects for other users
             huis = Housemate.objects.get(display_name='Huis')
 
             active_users = User.objects.filter(is_active=True)
@@ -268,6 +270,7 @@ def enroll(request):
             user_id = request.POST.get('user_id')
         except:
             breakOff = True
+            user_id = None
 
         if user_id is None:
             # TODO: Should not occur without debug
@@ -343,7 +346,11 @@ def enroll(request):
             except:
                 type_amount = False
 
+            # Can be practical for cook sign-in
+            signed_in_user = request.user.id
+
             json_data = {'result': success_message,
+                         'login_user': signed_in_user,
                          'status': 'success',
                          'enroll_user': str(enroll_user),
                          'enroll_date': str(enroll_date),
@@ -384,6 +391,19 @@ def close(request):
                             date_entry.close_time = timezone.now()
                             date_entry.save()
 
+                            # Build up allergy string
+                            userlist_entries = UserList.objects.filter(list_date=date)
+                            allergy_status = ""
+
+                            for userlist_entry in userlist_entries:
+                                h = Housemate.objects.get(id=userlist_entry.user_id)
+                                if h.diet:
+                                    allergy_status += h.display_name + " requires: " + h.diet.upper() + ". "
+
+                            # Inform cook about allergy
+                            if allergy_status:
+                                messages.warning(request, allergy_status)
+
                         # if closed
                         else:
                             date_entry.open = True
@@ -409,7 +429,6 @@ def close(request):
                     remainder = huis.balance
                     split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
                     huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
-
 
                     # update userlist objects
                     try:
@@ -501,38 +520,51 @@ def cost(request):
                 return redirect(request.META.get('HTTP_REFERER'))
 
             if date_entry.cook:
+                try:
+                    if date_entry.cost is None:
+                        # add cost to log
+                        print(date_entry.cost)
+                        print(cost_amount)
+                        date_entry.cost = cost_amount
+                        print(date_entry.cost)
+                    else:
+                        messages.error(request, 'Server received cost fill-in for eetlijst, which has been previously multiple times.')
+                        raise AssertionError
 
-                # add cost to log
-                date_entry.cost = cost_amount
-                date_entry.save()
+                    # update housemate object for current user
+                    h = Housemate.objects.get(user=request.user)
+                    h.balance += cost_amount
 
-                # update housemate object for current user
-                h = Housemate.objects.get(user=request.user)
-                h.balance += cost_amount
-                h.save()
+                    # update housemate objects for users who signed up
+                    huis = Housemate.objects.get(display_name='Huis')
 
-                # update housemate objects for users who signed up
-                huis = Housemate.objects.get(display_name='Huis')
+                    remainder = huis.balance
+                    split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
+                    huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
 
-                remainder = huis.balance
-                split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
-                huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
-
-                huis.save()
-
-                # update userlist objects
-                for u in users_enrolled:
-                    h = Housemate.objects.get(user=u.user)
-
-                    h.balance -= u.list_count*split_cost
-                    u.list_cost = -1*u.list_count*split_cost
-
-                    if u.list_cook:
-                        h.balance -= split_cost
-                        u.list_cost = cost_amount - split_cost*(1+u.list_count)
-
-                    u.save()
+                    # Seperately save
+                    date_entry.save()
                     h.save()
+                    huis.save()
+
+                    # update userlist objects
+                    for u in users_enrolled:
+                        h = Housemate.objects.get(user=u.user)
+
+                        h.balance -= u.list_count*split_cost
+                        u.list_cost = -1*u.list_count*split_cost
+
+                        if u.list_cook:
+                            h.balance -= split_cost
+                            u.list_cost = cost_amount - split_cost*(1+u.list_count)
+
+                        u.save()
+                        h.save()
+
+                    h = Housemate.objects.get(user=request.user)
+
+                except:
+                    messages.error(request, 'Server internal error during calculation of cost.')
 
             else:
                 messages.error(request, 'Cannot input cost without cook.')

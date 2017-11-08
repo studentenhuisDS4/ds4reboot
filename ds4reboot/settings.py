@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'gcm',
+    # 'gcm',
 ]
 
 INSTALLED_APPS += SECRET_APPS
@@ -84,6 +84,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Email settings
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
