@@ -66,6 +66,14 @@
             </div>
 
             <div class="uk-form-row">
+                <label class="uk-form-label" for="room-number">Room number:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="room-number" value="{{ h.room_number }}"
+                    {% if h.user.id == 2 %} disabled {% endif %}>
+                </div>
+            </div>
+
+            <div class="uk-form-row">
                 <label class="uk-form-label"></label>
                 <div class="uk-form-controls">
                     <button type="submit" name="profile-submit" value="user" class="uk-button uk-button-primary uk-float-right">Opslaan <i class="uk-icon-save"></i></button>
@@ -193,14 +201,23 @@ $(document).ready(function() {
             validating: 'uk-icon-refresh'
         },
         fields: {
-            email: {
+            'email': {
                 validators: {
                     emailAddress: {
                         message: 'The input is not a valid email address'
                     }
                 }
             },
-            cellphone: {
+            'room-number': {
+                validators: {
+                    between: {
+                        min: 1,
+                        max: 22,
+                        message: 'The input is not a valid room number (1-22)'
+                    }
+                }
+            },
+            'cellphone': {
                 validators: {
                     phone: {
                         country: 'NL',
@@ -208,7 +225,7 @@ $(document).ready(function() {
                     }
                 }
             },
-            parentphone: {
+            'parentphone': {
                 validators: {
                     phone: {
                         country: 'NL',
@@ -216,11 +233,27 @@ $(document).ready(function() {
                     }
                 }
             },
-            diet: {
+            'first-name': {
                 validators: {
                     regexp: {
                         regexp: /^[a-zA-Z\s]+$/,
-                        message: 'The last name can only consist of alphabetical and space'
+                        message: 'Name can only consist of alphabetical and space characters.'
+                    }
+                }
+            },
+            'last-name': {
+                validators: {
+                    regexp: {
+                        regexp: /^[a-zA-Z\s]+$/,
+                        message: 'Surname can only consist of alphabetical and space characters.'
+                    }
+                }
+            },
+            'diet': {
+                validators: {
+                    regexp: {
+                        regexp: /^[a-zA-Z\s]+$/,
+                        message: 'The diet can only consist of alphabetical and space characters.'
                     }
                 }
             }
