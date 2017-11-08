@@ -26,6 +26,7 @@ def profile(request, user_id=None):
                     cellphone = request.POST.get("cellphone", "")
                     parentphone = request.POST.get("parentphone", "")
                     diet = request.POST.get("diet","")
+                    room_number = request.POST.get("room-number", "")
 
                     # Define user to be changed
                     if request.user.id == user_id or user_id == None:
@@ -43,11 +44,19 @@ def profile(request, user_id=None):
                         messages.warning(request, 'Telefoonnummer ouders verwijderd.')
                     if diet == "" and user.housemate.diet != "":
                         messages.warning(request, 'Diet verwijderd.')
+                    if room_number == "" and not user.is_active and user.housemate.room_number != "":
+                        messages.warning(request, 'Room number deleted for inactive user.')
 
                     user.email = email
                     user.housemate.cell_phone = cellphone
                     user.housemate.parent_phone = parentphone
                     user.housemate.diet = diet
+                    if room_number != "" and user.is_active:
+                        user.housemate.room_number = room_number
+                    elif room_number == "" and not user.is_active:
+                        user.housemate.room_number = None
+                    else:
+                        messages.warning(request, 'Can\'t delete room number when user is still active.')
                     user.housemate.save()
                     user.save()
 
@@ -104,8 +113,12 @@ def profile(request, user_id=None):
             # build context object
             context = {
                 'breadcrumbs': ['profiel'],
-                'profile_user': profile_user
+                'profile_user': profile_user,
                 }
+
+            if request.user.is_superuser:
+                context['active_users'] = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
+                    .exclude(user__is_active=False)
 
             return render(request, 'user/profile.html', context)
             # return HttpResponse(json.dumps({'result': 'Profile updated.'}))
@@ -117,7 +130,7 @@ def profile(request, user_id=None):
             # get requested user
             profile_user = Housemate.objects.get(user_id=user_id)
             active_users = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin')\
-                .exclude(moveout_set=True)
+                .exclude(user__is_active=False)
 
             # build context object
             context = {
