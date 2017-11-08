@@ -161,10 +161,13 @@ def login_user(request):
     if request.method == 'POST':
 
         # get credentials from post and authenticate user
-        username = request.POST['username'].lower()
+        username = request.POST['username']
         password = request.POST['password']
 
         user = authenticate(username=username, password=password)
+
+        if not user:
+            user = authenticate(username=username.lower(), password=password)
 
         if user:
             if user.is_active:
