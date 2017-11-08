@@ -58,6 +58,27 @@ def balance(request):
         messages.error(request, 'Admin only area.')
         return redirect('/')
 
+def summary(request):
+    active_users = User.objects.filter(is_active=True)
+    inactive_users = User.objects.filter(is_active=False)
+    housemates = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis') \
+        .order_by('movein_date')
+    inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
+        .filter(moveout_set=None).order_by('movein_date').exclude(display_name='Admin')
+
+    year = str(timezone.now().year).zfill(2)
+    month = str(timezone.now().month).zfill(2)
+    day = str(timezone.now().day).zfill(2)
+
+    # build context object
+    context = {
+        'breadcrumbs': ['admin'],
+        'housemates': housemates,
+        'inactive': inactive_housemates,
+        'current_day': timezone.now(),
+        'focus_date': str(year) + '/' + str(month) + '/' + str(day),
+    }
+    return render(request, 'summary.html', context)
 
 # view for huisgenooten tab
 def housemates(request):
