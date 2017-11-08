@@ -31,7 +31,9 @@ $(document).ready(function(){
         }
     });
 
-    update_medals();
+    if (window.location.pathname === "/bierlijst/" || window.location.pathname === "/") {
+       update_medals();
+    }
 
     function update_medals() {
         return $.ajax({
