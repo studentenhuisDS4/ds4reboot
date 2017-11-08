@@ -13,7 +13,14 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;">
         <div class="uk-width-medium-7-10">
-
+            <ul class="uk-tab uk-tab-grid">
+                <li class="uk-hidden-small uk-width-1-3{% if request.resolver_match.url_name == 'summary' %} uk-active{% endif %}">
+                    <a href="{% url 'summary' %}"><i class="uk-icon-users"></i> Huisinfo</a>
+                </li>
+                 <li class="uk-visible-small uk-text-small uk-width-1-3{% if request.resolver_match.url_name == 'summary' %} uk-active{% endif %}">
+                    <a href="{% url 'summary' %}">Huisinfo</a>
+                </li>
+            </ul>
             <div class="tab-content"{% if request.resolver_match.url_name == 'balance' %} style="border-bottom: 1px solid #ddd;"{% endif %}>
                 <table class="small-rows uk-table uk-table-hover">
                     <thead class="uk-h6">
