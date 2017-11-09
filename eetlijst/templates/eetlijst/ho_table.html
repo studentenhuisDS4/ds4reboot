@@ -7,6 +7,7 @@
             <th>Naam</th>
             <th>Bedrag</th>
             <th>Omschrijving</th>
+            <th>Balans</th>
         </tr>
     </thead>
     <tbody>
@@ -16,6 +17,7 @@
             <td>{{ i.user }}</td>
             <td>{{ i.amount }}</td>
             <td>{{ i.note }}</td>
+            <td>{{ i.total_balance }}</td>
         </tr>
         {% endfor %}
     </tbody>
