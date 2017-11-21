@@ -205,12 +205,12 @@ def add_ho(request):
                 .exclude(display_name='Admin')
 
             active_balance = 0
-            for h in active_housemates:
-                active_balance += h.balance
+            for active_h in active_housemates:
+                active_balance += active_h.balance
 
             inactive_balance = 0
-            for h in inactive_housemates:
-                inactive_balance += h.balance
+            for inactive_h in inactive_housemates:
+                inactive_balance += inactive_h.balance
 
             overall_balance = active_balance + inactive_balance + huis.balance
 
