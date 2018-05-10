@@ -71,10 +71,13 @@ $(document).ready(function () {
         event.preventDefault();
     });
 
+    var currAudio = new Audio;
+
     // Set onclicks for turf buttons
-    $(".btn-turf").click(function () {
+    $(".btn-turf").click(function (event) {
         var user_id = $(this).attr("data-user");
         var turf_type = $(this).attr("data-type");
+        var audio_url = $(this).data("audio-src");
         var turf_count = $(".count-" + user_id).val();
 
         if (turf_count === '') {
@@ -93,7 +96,6 @@ $(document).ready(function () {
             success: function (json) {
                 if (json.status === 'success') {
                     UIkit.notify("<i class='uk-icon-check'></i> " + json.result, {status: 'success'});
-                    $(".count-" + user_id).val('');
 
                     // Update user beer & total value
                     var sum_el = $(".user-" + user_id + " .sum-" + turf_type + " span");
@@ -127,6 +129,7 @@ $(document).ready(function () {
                             }
                         }
                     } else {
+                        playSound(audio_url);
                         update_medals();
                     }
                 } else {
@@ -140,11 +143,29 @@ $(document).ready(function () {
             selector.fadeOut(100, function () {
                 selector.html(parseFloat(new_value));
             });
-            sum_el.fadeIn(100);
+            selector.fadeIn(100);
         };
 
-        var audioElement = document.createElement('audio');
-        // audioElement.setAttribute('src', );
+        var playSound = function (url) {
+            if (currAudio && currAudio.currentTime !== 0) {
+                var fadeOut = setInterval(function () {
+                    currAudio.volume = currAudio.volume -= 0.1;
+                    if (currAudio.volume < 0.2) {
+                        clearInterval(fadeOut);
+                        defaultAudio(currAudio, url);
+                    }
+                }, 100);
+            }
+            else {
+                defaultAudio(currAudio, url);
+            }
+        };
+
+        var defaultAudio = function(audio, url) {
+            currAudio.src = url;
+            currAudio.play();
+            currAudio.volume = 1;
+        }
     });
 
     // Set onclicks for signup buttons

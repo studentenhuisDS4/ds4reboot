@@ -9,7 +9,7 @@
     </div>
     <div class="uk-button-group uk-width-6-10 uk-padding-remove">
         <button data-user="{{ u.user_id }}" data-type="bier"
-                data-audio-src=""
+                data-audio-src="{% audio_url 'beer_sound.mp3' %}"
                 class="btn-turf uk-button uk-button-small uk-width-3-5 {% if u.user_id == request.user.id %}uk-button-primary{% endif %}">
             <i class="uk-icon-plus"></i>
         </button>
