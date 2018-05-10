@@ -142,6 +142,9 @@ $(document).ready(function () {
             });
             sum_el.fadeIn(100);
         };
+
+        var audioElement = document.createElement('audio');
+        // audioElement.setAttribute('src', );
     });
 
     // Set onclicks for signup buttons
