@@ -1,4 +1,5 @@
 {% load group_check %}
+{% load static from staticfiles %}
 
 <!DOCTYPE html>
 <html lang="en" class="uk-height-1-1">
@@ -18,10 +19,10 @@
     <link rel="stylesheet" href="/static/css/components/notify.almost-flat.min.css" />
     <link rel="stylesheet" href="/static/css/base.css" />
 
-    <script src="/static/js/jquery.js"></script>
-    <script src="/static/js/uikit.min.js"></script>
-    <script src="/static/js/base.js"></script>
-    <script src="/static/js/components/notify.min.js"></script>
+    <script src="{% static 'js/jquery.js'%}"></script>
+    <script src="{% static 'js/uikit.min.js'%}"></script>
+    <script src="{% static 'js/base.js'%}"></script>
+    <script src="{% static 'js/components/notify.min.js'%}"></script>
 
     {% block add_to_header %}{% endblock %}
 
