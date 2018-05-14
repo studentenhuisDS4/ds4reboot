@@ -5,7 +5,6 @@ from django.utils import timezone
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
 from django.contrib import messages
-from decimal import Decimal
 from openpyxl import Workbook
 
 # view for thesau page
@@ -123,11 +122,36 @@ def submit_hr(request):
 
         ws3.title = 'Oudhuisgenoten'
         ws3.sheet_properties.tabColor = "FB29B4"
-        ws3.append(['Naam', 'Verhuizing datum', 'Laatste HR datum', 'Huidige HR datum', 'Gecompenseerd saldo'])
+        ws3.append(['Naam',
+                    'Verhuizing datum', 'Laatste HR datum',
+                    'Huidige HR datum',
+                    'Dagen tot laatste HR',
+                    'Dagen tot huidige HR',
+                    'Percentage HR'
+                    'Gecompenseerd saldo'])
+
+        latest_hr_date = latest_hr.report_date
+        now_date = timezone.now().date()
 
         for u in moveout_list:
+
             if u.moveout_date >= latest_hr.report_date:
-                ws3.append([u.display_name, u.moveout_date, latest_hr.report_date, timezone.now().date(), u.balance])
+
+                days_latest_hr = (u.moveout_date - latest_hr_date).days
+                days_current_hr = (now_date - u.moveout_date).days
+
+                if days_current_hr == 0 and days_latest_hr == 0:
+                    perc = 0
+                else:
+                    perc = float(days_latest_hr / (days_latest_hr + days_current_hr))
+
+                ws3.append([u.display_name,
+                            u.moveout_date, latest_hr_date,
+                            now_date,
+                            days_latest_hr,
+                            days_current_hr,
+                            perc,
+                            u.balance])
 
                 # This action comes from remove_housemate in ds4admin page
                 u.balance = 0.00
