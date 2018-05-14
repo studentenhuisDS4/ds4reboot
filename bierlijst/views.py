@@ -93,8 +93,8 @@ def boetes(request, page=1):
         if int(filters['housemate']):
             active_housemates = select_housemates.filter(id=int(filters['housemate']))
         if int(filters['housemate']):
-            boetes = boetes.filter(boete_user_id=filters['housemate'])
-        if int(filters['fine_amount']):
+            boetes = boetes.filter(boete_user_id=int(filters['housemate']))
+        if filters['fine_amount']:
             boetes = boetes.filter(boete_count__gte=int(filters['fine_amount']))
         if filters['final_date']:
             date = datetime.strptime(filters['final_date'], "%d-%m-%Y").date()

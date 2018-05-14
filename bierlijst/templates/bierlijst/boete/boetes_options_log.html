@@ -8,9 +8,8 @@
             <form id="boetes-log-form" class="uk-form" method="get" action="/bierlijst/boetes/">
                 <div class="uk-form-row uk-grid uk-margin-small-top">
                     <label class="uk-width-1-2" for="housemate">Housemate</label>
-                    <select class="uk-width-1-2" name="housemate"
-                            placeholder="Housemate">
-                        <option value="0">Housemate</option>
+                    <select class="uk-width-1-2" name="housemate">
+                        <option class="uk-text-muted" value="0">Housemate</option>
                         {% for u in housemates %}
                             <option {% if filters.housemate|add:"0" == u.user_id %} selected {% endif %}
                                                                                     value="{{ u.user_id }}">{{ u }}</option>
@@ -27,10 +26,12 @@
 
                 <div class="uk-form-row uk-grid uk-margin-small-top">
                     <label class="uk-width-1-2" for="final_date">Last date</label>
-                    <input class="uk-width-1-2"
-                           type="text" name="final_date" placeholder="Click to pick date..."
-                           data-uk-datepicker="{format:'DD-MM-YYYY'}"
-                           {% if filters.final_date != 0 %}value="{{ filters.final_date }}"{% endif %}>
+                    <div class="uk-width-1-2 uk-form-icon">
+                        <i class="uk-icon-calendar uk-width-1-1"></i>
+                        <input type="text" name="final_date" placeholder="Pick a date..."
+                               data-uk-datepicker="{format:'DD-MM-YYYY'}"
+                               {% if filters.final_date != 0 %}value="{{ filters.final_date }}"{% endif %}>
+                    </div>
                 </div>
 
                 <div class="uk-form-row uk-grid">

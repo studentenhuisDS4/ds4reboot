@@ -16,3 +16,9 @@ def full_media_url(context):
 @register.simple_tag(takes_context=True)
 def audio_url(context, audio_file):
     return "http://" + context['request'].get_host() + STATIC_URL + "audio/" + audio_file
+
+
+@register.simple_tag(takes_context=True)
+def get_params_url(context):
+    return "/?" + context['request'].GET.urlencode()
+
