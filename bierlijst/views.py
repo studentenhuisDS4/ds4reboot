@@ -69,7 +69,7 @@ def show_log(request, page=1):
         'page_num': page
     }
 
-    return render(request, 'bierlijst/log.html', context)
+    return render(request, 'bierlijst/log/log.html', context)
 
 
 # view for boetes including form submission
@@ -108,7 +108,7 @@ def boetes(request, page=1):
         'page_num': page
     }
 
-    return render(request, 'bierlijst/boetes.html', context)
+    return render(request, 'bierlijst/boete/boetes.html', context)
 
 
 # handle add boetes post requests

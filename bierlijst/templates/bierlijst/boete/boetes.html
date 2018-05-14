@@ -8,21 +8,21 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove uk-hidden-small" style="position:relative;">
         <div class="uk-width-7-10">
-            {% include 'bierlijst/boetes_open.html' %}
-            {% include 'bierlijst/boetes_log.html' %}
+            {% include 'bierlijst/boete/boetes_open.html' %}
+            {% include 'bierlijst/boete/boetes_log.html' %}
         </div>
         <div class="uk-width-3-10" style="margin-top: 2.5em;">
-            {% include 'bierlijst/boetes_options.html' %}
+            {% include 'bierlijst/boete/boetes_options.html' %}
         </div>
     </div>
 
     <div class="uk-visible-small">
         <div class="uk-width-1-1">
-            {% include 'bierlijst/boetes_open.html' %}
-            {% include 'bierlijst/boetes_log.html' %}
+            {% include 'bierlijst/boete/boetes_open.html' %}
+            {% include 'bierlijst/boete/boetes_log.html' %}
         </div>
         <div class="uk-width-1-1 uk-margin-bottom">
-            {% include 'bierlijst/boetes_options.html' %}
+            {% include 'bierlijst/boete/boetes_options.html' %}
         </div>
     </div>
     {% else %}
