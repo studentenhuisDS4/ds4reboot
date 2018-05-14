@@ -6,8 +6,6 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 from decimal import Decimal
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 
 
 # view for ds4 admin page
