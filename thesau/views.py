@@ -93,6 +93,18 @@ def submit_hr(request):
     for u in user_list:
         ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
 
+    # Latest HR date
+    latest_hr = Report.objects.latest('id')
+
+    ws1.append([''])
+    ws1.append(['', '', '', '', '', '', 'Moved out housemates below'])
+    if moveout_list:
+        for u in moveout_list:
+            if u.moveout_date >= latest_hr.report_date:
+                ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn,
+                            u.boetes_geturfd_wwijn])
+
+    ws1.append([''])
     ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3], totals[4]])
 
     # create secondary worksheets
@@ -109,12 +121,9 @@ def submit_hr(request):
     if moveout_list:
         ws3 = wb.create_sheet()
 
-        ws3.title = 'Eetlijst Saldo'
+        ws3.title = 'Oudhuisgenoten'
         ws3.sheet_properties.tabColor = "FB29B4"
         ws3.append(['Naam', 'Verhuizing datum', 'Laatste HR datum', 'Huidige HR datum', 'Gecompenseerd saldo'])
-
-        # Latest HR date
-        latest_hr = Report.objects.latest('id')
 
         for u in moveout_list:
             if u.moveout_date >= latest_hr.report_date:
