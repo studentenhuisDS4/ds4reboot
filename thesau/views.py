@@ -92,19 +92,20 @@ def submit_hr(request):
     for u in user_list:
         ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
 
+    ws1.append([''])
+    ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3], totals[4]])
+    ws1.append([''])
+
     # Latest HR date
     latest_hr = Report.objects.latest('id')
 
-    ws1.append([''])
-    ws1.append(['', '', '', '', '', '', 'Moved out housemates below'])
+    ws1.append(['Moved out housemates below'])
+    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn', 'Boetewijn Rood', 'Boetewijn Wit', 'Open'])
     if moveout_list:
         for u in moveout_list:
             if u.moveout_date >= latest_hr.report_date:
                 ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn,
-                            u.boetes_geturfd_wwijn])
-
-    ws1.append([''])
-    ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3], totals[4]])
+                            u.boetes_geturfd_wwijn, u.boetes_open])
 
     # create secondary worksheets
     ws2 = wb.create_sheet()
