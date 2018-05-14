@@ -1,16 +1,6 @@
 <div class="uk-panel uk-panel-box">
-    <h3 class="uk-panel-title">Beerlist / Log</h3>
+    <h3 class="uk-panel-title">Beerlist / Fine log</h3>
     <hr>
-    <p>
-        <a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/bierlijst">
-            <i class="uk-icon-arrow-circle-left"></i> Back to beerlist</a>
-    </p>
-</div>
-
-<div class="uk-panel uk-panel-box">
-    <h3 class="uk-panel-title">Beerlist / Turf log</h3>
-    <hr>
-
     <h6 class="uk-margin-remove uk-text-bold">Filter log</h6>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
@@ -27,34 +17,17 @@
             </div>
 
             <div class="uk-form-row uk-grid uk-margin-small-top">
-                <label class="uk-width-1-2" for="beer_amount">Amount of beers</label>
-                <input class="uk-width-1-2" type="number" name="beer_amount" placeholder="1"
-                       {% if filters.beer_amount != 0 %}value="{{ filters.beer_amount }}"{% endif %}>
+                <label class="uk-width-1-2" for="fine_amount">Fine amount</label>
+                <input class="uk-width-1-2" type="number" name="fine_amount"
+                       placeholder="1"
+                       {% if filters.fine_amount != 0 %}value="{{ filters.fine_amount }}"{% endif %}>
             </div>
 
             <div class="uk-form-row uk-grid uk-margin-small-top">
-                <label class="uk-width-1-2">Choose sum</label>
-                <label class="uk-width-1-2">
-                    <input type="checkbox" name="aggregrate_days" title="Sum days"
-                        {% if filters.aggregrate_days == "true" %} checked{% endif %}>
-                    Sum days
-                </label>
-            </div>
-
-            <div class="uk-form-row uk-grid uk-margin-small-top">
-                <label class="uk-width-1-2"></label>
-                <label class="uk-width-1-2">
-                    <input type="checkbox" name="aggregrate_hours" title="Sum hours"
-                            {% if filters.aggregrate_hours == "true" %} checked{% endif %}>
-                    Sum hours
-                </label>
-            </div>
-
-            <div class="uk-form-row uk-grid uk-margin-small-top">
-                <label class="uk-width-4-10" for="final_date">Last date</label>
-                <div class="uk-width-6-10 uk-form-icon">
+                <label class="uk-width-1-2" for="final_date">Last date</label>
+                <div class="uk-width-1-2 uk-form-icon">
                     <i class="uk-icon-calendar uk-width-1-1"></i>
-                    <input class="uk-width-1-1" type="text" name="final_date" placeholder="Pick a date..."
+                    <input type="text" name="final_date" placeholder="Pick a date..."
                            data-uk-datepicker="{format:'DD-MM-YYYY'}"
                            {% if filters.final_date != 0 %}value="{{ filters.final_date }}"{% endif %}>
                 </div>
