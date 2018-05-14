@@ -14,21 +14,22 @@ import json
 
 # index view for bierlijst
 def index(request):
-
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True).exclude(username='admin')
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
 
     # calculate turf totals
     totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
-              str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0] + list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
+              str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0] +
+                  list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('boetes_open')).values())[0]),
               str(list(user_list.aggregate(Sum('boetes_total')).values())[0])]
 
     # find medaled users
-    user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
+    user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by(
+        '-sum_bier')[:3]
     medals = []
 
     for u in user_medals:
@@ -50,7 +51,6 @@ def index(request):
 
 # view for bierlijst log
 def show_log(request, page=1):
-
     # get list of turfed items
     turf_list = Paginator(Turf.objects.order_by('-turf_time'), 25)
 
@@ -74,15 +74,18 @@ def show_log(request, page=1):
 
 # view for boetes including form submission
 def boetes(request, page=1):
-
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
-    housemates = Housemate.objects.filter(user__id__in = active_users).\
-        exclude(display_name='Admin').exclude(display_name = 'Huis').order_by('movein_date')
+    housemates = Housemate.objects.filter(user__id__in=active_users). \
+        exclude(display_name='Admin').exclude(display_name='Huis').order_by('movein_date')
 
     # get lists of all boetes and users with open boetes
-    log_boetes = Housemate.objects.filter(Q(boetes_open__gt = 0), user__id__in = active_users).order_by('-boetes_open')
-    num_boetes = str(list(log_boetes.filter(boetes_open__gt = 0).aggregate(Sum('boetes_open')).values())[0])
+    log_boetes = Housemate.objects.filter(Q(boetes_open__gt=0), user__id__in=active_users).order_by('-boetes_open')
+    num_boetes = list(log_boetes.filter(boetes_open__gt=0).aggregate(Sum('boetes_open')).values())[0]
+    turfed_boetes_rwijn = list(log_boetes.filter(boetes_geturfd_rwijn__gt=0)
+                               .aggregate(Sum('boetes_geturfd_rwijn')).values())[0]
+    turfed_boetes_wwijn = list(log_boetes.filter(boetes_geturfd_wwijn__gt=0)
+                               .aggregate(Sum('boetes_geturfd_wwijn')).values())[0]
     boetes_list = Paginator(Boete.objects.order_by('-created_time'), 10)
 
     # ensure page number is valid
@@ -98,6 +101,8 @@ def boetes(request, page=1):
         'housemates': housemates,
         'log_boetes': log_boetes,
         'num_boetes': num_boetes,
+        'turfed_boetes_rwijn': turfed_boetes_rwijn,
+        'turfed_boetes_wwijn': turfed_boetes_wwijn,
         'table_list': table_list,
         'pages': str(boetes_list.num_pages),
         'page_num': page
@@ -108,7 +113,6 @@ def boetes(request, page=1):
 
 # handle add boetes post requests
 def add_boete(request):
-
     if request.method == 'POST':
         if request.user.is_authenticated():
 
@@ -144,7 +148,8 @@ def add_boete(request):
             h.save()
 
             # add entry to boete table
-            b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=request.user, boete_count=count, boete_note=note)
+            b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=request.user, boete_count=count,
+                      boete_note=note)
             b.save()
 
         else:
@@ -158,7 +163,6 @@ def add_boete(request):
 
 # handle remove boete requests
 def remove_boete(request, boete_id):
-
     if request.user.is_authenticated():
         b = Boete.objects.get(id=boete_id)
 
@@ -177,7 +181,6 @@ def remove_boete(request, boete_id):
 
 # handle turf boete requests
 def turf_boete(request, type_wine, user_id):
-
     if request.user.is_authenticated():
 
         if type_wine == 'r' or type_wine == 'w':
@@ -209,7 +212,6 @@ def turf_boete(request, type_wine, user_id):
 
 # handle reset boete requests
 def reset_boetes(request):
-
     if request.user.is_authenticated():
 
         Boete.objects.all().delete()
@@ -228,7 +230,6 @@ def reset_boetes(request):
 
 # handle turf post requests
 def turf_item(request, user_id):
-
     if request.method == 'POST':
         if request.user.is_authenticated():
 
@@ -243,13 +244,16 @@ def turf_item(request, user_id):
                     turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
                 except ValueError:
-                    return HttpResponse(json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
+                    return HttpResponse(
+                        json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
 
                 if turf_type == 'bier' and not float(turf_count).is_integer():
-                    return HttpResponse(json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
+                    return HttpResponse(
+                        json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
 
                 if turf_count >= 1000:
-                    return HttpResponse(json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
+                    return HttpResponse(
+                        json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
 
             else:
                 turf_count = 1
@@ -265,7 +269,8 @@ def turf_item(request, user_id):
                     h.total_bier += turf_count
 
                     success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
-                    success_message = success_message if turf_count == 1 else success_message.replace('bier', 'biertjes')
+                    success_message = success_message if turf_count == 1 else success_message.replace('bier',
+                                                                                                      'biertjes')
                 else:
                     success_message = 'Je kan geen negatief aantal biertjes hebben.'
                     return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
@@ -285,7 +290,7 @@ def turf_item(request, user_id):
 
                 new_value = h.sum_wwijn
                 sum_type = 'sum_wwijn'
-            elif turf_type =='rwijn':
+            elif turf_type == 'rwijn':
                 if h.sum_rwijn + turf_count >= 0:
                     h.sum_rwijn += Decimal(turf_count)
                     h.total_rwijn += Decimal(turf_count)
@@ -304,25 +309,27 @@ def turf_item(request, user_id):
             else:
                 return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
 
-            t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count, turf_type=turf_type)
+            t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count,
+                     turf_type=turf_type)
             t.save()
 
             return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
                                             'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
 
         else:
-            return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            return HttpResponse(
+                json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
 
 
 # handle turf post requests
 def list_medals(request):
-
     if request.method == 'GET':
         if request.user.is_authenticated():
 
             # find medaled users
             active_users = User.objects.filter(is_active=True)
-            user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
+            user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by(
+                '-sum_bier')[:3]
             medals = []
 
             for u in user_medals:
@@ -331,7 +338,9 @@ def list_medals(request):
                 else:
                     medals += [0]
 
-            return HttpResponse(json.dumps({'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}}))
+            return HttpResponse(json.dumps(
+                {'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}}))
 
         else:
-            return HttpResponse(json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            return HttpResponse(
+                json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))

@@ -1,7 +1,7 @@
 <table class="basic-table small-rows uk-table uk-table-hover">
     <caption><h5 class="uk-text-muted" style="font-style:normal">Open boetes ({{ num_boetes }})</h5></caption>
     {% if log_boetes %}
-    <thead class="uk-h6">
+        <thead class="uk-h6">
         <tr>
             <th>Naam</th>
             <th class="uk-text-center">Open boetes</th>
@@ -9,26 +9,40 @@
             <th class="uk-hidden-small uk-text-center">Geturfde witte-wijn boetes</th>
             <th class="uk-text-center">Turf Boetes</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
 
         {% for b in log_boetes %}
-        <tr>
-            <td>{{ b }}</td>
-            <td class="uk-text-center">{{ b.boetes_open }}</td>
-            <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd_rwijn }}</td>
-            <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd_wwijn }}</td>
-            <td class="uk-text-center">
-                <div class="uk-button-group">
-                    <a href="/bierlijst/boetes/turf/w/{{ b.user_id }}/" class="uk-button uk-button-mini uk-button-primary uk-width-1-2">W. Wijn</a>
-                    <a href="/bierlijst/boetes/turf/r/{{ b.user_id }}/" class="uk-button uk-button-mini uk-button-primary uk-width-1-2">R. Wijn</a>
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <td>{{ b }}</td>
+                <td class="uk-text-center">{{ b.boetes_open }}</td>
+                <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd_rwijn }}</td>
+                <td class="uk-hidden-small uk-text-center">{{ b.boetes_geturfd_wwijn }}</td>
+                <td class="uk-text-center">
+                    <div class="uk-button-group">
+                        <a href="/bierlijst/boetes/turf/r/{{ b.user_id }}/"
+                           class="uk-button uk-button-mini uk-button-primary uk-width-1-2">R. Wijn</a>
+                        <a href="/bierlijst/boetes/turf/w/{{ b.user_id }}/"
+                           class="uk-button uk-button-mini uk-button-primary uk-width-1-2">W. Wijn</a>
+                    </div>
+                </td>
+            </tr>
         {% endfor %}
 
-    </tbody>
+        </tbody>
+
+        <tfoot class="uk-text-bold">
+        <tr>
+            <td>Total</td>
+            <td class="uk-text-center">{{ num_boetes }}</td>
+            <td class="uk-text-center uk-hidden-small">{{ turfed_boetes_rwijn }}</td>
+            <td class="uk-text-center uk-hidden-small">{{ turfed_boetes_wwijn }}</td>
+            <td class="uk-text-center">-</td>
+        </tr>
+        </tfoot>
     {% else %}
-    <tr><td class="uk-text-center uk-text-muted" style="padding:1em;">Geen open boetes.</td></tr>
+        <tr>
+            <td class="uk-text-center uk-text-muted" style="padding:1em;">Geen open boetes.</td>
+        </tr>
     {% endif %}
 </table>
