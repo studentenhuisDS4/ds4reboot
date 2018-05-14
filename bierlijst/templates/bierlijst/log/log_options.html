@@ -39,8 +39,8 @@
                        data-uk-tooltip="{pos:'bottom'}" title="Sum days preceeds sum hours."></i>
                 </label>
                 <label class="uk-width-1-2">
-                    <input type="checkbox" name="aggregrate_days" title="Sum days"
-                        {% if filters.aggregrate_days == "true" %} checked{% endif %}>
+                    <input type="checkbox" name="aggregate_days" title="Sum days"
+                            {% if filters.aggregate_days == "on" %} checked{% endif %}>
                     Sum days
                 </label>
             </div>
@@ -48,8 +48,10 @@
             <div class="uk-form-row uk-grid uk-margin-small-top">
                 <label class="uk-width-1-2"></label>
                 <label class="uk-width-1-2">
-                    <input type="checkbox" name="aggregrate_hours" title="Sum hours"
-                            {% if filters.aggregrate_hours == "true" %} checked{% endif %}>
+                    <input type="checkbox" name="aggregate_hours" title="Sum hours"
+                            {% if filters.aggregate_hours == "on" %}
+                           {% if filters.aggregate_days != "on" %}checked{% endif %}
+                            {% endif %}>
                     Sum hours
                 </label>
             </div>
