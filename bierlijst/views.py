@@ -24,7 +24,8 @@ def index(request):
                   list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('boetes_open')).values())[0]),
+              str(list(user_list.aggregate(Sum('boetes_geturfd_rwijn')).values())[0] +
+                  list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0]),
               str(list(user_list.aggregate(Sum('boetes_total')).values())[0])]
 
     # find medaled users
