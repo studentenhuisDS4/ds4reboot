@@ -34,7 +34,7 @@ def hr(request):
         # generate necessary user lists
         active_users = User.objects.filter(is_active=True).exclude(username='admin')
         user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
-        moveout_list = Housemate.objects.filter(moveout_set=0).order_by('moveout_date')
+        moveout_list = Housemate.objects.filter(moveout_set=1).order_by('moveout_date')
 
         # calculate turf totals
         totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
