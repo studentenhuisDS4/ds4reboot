@@ -1,33 +1,38 @@
 <div class="uk-panel uk-panel-box">
-    <h3 class="uk-panel-title">Bierlijst / Boetes</h3>
+    <h3 class="uk-panel-title">Beerlist / Fines</h3>
     <hr>
 
-    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/bierlijst"><i class="uk-icon-arrow-circle-left"></i> Terug naar bierlijst</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/bierlijst">
+        <i class="uk-icon-arrow-circle-left"></i> Back to beerlist</a></p>
     {% if request.user|is_thesau or request.user|is_admin %}
     <hr>
 
-    <h6 class="uk-margin-remove uk-text-bold">Voeg een boete</h6>
+    <h6 class="uk-margin-remove uk-text-bold">Add a new fine</h6>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
         <form class="uk-form" method="post" action="/bierlijst/boetes/add/">
             {% csrf_token %}
             <div class="uk-form-row uk-grid uk-grid-small">
-                <div class="uk-width-2-10"><input type="number" name="count" placeholder="1"></div>
-                <div class="uk-width-8-10"><input class="uk-width-1-1" type="text" maxlength="100" name="note" placeholder="Reden"></div>
+                <div class="uk-width-2-10">
+                    <input type="number" name="count" placeholder="1">
+                </div>
+                <div class="uk-width-8-10">
+                    <input class="uk-width-1-1" type="text" maxlength="100" name="note" placeholder="Reason">
+                </div>
             </div>
 
             <div class="uk-form-row uk-grid uk-grid-small">
 
                 <div class="uk-width-1-2">
                     <select name="housemate" class="uk-width-1-1">
-                        <option value="0">Huisgenoot</option>
+                        <option value="0">Housemate</option>
                         {% for u in housemates %}
                         <option value="{{ u.user_id }}">{{ u }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="uk-width-1-2">
-                    <button type="submit" class="uk-button uk-button-primary uk-width-1-1">Voeg toe</button>
+                    <button type="submit" class="uk-button uk-button-primary uk-width-1-1">Add</button>
                 </div>
 
             </div>
