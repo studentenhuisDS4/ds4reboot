@@ -14,7 +14,7 @@
     <h6 class="uk-margin-remove uk-text-bold">Filter log</h6>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
-        <form id="boetes-log-form" class="uk-form" method="get" action="/bierlijst/boetes/">
+        <form id="boetes-log-form" class="uk-form" method="get" action="{% url 'log' %}">
             <div class="uk-form-row uk-grid uk-margin-small-top">
                 <label class="uk-width-1-2" for="housemate">Housemate</label>
                 <select class="uk-width-1-2" name="housemate">
@@ -33,7 +33,11 @@
             </div>
 
             <div class="uk-form-row uk-grid uk-margin-small-top">
-                <label class="uk-width-1-2">Choose sum</label>
+                <label class="uk-width-1-2">
+                    Choose sum
+                    <i class="uk-icon-exclamation-circle uk-icon-hover"
+                       data-uk-tooltip="{pos:'bottom'}" title="Sum days preceeds sum hours."></i>
+                </label>
                 <label class="uk-width-1-2">
                     <input type="checkbox" name="aggregrate_days" title="Sum days"
                         {% if filters.aggregrate_days == "true" %} checked{% endif %}>

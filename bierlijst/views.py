@@ -54,8 +54,32 @@ def index(request):
 
 # view for bierlijst log
 def show_log(request, page=1):
+
+    active_users = User.objects.filter(is_active=True)
+    active_housemates = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+    select_housemates = active_housemates.exclude(display_name='Admin').exclude(display_name='Huis')
+
+    # Apply filter if any
+    filters = dict()
+    filters_str = ['housemate', 'beer_amount', 'aggregrate_days', 'aggregrate_hours', 'final_date']
+    for filt in filters_str:
+        filters[filt] = request.GET.get(filt, 0)
+
+    beer_logs = Turf.objects
+    try:
+        if int(filters['housemate']):
+            beer_logs = beer_logs.filter(turf_user_id=int(filters['housemate']))
+        if filters['beer_amount']:
+            beer_logs = beer_logs.filter(turf_count__gte=int(filters['beer_amount']))
+        if filters['final_date']:
+            date = datetime.strptime(filters['final_date'], "%d-%m-%Y").date()
+            beer_logs = beer_logs.filter(turf_time__lte=date)
+    except Exception as e:
+        print(e)
+        pass
+
     # get list of turfed items
-    turf_list = Paginator(Turf.objects.order_by('-turf_time'), 25)
+    turf_list = Paginator(beer_logs.order_by('-turf_time'), 25)
 
     # ensure page number is valid
     try:
@@ -67,6 +91,8 @@ def show_log(request, page=1):
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+        'housemates': select_housemates,
+        'filters': filters,
         'table_list': table_list,
         'pages': str(turf_list.num_pages),
         'page_num': page
