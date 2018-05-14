@@ -6,25 +6,32 @@
 {% block body_block %}
 
     {% if user.is_authenticated %}
-    <div class="uk-grid uk-padding-remove uk-hidden-small" style="position:relative;">
-        <div class="uk-width-7-10">
-            {% include 'bierlijst/boete/boetes_open.html' %}
-            {% include 'bierlijst/boete/boetes_log.html' %}
+        <div class="uk-grid uk-padding-remove uk-hidden-small" style="position:relative;">
+            <div class="uk-width-7-10">
+                {% include 'bierlijst/boete/boetes_open.html' %}
+            </div>
+            <div class="uk-width-3-10" style="margin-top: 2.5em;">
+                {% include 'bierlijst/boete/boetes_options.html' %}
+            </div>
         </div>
-        <div class="uk-width-3-10" style="margin-top: 2.5em;">
-            {% include 'bierlijst/boete/boetes_options.html' %}
+        <div class="uk-grid uk-padding-remove uk-margin-top-small uk-hidden-small" style="position:relative;">
+            <div class="uk-width-7-10">
+                {% include 'bierlijst/boete/boetes_log.html' %}
+            </div>
+            <div class="uk-width-3-10" style="margin-top: 2.5em;">
+                {% include 'bierlijst/boete/boetes_options_log.html' %}
+            </div>
         </div>
-    </div>
 
-    <div class="uk-visible-small">
-        <div class="uk-width-1-1">
-            {% include 'bierlijst/boete/boetes_open.html' %}
-            {% include 'bierlijst/boete/boetes_log.html' %}
+        <div class="uk-visible-small">
+            <div class="uk-width-1-1">
+                {% include 'bierlijst/boete/boetes_open.html' %}
+                {% include 'bierlijst/boete/boetes_log.html' %}
+            </div>
+            <div class="uk-width-1-1 uk-margin-bottom">
+                {% include 'bierlijst/boete/boetes_options.html' %}
+            </div>
         </div>
-        <div class="uk-width-1-1 uk-margin-bottom">
-            {% include 'bierlijst/boete/boetes_options.html' %}
-        </div>
-    </div>
     {% else %}
         {% include 'base/login_form.html' %}
     {% endif %}

@@ -7,7 +7,7 @@
             <th class="uk-text-center">Open fines</th>
             <th class="uk-hidden-small uk-text-center">Turfed red wine fines</th>
             <th class="uk-hidden-small uk-text-center">Turfed white wine fines</th>
-            <th class="uk-text-center">Turfed fines</th>
+            <th class="uk-text-center">Turf fines</th>
         </tr>
         </thead>
         <tbody>
@@ -21,9 +21,9 @@
                 <td class="uk-text-center">
                     <div class="uk-button-group">
                         <a href="/bierlijst/boetes/turf/r/{{ b.user_id }}/"
-                           class="uk-button uk-button-mini uk-button-primary uk-width-1-2">R. Wijn</a>
+                           class="uk-button uk-button-mini uk-button-danger uk-width-1-2">Red wine</a>
                         <a href="/bierlijst/boetes/turf/w/{{ b.user_id }}/"
-                           class="uk-button uk-button-mini uk-button-primary uk-width-1-2">W. Wijn</a>
+                           class="uk-button uk-button-mini uk-button-success uk-width-1-2">White wine </a>
                     </div>
                 </td>
             </tr>
@@ -42,7 +42,7 @@
         </tfoot>
     {% else %}
         <tr>
-            <td class="uk-text-center uk-text-muted" style="padding:1em;">Geen open boetes.</td>
+            <td class="uk-text-center uk-text-muted" style="padding:1em;">No open fines.</td>
         </tr>
     {% endif %}
 </table>

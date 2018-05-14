@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+from django.utils.datetime_safe import datetime
+
 from user.models import Housemate
 from bierlijst.models import Turf, Boete
 from thesau.models import BoetesReport
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, QueryDict
 from django.contrib import messages
 from decimal import Decimal
 from django.db.models import Sum, Q
@@ -75,19 +77,43 @@ def show_log(request, page=1):
 
 # view for boetes including form submission
 def boetes(request, page=1):
+    # Apply filter if any
+    filters = dict()
+    filters_str = ['housemate', 'fine_amount', 'final_date']
+    for filt in filters_str:
+        filters[filt] = request.GET.get(filt, 0)
+
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
-    housemates = Housemate.objects.filter(user__id__in=active_users). \
-        exclude(display_name='Admin').exclude(display_name='Huis').order_by('movein_date')
+    active_housemates = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+    select_housemates = active_housemates.exclude(display_name='Admin').exclude(display_name='Huis')
 
-    # get lists of all boetes and users with open boetes
-    log_boetes = Housemate.objects.filter(Q(boetes_open__gt=0), user__id__in=active_users).order_by('-boetes_open')
+    boetes = Boete.objects
+    try:
+        if int(filters['housemate']):
+            active_housemates = select_housemates.filter(id=int(filters['housemate']))
+        if int(filters['housemate']):
+            boetes = boetes.filter(boete_user_id=filters['housemate'])
+        if int(filters['fine_amount']):
+            boetes = boetes.filter(boete_count__gte=int(filters['fine_amount']))
+        if filters['final_date']:
+            date = datetime.strptime(filters['final_date'], "%d-%m-%Y").date()
+            boetes = boetes.filter(created_time__lte=date)
+    except Exception as e:
+        print(e)
+        # print("Error " +str(e))
+        pass
+
+    # get paginated list of fines
+    boetes_list = Paginator(boetes.order_by('-created_time'), 10)
+
+    # get lists of users with open fines
+    log_boetes = active_housemates.filter(Q(boetes_open__gt=0), user__id__in=active_users).order_by('-boetes_open')
     num_boetes = list(log_boetes.filter(boetes_open__gt=0).aggregate(Sum('boetes_open')).values())[0]
     turfed_boetes_rwijn = list(log_boetes.filter(boetes_geturfd_rwijn__gt=0)
                                .aggregate(Sum('boetes_geturfd_rwijn')).values())[0]
     turfed_boetes_wwijn = list(log_boetes.filter(boetes_geturfd_wwijn__gt=0)
                                .aggregate(Sum('boetes_geturfd_wwijn')).values())[0]
-    boetes_list = Paginator(Boete.objects.order_by('-created_time'), 10)
 
     # ensure page number is valid
     try:
@@ -99,14 +125,15 @@ def boetes(request, page=1):
     # build context object
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        'housemates': housemates,
+        'housemates': select_housemates,
         'log_boetes': log_boetes,
         'num_boetes': num_boetes,
         'turfed_boetes_rwijn': turfed_boetes_rwijn,
         'turfed_boetes_wwijn': turfed_boetes_wwijn,
         'table_list': table_list,
         'pages': str(boetes_list.num_pages),
-        'page_num': page
+        'page_num': page,
+        'filters': filters
     }
 
     return render(request, 'bierlijst/boete/boetes.html', context)
