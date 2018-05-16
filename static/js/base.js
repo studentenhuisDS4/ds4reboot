@@ -163,16 +163,18 @@ $(document).ready(function () {
         };
 
         var defaultAudio = function(audio, url) {
-            url_ext = Math.floor((Math.random() * 13) + 1);
-            while (url_ext === last_file) {
-                url_ext = Math.floor((Math.random() * 13) + 1);
+            url_ext = Math.floor((Math.random() * 130) + 1);
+            // while (url_ext === last_file) {
+            //     url_ext = Math.floor((Math.random() * 13) + 1);
+            // }
+
+            if (url_ext <= 13) {
+                last_file = url_ext;
+
+                currAudio.src = url + url_ext.toString() + ".mp3";
+                currAudio.play();
+                currAudio.volume = 1;
             }
-
-            last_file = url_ext;
-
-            currAudio.src = url + url_ext.toString() + ".mp3";
-            currAudio.play();
-            currAudio.volume = 1;
         }
     });
 
