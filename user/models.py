@@ -4,7 +4,10 @@ from django.db import models
 
 
 # model for housemates (linked to auth user)
-class Housemate(models.Model):
+from base.models import SoftDeletionModel
+
+
+class Housemate(SoftDeletionModel):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=12)

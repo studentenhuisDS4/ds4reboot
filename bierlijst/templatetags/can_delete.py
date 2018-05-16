@@ -3,12 +3,10 @@ from user.models import Housemate
 from bierlijst.models import Boete
 
 
-# custom template tag to check if deletion of boete is possible
 @register.filter
 def can_del(boete_id, user_id):
-
+    # Check if deletion of boete is possible
     if Boete.objects.get(pk=boete_id).boete_count <= Housemate.objects.get(user_id=user_id).boetes_open:
         return True
-
     else:
         return False

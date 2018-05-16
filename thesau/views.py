@@ -5,7 +5,6 @@ from django.utils import timezone
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
 from django.contrib import messages
-from decimal import Decimal
 from openpyxl import Workbook
 
 # view for thesau page
@@ -35,7 +34,7 @@ def hr(request):
         # generate necessary user lists
         active_users = User.objects.filter(is_active=True).exclude(username='admin')
         user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
-        moveout_list = Housemate.objects.filter(moveout_set=0).order_by('moveout_date')
+        moveout_list = Housemate.objects.filter(moveout_set=1).order_by('moveout_date')
 
         # calculate turf totals
         totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
@@ -93,7 +92,20 @@ def submit_hr(request):
     for u in user_list:
         ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
 
+    ws1.append([''])
     ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3], totals[4]])
+    ws1.append([''])
+
+    # Latest HR date
+    latest_hr = Report.objects.latest('id')
+
+    ws1.append(['Moved out housemates below'])
+    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn', 'Boetewijn Rood', 'Boetewijn Wit', 'Open'])
+    if moveout_list:
+        for u in moveout_list:
+            if u.moveout_date >= latest_hr.report_date:
+                ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn,
+                            u.boetes_geturfd_wwijn, u.boetes_open])
 
     # create secondary worksheets
     ws2 = wb.create_sheet()
@@ -109,16 +121,38 @@ def submit_hr(request):
     if moveout_list:
         ws3 = wb.create_sheet()
 
-        ws3.title = 'Eetlijst Saldo'
+        ws3.title = 'Oudhuisgenoten'
         ws3.sheet_properties.tabColor = "FB29B4"
-        ws3.append(['Naam', 'Verhuizing datum', 'Laatste HR datum', 'Huidige HR datum', 'Gecompenseerd saldo'])
+        ws3.append(['Naam',
+                    'Verhuizing datum', 'Laatste HR datum',
+                    'Huidige HR datum',
+                    'Dagen tot laatste HR',
+                    'Dagen tot huidige HR',
+                    'Percentage HR'
+                    'Gecompenseerd saldo'])
 
-        # Latest HR date
-        latest_hr = Report.objects.latest('id')
+        latest_hr_date = latest_hr.report_date
+        now_date = timezone.now().date()
 
         for u in moveout_list:
+
             if u.moveout_date >= latest_hr.report_date:
-                ws3.append([u.display_name, u.moveout_date, latest_hr.report_date, timezone.now().date(), u.balance])
+
+                days_latest_hr = (u.moveout_date - latest_hr_date).days
+                days_current_hr = (now_date - u.moveout_date).days
+
+                if days_current_hr == 0 and days_latest_hr == 0:
+                    perc = 0
+                else:
+                    perc = float(days_latest_hr / (days_latest_hr + days_current_hr))
+
+                ws3.append([u.display_name,
+                            u.moveout_date, latest_hr_date,
+                            now_date,
+                            days_latest_hr,
+                            days_current_hr,
+                            perc,
+                            u.balance])
 
                 # This action comes from remove_housemate in ds4admin page
                 u.balance = 0.00

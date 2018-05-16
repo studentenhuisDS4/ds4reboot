@@ -12,18 +12,19 @@ BaseUserAdmin.add_fieldsets = (
     ),
 )
 
+
 # define an inline admin descriptor for Housemate model
-class HousematInline(admin.StackedInline):
+class HousemateInline(admin.StackedInline):
     model = Housemate
     can_delete = False
     verbose_name_plural = 'Housemate Information'
     exclude = ('sum_bier','sum_wwijn','sum_rwijn','total_bier','total_wwijn','total_rwijn',
-               'boetes_open','boetes_geturfd','boetes_total','moveout_date','moveout_set')
+               'boetes_open','boetes_geturfd','boetes_total')
 
 
 # define a new User admin
 class UserAdmin(BaseUserAdmin):
-    inlines = (HousematInline, )
+    inlines = (HousemateInline, )
 
 
 # re-register UserAdmin
