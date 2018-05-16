@@ -72,6 +72,7 @@ $(document).ready(function () {
     });
 
     var currAudio = new Audio;
+    var last_file = 0;
 
     // Set onclicks for turf buttons
     $(".btn-turf").click(function (event) {
@@ -149,7 +150,7 @@ $(document).ready(function () {
         var playSound = function (url) {
             if (currAudio && currAudio.currentTime !== 0) {
                 var fadeOut = setInterval(function () {
-                    currAudio.volume = currAudio.volume -= 0.1;
+                    currAudio.volume = currAudio.volume -= 0.33;
                     if (currAudio.volume < 0.2) {
                         clearInterval(fadeOut);
                         defaultAudio(currAudio, url);
@@ -162,7 +163,14 @@ $(document).ready(function () {
         };
 
         var defaultAudio = function(audio, url) {
-            currAudio.src = url;
+            url_ext = Math.floor((Math.random() * 13) + 1);
+            while (url_ext === last_file) {
+                url_ext = Math.floor((Math.random() * 13) + 1);
+            }
+
+            last_file = url_ext;
+
+            currAudio.src = url + url_ext.toString() + ".mp3";
             currAudio.play();
             currAudio.volume = 1;
         }
