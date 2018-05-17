@@ -1,9 +1,5 @@
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
-
-# Create your tests here.
-
-from django.test import SimpleTestCase
 from django.template import Context, Template
 
 
@@ -47,9 +43,9 @@ class ResourceTemplateTagTest(TestCase):
         self.assertIn('/?', rendr)
         self.assertNotIn('http://', rendr)
 
-    def test_fullstatic(self):
+    def test_full_static(self):
         # Create an instance of a GET request.
-        request = self.factory.get('/', {'param1': 'value', 'param2': 'value2'}, secure=False)
+        request = self.factory.get('/', secure=False)
         context = Context({'request': request})
         template_to_render = Template(
             '{% load resource_tags %}'
@@ -63,7 +59,7 @@ class ResourceTemplateTagTest(TestCase):
     def test_full_media(self):
 
         # Create an instance of a GET request.
-        request = self.factory.get('/', {'param1': 'value', 'param2': 'value2'}, secure=False)
+        request = self.factory.get('/', secure=False)
         context = Context({'request': request})
         template_to_render = Template(
             '{% load resource_tags %}'
@@ -73,3 +69,17 @@ class ResourceTemplateTagTest(TestCase):
         print("Tested full_media tag:", templ)
         self.assertIn('/media/', templ)
         self.assertIn('http://', templ)
+
+    def test_static_secure(self):
+
+        # Create an instance of a GET request.
+        request = self.factory.get('/', secure=True)
+        context = Context({'request': request})
+        template_to_render = Template(
+            '{% load resource_tags %}'
+            '{% full_static_url %}'
+        )
+        templ = template_to_render.render(context)
+        print("Tested [secure] full_static tag:", templ)
+        self.assertIn('/static/', templ)
+        self.assertIn('https://', templ)
