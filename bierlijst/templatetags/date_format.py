@@ -1,6 +1,5 @@
 from django.template.defaulttags import register
-from user.models import Housemate
-from bierlijst.models import Boete
+import datetime
 
 
 @register.filter
@@ -16,3 +15,12 @@ def format_hour(hour):
             return str(h) + " AM (midnight)"
         else:
             return str(h) + " AM"
+
+
+@register.filter
+def format_month(int_month):
+    if int_month:
+        m = datetime.date(1900, int(int_month), 1).strftime('%B')
+        return m
+    else:
+        return ''

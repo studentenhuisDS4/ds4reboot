@@ -1,5 +1,4 @@
 from django.template.defaulttags import register
-import datetime as dt
 
 
 # display date as DD Month

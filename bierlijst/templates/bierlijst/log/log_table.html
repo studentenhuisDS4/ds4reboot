@@ -1,4 +1,4 @@
-{% load format_hour from hour_format %}
+{% load format_hour from date_format %}
 {% load humanize %}
 {% load get_params_url from resource_tags %}
 
@@ -26,7 +26,7 @@
                 <td>
                     <i class="uk-icon-exclamation-circle uk-icon-hover"
                        data-uk-tooltip="{pos:'top-left'}" title="{{ t.turf_time }} at {{ t.hour|format_hour }}"></i>
-                    {{ t.turf_time|naturalday }} <strong>at {{ t.hour|format_hour }}</strong>
+                    {{ t.turf_time }} <strong>at {{ t.hour|format_hour }}</strong>
                 </td>
             {% elif t.turf_by == None %}
                 <td>
