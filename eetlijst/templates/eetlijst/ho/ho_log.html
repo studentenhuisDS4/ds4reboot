@@ -8,19 +8,19 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove uk-hidden-small" style="position:relative;">
         <div class="uk-width-7-10">
-            {% include 'eetlijst/ho_table.html' %}
+            {% include 'eetlijst/ho/ho_table.html' %}
         </div>
         <div class="uk-width-3-10" style="margin-top: 2.5em;">
-            {% include 'eetlijst/log_options.html' %}
+            {% include 'eetlijst/ho/ho_log_options.html' %}
         </div>
     </div>
 
     <div class="uk-visible-small">
         <div class="uk-width-1-1">
-            {% include 'eetlijst/ho_table.html' %}
+            {% include 'eetlijst/ho/ho_table.html' %}
         </div>
         <div class="uk-width-1-1 uk-margin-bottom">
-            {% include 'eetlijst/log_options.html' %}
+            {% include 'eetlijst/ho/ho_log_options.html' %}
         </div>
     </div>
     {% else %}

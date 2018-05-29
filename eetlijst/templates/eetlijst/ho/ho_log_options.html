@@ -1,0 +1,77 @@
+<div class="uk-panel uk-panel-box">
+    <h3 class="uk-panel-title">Eatinglist / General-cost log</h3>
+
+    <hr>
+    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="{% url 'eetlijst index' %}"><i
+            class="uk-icon-arrow-circle-left"></i> Back to eating list</a></p>
+
+    <hr>
+    <h6 class="uk-margin-remove uk-text-bold">Filter general-cost log</h6>
+
+    <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
+        <form id="eetlijst-ho-log-form" class="uk-form" method="get" action="{% url 'ho log' 1 %}">
+            <div class="uk-form-row uk-grid uk-margin-small-top">
+                <label class="uk-width-1-2" for="housemate">Housemate</label>
+                <select class="uk-width-1-2" name="housemate">
+                    <option class="uk-text-muted" value="0">Housemate</option>
+                    {% for u in housemates %}
+                        <option {% if filters.housemate|add:"0" == u.user_id %} selected {% endif %}
+                                                                                     value="{{ u.user_id }}">{{ u }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="uk-form-row uk-grid uk-margin-small-top">
+                <label class="uk-width-4-10" for="final_date">Last date</label>
+                <div class="uk-width-6-10 uk-form-icon">
+                    <i class="uk-icon-calendar uk-width-1-1"></i>
+                    <input class="uk-width-1-1" type="text" name="final_date" placeholder="Pick a date..."
+                           data-uk-datepicker="{format:'DD-MM-YYYY'}"
+                           {% if filters.final_date != 0 %}value="{{ filters.final_date }}"{% endif %}>
+                </div>
+            </div>
+
+            <div class="uk-form-row uk-grid uk-margin-small-top">
+                <label class="uk-width-1-2" for="min_amount">Min. amount (&euro;)</label>
+                <input class="uk-width-1-2" type="number" name="min_amount" placeholder="1"
+                       {% if filters.min_amount != 0 %}value="{{ filters.min_amount }}"{% endif %}>
+            </div>
+
+            <div class="uk-form-row uk-grid uk-margin-small-top">
+                <label class="uk-width-1-2" for="sum_choice">Choose sum type </label>
+                <select class="uk-width-1-2" name="sum_choice">
+                    <option class="uk-text-muted" value="0">Select type</option>
+                    {% for type in sum_types %}
+                        <option {% if filters.sum_choice == type.option %} selected {% endif %}
+                                                                           value="{{ type.option }}">
+                            {{ type.label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="uk-form-row uk-grid">
+                <div class="uk-width-4-10">
+                    <button type="reset" class="uk-button uk-button-danger uk-width-1-1"
+                            data-form-resettable>
+                        Reset
+                    </button>
+                </div>
+                <div class="uk-width-6-10">
+                    <button type="submit" class="uk-button uk-button-primary uk-width-1-1">Filter</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("body").on("click", "[data-form-resettable]", function () {
+                var url = location.href;
+                location = url.split('?')[0];
+            });
+        });
+    </script>
+
+</div>

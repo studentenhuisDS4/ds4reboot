@@ -1,5 +1,8 @@
 from django.contrib.auth.models import User
-from django.http import HttpResponse,JsonResponse
+from django.db.models import Sum
+from django.http import HttpResponse, JsonResponse
+from django.utils.datetime_safe import datetime
+
 from user.models import Housemate
 from eetlijst.models import HOLog, Transfer, DateList, UserList
 from django.shortcuts import render, redirect
@@ -11,15 +14,15 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
+
 # generate eetlijst view for current or defined date
 def index(request, year=None, month=None, day=None):
-
     # get current date if nothing specified
     if not year or not month or not day:
         # bug solved; needed zero-pad to keep consistency in template context.focus_date
-        year=str(timezone.now().year).zfill(2)
-        month=str(timezone.now().month).zfill(2)
-        day=str(timezone.now().day).zfill(2)
+        year = str(timezone.now().year).zfill(2)
+        month = str(timezone.now().month).zfill(2)
+        day = str(timezone.now().day).zfill(2)
 
     # build date array
     focus_date = dt.date(int(year), int(month), int(day))
@@ -29,7 +32,8 @@ def index(request, year=None, month=None, day=None):
     open_days = []
     if request.user.is_authenticated():
         try:
-            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by('date')
+            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by(
+                'date')
 
             if open_costs:
                 user_open = True
@@ -37,7 +41,14 @@ def index(request, year=None, month=None, day=None):
                 for oc in open_costs:
                     # url_date = oc.date.isoformat().replace('-','/')
                     open_days += [[oc.date.isoformat(),
-                                   oc.date.strftime('%a (%d/%m)').replace('Mon','Ma').replace('Tue','Di').replace('Wed','Wo').replace('Thu','Do').replace('Fri','Vr').replace('Sat','Za').replace('Sun','Zo'),
+                                   oc.date.strftime('%a (%d/%m)')
+                                       .replace('Mon', 'Ma')
+                                       .replace('Tue', 'Di')
+                                       .replace('Wed', 'Wo')
+                                       .replace('Thu', 'Do')
+                                       .replace('Fri', 'Vr')
+                                       .replace('Sat', 'Za')
+                                       .replace('Sun', 'Zo'),
                                    oc.date]]
 
             else:
@@ -64,7 +75,7 @@ def index(request, year=None, month=None, day=None):
         focus_cook = False
 
     # get dates for selected week
-    day_names = ['Ma','Di','Wo','Do','Vr','Za','Zo']
+    day_names = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo']
     date_list = {}
 
     for n in range(7):
@@ -88,14 +99,18 @@ def index(request, year=None, month=None, day=None):
     day_n = focus_date + dt.timedelta(days=1)
 
     date_nav = {}
-    date_nav['pw'] = '/eetlijst/' + str(week_p.year) + '/' + str(week_p.month).zfill(2) + '/' + str(week_p.day).zfill(2) + '/'
-    date_nav['nw'] = '/eetlijst/' + str(week_n.year) + '/' + str(week_n.month).zfill(2) + '/' + str(week_n.day).zfill(2) + '/'
-    date_nav['pd'] = '/eetlijst/' + str(day_p.year) + '/' + str(day_p.month).zfill(2) + '/' + str(day_p.day).zfill(2) + '/'
-    date_nav['nd'] = '/eetlijst/' + str(day_n.year) + '/' + str(day_n.month).zfill(2) + '/' + str(day_n.day).zfill(2) + '/'
+    date_nav['pw'] = '/eetlijst/' + str(week_p.year) + '/' + str(week_p.month).zfill(2) + '/' + str(week_p.day).zfill(
+        2) + '/'
+    date_nav['nw'] = '/eetlijst/' + str(week_n.year) + '/' + str(week_n.month).zfill(2) + '/' + str(week_n.day).zfill(
+        2) + '/'
+    date_nav['pd'] = '/eetlijst/' + str(day_p.year) + '/' + str(day_p.month).zfill(2) + '/' + str(day_p.day).zfill(
+        2) + '/'
+    date_nav['nd'] = '/eetlijst/' + str(day_n.year) + '/' + str(day_n.month).zfill(2) + '/' + str(day_n.day).zfill(
+        2) + '/'
 
     # get list of active users sorted by move-in date
     active_users = User.objects.filter(is_active=True)
-    user_list = Housemate.objects.filter(user__id__in=active_users).exclude(display_name = 'Huis').order_by('movein_date')
+    user_list = Housemate.objects.filter(user__id__in=active_users).exclude(display_name='Huis').order_by('movein_date')
 
     # combine date_list and database Userlist to reduce template tag queries
     date_entries = {}
@@ -103,7 +118,7 @@ def index(request, year=None, month=None, day=None):
     for date in date_list:
         date_entries[date] = UserList.objects.filter(list_date=date_list[date][1])
         for entry in date_entries[date]:
-            user_date_entries[ (entry.user_id, date_list[date][1]) ] = entry
+            user_date_entries[(entry.user_id, date_list[date][1])] = entry
 
     # calculate total balance
     total_balance = 0
@@ -138,7 +153,6 @@ def index(request, year=None, month=None, day=None):
 
 # handle goto date post requests
 def goto_date(request):
-
     # validate input
     sel_date = request.POST.get('date')
 
@@ -147,7 +161,7 @@ def goto_date(request):
 
     else:
         try:
-            dt.date(int(sel_date[0:4]),int(sel_date[5:7]),int(sel_date[8:10]))
+            dt.date(int(sel_date[0:4]), int(sel_date[5:7]), int(sel_date[8:10]))
         except ValueError:
             messages.error(request, 'Invalid date.')
 
@@ -156,19 +170,18 @@ def goto_date(request):
 
 # handle add ho requests
 def add_ho(request):
-
     if request.method == 'POST':
         if request.user.is_authenticated():
 
             user_id = int(request.user.id)
             note = request.POST.get('note')
 
-             # validate form input
+            # validate form input
             if request.POST.get('amount') == '':
                 messages.error(request, 'Must add amount.')
                 return redirect(request.META.get('HTTP_REFERER'))
             else:
-                amount = Decimal(round(Decimal(request.POST.get('amount')),2))
+                amount = Decimal(round(Decimal(request.POST.get('amount')), 2))
 
             if note == '':
                 messages.error(request, 'Must add description.')
@@ -185,14 +198,14 @@ def add_ho(request):
             # Admin exclude are to be sure, admin shouldn't be active
             active_users = User.objects.filter(is_active=True)
             inactive_users = User.objects.filter(is_active=None)
-            active_housemates = Housemate.objects.filter(user__id__in=active_users)\
+            active_housemates = Housemate.objects.filter(user__id__in=active_users) \
                 .exclude(display_name='Huis') \
                 .exclude(display_name='Admin')
 
             # take care of remainder
             remainder = huis.balance
-            split_cost = round((amount - remainder)/len(active_housemates), 2)
-            huis.balance = len(active_housemates)*split_cost - amount + remainder
+            split_cost = round((amount - remainder) / len(active_housemates), 2)
+            huis.balance = len(active_housemates) * split_cost - amount + remainder
 
             huis.save()
 
@@ -200,7 +213,7 @@ def add_ho(request):
                 o.balance -= split_cost
                 o.save()
 
-            inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
+            inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
                 .exclude(display_name='Huis') \
                 .exclude(display_name='Admin')
 
@@ -229,14 +242,13 @@ def add_ho(request):
 
 # handle balance transfer post requests
 def bal_transfer(request):
-
     if request.method == 'POST':
         if request.user.is_authenticated():
 
             current_user = int(request.user.id)
             other_user = request.POST.get('housemate')
 
-             # validate form input
+            # validate form input
             if int(request.POST.get('housemate')) == 0:
                 messages.error(request, 'Must choose housemate.')
                 return redirect(request.META.get('HTTP_REFERER'))
@@ -247,7 +259,7 @@ def bal_transfer(request):
                 messages.error(request, 'Amount must be positive, use arrow button to choose direction.')
                 return redirect(request.META.get('HTTP_REFERER'))
             else:
-                amount = Decimal(round(Decimal(request.POST.get('amount')),2))
+                amount = Decimal(round(Decimal(request.POST.get('amount')), 2))
 
             # get user data from POST
             if request.POST.get('direction') == 'to':
@@ -257,7 +269,6 @@ def bal_transfer(request):
                 from_user = Housemate.objects.get(user_id=other_user)
                 to_user = Housemate.objects.get(user_id=current_user)
 
-
             # update housemate objects
             from_user.balance -= amount
             from_user.save()
@@ -266,7 +277,8 @@ def bal_transfer(request):
             to_user.save()
 
             # add entry to transfer table
-            t = Transfer(user=request.user, from_user=from_user.user.housemate.display_name, to_user=to_user.user.housemate.display_name, amount=amount)
+            t = Transfer(user=request.user, from_user=from_user.user.housemate.display_name,
+                         to_user=to_user.user.housemate.display_name, amount=amount)
             t.save()
 
         else:
@@ -280,18 +292,11 @@ def bal_transfer(request):
 
 # handle eetlijst enrollment
 def enroll(request):
-
     if request.method == 'POST':
         # Get user and turf type from POST
-        breakOff = False
         try:
             user_id = request.POST.get('user_id')
         except:
-            breakOff = True
-            user_id = None
-
-        if user_id is None:
-            # TODO: Should not occur without debug
             return HttpResponse(JsonResponse(
                 {'result': 'Error: Could not find requested user.', 'status': 'failure'}))
 
@@ -313,10 +318,12 @@ def enroll(request):
                     if user_entry.list_count == 1:
                         success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
                     else:
-                        success_message = '%s is %s keer ingeschreven.' % (str(enroll_user).capitalize(), int(user_entry.list_count))
+                        success_message = '%s is %s keer ingeschreven.' % (
+                            str(enroll_user).capitalize(), int(user_entry.list_count))
                 else:
                     # TODO: restyle instead of suggesting to refresh
-                    return HttpResponse(JsonResponse({'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+                    return HttpResponse(JsonResponse(
+                        {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
             elif enroll_type == 'sponge':
                 date_entry.num_eating -= user_entry.list_count
                 user_entry.list_count = 0
@@ -378,7 +385,8 @@ def enroll(request):
 
             return HttpResponse(JsonResponse(json_data))
         else:
-            return HttpResponse(JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            return HttpResponse(
+                JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
     else:
         messages.error(request, 'Method must be POST.')
     return redirect(request.META.get('HTTP_REFERER'))
@@ -386,7 +394,6 @@ def enroll(request):
 
 # close eetlijst
 def close(request):
-
     if request.method == 'POST':
         if request.user.is_authenticated():
 
@@ -445,8 +452,8 @@ def close(request):
                     huis = Housemate.objects.get(display_name='Huis')
 
                     remainder = huis.balance
-                    split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
-                    huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
+                    split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
+                    huis.balance = date_entry.num_eating * split_cost - cost_amount + remainder
 
                     # update userlist objects
                     try:
@@ -458,7 +465,7 @@ def close(request):
                     for u in users_enrolled:
                         h = Housemate.objects.get(user=u.user)
 
-                        h.balance -= u.list_count*split_cost
+                        h.balance -= u.list_count * split_cost
 
                         if u.list_cook:
                             h.balance -= split_cost
@@ -500,7 +507,6 @@ def close(request):
 
 # handle eetlijst cost input
 def cost(request):
-
     if request.method == 'POST':
         if request.user.is_authenticated():
 
@@ -528,7 +534,8 @@ def cost(request):
                 messages.error(request, 'No vaild entry for date.')
                 return redirect(request.META.get('HTTP_REFERER'))
             if date_entry.num_eating <= 1:
-                messages.error(request, "You can't cook for yourself moron. Well, you technically can. But not here. We don't allow it...  This is awkward.     Achievement: can't stop me #1")
+                messages.error(request,
+                               "You can't cook for yourself. Achievement: can't stop me #1")
                 return redirect(request.META.get('HTTP_REFERER'))
 
             try:
@@ -543,7 +550,8 @@ def cost(request):
                         # add cost to log
                         date_entry.cost = cost_amount
                     else:
-                        messages.error(request, 'Server received cost fill-in for eetlijst, which has been previously multiple times.')
+                        messages.error(request,
+                                       'Server received cost fill-in for a day, which was already filled.')
                         raise AssertionError
 
                     # update housemate object for current user
@@ -554,8 +562,8 @@ def cost(request):
                     huis = Housemate.objects.get(display_name='Huis')
 
                     remainder = huis.balance
-                    split_cost = Decimal(round((cost_amount - remainder)/date_entry.num_eating,2))
-                    huis.balance = date_entry.num_eating*split_cost - cost_amount + remainder
+                    split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
+                    huis.balance = date_entry.num_eating * split_cost - cost_amount + remainder
 
                     # Seperately save
                     date_entry.save()
@@ -566,12 +574,12 @@ def cost(request):
                     for u in users_enrolled:
                         h = Housemate.objects.get(user=u.user)
 
-                        h.balance -= u.list_count*split_cost
-                        u.list_cost = -1*u.list_count*split_cost
+                        h.balance -= u.list_count * split_cost
+                        u.list_cost = -1 * u.list_count * split_cost
 
                         if u.list_cook:
                             h.balance -= split_cost
-                            u.list_cost = cost_amount - split_cost*(1+u.list_count)
+                            u.list_cost = cost_amount - split_cost * (1 + u.list_count)
 
                         u.save()
                         h.save()
@@ -597,9 +605,56 @@ def cost(request):
 
 # view for ho log
 def ho_log(request, page=1):
+    active_users = User.objects.filter(is_active=True)
+    active_housemates = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+    select_housemates = active_housemates.exclude(display_name='Admin').exclude(display_name='Huis')
+
+    filters = dict()
+    filters_str = ['housemate',
+                   'min_amount',
+                   'sum_choice',
+                   'final_date']
+    sum_types = [
+        {"option": 'aggregate_days', "label": 'Aggregate days'},
+        {"option": 'aggregate_months', "label": 'Aggregate months'},
+        {"option": 'aggregate_years', "label": 'Aggregate years'},
+    ]
+
+    for filt in filters_str:
+        filters[filt] = request.GET.get(filt, 0)
+
+    ho_logs = HOLog.objects.order_by('-time')
+
+    try:
+        if int(filters['housemate']):
+            u = User.objects.get(id=int(filters['housemate']))
+            ho_logs = ho_logs.filter(user_id=u)
+        if filters['min_amount']:
+            ho_logs = ho_logs.filter(amount__gte=int(filters['min_amount']))
+        if filters['final_date']:
+            date = datetime.strptime(filters['final_date'], "%d-%m-%Y").date()
+            ho_logs = ho_logs.filter(time__lte=date)
+        if filters['sum_choice'] == "aggregate_days":
+            ho_logs = ho_logs.extra(select={'time': 'date( time )'}) \
+                .values('time', 'user__first_name') \
+                .annotate(amount=Sum('amount')).order_by('-turf_time')
+        elif filters['sum_choice'] == "aggregate_months":
+            ho_logs = ho_logs.extra(select={'time': 'date( time )'}) \
+                .extra({"month": "date_part(\'month\', \"time\")"}) \
+                .extra({"year": "date_part(\'year\', \"time\")"}) \
+                .values('month', 'year', 'user__first_name') \
+                .annotate(amount=Sum('amount')).order_by('-year', '-month')
+        elif filters['sum_choice'] == "aggregate_years":
+            ho_logs = ho_logs.extra(select={'time': 'date( time )'}) \
+                .extra({"year": "date_part(\'year\', \"time\")"}) \
+                .values('user__first_name', 'year') \
+                .annotate(amount=Sum('amount')).order_by('-year')
+    except Exception as e:
+        print("Exception:" + str(e))
+        # pass
 
     # get list of turfed items
-    ho_list = Paginator(HOLog.objects.order_by('-time'), 25)
+    ho_list = Paginator(ho_logs.order_by('-time'), 25)
 
     # ensure page number is valid
     try:
@@ -612,18 +667,75 @@ def ho_log(request, page=1):
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'table_list': table_list,
+        'housemates': select_housemates,
+        'filters': filters,
+        'sum_types': sum_types,
         'pages': str(ho_list.num_pages),
         'page_num': page
     }
 
-    return render(request, 'eetlijst/ho_log.html', context)
+    return render(request, 'eetlijst/ho/ho_log.html', context)
 
 
 # view for transfer log
 def transfer_log(request, page=1):
+    active_users = User.objects.filter(is_active=True)
+    active_housemates = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+    select_housemates = active_housemates.exclude(display_name='Admin').exclude(display_name='Huis')
+
+    filters = dict()
+    filters_str = ['housemate_from', 'housemate_to',
+                   'min_amount',
+                   'sum_choice',
+                   'final_date']
+    sum_types = [
+        {"option": 'aggregate_days', "label": 'Aggregate days'},
+        {"option": 'aggregate_months', "label": 'Aggregate months'}
+    ]
+
+    for filt in filters_str:
+        filters[filt] = request.GET.get(filt, 0)
+
+    t_logs = Transfer.objects.order_by('-time')
+
+    try:
+        if int(filters['housemate_from']):
+            h = Housemate.objects.get(id=int(filters['housemate_from']))
+            t_logs = t_logs.filter(from_user=h)
+        if int(filters['housemate_to']):
+            h = Housemate.objects.get(id=int(filters['housemate_to']))
+            t_logs = t_logs.filter(to_user=h)
+        if filters['min_amount']:
+            t_logs = t_logs.filter(amount__gte=int(filters['min_amount']))
+        if filters['final_date']:
+            date = datetime.strptime(filters['final_date'], "%d-%m-%Y").date()
+            t_logs = t_logs.filter(time__lte=date)
+        if filters['sum_choice'] == "aggregate_days":
+            t_logs = t_logs.extra(select={'time': 'date( time )'})
+            if int(filters['housemate_to']) and not int(filters['housemate_from']):
+                t_logs = t_logs.values('time', 'from_user')
+            elif int(filters['housemate_from']):
+                t_logs = t_logs.values('time', 'to_user')
+            else:
+                t_logs = t_logs.values('time', 'to_user', 'from_user')
+            t_logs = t_logs.annotate(amount=Sum('amount')).order_by('-turf_time')
+        elif filters['sum_choice'] == "aggregate_months":
+            t_logs = t_logs.extra(select={'time': 'date( time )'}) \
+                .extra({"month": "date_part(\'month\', \"time\")"}) \
+                .extra({"year": "date_part(\'year\', \"time\")"})
+            if int(filters['housemate_to']) and not int(filters['housemate_from']):
+                t_logs = t_logs.values('month', 'year', 'from_user')
+            elif int(filters['housemate_from']):
+                t_logs = t_logs.values('month', 'year', 'to_user')
+            else:
+                t_logs = t_logs.values('month', 'year', 'to_user', 'from_user')
+            t_logs = t_logs.annotate(amount=Sum('amount')).order_by('-time')
+    except Exception as e:
+        print("Exception:" + str(e))
+        pass
 
     # get list of turfed items
-    transfer_list = Paginator(Transfer.objects.order_by('-time'), 25)
+    transfer_list = Paginator(t_logs.order_by('-time'), 25)
 
     # ensure page number is valid
     try:
@@ -636,8 +748,11 @@ def transfer_log(request, page=1):
     context = {
         'breadcrumbs': request.get_full_path()[1:-1].split('/'),
         'table_list': table_list,
+        'housemates': select_housemates,
+        'filters': filters,
+        'sum_types': sum_types,
         'pages': str(transfer_list.num_pages),
         'page_num': page
     }
 
-    return render(request, 'eetlijst/transfer_log.html', context)
+    return render(request, 'eetlijst/transfer/transfer_log.html', context)
