@@ -37,15 +37,12 @@ else
     echo "---> postgresql already installed."    
 fi
 
-pip install -r requirements.txt
-
 if [ ! -d "/var/lib/postgres/data" ]; then
-    sudo mkdir /var/lib/postgres/data
+    sudo -u postgres mkdir /var/lib/postgres/data
+    sudo chown -c -R postgres:postgres /var/lib/postgres
+    sudo -u postgres initdb --locale $LANG -E UTF8 -D '/var/lib/postgres/data'
 fi
 
-sudo chown -c -R postgres:postgres /var/lib/postgres
-
-sudo -u postgres -H sh -f ".././postgres.sh"
 
 echo "
 ---> Return to sudo. Starting postgresql service.
@@ -55,7 +52,7 @@ sudo systemctl enable postgresql
 sudo systemctl start postgresql.service
 
 echo "---> Trying to check if postgres is running: "
-sudo systemctl status postgresql.service | grep "active (running)"
+systemctl status postgresql.service | grep "active (running)"
 
 if [ "$USER" == "root" ]; then
     echo "---? Specify a non-root user to be used on the database:"
@@ -65,7 +62,7 @@ else
     DB_USER="$USER"
 fi
 
-if [ ! psql --list | grep "$norootuser" ]; then
+if ! psql --list | grep "$norootuser"; then
     echo "Couldn't find user database...?"
     createuser -s -U postgres "$norootuser"
 fi
@@ -120,6 +117,8 @@ if ! pip freeze | grep "virtualenv"; then
 fi
 
 virtualenv venv
+
+sudo pip install -r requirements.txt --user
 
 python manage.py migrate
 
