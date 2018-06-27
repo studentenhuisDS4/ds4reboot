@@ -151,6 +151,12 @@ def index(request, year=None, month=None, day=None):
     return render(request, 'eetlijst/index.html', context)
 
 
+def doorbell(request):
+    print('Success')
+    context={}
+    return redirect('/eetlijst/')
+
+
 # handle goto date post requests
 def goto_date(request):
     # validate input
