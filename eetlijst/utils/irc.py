@@ -1,3 +1,4 @@
+import random
 import socket, string
 
 #some user data, change as per your taste
@@ -7,6 +8,13 @@ NICKNAME = 'iotard_ds4reboot_caller2'
 CHANNEL = '#iotard'
 
 IRC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+name = id_generator()
 
 
 def irc_conn():
@@ -35,10 +43,15 @@ def disconnect():
     send_data("QUIT")
 
 
+
+
+
 def login(nickname, username='user', password = None, realname='Pythonist', hostname='Helena', servername='Server'):
     # send login data (customizable)
     send_data("USER %s %s %s %s" % (username, hostname, servername, realname))
-    send_data("NICK " + nickname)
+
+    print(name)
+    send_data("NICK " + name)
 
 
 def send_irc_broad():
