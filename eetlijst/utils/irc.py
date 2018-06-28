@@ -3,7 +3,7 @@ import socket, string
 #some user data, change as per your taste
 SERVER = 'irc.freenode.net'
 PORT = 6667
-NICKNAME = 'iotard_ds4reboot_caller'
+NICKNAME = 'iotard_ds4reboot_caller2'
 CHANNEL = '#iotard'
 
 IRC = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -32,7 +32,7 @@ def join(channel):
 
 def disconnect():
     # join the channel
-    send_data("DISCONNECT")
+    send_data("QUIT")
 
 
 def login(nickname, username='user', password = None, realname='Pythonist', hostname='Helena', servername='Server'):
@@ -48,4 +48,4 @@ def send_irc_broad():
 
     send_data("PRIVMSG " + CHANNEL + " :RING BROADCAST ALL")
 
-    disconnect()
+    # disconnect()
