@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.utils.datetime_safe import datetime
 
+from eetlijst.utils.irc import send_irc_broad, irc_conn
 from user.models import Housemate
 from eetlijst.models import HOLog, Transfer, DateList, UserList
 from django.shortcuts import render, redirect
@@ -11,12 +12,12 @@ import datetime as dt
 from decimal import Decimal
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib import messages
-from django.template.loader import render_to_string
 from django.http import JsonResponse
 
 
 # generate eetlijst view for current or defined date
 def index(request, year=None, month=None, day=None):
+    irc_conn()
     # get current date if nothing specified
     if not year or not month or not day:
         # bug solved; needed zero-pad to keep consistency in template context.focus_date
@@ -149,6 +150,12 @@ def index(request, year=None, month=None, day=None):
     }
 
     return render(request, 'eetlijst/index.html', context)
+
+
+def doorbell(request):
+    print('Doorbell fired')
+    send_irc_broad()
+    return redirect('/eetlijst/')
 
 
 # handle goto date post requests
