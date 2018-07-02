@@ -3,7 +3,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.utils.datetime_safe import datetime
 
-from eetlijst.utils.irc import send_irc_broad, irc_conn
+from eetlijst.irc import send_irc_broad, irc_conn
 from user.models import Housemate
 from eetlijst.models import HOLog, Transfer, DateList, UserList
 from django.shortcuts import render, redirect
