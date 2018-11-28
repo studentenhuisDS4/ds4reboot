@@ -22,6 +22,8 @@ class TestBierlijst(TestCase):
                 response = self.client.get(reverse(url.name), follow=True)
                 print(str(response))
                 self.assertEqual(response.status_code, 200)
+            else:
+                print("-- url POST skipped --")
 
     def test_boete_post_enforced(self):
         response = self.client.get(reverse('add boetes'), follow=True)

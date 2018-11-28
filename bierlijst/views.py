@@ -228,7 +228,7 @@ def add_boete(request):
 
 # handle remove boete requests
 def remove_boete(request, boete_id):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         b = Boete.objects.get(id=boete_id)
 
         h = Housemate.objects.get(user_id=b.boete_user)
@@ -246,7 +246,7 @@ def remove_boete(request, boete_id):
 
 # handle turf boete requests
 def turf_boete(request, type_wine, user_id):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
         if type_wine == 'r' or type_wine == 'w':
 
@@ -296,7 +296,7 @@ def reset_boetes(request):
 # handle turf post requests
 @require_POST
 def turf_item(request, user_id):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
         # Get user and turf type from POST
         turf_user = User.objects.get(pk=user_id)
