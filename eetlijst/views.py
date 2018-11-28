@@ -29,7 +29,7 @@ def index(request, year=None, month=None, day=None):
 
     # check if user has costs to fill
     open_days = []
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         try:
             open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by(
                 'date')

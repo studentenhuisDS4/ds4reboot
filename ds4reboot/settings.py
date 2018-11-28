@@ -13,15 +13,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 from ds4reboot.secret_settings import *
 
-# Set plotly credentials
-# plotly.tools.set_credentials_file(username='damienallen', api_key='kf1rtj9u7l')
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Application definition
-if not SECRET_APPS:
-    SECRET_APPS = []
 
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
@@ -42,13 +35,12 @@ INSTALLED_APPS = [
 
 INSTALLED_APPS += SECRET_APPS
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -73,9 +65,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 
-# Password validation
-# https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -85,26 +74,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Email settings
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Europe/Amsterdam'
-
 USE_I18N = True
-
 USE_L10N = True
-
-USE_TZ = False # Use local time
-
+USE_TZ = False  # Use local time
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 

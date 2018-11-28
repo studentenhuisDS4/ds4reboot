@@ -1,6 +1,9 @@
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
 from django.template import Context, Template
+from django.urls import reverse
+
+from base.urls import urlpatterns
 
 
 class ResourceTemplateTagTest(TestCase):
@@ -83,3 +86,8 @@ class ResourceTemplateTagTest(TestCase):
         print("Tested [secure] full_static tag:", templ)
         self.assertIn('/static/', templ)
         self.assertIn('https://', templ)
+
+    def test_responses(self):
+        for url in urlpatterns:
+            response = self.client.get(reverse(url.name))
+            self.assertEqual(response.status_code, 200)
