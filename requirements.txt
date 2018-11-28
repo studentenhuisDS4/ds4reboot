@@ -2,8 +2,8 @@ django==1.9.2
 django-gcm==1.2.0
 djangorestframework==3.8.2
 django_compressor==2.2
-psycopg2==2.7.4
+psycopg2==2.7.6
 gunicorn==19.6.0
 openpyxl==2.3.5
 virtualenv==16.0.0
-irc=16.3
+
