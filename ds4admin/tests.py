@@ -8,6 +8,10 @@ class TestAdminPage(TestCase):
 
     def test_responses(self):
         for url in urlpatterns:
-            response = self.client.get(reverse(url.name))
-            print(response)
-            self.assertEqual(response.status_code, 200)
+
+            if url.name is not None:
+                print("- " + str(url.name))
+
+                response = self.client.get(reverse(url.name), follow=True)
+                print(response.status_code)
+                self.assertEqual(response.status_code, 200)

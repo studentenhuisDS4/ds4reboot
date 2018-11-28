@@ -1,17 +1,19 @@
-from django.contrib.auth.models import User
-from django.utils.datetime_safe import datetime
-
-from user.models import Housemate
-from bierlijst.models import Turf, Boete
-from thesau.models import BoetesReport
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse, QueryDict
-from django.contrib import messages
-from decimal import Decimal
-from django.db.models import Sum, Q, Count
-from django.core.paginator import Paginator, EmptyPage
 # from gcm.models import get_device_model
 import json
+from decimal import Decimal
+
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage
+from django.db.models import Sum, Q
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.utils.datetime_safe import datetime
+from django.views.decorators.http import require_POST
+
+from bierlijst.models import Turf, Boete
+from thesau.models import BoetesReport
+from user.models import Housemate
 
 
 # index view for bierlijst
@@ -178,51 +180,48 @@ def boetes(request, page=1):
 
 
 # handle add boetes post requests
+@require_POST
 def add_boete(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
-            # get data from POST
-            user_id = int(request.POST.get('housemate'))
-            note = request.POST.get('note')
+        # get data from POST
+        user_id = int(request.POST.get('housemate'))
+        note = request.POST.get('note')
 
-            if request.POST.get('count') == '':
-                count = 1
-            else:
-                count = int(request.POST.get('count'))
-
-            # validate form input
-            if count > 10 or count < 1:
-                messages.error(request, 'Number of boetes must be between 1 and 10.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            if note == '':
-                messages.error(request, 'Must add reason.')
-                return redirect(request.META.get('HTTP_REFERER'))
-
-            elif len(note) > 100:
-                messages.error(request, 'Note must be less than 50 characters!')
-                return redirect(request.META.get('HTTP_REFERER'))
-
-            if user_id == 0:
-                messages.error(request, 'Must choose housemate.')
-                return redirect(request.META.get('HTTP_REFERER'))
-
-            # update housemate object
-            h = Housemate.objects.get(user_id=user_id)
-            h.boetes_open += count
-            h.boetes_total += count
-            h.save()
-
-            # add entry to boete table
-            b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=request.user, boete_count=count,
-                      boete_note=note)
-            b.save()
-
+        if request.POST.get('count') == '':
+            count = 1
         else:
-            return render(request, 'base/login_page.html')
+            count = int(request.POST.get('count'))
+
+        # validate form input
+        if count > 10 or count < 1:
+            messages.error(request, 'Number of boetes must be between 1 and 10.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        if note == '':
+            messages.error(request, 'Must add reason.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        elif len(note) > 100:
+            messages.error(request, 'Note must be less than 50 characters!')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        if user_id == 0:
+            messages.error(request, 'Must choose housemate.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        # update housemate object
+        h = Housemate.objects.get(user_id=user_id)
+        h.boetes_open += count
+        h.boetes_total += count
+        h.save()
+
+        # add entry to boete table
+        b = Boete(boete_user=h.user, boete_name=h.display_name, created_by=request.user, boete_count=count,
+                  boete_note=note)
+        b.save()
 
     else:
-        messages.error(request, 'Method must be POST.')
+        return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
@@ -278,7 +277,7 @@ def turf_boete(request, type_wine, user_id):
 
 # handle reset boete requests
 def reset_boetes(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
         Boete.objects.all().delete()
 
@@ -295,102 +294,102 @@ def reset_boetes(request):
 
 
 # handle turf post requests
+@require_POST
 def turf_item(request, user_id):
-    if request.method == 'POST':
-        if request.user.is_authenticated():
+    if request.user.is_authenticated():
 
-            # Get user and turf type from POST
-            turf_user = User.objects.get(pk=user_id)
-            turf_type = request.POST.get('turf_type')
+        # Get user and turf type from POST
+        turf_user = User.objects.get(pk=user_id)
+        turf_type = request.POST.get('turf_type')
 
-            if request.POST.get('count'):
+        if request.POST.get('count'):
 
-                # validate count input
-                try:
-                    turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
+            # validate count input
+            try:
+                turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
-                except ValueError:
-                    return HttpResponse(
-                        json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
+            except ValueError:
+                return HttpResponse(
+                    json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
 
-                if turf_type == 'bier' and not float(turf_count).is_integer():
-                    return HttpResponse(
-                        json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
+            if turf_type == 'bier' and not float(turf_count).is_integer():
+                return HttpResponse(
+                    json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
 
-                if turf_count >= 1000:
-                    return HttpResponse(
-                        json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
-
-            else:
-                turf_count = 1
-
-            h = Housemate.objects.get(user_id=user_id)
-
-            # add entry to database
-            new_value = 0
-            sum_type = ''
-            if turf_type == 'bier':
-                if h.sum_bier + turf_count >= 0:
-                    h.sum_bier += turf_count
-                    h.total_bier += turf_count
-
-                    success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
-                    success_message = success_message if turf_count == 1 else success_message.replace('bier',
-                                                                                                      'biertjes')
-                else:
-                    success_message = 'Je kan geen negatief aantal biertjes hebben.'
-                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
-
-                new_value = h.sum_bier
-                sum_type = 'sum_bier'
-
-            elif turf_type == 'wwijn':
-                if h.sum_wwijn + turf_count >= 0:
-                    h.sum_wwijn += Decimal(turf_count)
-                    h.total_wwijn += Decimal(turf_count)
-
-                    success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
-                else:
-                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
-                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
-
-                new_value = h.sum_wwijn
-                sum_type = 'sum_wwijn'
-            elif turf_type == 'rwijn':
-                if h.sum_rwijn + turf_count >= 0:
-                    h.sum_rwijn += Decimal(turf_count)
-                    h.total_rwijn += Decimal(turf_count)
-                else:
-                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
-                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
-
-                success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
-
-                new_value = h.sum_rwijn
-                sum_type = 'sum_rwijn'
-
-            h.save()
-            if sum_type != '':
-                new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
-            else:
-                return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
-
-            t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count,
-                     turf_type=turf_type)
-            t.save()
-
-            return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
-                                            'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
+            if turf_count >= 1000:
+                return HttpResponse(
+                    json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
 
         else:
-            return HttpResponse(
-                json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            turf_count = 1
+
+        h = Housemate.objects.get(user_id=user_id)
+
+        # add entry to database
+        new_value = 0
+        sum_type = ''
+        if turf_type == 'bier':
+            if h.sum_bier + turf_count >= 0:
+                h.sum_bier += turf_count
+                h.total_bier += turf_count
+
+                success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
+                success_message = success_message if turf_count == 1 else success_message.replace('bier',
+                                                                                                  'biertjes')
+            else:
+                success_message = 'Je kan geen negatief aantal biertjes hebben.'
+                return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+
+            new_value = h.sum_bier
+            sum_type = 'sum_bier'
+
+        elif turf_type == 'wwijn':
+            if h.sum_wwijn + turf_count >= 0:
+                h.sum_wwijn += Decimal(turf_count)
+                h.total_wwijn += Decimal(turf_count)
+
+                success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+            else:
+                success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+
+            new_value = h.sum_wwijn
+            sum_type = 'sum_wwijn'
+        elif turf_type == 'rwijn':
+            if h.sum_rwijn + turf_count >= 0:
+                h.sum_rwijn += Decimal(turf_count)
+                h.total_rwijn += Decimal(turf_count)
+            else:
+                success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+
+            success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+
+            new_value = h.sum_rwijn
+            sum_type = 'sum_rwijn'
+
+        h.save()
+        if sum_type != '':
+            new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
+        else:
+            return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
+
+        t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count,
+                 turf_type=turf_type)
+        t.save()
+
+        return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
+                                        'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
+
+    else:
+        return HttpResponse(
+            json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
 
 
 # handle turf post requests
 def list_medals(request):
     if request.method == 'GET':
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
 
             # find medaled users
             active_users = User.objects.filter(is_active=True)

@@ -15,7 +15,6 @@ class ResourceTemplateTagTest(TestCase):
             username='david', email='davidzwa@gmail.com', password='top_secret')
 
     def test_audio(self):
-
         # Create an instance of a GET request.
         request = self.factory.get('/', secure=False)
         context = Context({'request': request})
@@ -29,7 +28,6 @@ class ResourceTemplateTagTest(TestCase):
         self.assertIn("/static/audio/", rendr)
 
     def test_get_params(self):
-
         # Create an instance of a GET request.
         request = self.factory.get('/', {'param1': 'value', 'param2': 'value2'}, secure=False)
         context = Context({'request': request})
@@ -60,7 +58,6 @@ class ResourceTemplateTagTest(TestCase):
         self.assertIn('http://', templ)
 
     def test_full_media(self):
-
         # Create an instance of a GET request.
         request = self.factory.get('/', secure=False)
         context = Context({'request': request})
@@ -74,7 +71,6 @@ class ResourceTemplateTagTest(TestCase):
         self.assertIn('http://', templ)
 
     def test_static_secure(self):
-
         # Create an instance of a GET request.
         request = self.factory.get('/', secure=True)
         context = Context({'request': request})
@@ -86,6 +82,11 @@ class ResourceTemplateTagTest(TestCase):
         print("Tested [secure] full_static tag:", templ)
         self.assertIn('/static/', templ)
         self.assertIn('https://', templ)
+
+    # TODO create tests to test access to media/static
+    # def test_media_folder:
+
+    # def test_static_folder:
 
     def test_responses(self):
         for url in urlpatterns:
