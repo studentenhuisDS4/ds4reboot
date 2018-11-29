@@ -43,6 +43,7 @@ jobs:
 
       - run:
           command: |
+            pip install -r requirements.txt
             pipenv run "python manage.py test"
       - store_test_results:
           path: test-results
