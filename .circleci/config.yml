@@ -42,10 +42,6 @@ jobs:
       # https://nose.readthedocs.io
 
       - run:
-          name: run tests
-          command: |
-            python manage.py test
-      - run:
           command: |
             pipenv run "python manage.py test"
       - store_test_results:
