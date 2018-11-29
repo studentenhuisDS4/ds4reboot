@@ -1,22 +1,22 @@
 from django.contrib.auth.models import User
-from user.models import Housemate
-from eetlijst.models import DateList, UserList
 from django.shortcuts import render
 from django.utils import timezone
-from django.http import HttpResponse
+
+from eetlijst.models import DateList, UserList
+from user.models import Housemate
 
 
 # display home page
 def home_page(request):
-
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
         # get object for current user
         user_info = Housemate.objects.get(user_id=request.user.id)
 
         # load data on bierlijst medals
         active_users = User.objects.filter(is_active=True)
-        user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by('-sum_bier')[:3]
+        user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by(
+            '-sum_bier')[:3]
 
         medals = []
 
@@ -38,7 +38,8 @@ def home_page(request):
 
             if data_date.cook:
 
-                eetlijst_info = [Housemate.objects.get(user_id=data_date.cook.id).display_name, data_date.num_eating, eating_with, data_date.open]
+                eetlijst_info = [Housemate.objects.get(user_id=data_date.cook.id).display_name, data_date.num_eating,
+                                 eating_with, data_date.open]
 
             else:
                 eetlijst_info = ['Geen', data_date.num_eating, eating_with, data_date.open]
@@ -65,9 +66,8 @@ def home_page(request):
 
 # view for relatively static contact page
 def contact(request):
-
     # build context object
     context = {
-            'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-        }
+        'breadcrumbs': request.get_full_path()[1:-1].split('/'),
+    }
     return render(request, 'contact/index.html', context)

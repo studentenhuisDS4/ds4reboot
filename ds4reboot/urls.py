@@ -24,6 +24,5 @@ urlpatterns = [
     url(r'^eetlijst/', include('eetlijst.urls')),
     url(r'^thesau/', include('thesau.urls')),
     url(r'^ds4admin/', include('ds4admin.urls')),
-    url(r'^admin/', admin.site.urls),
-    # url(r'', include('gcm.urls')),
+    url(r'^admin/', admin.site.urls)
 ]
