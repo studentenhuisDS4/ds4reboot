@@ -7,9 +7,9 @@ from user.models import Housemate
 from django.contrib import messages
 from openpyxl import Workbook
 
+
 # view for thesau page
 def index(request):
-
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # get reports archive
@@ -19,16 +19,16 @@ def index(request):
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'report_list': report_list,
-            }
+        }
         return render(request, 'thesau/index.html', context)
 
     else:
         messages.error(request, 'Only accessible to thesaus and admins.')
         return redirect('/')
 
+
 # view for HR page
 def hr(request):
-
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # generate necessary user lists
@@ -54,7 +54,7 @@ def hr(request):
             'moveout_list': moveout_list,
             'boetes': [BoetesReport.objects.get(type='w').boete_count, BoetesReport.objects.get(type='r').boete_count],
             'totals': totals,
-            }
+        }
 
         return render(request, 'thesau/hr.html', context)
 
@@ -65,7 +65,6 @@ def hr(request):
 
 # generate XLSX file and commit changes
 def submit_hr(request):
-
     # generate necessary user lists
     active_users = User.objects.filter(is_active=True).exclude(username='admin')
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
@@ -90,7 +89,8 @@ def submit_hr(request):
     ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn', 'Boetewijn Rood', 'Boetewijn Wit'])
 
     for u in user_list:
-        ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
+        ws1.append(
+            [u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
 
     ws1.append([''])
     ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3], totals[4]])
