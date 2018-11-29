@@ -9,13 +9,13 @@ jobs:
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
       - image: circleci/postgres:9.6.2
         environment:
-          POSTGRES_USER: root
+          POSTGRES_USER: circleci
           POSTGRES_DB: circle_test
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
-
+      - create_secrets: cp "./.circleci/secret_settings.py" "./ds4reboot/secret_settings.py"
       # Download and cache dependencies
       - restore_cache:
           keys:
