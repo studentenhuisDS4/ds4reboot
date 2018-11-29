@@ -1,3 +1,5 @@
+from unittest import skip
+
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
 from django.template import Context, Template
@@ -56,6 +58,7 @@ class ResourceTemplateTagTest(TestCase):
         self.assertIn('/static/', templ)
         self.assertIn('http://', templ)
 
+    @skip
     def test_full_media(self):
 
         # Create an instance of a GET request.
