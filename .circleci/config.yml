@@ -15,7 +15,7 @@ jobs:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
-      - create_secrets: cp "./.circleci/secret_settings.py" "./ds4reboot/secret_settings.py"
+      - run: cp "./.circleci/secret_settings.py" "./ds4reboot/secret_settings.py"
       # Download and cache dependencies
       - restore_cache:
           keys:
