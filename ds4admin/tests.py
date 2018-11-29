@@ -5,7 +5,7 @@ from ds4admin.urls import urlpatterns
 
 
 class TestAdminPage(TestCase):
-    skip_nonstatic = ['toggle group', 'activate housemate', 'deactivate housemate', 'remove housemate']
+    skip_nonstatic = ['toggle group', 'activate housemate', 'deactivate housemate', 'remove housemate', 'create user post']
 
     def test_static_responses(self):
         print("Testing Admin:")

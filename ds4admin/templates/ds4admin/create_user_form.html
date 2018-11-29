@@ -1,0 +1,219 @@
+<div class="tab_content" style="border-bottom: 1px solid #ddd; padding: 2em; margin-left: 0;">
+    <div class="uk-grid uk-container-center" style="max-width: 40em">
+
+        <style type="text/css">
+            /* Custom the feedback icon styles */
+            #profile-form .fv-control-feedback {
+                position: static;
+                padding-left: 10px;
+                display: inline;
+            }
+        </style>
+
+        <form id="profile-form"
+              class="uk-form uk-form-horizontal uk-container-center uk-padding-remove uk-width-4-5 form-inline"
+              action="{% url 'create user post' %}" method="POST">
+            {% csrf_token %}
+
+            <div class="uk-container-center uk-margin-small-top">
+                <h5 class="uk-text-muted">Supply details</h5>
+                <hr>
+                <br>
+            </div>
+
+            <input type="hidden" name="profile-edit-type" value="profile"/>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="first-name">Voornaam:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="first-name" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="last-name">Achternaam:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="last-name" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="email">Email:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="email" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="cellphone">Cell:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="cellphone" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="parent-phone">Ouders:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="parentphone" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="diet">Diet:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="diet" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="room-number">Room number:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="room-number" value="">
+                </div>
+            </div>
+
+            <br>
+            <div class="uk-container-center uk-margin-small-top">
+                <h5 class="uk-text-muted">Supply login</h5>
+                <hr>
+                <br>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="profile-name">Profile name:</label>
+                <div class="uk-form-controls">
+                    <input type="text" name="profile-name" value="">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="new-pass">Nieuw wachtwoord:</label>
+                <div class="uk-form-controls">
+                    <input type="password" name="new-pass">
+                </div>
+            </div>
+
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="verify-pass">Herhaal wachtwoord:</label>
+                <div class="uk-form-controls">
+                    <input type="password" name="verify-pass">
+                </div>
+            </div>
+
+            <input type="hidden" name="profile-edit-type" value="password"/>
+
+            <hr>
+            <br>
+            <div class="uk-form-row">
+                <label class="uk-form-label" for="profile-submit"></label>
+                <div class="uk-form-controls">
+                    <button type="submit" name="profile-submit" value="user"
+                            class="uk-button uk-button-success uk-float-right">Add user <i class="uk-icon-save"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#profile-form')
+            .formValidation({
+                framework: 'uikit',
+                icon: {
+                    valid: 'uk-icon-check',
+                    invalid: 'uk-icon-times',
+                    validating: 'uk-icon-refresh'
+                },
+                fields: {
+                    'email': {
+                        validators: {
+                            emailAddress: {
+                                message: 'The input is not a valid email address'
+                            }
+                        }
+                    },
+                    'room-number': {
+                        validators: {
+                            between: {
+                                min: 1,
+                                max: 22,
+                                message: 'The input is not a valid room number (1-22)'
+                            }
+                        }
+                    },
+                    'first-name': {
+                        validators: {
+                            regexp: {
+                                regexp: /^[a-zA-Z\s]+$/,
+                                message: 'Name can only consist of alphabetical and space characters.'
+                            }
+                        }
+                    },
+                    'last-name': {
+                        validators: {
+                            regexp: {
+                                regexp: /^[a-zA-Z\s]+$/,
+                                message: 'Surname can only consist of alphabetical and space characters.'
+                            }
+                        }
+                    },
+                    'diet': {
+                        validators: {
+                            regexp: {
+                                regexp: /^[a-zA-Z\s]+$/,
+                                message: 'The diet can only consist of alphabetical and space characters.'
+                            }
+                        }
+                    },
+                    'current-pass': {
+                        validators: {
+                            nonEmpty: {
+                                message: 'The current password is required.'
+                            }
+                        }
+                    },
+                    'new-pass': {
+                        validators: {
+                            nonEmpty: {
+                                message: 'The new password is required.'
+                            },
+                            identical: {
+                                field: 'verify-pass',
+                                message: 'The password and its confirm are not the same.'
+                            },
+                            stringLength: {
+                                min: 6,
+                                message: 'The password must be longer than 5 characters.'
+                            },
+                            different: {
+                                field: 'current-pass',
+                                message: 'The new password must be different.'
+                            }
+                        }
+                    },
+                    'verify-pass': {
+                        validators: {
+                            nonEmpty: {
+                                message: 'The new password must be confirmed.'
+                            },
+                            identical: {
+                                field: 'new-pass',
+                                message: 'The password and its confirm are not the same.'
+                            },
+                            stringLength: {
+                                min: 6,
+                                message: 'The password must be longer than 5 characters.'
+                            },
+                            different: {
+                                field: 'current-pass',
+                                message: 'The new password must be different.'
+                            }
+                        }
+                    }
+                }
+            });
+    });
+</script>

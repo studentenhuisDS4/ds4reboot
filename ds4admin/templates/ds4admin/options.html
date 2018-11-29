@@ -1,10 +1,23 @@
 <div class="uk-panel uk-panel-box">
     <h3 class="uk-panel-title">DS4 Admin</h3>
     <hr>
-    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-success" href="/admin/auth/user/add/"><i class="uk-icon-plus-circle"></i> Huisgenoot toevoegen</a></p>
-    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/admin/"><i class="uk-icon-chain"></i> Django admin</a></p>
-    <p><a class="uk-button uk-button-large uk-width-1-1" href="/bierlijst/boetes/"><i class="uk-icon-chain"></i> Boetes pagina</a></p>
-    <p><a class="uk-button uk-button-large uk-width-1-1" href="/thesau/"><i class="uk-icon-chain"></i> Thesau pagina</a></p>
+    {% if request.get_full_path != "/ds4admin/create_user/" %}
+        <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-success" href="{% url 'create user' %}">
+            <i class="uk-icon-plus-circle"></i> Huisgenoot toevoegen
+        </a></p>
+    {% else %}
+        <a class="uk-button uk-button-large uk-width-1-1 uk-button-danger" href="{{request.META.HTTP_REFERER}}">
+        <i class="uk-icon-fast-backward"></i> Go back
+        </a>
+    {% endif %}
+    {#    <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="/admin/"><i class="uk-icon-chain"></i> Django admin</a></p>#}
+    <p><a class="uk-button uk-button-large uk-width-1-1" href="/bierlijst/boetes/"><i class="uk-icon-chain"></i> Boetes
+        pagina</a></p>
+    <p><a class="uk-button uk-button-large uk-width-1-1" href="/thesau/"><i class="uk-icon-chain"></i> Thesau pagina</a>
+    </p>
+
+
+    {% if request.get_full_path != "/ds4admin/create_user/" %}
     <hr>
 
     <div class="uk-width-1-1 uk-container-center uk-margin-top uk-margin-bottom">
@@ -16,20 +29,23 @@
                 <div class="uk-width-5-10">
                     <div class="uk-form-icon">
                         <i class="uk-icon-calendar uk-icon-small"></i>
-                        <input type="text" id="deactivate-datepick" name="deactivate_date" class="uk-width-1-1" value="{{ focus_date|current_date }}" data-uk-datepicker="{format:'YYYY/MM/DD'}">
+                        <input type="text" id="deactivate-datepick" name="deactivate_date" class="uk-width-1-1"
+                               value="{{ focus_date|current_date }}" data-uk-datepicker="{format:'YYYY/MM/DD'}">
                     </div>
                 </div>
 
                 <select name="housemate" class="uk-width-4-10" style="margin-left: 1em; margin-bottom: 1em">
                     <option selected="true" disabled="disabled" value="0">Huisgenoot</option>
                     {% for u in housemates %}
-                    <option value="{{ u.user_id }}">{{ u }}</option>
+                        <option value="{{ u.user_id }}">{{ u }}</option>
                     {% endfor %}
                 </select>
 
             </div>
 
-            <button type="submit" class="uk-button uk-button-primary uk-width-1-1"><i class="uk-icon-minus-circle"></i> Deactiveren</button>
+            <button type="submit" class="uk-button uk-button-primary uk-width-1-1"><i class="uk-icon-minus-circle"></i>
+                Deactiveren
+            </button>
 
         </form>
 
@@ -46,19 +62,22 @@
                 <div class="uk-width-5-10">
                     <div class="uk-form-icon">
                         <i class="uk-icon-calendar"></i>
-                        <input type="text" id="activate-datepick" name="activate_date" class="uk-width-1-1" value="{{ focus_date|current_date }}" data-uk-datepicker="{format:'YYYY/MM/DD'}">
+                        <input type="text" id="activate-datepick" name="activate_date" class="uk-width-1-1"
+                               value="{{ focus_date|current_date }}" data-uk-datepicker="{format:'YYYY/MM/DD'}">
                     </div>
                 </div>
 
                 <select name="housemate" class="uk-width-4-10" style="margin-left: 1em; margin-bottom: 1em">
                     <option selected="true" disabled="disabled" value="0">Huisgenoot</option>
                     {% for u in inactive %}
-                    <option value="{{ u.user_id }}">{{ u }}</option>
+                        <option value="{{ u.user_id }}">{{ u }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <button type="submit" class="uk-button uk-button-success uk-width-1-1"><i class="uk-icon-plus-circle"></i> Activeren</button>
+            <button type="submit" class="uk-button uk-button-success uk-width-1-1"><i class="uk-icon-plus-circle"></i>
+                Activeren
+            </button>
 
         </form>
 
@@ -74,15 +93,17 @@
                 <select name="housemate" class="uk-width-1-1 uk-form-small" style="margin-bottom: 1em">
                     <option selected="true" disabled="disabled" value="0">Huisgenoot</option>
                     {% for u in housemates %}
-                    <option value="{{ u.user_id }}">{{ u }}</option>
+                        <option value="{{ u.user_id }}">{{ u }}</option>
                     {% endfor %}
                 </select>
 
-                <button type="submit" class="uk-button uk-button-danger uk-width-1-1 uk-form-small"><i class="uk-icon-times-circle"></i> Verwijderen</button>
+                <button type="submit" class="uk-button uk-button-danger uk-width-1-1 uk-form-small"><i
+                        class="uk-icon-times-circle"></i> Verwijderen
+                </button>
 
             </div>
 
         </form>
     </div>
-
+    {% endif %}
 </div>
