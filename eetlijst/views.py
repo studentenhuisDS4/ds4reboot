@@ -376,6 +376,7 @@ def enroll(request):
 
         return HttpResponse(JsonResponse(json_data))
 
+
 # close eetlijst
 @require_POST
 def close(request):
@@ -395,7 +396,7 @@ def close(request):
                 if date_entry.cook == request.user:
 
                     # if open
-                    if date_entry.open == True:
+                    if date_entry.open:
                         date_entry.open = False
                         date_entry.close_time = timezone.now()
                         date_entry.save()
@@ -478,10 +479,10 @@ def close(request):
         else:
             messages.error(request, 'Cannot close list without cook.')
             return redirect(request.META.get('HTTP_REFERER'))
-
-
     else:
         return render(request, 'base/login_page.html')
+
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # handle eetlijst cost input
