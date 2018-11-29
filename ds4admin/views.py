@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User, Group
+from django.views.decorators.http import require_POST
+
 from user.models import Housemate
 from eetlijst.models import HOLog
 from thesau.models import Report
@@ -10,17 +12,16 @@ from decimal import Decimal
 
 # view for ds4 admin page
 def balance(request):
-
     if request.user.is_superuser:
 
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
         inactive_users = User.objects.filter(is_active=False)
-        housemates = Housemate.objects.filter(user__id__in=active_users)\
+        housemates = Housemate.objects.filter(user__id__in=active_users) \
             .exclude(display_name='Huis') \
             .exclude(display_name='Admin') \
             .order_by('movein_date')
-        inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users)\
+        inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
             .exclude(moveout_set=True).order_by('movein_date').exclude(display_name='Admin')
 
         huis_balance = Housemate.objects.get(display_name='Huis').balance
@@ -48,13 +49,14 @@ def balance(request):
             'remainder': huis_balance,
             'overall_balance': overall_balance,
             'focus_date': str(year) + '/' + str(month) + '/' + str(day),
-            }
+        }
 
         return render(request, 'ds4admin/balance.html', context)
 
     else:
         messages.error(request, 'Admin only area.')
         return redirect('/')
+
 
 def summary(request):
     active_users = User.objects.filter(is_active=True)
@@ -78,15 +80,15 @@ def summary(request):
     }
     return render(request, 'summary.html', context)
 
+
 # view for huisgenooten tab
 def housemates(request):
-
     if request.user.is_superuser:
 
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
         inactive_users = User.objects.filter(is_active=False)
-        housemates = Housemate.objects.filter(user__id__in=active_users)\
+        housemates = Housemate.objects.filter(user__id__in=active_users) \
             .exclude(display_name='Huis') \
             .exclude(display_name='Admin') \
             .order_by('movein_date')
@@ -112,15 +114,15 @@ def housemates(request):
         messages.error(request, 'Admin only area.')
         return redirect('/')
 
+
 # view for permissionstab
 def permissions(request):
-
     if request.user.is_superuser:
 
         # get list of active users sorted by move-in date
         active_users = User.objects.filter(is_active=True)
         inactive_users = User.objects.filter(is_active=False)
-        housemates = Housemate.objects.filter(user__id__in=active_users)\
+        housemates = Housemate.objects.filter(user__id__in=active_users) \
             .exclude(display_name='Huis') \
             .exclude(display_name='Admin') \
             .order_by('movein_date')
@@ -149,7 +151,6 @@ def permissions(request):
 
 # handle requests to toggle user group
 def toggle_group(request, group_type, user_id):
-
     u = User.objects.get(id=user_id)
 
     if group_type == 'admin':
@@ -174,9 +175,8 @@ def toggle_group(request, group_type, user_id):
 
 # handle remove housemate post requests
 def remove_housemate(request):
-
     if request.method == 'POST':
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
 
             # get data from POST
             remove_id = int(request.POST.get('housemate'))
@@ -196,9 +196,9 @@ def remove_housemate(request):
 
                 # Get required database objects
                 huis = Housemate.objects.get(display_name='Huis')
-                active_users = User.objects\
-                    .filter(is_active=True)\
-                    .exclude(id=remove_id)\
+                active_users = User.objects \
+                    .filter(is_active=True) \
+                    .exclude(id=remove_id) \
                     .exclude(username='huis') \
                     .exclude(username='admin')
 
@@ -208,7 +208,7 @@ def remove_housemate(request):
                 # Get old remainder and optimally calculate split cost to remove this housemate
                 remainder = huis.balance
 
-                split_cost = Decimal(round((h.balance + remainder)/len(other_housemates), 2))
+                split_cost = Decimal(round((h.balance + remainder) / len(other_housemates), 2))
                 total_diff = len(active_users) * split_cost
                 new_remainder = -(total_diff - h.balance)
 
@@ -219,11 +219,11 @@ def remove_housemate(request):
                 ho = HOLog(user=h.user, amount=h.balance, note='Verhuizen')
 
                 # Render email to send summary
-                last_hr_date = Report.objects.latest('report_date').report_date # Assume housemate already lived here
+                last_hr_date = Report.objects.latest('report_date').report_date  # Assume housemate already lived here
                 curr_date = timezone.now().date()
 
                 # Force float by introducing comma: 93.0
-                est_hr_perc = round((curr_date - last_hr_date).days / 93.0 * 100, 2)    # Assume 31 * 3 days for HR
+                est_hr_perc = round((curr_date - last_hr_date).days / 93.0 * 100, 2)  # Assume 31 * 3 days for HR
 
                 if est_hr_perc > 100:
                     est_hr_perc = 100
@@ -274,9 +274,8 @@ def remove_housemate(request):
 
 # handle activation of inactive housemate
 def activate_housemate(request):
-
     if request.method == 'POST':
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
 
             # get data from POST
             try:
@@ -315,11 +314,11 @@ def activate_housemate(request):
 
     return redirect(request.META.get('HTTP_REFERER'))
 
+
 # handle deactivation of housemate post requests
 def deactivate_housemate(request):
-
     if request.method == 'POST':
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
 
             # get data from POST
             try:
@@ -358,4 +357,3 @@ def deactivate_housemate(request):
         messages.error(request, 'Method must be POST.')
 
     return redirect(request.META.get('HTTP_REFERER'))
-

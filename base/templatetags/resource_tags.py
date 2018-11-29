@@ -1,6 +1,5 @@
-from django.conf.global_settings import MEDIA_URL
 from django.template.defaulttags import register
-from ds4reboot.settings import STATIC_URL
+from ds4reboot.settings import STATIC_URL, MEDIA_URL
 
 
 @register.simple_tag(takes_context=True)

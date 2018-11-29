@@ -1,23 +1,23 @@
-from django.contrib.auth.models import User
-from django.db.models import Sum
-from django.http import HttpResponse
-from django.utils.datetime_safe import datetime
-
-from eetlijst.irc import send_irc_broad, irc_conn
-from user.models import Housemate
-from eetlijst.models import HOLog, Transfer, DateList, UserList
-from django.shortcuts import render, redirect
-from django.utils import timezone
 import datetime as dt
 from decimal import Decimal
-from django.core.paginator import Paginator, EmptyPage
+
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.utils.datetime_safe import datetime
+from django.views.decorators.http import require_POST
+
+from eetlijst.models import HOLog, Transfer, DateList, UserList
+from user.models import Housemate
 
 
 # generate eetlijst view for current or defined date
 def index(request, year=None, month=None, day=None):
-    irc_conn()
     # get current date if nothing specified
     if not year or not month or not day:
         # bug solved; needed zero-pad to keep consistency in template context.focus_date
@@ -31,7 +31,7 @@ def index(request, year=None, month=None, day=None):
 
     # check if user has costs to fill
     open_days = []
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         try:
             open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by(
                 'date')
@@ -152,12 +152,6 @@ def index(request, year=None, month=None, day=None):
     return render(request, 'eetlijst/index.html', context)
 
 
-def doorbell(request):
-    print('Doorbell fired')
-    send_irc_broad()
-    return redirect('/eetlijst/')
-
-
 # handle goto date post requests
 def goto_date(request):
     # validate input
@@ -176,436 +170,421 @@ def goto_date(request):
 
 
 # handle add ho requests
+@require_POST
 def add_ho(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
-            user_id = int(request.user.id)
-            note = request.POST.get('note')
+        user_id = int(request.user.id)
+        note = request.POST.get('note')
 
-            # validate form input
-            if request.POST.get('amount') == '':
-                messages.error(request, 'Must add amount.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            else:
-                amount = Decimal(round(Decimal(request.POST.get('amount')), 2))
-
-            if note == '':
-                messages.error(request, 'Must add description.')
-                return redirect(request.META.get('HTTP_REFERER'))
-
-            # update housemate object for current user
-            h = Housemate.objects.get(user_id=user_id)
-            h.balance += amount
-            h.save()
-
-            # update housemate objects for other users
-            huis = Housemate.objects.get(display_name='Huis')
-
-            # Admin exclude are to be sure, admin shouldn't be active
-            active_users = User.objects.filter(is_active=True)
-            inactive_users = User.objects.filter(is_active=None)
-            active_housemates = Housemate.objects.filter(user__id__in=active_users) \
-                .exclude(display_name='Huis') \
-                .exclude(display_name='Admin')
-
-            # take care of remainder
-            remainder = huis.balance
-            split_cost = round((amount - remainder) / len(active_housemates), 2)
-            huis.balance = len(active_housemates) * split_cost - amount + remainder
-
-            huis.save()
-
-            for o in active_housemates:
-                o.balance -= split_cost
-                o.save()
-
-            inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
-                .exclude(display_name='Huis') \
-                .exclude(display_name='Admin')
-
-            active_balance = 0
-            for active_h in active_housemates:
-                active_balance += active_h.balance
-
-            inactive_balance = 0
-            for inactive_h in inactive_housemates:
-                inactive_balance += inactive_h.balance
-
-            overall_balance = active_balance + inactive_balance + huis.balance
-
-            # add entry to ho table
-            ho = HOLog(user=h.user, amount=amount, note=note, total_balance=overall_balance)
-            ho.save()
-
+        # validate form input
+        if request.POST.get('amount') == '':
+            messages.error(request, 'Must add amount.')
+            return redirect(request.META.get('HTTP_REFERER'))
         else:
-            return render(request, 'base/login_page.html')
+            amount = Decimal(round(Decimal(request.POST.get('amount')), 2))
+
+        if note == '':
+            messages.error(request, 'Must add description.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        # update housemate object for current user
+        h = Housemate.objects.get(user_id=user_id)
+        h.balance += amount
+        h.save()
+
+        # update housemate objects for other users
+        huis = Housemate.objects.get(display_name='Huis')
+
+        # Admin exclude are to be sure, admin shouldn't be active
+        active_users = User.objects.filter(is_active=True)
+        inactive_users = User.objects.filter(is_active=None)
+        active_housemates = Housemate.objects.filter(user__id__in=active_users) \
+            .exclude(display_name='Huis') \
+            .exclude(display_name='Admin')
+
+        # take care of remainder
+        remainder = huis.balance
+        split_cost = round((amount - remainder) / len(active_housemates), 2)
+        huis.balance = len(active_housemates) * split_cost - amount + remainder
+
+        huis.save()
+
+        for o in active_housemates:
+            o.balance -= split_cost
+            o.save()
+
+        inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
+            .exclude(display_name='Huis') \
+            .exclude(display_name='Admin')
+
+        active_balance = 0
+        for active_h in active_housemates:
+            active_balance += active_h.balance
+
+        inactive_balance = 0
+        for inactive_h in inactive_housemates:
+            inactive_balance += inactive_h.balance
+
+        overall_balance = active_balance + inactive_balance + huis.balance
+
+        # add entry to ho table
+        ho = HOLog(user=h.user, amount=amount, note=note, total_balance=overall_balance)
+        ho.save()
 
     else:
-        messages.error(request, 'Method must be POST.')
+        return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
 
 # handle balance transfer post requests
+@require_POST
 def bal_transfer(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
-            current_user = int(request.user.id)
-            other_user = request.POST.get('housemate')
+        current_user = int(request.user.id)
+        other_user = request.POST.get('housemate')
 
-            # validate form input
-            if int(request.POST.get('housemate')) == 0:
-                messages.error(request, 'Must choose housemate.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            if request.POST.get('amount') == '':
-                messages.error(request, 'Must add amount.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            elif Decimal(request.POST.get('amount')) < 0:
-                messages.error(request, 'Amount must be positive, use arrow button to choose direction.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            else:
-                amount = Decimal(round(Decimal(request.POST.get('amount')), 2))
-
-            # get user data from POST
-            if request.POST.get('direction') == 'to':
-                from_user = Housemate.objects.get(user_id=current_user)
-                to_user = Housemate.objects.get(user_id=other_user)
-            else:
-                from_user = Housemate.objects.get(user_id=other_user)
-                to_user = Housemate.objects.get(user_id=current_user)
-
-            # update housemate objects
-            from_user.balance -= amount
-            from_user.save()
-
-            to_user.balance += amount
-            to_user.save()
-
-            # add entry to transfer table
-            t = Transfer(user=request.user, from_user=from_user.user.housemate.display_name,
-                         to_user=to_user.user.housemate.display_name, amount=amount)
-            t.save()
-
+        # validate form input
+        if int(request.POST.get('housemate')) == 0:
+            messages.error(request, 'Must choose housemate.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        if request.POST.get('amount') == '':
+            messages.error(request, 'Must add amount.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        elif Decimal(request.POST.get('amount')) < 0:
+            messages.error(request, 'Amount must be positive, use arrow button to choose direction.')
+            return redirect(request.META.get('HTTP_REFERER'))
         else:
-            return render(request, 'base/login_page.html')
+            amount = Decimal(round(Decimal(request.POST.get('amount')), 2))
+
+        # get user data from POST
+        if request.POST.get('direction') == 'to':
+            from_user = Housemate.objects.get(user_id=current_user)
+            to_user = Housemate.objects.get(user_id=other_user)
+        else:
+            from_user = Housemate.objects.get(user_id=other_user)
+            to_user = Housemate.objects.get(user_id=current_user)
+
+        # update housemate objects
+        from_user.balance -= amount
+        from_user.save()
+
+        to_user.balance += amount
+        to_user.save()
+
+        # add entry to transfer table
+        t = Transfer(user=request.user, from_user=from_user.user.housemate.display_name,
+                     to_user=to_user.user.housemate.display_name, amount=amount)
+        t.save()
 
     else:
-        messages.error(request, 'Method must be POST.')
+        return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
 
 # handle eetlijst enrollment
+@require_POST
 def enroll(request):
-    if request.method == 'POST':
-        # Get user and turf type from POST
-        try:
-            user_id = request.POST.get('user_id')
-        except:
-            return HttpResponse(JsonResponse(
-                {'result': 'Error: Could not find requested user.', 'status': 'failure'}))
+    # Get user and turf type from POST
+    try:
+        user_id = request.POST.get('user_id')
+    except:
+        return HttpResponse(JsonResponse(
+            {'result': 'Error: Could not find requested user.', 'status': 'failure'}))
 
-        if request.user.is_authenticated():
-            enroll_user = Housemate.objects.get(user_id=user_id)
-            enroll_date = request.POST.get('enroll_date')
-            enroll_type = request.POST.get('enroll_type')
+    if request.user.is_authenticated:
+        enroll_user = Housemate.objects.get(user_id=user_id)
+        enroll_date = request.POST.get('enroll_date')
+        enroll_type = request.POST.get('enroll_type')
 
-            # get or create rows as necessary
-            user_entry, user_created = UserList.objects.get_or_create(user=enroll_user.user, list_date=enroll_date)
-            date_entry, date_created = DateList.objects.get_or_create(date=enroll_date)
+        # get or create rows as necessary
+        user_entry, user_created = UserList.objects.get_or_create(user=enroll_user.user, list_date=enroll_date)
+        date_entry, date_created = DateList.objects.get_or_create(date=enroll_date)
 
-            # modify models as appropriate
-            if enroll_type == 'signup':
-                user_entry.list_count += 1
-                date_entry.num_eating += 1
-                type_amount = user_entry.list_count
-                if date_entry.open:
-                    if user_entry.list_count == 1:
-                        success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
-                    else:
-                        success_message = '%s is %s keer ingeschreven.' % (
-                            str(enroll_user).capitalize(), int(user_entry.list_count))
+        # modify models as appropriate
+        if enroll_type == 'signup':
+            user_entry.list_count += 1
+            date_entry.num_eating += 1
+            type_amount = user_entry.list_count
+            if date_entry.open:
+                if user_entry.list_count == 1:
+                    success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
                 else:
-                    # TODO: restyle instead of suggesting to refresh
-                    return HttpResponse(JsonResponse(
-                        {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
-            elif enroll_type == 'sponge':
-                date_entry.num_eating -= user_entry.list_count
-                user_entry.list_count = 0
-                if date_entry.open:
-                    success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
-                    type_amount = 0
-                else:
-                    # TODO: restyle instead of suggesting to refresh
-                    return HttpResponse(JsonResponse(
-                        {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
-            elif enroll_type == 'cook':
-                if date_entry.cook and not date_entry.cook == enroll_user.user:
-                    return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'failure'}))
-                elif date_entry.cook == enroll_user.user:
-                    user_entry.list_cook = False
-                    date_entry.num_eating -= 1
-                    date_entry.cook = None
-                    date_entry.signup_time = None
-                    success_message = '%s kookt niet meer.' % (str(enroll_user).capitalize())
-                    type_amount = 0
-                else:
-                    user_entry.list_cook = True
-                    date_entry.signup_time = timezone.now()
-                    date_entry.cook = enroll_user.user
-                    date_entry.num_eating += 1
-                    success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())
-                    type_amount = 1
+                    success_message = '%s is %s keer ingeschreven.' % (
+                        str(enroll_user).capitalize(), int(user_entry.list_count))
             else:
-                return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'}))
-
-            user_entry.timestamp = timezone.now()
-            user_entry.save()
-            date_entry.save()
-
-            # clean up if necessary
-            if user_entry.list_count == 0 and user_entry.list_cook == False:
-                user_entry.delete()
-
-            if date_entry.num_eating == 0:
-                date_entry.delete()
-
-            # collect json data for jquery to check
-            try:
-                type_amount
-            except:
-                type_amount = False
-
-            # Can be practical for cook sign-in
-            signed_in_user = request.user.id
-
-            json_data = {'result': success_message,
-                         'login_user': signed_in_user,
-                         'status': 'success',
-                         'enroll_user': str(enroll_user),
-                         'enroll_date': str(enroll_date),
-                         'enroll_type': str(enroll_type),
-                         'enroll_amount': str(type_amount),
-                         'total_amount': str(date_entry.num_eating)}
-
-            return HttpResponse(JsonResponse(json_data))
+                # TODO: restyle instead of suggesting to refresh
+                return HttpResponse(JsonResponse(
+                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+        elif enroll_type == 'sponge':
+            date_entry.num_eating -= user_entry.list_count
+            user_entry.list_count = 0
+            if date_entry.open:
+                success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
+                type_amount = 0
+            else:
+                # TODO: restyle instead of suggesting to refresh
+                return HttpResponse(JsonResponse(
+                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+        elif enroll_type == 'cook':
+            if date_entry.cook and not date_entry.cook == enroll_user.user:
+                return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'failure'}))
+            elif date_entry.cook == enroll_user.user:
+                user_entry.list_cook = False
+                date_entry.num_eating -= 1
+                date_entry.cook = None
+                date_entry.signup_time = None
+                success_message = '%s kookt niet meer.' % (str(enroll_user).capitalize())
+                type_amount = 0
+            else:
+                user_entry.list_cook = True
+                date_entry.signup_time = timezone.now()
+                date_entry.cook = enroll_user.user
+                date_entry.num_eating += 1
+                success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())
+                type_amount = 1
         else:
-            return HttpResponse(
-                JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'}))
+
+        user_entry.timestamp = timezone.now()
+        user_entry.save()
+        date_entry.save()
+
+        # clean up if necessary
+        if user_entry.list_count == 0 and user_entry.list_cook == False:
+            user_entry.delete()
+
+        if date_entry.num_eating == 0:
+            date_entry.delete()
+
+        # collect json data for jquery to check
+        try:
+            type_amount
+        except:
+            type_amount = False
+
+        # Can be practical for cook sign-in
+        signed_in_user = request.user.id
+
+        json_data = {'result': success_message,
+                     'login_user': signed_in_user,
+                     'status': 'success',
+                     'enroll_user': str(enroll_user),
+                     'enroll_date': str(enroll_date),
+                     'enroll_type': str(enroll_type),
+                     'enroll_amount': str(type_amount),
+                     'total_amount': str(date_entry.num_eating)}
+
+        return HttpResponse(JsonResponse(json_data))
+
     else:
-        messages.error(request, 'Method must be POST.')
+        return render(request, 'base/login_page.html')
+
     return redirect(request.META.get('HTTP_REFERER'))
 
 
 # close eetlijst
+@require_POST
 def close(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
-            # get date from post
-            date = request.POST.get('close-date')
+        # get date from post
+        date = request.POST.get('close-date')
 
-            # get or create rows as necessary
-            date_entry, date_created = DateList.objects.get_or_create(date=date)
+        # get or create rows as necessary
+        date_entry, date_created = DateList.objects.get_or_create(date=date)
 
-            if date_entry.cook:
+        if date_entry.cook:
 
-                # check if cost is already entered
-                if not date_entry.cost:
+            # check if cost is already entered
+            if not date_entry.cost:
 
-                    if date_entry.cook == request.user:
+                if date_entry.cook == request.user:
 
-                        # if open
-                        if date_entry.open == True:
-                            date_entry.open = False
-                            date_entry.close_time = timezone.now()
-                            date_entry.save()
+                    # if open
+                    if date_entry.open:
+                        date_entry.open = False
+                        date_entry.close_time = timezone.now()
+                        date_entry.save()
 
-                            # Build up allergy string
-                            userlist_entries = UserList.objects.filter(list_date=date)
-                            allergy_status = ""
+                        # Build up allergy string
+                        userlist_entries = UserList.objects.filter(list_date=date)
+                        allergy_status = ""
 
-                            for userlist_entry in userlist_entries:
-                                h = Housemate.objects.get(id=userlist_entry.user_id)
-                                if h.diet:
-                                    allergy_status += h.display_name + " requires: " + h.diet.upper() + ". "
+                        for userlist_entry in userlist_entries:
+                            h = Housemate.objects.get(id=userlist_entry.user_id)
+                            if h.diet:
+                                allergy_status += h.display_name + " requires: " + h.diet.upper() + ". "
 
-                            # Inform cook about allergy
-                            if allergy_status:
-                                messages.warning(request, allergy_status)
+                        # Inform cook about allergy
+                        if allergy_status:
+                            messages.warning(request, allergy_status)
 
-                        # if closed
-                        else:
-                            date_entry.open = True
-                            date_entry.close_time = None
-                            date_entry.save()
-
+                    # if closed
                     else:
-                        messages.error(request, 'Must be cook to close list.')
-                        return redirect(request.META.get('HTTP_REFERER'))
+                        date_entry.open = True
+                        date_entry.close_time = None
+                        date_entry.save()
 
                 else:
-
-                    if not date_entry.cook == request.user:
-                        messages.error(request, 'Must be cook to reopen list.')
-                        return redirect(request.META.get('HTTP_REFERER'))
-
-                    # Reverse existing costs
-                    cost_amount = -date_entry.cost
-
-                    # update housemate objects for users who signed up
-                    huis = Housemate.objects.get(display_name='Huis')
-
-                    remainder = huis.balance
-                    split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
-                    huis.balance = date_entry.num_eating * split_cost - cost_amount + remainder
-
-                    # update userlist objects
-                    try:
-                        users_enrolled = UserList.objects.filter(list_date=date_entry.date)
-                    except UserList.DoesNotExist:
-                        messages.error(request, 'No users signed up for selected date.')
-                        return redirect(request.META.get('HTTP_REFERER'))
-
-                    for u in users_enrolled:
-                        h = Housemate.objects.get(user=u.user)
-
-                        h.balance -= u.list_count * split_cost
-
-                        if u.list_cook:
-                            h.balance -= split_cost
-
-                        u.list_cost = None
-
-                        u.save()
-                        h.save()
-
-                    huis.save()
-
-                    # update housemate object for current user
-                    cook = Housemate.objects.get(user=request.user)
-                    cook.balance += cost_amount
-                    cook.save()
-
-                    # add cost to log
-                    date_entry.cost = None
-                    date_entry.open = True
-                    date_entry.close_time = None
-                    date_entry.save()
-
-                    messages.info(request, 'List re-opened, costs have been refunded.')
+                    messages.error(request, 'Must be cook to close list.')
                     return redirect(request.META.get('HTTP_REFERER'))
 
             else:
-                messages.error(request, 'Cannot close list without cook.')
+
+                if not date_entry.cook == request.user:
+                    messages.error(request, 'Must be cook to reopen list.')
+                    return redirect(request.META.get('HTTP_REFERER'))
+
+                # Reverse existing costs
+                cost_amount = -date_entry.cost
+
+                # update housemate objects for users who signed up
+                huis = Housemate.objects.get(display_name='Huis')
+
+                remainder = huis.balance
+                split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
+                huis.balance = date_entry.num_eating * split_cost - cost_amount + remainder
+
+                # update userlist objects
+                try:
+                    users_enrolled = UserList.objects.filter(list_date=date_entry.date)
+                except UserList.DoesNotExist:
+                    messages.error(request, 'No users signed up for selected date.')
+                    return redirect(request.META.get('HTTP_REFERER'))
+
+                for u in users_enrolled:
+                    h = Housemate.objects.get(user=u.user)
+
+                    h.balance -= u.list_count * split_cost
+
+                    if u.list_cook:
+                        h.balance -= split_cost
+
+                    u.list_cost = None
+
+                    u.save()
+                    h.save()
+
+                huis.save()
+
+                # update housemate object for current user
+                cook = Housemate.objects.get(user=request.user)
+                cook.balance += cost_amount
+                cook.save()
+
+                # add cost to log
+                date_entry.cost = None
+                date_entry.open = True
+                date_entry.close_time = None
+                date_entry.save()
+
+                messages.info(request, 'List re-opened, costs have been refunded.')
                 return redirect(request.META.get('HTTP_REFERER'))
 
-
         else:
-            return render(request, 'base/login_page.html')
-
+            messages.error(request, 'Cannot close list without cook.')
+            return redirect(request.META.get('HTTP_REFERER'))
     else:
-        messages.error(request, 'Method must be POST.')
+        return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))
 
 
 # handle eetlijst cost input
+@require_POST
 def cost(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated():
+    if request.user.is_authenticated:
 
-            # get date from post
-            date = request.POST.get('cost-date')
+        # get date from post
+        date = request.POST.get('cost-date')
 
-            # validate form input
-            if request.POST.get('cost-amount') == '':
-                messages.error(request, 'Must add amount.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            elif Decimal(request.POST.get('cost-amount')) < 0:
-                messages.error(request, 'Amount must be positive.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            elif Decimal(request.POST.get('cost-amount')) > 999:
-                messages.error(request, 'Amount must less than 999 euro''s.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            else:
-                cost_amount = Decimal(round(Decimal(request.POST.get('cost-amount')), 2))
+        # validate form input
+        if request.POST.get('cost-amount') == '':
+            messages.error(request, 'Must add amount.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        elif Decimal(request.POST.get('cost-amount')) < 0:
+            messages.error(request, 'Amount must be positive.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        elif Decimal(request.POST.get('cost-amount')) > 999:
+            messages.error(request, 'Amount must less than 999 euro''s.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        else:
+            cost_amount = Decimal(round(Decimal(request.POST.get('cost-amount')), 2))
 
-            # get or create rows as necessary
+        # get or create rows as necessary
+        try:
+            date_entry = DateList.objects.get(date=date)
+
+        except DateList.DoesNotExist:
+            messages.error(request, 'No vaild entry for date.')
+            return redirect(request.META.get('HTTP_REFERER'))
+        if date_entry.num_eating <= 1:
+            messages.error(request,
+                           "You can't cook for yourself. Achievement: can't stop me #1")
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        try:
+            users_enrolled = UserList.objects.filter(list_date=date)
+        except UserList.DoesNotExist:
+            messages.error(request, 'No users signed up for selected date.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        if date_entry.cook:
             try:
-                date_entry = DateList.objects.get(date=date)
+                if date_entry.cost is None:
+                    # add cost to log
+                    date_entry.cost = cost_amount
+                else:
+                    messages.error(request,
+                                   'Server received cost fill-in for a day, which was already filled.')
+                    raise AssertionError
 
-            except DateList.DoesNotExist:
-                messages.error(request, 'No vaild entry for date.')
-                return redirect(request.META.get('HTTP_REFERER'))
-            if date_entry.num_eating <= 1:
-                messages.error(request,
-                               "You can't cook for yourself. Achievement: can't stop me #1")
-                return redirect(request.META.get('HTTP_REFERER'))
+                # update housemate object for current user
+                h = Housemate.objects.get(user=request.user)
+                h.balance += cost_amount
 
-            try:
-                users_enrolled = UserList.objects.filter(list_date=date)
-            except UserList.DoesNotExist:
-                messages.error(request, 'No users signed up for selected date.')
-                return redirect(request.META.get('HTTP_REFERER'))
+                # update housemate objects for users who signed up
+                huis = Housemate.objects.get(display_name='Huis')
 
-            if date_entry.cook:
-                try:
-                    if date_entry.cost is None:
-                        # add cost to log
-                        date_entry.cost = cost_amount
-                    else:
-                        messages.error(request,
-                                       'Server received cost fill-in for a day, which was already filled.')
-                        raise AssertionError
+                remainder = huis.balance
+                split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
+                huis.balance = date_entry.num_eating * split_cost - cost_amount + remainder
 
-                    # update housemate object for current user
-                    h = Housemate.objects.get(user=request.user)
-                    h.balance += cost_amount
+                # Seperately save
+                date_entry.save()
+                h.save()
+                huis.save()
 
-                    # update housemate objects for users who signed up
-                    huis = Housemate.objects.get(display_name='Huis')
+                # update userlist objects
+                for u in users_enrolled:
+                    h = Housemate.objects.get(user=u.user)
 
-                    remainder = huis.balance
-                    split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
-                    huis.balance = date_entry.num_eating * split_cost - cost_amount + remainder
+                    h.balance -= u.list_count * split_cost
+                    u.list_cost = -1 * u.list_count * split_cost
 
-                    # Seperately save
-                    date_entry.save()
+                    if u.list_cook:
+                        h.balance -= split_cost
+                        u.list_cost = cost_amount - split_cost * (1 + u.list_count)
+
+                    u.save()
                     h.save()
-                    huis.save()
 
-                    # update userlist objects
-                    for u in users_enrolled:
-                        h = Housemate.objects.get(user=u.user)
+                h = Housemate.objects.get(user=request.user)
 
-                        h.balance -= u.list_count * split_cost
-                        u.list_cost = -1 * u.list_count * split_cost
-
-                        if u.list_cook:
-                            h.balance -= split_cost
-                            u.list_cost = cost_amount - split_cost * (1 + u.list_count)
-
-                        u.save()
-                        h.save()
-
-                    h = Housemate.objects.get(user=request.user)
-
-                except:
-                    messages.error(request, 'Server internal error during calculation of cost.')
-
-            else:
-                messages.error(request, 'Cannot input cost without cook.')
-                return redirect(request.META.get('HTTP_REFERER'))
-
+            except:
+                messages.error(request, 'Server internal error during calculation of cost.')
 
         else:
-            return render(request, 'base/login_page.html')
+            messages.error(request, 'Cannot input cost without cook.')
+            return redirect(request.META.get('HTTP_REFERER'))
 
     else:
-        messages.error(request, 'Method must be POST.')
+
+        return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))
 

@@ -10,13 +10,12 @@ import json
 
 # display users index
 def index(request):
-
     return redirect('/user/profiel/%s/' % (request.user.id))
 
 
 # display profile page
 def profile(request, user_id=None):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         if request.method == 'POST':
             try:
                 if request.POST.get("profile-edit-type", "") == "profile":
@@ -25,7 +24,7 @@ def profile(request, user_id=None):
                     email = request.POST.get("email", "")
                     cellphone = request.POST.get("cellphone", "")
                     parentphone = request.POST.get("parentphone", "")
-                    diet = request.POST.get("diet","")
+                    diet = request.POST.get("diet", "")
                     room_number = request.POST.get("room-number", "")
 
                     # Define user to be changed
@@ -77,7 +76,8 @@ def profile(request, user_id=None):
                     elif new_pass != verify_pass:
                         messages.error(request, 'Nieuw (herhaald) wachtwoord is niet goed herhaald.')
                     elif current_pass == new_pass or current_pass == verify_pass:
-                        messages.error(request, 'Nieuw, of herhaald wachtwoord is hetzelfde als het huidige wachtwoord.')
+                        messages.error(request,
+                                       'Nieuw, of herhaald wachtwoord is hetzelfde als het huidige wachtwoord.')
                     else:
                         # Define user to be changed
                         if request.user.id == user_id or user_id is None:
@@ -114,7 +114,7 @@ def profile(request, user_id=None):
             context = {
                 'breadcrumbs': ['profiel'],
                 'profile_user': profile_user,
-                }
+            }
 
             if request.user.is_superuser:
                 context['active_users'] = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
@@ -129,7 +129,7 @@ def profile(request, user_id=None):
 
             # get requested user
             profile_user = Housemate.objects.get(user_id=user_id)
-            active_users = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin')\
+            active_users = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
                 .exclude(user__is_active=False)
 
             # build context object
@@ -137,27 +137,15 @@ def profile(request, user_id=None):
                 'breadcrumbs': ['profiel'],
                 'profile_user': profile_user,
                 'active_users': active_users
-                }
+            }
 
             return render(request, 'user/profile.html', context)
     else:
         return render(request, 'base/login_page.html')
 
-# display settings page -- disabled for now
-def settings(request):
-    return redirect('/user/profiel/%s/' % request.user.id)
-
-    # # build context object
-    # context = {
-    #     'breadcrumbs': request.get_full_path()[1:-1].split('/'),
-    # }
-    #
-    # return render(request, 'user/settings.html', context)
-
 
 # handle requests from login form
 def login_user(request):
-
     if request.method == 'POST':
 
         # get credentials from post and authenticate user
@@ -197,6 +185,7 @@ def logout_user(request):
     logout(request)
     return redirect(request.META.get('HTTP_REFERER'))
 
+
 # login as 'huis'
 def login_huis(request):
     logout(request)
@@ -214,4 +203,3 @@ def login_huis(request):
         messages.error(request, 'Huis account does not exist.')
 
     return redirect(request.META.get('HTTP_REFERER'))
-
