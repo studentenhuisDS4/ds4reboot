@@ -10,7 +10,7 @@ import json
 
 # display users index
 def index(request):
-    return redirect('/user/profiel/%s/' % (request.user.id))
+    return redirect('/user/profiel/%s/' % request.user.id)
 
 
 # display profile page

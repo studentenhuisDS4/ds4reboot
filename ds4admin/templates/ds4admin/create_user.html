@@ -1,0 +1,47 @@
+{% extends 'base/base.html' %}
+
+{% block title %} | Profiel{% endblock %}
+
+{% block add_to_header %}
+<!-- FormValidation CSS file -->
+<link rel="stylesheet" href="/static/formvalidation/css/formValidation.min.css">
+<!-- FormValidation plugin and the class supports validating Semantic form -->
+<script src="/static/formvalidation/js/formValidation.min.js"></script>
+<script src="/static/formvalidation/js/framework/uikit.min.js"></script>
+{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+    <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+        <div class="uk-width-medium-7-10">
+            <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
+                {% if profile_user.user.id == request.user.id or user.is_staff %}
+                <li><a href=""><i class="uk-icon-user"></i> Create user</a></li>
+                {% else %}
+                <li><a href="" class="uk-text-muted"><i class="uk-icon-user"></i> Create user</a></li>
+                {% endif %}
+            </ul>
+
+            <ul id="tab-container" class="uk-switcher tab-content">
+                {% if user.is_staff %}
+                <li>{% include 'ds4admin/create_user_form.html' %}</li>
+                {% else %}
+                <li>{% include 'ds4admin/create_user_noaccess.html' %}</li>
+                {% endif %}
+            </ul>
+
+
+        </div>
+        <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
+            {% if user.is_staff %}
+                {% include 'ds4admin/options.html' %}
+            {%  endif %}
+        </div>
+    </div>
+
+    {% else %}
+        {% include 'base/login_form.html' %}
+    {% endif %}
+
+{% endblock %}

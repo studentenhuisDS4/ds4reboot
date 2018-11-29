@@ -1,5 +1,6 @@
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from user.models import Housemate
 from eetlijst.models import HOLog
@@ -355,5 +356,85 @@ def deactivate_housemate(request):
 
     else:
         messages.error(request, 'Method must be POST.')
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@require_GET
+def create_user(request):
+    # build context object
+    context = {
+        'breadcrumbs': ['admin', 'create user'],
+    }
+
+    return render(request, 'ds4admin/create_user.html', context)
+
+
+@require_POST
+def create_user_post(request):
+    try:
+        # Assume client side validation has succeeded
+        email = request.POST.get("email", "")
+        cellphone = request.POST.get("cellphone", "")
+        parentphone = request.POST.get("parentphone", "")
+        diet = request.POST.get("diet", "")
+        room_number = request.POST.get("room-number", "")
+        profile_name = request.POST.get("profile-name", "")
+        first_name = request.POST.get("first-name", "")
+        last_name = request.POST.get("last-name", "")
+        new_pass = request.POST.get("new-pass", "")
+        verify_pass = request.POST.get("verify-pass", "")
+
+        if len(new_pass) == 0 and len(new_pass) > 5:
+            messages.error(request, 'Nieuw wachtwoord is niet lang genoeg of niet gegeven.')
+        elif len(verify_pass) == 0 and len(verify_pass) > 5:
+            messages.error(request, 'Nieuw (herhaald) wachtwoord is niet lang genoeg of niet gegeven.')
+        elif new_pass != verify_pass:
+            messages.error(request, 'Nieuw (herhaald) wachtwoord is niet goed herhaald.')
+        else:
+            if email == "" or first_name == "" or last_name == "":
+                messages.error(request, 'Email, first or last name empty.')
+                return redirect(request.META.get('HTTP_REFERER'))
+            if room_number == "":
+                messages.error(request, 'Room number not specified.')
+                return redirect(request.META.get('HTTP_REFERER'))
+
+            if cellphone == "":
+                messages.warning(request, 'Telephone empty.')
+            if parentphone == "":
+                messages.warning(request, 'Telephone parents empty.')
+            if diet == "":
+                messages.warning(request, 'Diet empty.')
+
+            user = User.objects.create_user(email=email, username=profile_name, password=verify_pass,
+                                            first_name=first_name, last_name=last_name)
+            if user is not None:
+                # Authenticate current password
+                user_auth = authenticate(username=user.username, password=verify_pass)
+                if user_auth is not None:
+                    user_auth.save()
+                else:
+                    messages.error(request, 'The password did not validate.')
+                    return redirect(request.META.get('HTTP_REFERER'))
+            else:
+                messages.error(request, 'The profile couldnt be created. User not created somehow.')
+                return redirect(request.META.get('HTTP_REFERER'))
+
+            # Define user, housemate to be created
+            user.housemate = Housemate.objects.create(user_id=user.id, diet=diet,
+                                                      cell_phone=cellphone, parent_phone=parentphone,
+                                                      display_name=first_name,
+                                                      room_number=room_number)
+            user.housemate.save()
+            user.save()
+
+            messages.success(request, 'Profile for ' + profile_name + ' (' +
+                             user.first_name + ') succesfull.')
+
+            # get requested user
+            return redirect('/user/profiel/'+str(user.id)+'/')
+
+    except Exception as e:
+        messages.error(request, 'The form couldnt be validated correctly. ' + str(e))
 
     return redirect(request.META.get('HTTP_REFERER'))

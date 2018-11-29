@@ -2,13 +2,11 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import models
 
-
 # model for housemates (linked to auth user)
 from base.models import SoftDeletionModel
 
 
 class Housemate(SoftDeletionModel):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=12)
 
@@ -21,8 +19,8 @@ class Housemate(SoftDeletionModel):
     moveout_set = models.NullBooleanField()
 
     # phone numbers
-    cell_phone = models.CharField(default='06',max_length=50)
-    parent_phone = models.CharField( max_length=50, blank=True)
+    cell_phone = models.CharField(default='06', max_length=50)
+    parent_phone = models.CharField(max_length=50, blank=True)
 
     # eetlijst related values
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
