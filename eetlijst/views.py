@@ -235,6 +235,8 @@ def add_ho(request):
     else:
         return render(request, 'base/login_page.html')
 
+    return redirect(request.META.get('HTTP_REFERER'))
+
 
 # handle balance transfer post requests
 @require_POST
@@ -279,6 +281,8 @@ def bal_transfer(request):
 
     else:
         return render(request, 'base/login_page.html')
+
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # handle eetlijst enrollment
@@ -375,6 +379,11 @@ def enroll(request):
                      'total_amount': str(date_entry.num_eating)}
 
         return HttpResponse(JsonResponse(json_data))
+
+    else:
+        return render(request, 'base/login_page.html')
+
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # close eetlijst
@@ -573,9 +582,11 @@ def cost(request):
             messages.error(request, 'Cannot input cost without cook.')
             return redirect(request.META.get('HTTP_REFERER'))
 
-
     else:
+
         return render(request, 'base/login_page.html')
+
+    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # view for ho log
