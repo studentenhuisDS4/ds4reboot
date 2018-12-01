@@ -40,8 +40,8 @@ jobs:
           path: test-results
           destination: tr1
   deploy:
-    machine:
-      enabled: true
+    docker:
+      - image: circleci/python:3.4.3
     working_directory: ~/srv/ds4reboot/
     steps:
       - add_ssh_keys:
@@ -50,7 +50,6 @@ jobs:
       - run:
           name: Install Python dependencies in a venv
           command: |
-            python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements
       - checkout
