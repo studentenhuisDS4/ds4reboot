@@ -57,11 +57,11 @@ jobs:
           name: Restart gunicorn
           command: |
             sudo service gunicorn restart
-  workflows:
-    version: 2
-    deploy:
-      jobs:
-        - deploy:
-            filters:
-              branches:
-                only: master
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: master
