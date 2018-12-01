@@ -52,18 +52,18 @@ jobs:
           command: |
             ssh-agent
             ssh-add ~/.ssh/id_rsa*
-            ssh -v $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
-            ssh -v $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" '. venv/bin/activate'
-            ssh -v $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'pip install -r requirements'
+            ssh -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
+            ssh -o "StrictHostKeyChecking no" '. venv/bin/activate'
+            ssh -o "StrictHostKeyChecking no" 'pip install -r requirements'
       - run:
           name: Checkout master
           command: |
-            ssh -v $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'sudo git checkout master'
-            ssh -v $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'sudo git pull'
+            ssh -o "StrictHostKeyChecking no" 'sudo git checkout master'
+            ssh -o "StrictHostKeyChecking no" 'sudo git pull'
       - run:
           name: Restart gunicorn
           command: |
-            ssh -v $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'sudo service gunicorn restart'
+            ssh -o "StrictHostKeyChecking no" 'sudo service gunicorn restart'
 workflows:
   version: 2
   deploy:
