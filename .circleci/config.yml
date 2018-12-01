@@ -50,6 +50,7 @@ jobs:
       - run:
           name: Remote update venv.
           command: |
+            sudo apt-get install sshpass
             ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
             ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" '. venv/bin/activate'
             ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'pip install -r requirements'
