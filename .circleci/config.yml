@@ -39,13 +39,12 @@ jobs:
       - store_artifacts:
           path: test-results
           destination: tr1
-  deploy-job:
+  deploy:
+    working_directory: ~/srv/ds4reboot/
     steps:
       - add_ssh_keys:
           fingerprints:
             - "73:83:79:c1:38:09:24:b7:f9:28:65:cd:66:34:40:bf"
-      - executor:
-        working_directory: "~/srv/ds4reboot/"
       - run:
           name: Install Python dependencies in a venv
           command: |
