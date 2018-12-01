@@ -41,22 +41,27 @@ jobs:
           destination: tr1
   deploy:
     docker:
-      - image: circleci/python:3.4.3
+      - image: circleci/python:3.6.4
     working_directory: ~/srv/ds4reboot/
     steps:
       - add_ssh_keys:
           fingerprints:
             - "73:83:79:c1:38:09:24:b7:f9:28:65:cd:66:34:40:bf"
       - run:
-          name: Install Python dependencies in a venv
+          name: Remote update venv.
           command: |
-            . venv/bin/activate
-            pip install -r requirements
-      - checkout
+            ssh david@ds4.nl 'cd ~/srv/ds4reboot/'
+            ssh david@ds4.nl '. venv/bin/activate'
+            ssh david@ds4.nl 'pip install -r requirements'
+      - run:
+          name: Checkout master
+          command: |
+            ssh david@ds4.nl 'sudo git checkout master'
+            ssh david@ds4.nl 'sudo git pull'
       - run:
           name: Restart gunicorn
           command: |
-            sudo service gunicorn restart
+            ssh david@ds4.nl 'sudo service gunicorn restart'
 workflows:
   version: 2
   deploy:
@@ -65,3 +70,6 @@ workflows:
       - deploy:
           requires:
             - test
+          filters:
+            branches:
+              only: master
