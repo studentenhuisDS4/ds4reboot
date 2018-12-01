@@ -50,18 +50,18 @@ jobs:
       - run:
           name: Remote update venv.
           command: |
-            ssh SSH_USER@SSH_HOST -p SSH_PASS -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
-            ssh SSH_USER@SSH_HOST -p SSH_PASS -o "StrictHostKeyChecking no" '. venv/bin/activate'
-            ssh SSH_USER@SSH_HOST -p SSH_PASS -o "StrictHostKeyChecking no" 'pip install -r requirements'
+            ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
+            ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" '. venv/bin/activate'
+            ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'pip install -r requirements'
       - run:
           name: Checkout master
           command: |
-            ssh SSH_USER@SSH_HOST -p SSH_PASS -o "StrictHostKeyChecking no" 'sudo git checkout master'
-            ssh SSH_USER@SSH_HOST -p SSH_PASS -o "StrictHostKeyChecking no" 'sudo git pull'
+            ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'sudo git checkout master'
+            ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'sudo git pull'
       - run:
           name: Restart gunicorn
           command: |
-            ssh ds4.nl 'sudo service gunicorn restart'
+            ssh_pass -p SSH_PASS ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'sudo service gunicorn restart'
 workflows:
   version: 2
   deploy:
