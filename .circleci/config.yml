@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  test:
     working_directory: ~/circleci-demo-python-django
     docker:
       - image: circleci/python:3.6.4
@@ -40,6 +40,8 @@ jobs:
           path: test-results
           destination: tr1
   deploy:
+    machine:
+      enabled: true
     working_directory: ~/srv/ds4reboot/
     steps:
       - add_ssh_keys:
@@ -60,7 +62,10 @@ workflows:
   version: 2
   deploy:
     jobs:
+      - test
       - deploy:
+          requires:
+            - test
           filters:
             branches:
               only: master
