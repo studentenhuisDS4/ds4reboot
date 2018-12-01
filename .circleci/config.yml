@@ -46,7 +46,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "73:83:79:c1:38:09:24:b7:f9:28:65:cd:66:34:40:bf"
+            - "ff:48:a8:32:56:b8:11:40:3b:04:b7:42:ae:fe:b2:ce"
       - run:
           name: Remote update venv.
           command: |
