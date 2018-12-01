@@ -50,18 +50,19 @@ jobs:
       - run:
           name: Remote update venv.
           command: |
-            ssh david@ds4.nl -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
-            ssh david@ds4.nl -o "StrictHostKeyChecking no" '. venv/bin/activate'
-            ssh david@ds4.nl -o "StrictHostKeyChecking no" 'pip install -r requirements'
+            ssh-add ~/.ssh/id_rsa
+            ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
+            ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" '. venv/bin/activate'
+            ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'pip install -r requirements'
       - run:
           name: Checkout master
           command: |
-            ssh david@ds4.nl -o "StrictHostKeyChecking no" 'sudo git checkout master'
-            ssh david@ds4.nl -o "StrictHostKeyChecking no" 'sudo git pull'
+            ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'sudo git checkout master'
+            ssh SSH_USER@SSH_HOST -o "StrictHostKeyChecking no" 'sudo git pull'
       - run:
           name: Restart gunicorn
           command: |
-            ssh david@ds4.nl 'sudo service gunicorn restart'
+            ssh ds4.nl 'sudo service gunicorn restart'
 workflows:
   version: 2
   deploy:
