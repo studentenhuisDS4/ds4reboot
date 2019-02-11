@@ -24,7 +24,7 @@ class Housemate(SoftDeletionModel):
 
     # eetlijst related values
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    diet = models.CharField(max_length=30, blank=True)
+    diet = models.CharField(max_length=100, blank=True)
 
     # store boete counts and status
     boetes_open = models.IntegerField(default=0)
