@@ -55,16 +55,11 @@ jobs:
       - run:
           name: Checkout master
           command: |
-            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/'
-            ssh $SSH_USER@$SSH_HOST 'pwd'
-            ssh $SSH_USER@$SSH_HOST 'ls -a'
-            ssh $SSH_USER@$SSH_HOST 'git checkout master'
-            ssh $SSH_USER@$SSH_HOST 'git pull'
+            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/ && git checkout master && git pull'
       - run:
           name: Update venv
           command: |
-            ssh $SSH_USER@$SSH_HOST 'ls -a | grep requirements'
-            ssh $SSH_USER@$SSH_HOST 'pip install -r requirements.txt'
+            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/ && pip install -r requirements.txt'
       - run:
           name: Restart gunicorn
           command: |
