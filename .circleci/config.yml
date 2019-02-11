@@ -55,6 +55,8 @@ jobs:
       - run:
           name: Checkout master
           command: |
+            ssh $SSH_USER@$SSH_HOST 'pwd'
+            ssh $SSH_USER@$SSH_HOST 'ls -a'
             ssh $SSH_USER@$SSH_HOST 'git checkout master'
             ssh $SSH_USER@$SSH_HOST 'git pull'
       - run:
