@@ -53,7 +53,7 @@ jobs:
             ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /srv/ds4reboot/'
             ssh $SSH_USER@$SSH_HOST 'ls -a'
             ssh $SSH_USER@$SSH_HOST 'source /srv/ds4reboot/venv/bin/activate'
-            ssh $SSH_USER@$SSH_HOST 'pip install -r requirements'
+            ssh $SSH_USER@$SSH_HOST 'pip install -r requirements.txt'
       - run:
           name: Checkout master
           command: |
