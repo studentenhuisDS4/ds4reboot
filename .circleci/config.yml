@@ -59,7 +59,7 @@ jobs:
       - run:
           name: Restart gunicorn
           command: |
-            ssh $SSH_USER@$SSH_HOST 'sudo service gunicorn restart'
+            ssh $SSH_USER@$SSH_HOST 'service gunicorn restart'
 workflows:
   version: 2
   deploy:
