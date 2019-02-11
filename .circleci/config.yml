@@ -59,6 +59,7 @@ jobs:
             ssh $SSH_USER@$SSH_HOST 'sudo git pull'
       - run:
           name: Update venv
+          command: |
             ssh $SSH_USER@$SSH_HOST 'ls -a | grep requirements'
             ssh $SSH_USER@$SSH_HOST 'pip install -r requirements.txt'
       - run:
