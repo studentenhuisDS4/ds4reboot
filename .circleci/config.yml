@@ -50,12 +50,11 @@ jobs:
       - run:
           name: Get into venv.
           command: |
-            ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /srv/ds4reboot/'
-            ssh $SSH_USER@$SSH_HOST 'source /srv/ds4reboot/venv/bin/activate'
+            ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'source /srv/ds4reboot/venv/bin/activate'
       - run:
           name: Checkout master
           command: |
-            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/ && git checkout master && git pull'
+            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/ && git checkout master && git pull && python manage.py migrate'
       - run:
           name: Restart gunicorn
           command: |
