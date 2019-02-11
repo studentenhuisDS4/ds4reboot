@@ -48,17 +48,19 @@ jobs:
           fingerprints:
             - "cc:61:91:7a:32:93:c1:8e:00:ac:1b:96:07:7c:3a:c7"
       - run:
-          name: Remote update venv.
+          name: Get into venv.
           command: |
             ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /srv/ds4reboot/'
             ssh $SSH_USER@$SSH_HOST 'source /srv/ds4reboot/venv/bin/activate'
-            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/'
-            ssh $SSH_USER@$SSH_HOST 'pip install -r requirements.txt'
       - run:
           name: Checkout master
           command: |
             ssh $SSH_USER@$SSH_HOST 'sudo git checkout master'
             ssh $SSH_USER@$SSH_HOST 'sudo git pull'
+      - run:
+          name: Update venv
+            ssh $SSH_USER@$SSH_HOST 'ls -a | grep requirements'
+            ssh $SSH_USER@$SSH_HOST 'pip install -r requirements.txt'
       - run:
           name: Restart gunicorn
           command: |
