@@ -57,10 +57,6 @@ jobs:
           command: |
             ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/ && git checkout master && git pull'
       - run:
-          name: Update venv
-          command: |
-            ssh $SSH_USER@$SSH_HOST 'cd /srv/ds4reboot/ && pip install -r requirements.txt'
-      - run:
           name: Restart gunicorn
           command: |
             ssh $SSH_USER@$SSH_HOST 'sudo service gunicorn restart'
