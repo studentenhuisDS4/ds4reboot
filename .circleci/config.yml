@@ -44,15 +44,15 @@ jobs:
       - image: circleci/python:3.6.4
     working_directory: ~/srv/ds4reboot/
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "ff:48:a8:32:56:b8:11:40:3b:04:b7:42:ae:fe:b2:ce"
+#      - add_ssh_keys:
+#          fingerprints:
+#            - "ff:48:a8:32:56:b8:11:40:3b:04:b7:42:ae:fe:b2:ce"
       - run:
           name: Remote update venv.
           command: |
-            ssh-agent
-            ssh-add ~/.ssh/id_rsa*
-            yes "$SSH_PASS" | ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
+#            ssh-agent
+#            ssh-add ~/.ssh/id_rsa*
+#            yes "$SSH_PASS" | ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
             ssh -vv $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd ~/srv/ds4reboot/'
             ssh -vv $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" '. venv/bin/activate'
             ssh -vv $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'pip install -r requirements'
