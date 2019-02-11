@@ -44,6 +44,9 @@ jobs:
       - image: circleci/python:3.6.4
     working_directory: ~/srv/ds4reboot/
     steps:
+#      - add_ssh_keys:
+#          fingerprints:
+#            - "cc:61:91:7a:32:93:c1:8e:00:ac:1b:96:07:7c:3a:c7"
       - run:
           name: Remote update venv.
           command: |
