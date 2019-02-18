@@ -415,7 +415,7 @@ def close(request):
                         allergy_status = ""
 
                         for userlist_entry in userlist_entries:
-                            h = Housemate.objects.get(id=userlist_entry.user_id)
+                            h = Housemate.objects.get(user_id=userlist_entry.user_id)
                             if h.diet:
                                 allergy_status += h.display_name + " requires: " + h.diet.upper() + ". "
 
