@@ -1,0 +1,39 @@
+{% block add_to_header %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
+{% endblock %}
+
+<div class="uk-panel uk-panel-box">
+    <h3>Time till Lentefeest 2019 <em>May, 18th!</em></h3>
+    <small>Theme: Public Transport</small>
+    <br/>
+    <small>Title: <i>t.b.d.</i></small>
+    <br/>
+    <br/>
+    <div class="clock clock-wrapper"></div>
+</div>
+
+<script type="text/javascript">
+    var clock;
+    $(document).ready(function () {
+        // Grab the current date
+        var currentDate = new Date();
+        // Set some date in the future. In this case, it's always Jan 1
+        var futureDate = new Date(2019, 5, 18);
+        // Calculate the difference in seconds between the future and current date
+        var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+
+        var clocks = [];
+
+        $('.clock').each(function () {
+            var clock = $(this);
+
+            clock.FlipClock(diff, {
+                clockFace: 'DailyCounter',
+                countdown: true
+            });
+
+            clocks.push(clock);
+        });
+    });
+</script>

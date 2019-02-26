@@ -1,6 +1,24 @@
 <div class="uk-panel uk-panel-box">
     <h3 class="uk-panel-title">Huisinfo</h3>
     <hr>
+
+    {% if user.is_authenticated %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+        <script>
+            var clipboard = new ClipboardJS('[data-clipboard-text]', function (trigger) {
+                return trigger;
+            });
+
+            clipboard.on('success', function (e) {
+                UIkit.notify("<i class='uk-icon-check'></i> Copied the calendar URL!", {status: 'success'});
+                e.clearSelection();
+            });
+        </script>
+        <p class="uk-button uk-button-primary uk-button-large uk-width-1-1"
+           data-clipboard-text="https://calendar.google.com/calendar/ical/ds4calendar%40gmail.com/public/basic.ics"
+           data-uk-tooltip="In kaas you want the calendar with awesome events.">Copy DS4 calendar URL
+        </p>
+    {% endif %}
     <p><a class="uk-button uk-button-large uk-width-1-1" href="/"><i class="uk-icon-home"></i> Home</a></p>
 
 </div>

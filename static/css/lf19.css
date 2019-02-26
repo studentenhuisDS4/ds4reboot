@@ -1,0 +1,74 @@
+
+.lf-nav {
+    background: #00a8e6;
+    border-width: 3px;
+}
+
+.uk-active-brand {
+    background: #44a8e6;
+    border: 1px solid #00a8e6;
+    border-radius: 15px;
+}
+
+.uk-active-lf {
+    background: #333333;
+}
+
+.uk-navbar-nav li a {
+    color: white;
+    text-shadow: 0 1px #44a8e6;
+}
+
+.uk-navbar-nav li a:hover {
+    background: #444444;
+    color: white;
+    text-shadow: 0 1px #44a8e6;
+}
+
+.uk-navbar-toggle {
+    text-shadow: none;
+}
+
+.uk-breadcrumb {
+    padding-top: 1px;
+    text-shadow: 1px 1px darkcyan;
+}
+
+.uk-dropdown-lf {
+    background-color: #44a8e6;
+
+}
+
+@media (max-width: 772px) {
+    .panel-rotated-inv {
+        margin-top: 0;
+        background-color: rgba(255, 255, 255, 0.9);
+        margin-left:1em;
+        margin-right:1em;
+    }
+}
+
+@media only screen and (min-width: 772px) {
+    .panel-rotated {
+        /* perspective function in transform property */
+        transform: perspective(1000px) rotateY(-30deg);
+    }
+
+    .panel-rotated-inv {
+        /* perspective function in transform property */
+        transform: perspective(1000px) rotateY(30deg);
+        margin-top:6em; margin-bottom:2em;
+        position: relative;
+    }
+}
+
+.clock-wrapper {
+    zoom: 0.35;
+    -moz-transform: scale(0.35)
+}
+
+.flip-clock-label {
+    font-size: 30px;
+    color: #00a8e6 !important;
+    text-shadow: 0 1px #44a8e6 !important;
+}
