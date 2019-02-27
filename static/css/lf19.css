@@ -43,8 +43,8 @@
     .panel-rotated-inv {
         margin-top: 0;
         background-color: rgba(255, 255, 255, 0.9);
-        margin-left:1em;
-        margin-right:1em;
+        margin-left: 1em;
+        margin-right: 1em;
     }
 }
 
@@ -57,18 +57,21 @@
     .panel-rotated-inv {
         /* perspective function in transform property */
         transform: perspective(1000px) rotateY(30deg);
-        margin-top:6em; margin-bottom:2em;
+        margin-top: 6em;
+        margin-bottom: 2em;
         position: relative;
     }
 }
 
-.clock-wrapper {
-    zoom: 0.35;
-    -moz-transform: scale(0.35)
-}
 
 .flip-clock-label {
     font-size: 30px;
     color: #00a8e6 !important;
     text-shadow: 0 1px #44a8e6 !important;
+}
+
+@-moz-document url-prefix() {
+  h1, p{
+    color:pink;
+  }
 }
