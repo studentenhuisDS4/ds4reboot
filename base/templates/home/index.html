@@ -24,11 +24,6 @@
     </div>
 
     <div class="uk-grid uk-visible-small">
-        <div class="uk-width-1-1">
-            <div style="margin-left:1em; margin-right:1em; margin-top:-50px;">
-                {% include 'home/lf_countdown.html' %}
-            </div>
-        </div>
         {% if user.is_authenticated and request.user.username != 'huis' %}
             <div class="uk-width-1-1">
                 <div style="margin-left:1em; margin-right:1em;">
