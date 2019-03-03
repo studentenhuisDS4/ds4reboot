@@ -118,7 +118,7 @@ def profile(request, user_id=None):
 
             if request.user.is_superuser:
                 context['active_users'] = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
-                    .exclude(user__is_active=False)
+                    .exclude(user__is_active=False).order_by('movein_date')
 
             return render(request, 'user/profile.html', context)
             # return HttpResponse(json.dumps({'result': 'Profile updated.'}))
