@@ -117,8 +117,11 @@ def profile(request, user_id=None):
             }
 
             if request.user.is_superuser:
-                context['active_users'] = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
+                active_users = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
                     .exclude(user__is_active=False).order_by('movein_date')
+
+                context['active_users'] = active_users
+                context['rooms'] = active_users
 
             return render(request, 'user/profile.html', context)
             # return HttpResponse(json.dumps({'result': 'Profile updated.'}))
@@ -130,13 +133,23 @@ def profile(request, user_id=None):
             # get requested user
             profile_user = Housemate.objects.get(user_id=user_id)
             active_users = Housemate.objects.exclude(display_name='Huis').exclude(display_name='Admin') \
-                .exclude(user__is_active=False)
+                .exclude(user__is_active=False).order_by('movein_date')
+
+            rooms = dict()
+            duplicates = dict()
+            for user in active_users:
+                if len({k: v for k, v in rooms.items() if k == user.room_number}) == 0:
+                    rooms[user.user_id] = user
+                else:
+                    duplicates[user.user_id] = user
 
             # build context object
             context = {
                 'breadcrumbs': ['profiel'],
                 'profile_user': profile_user,
-                'active_users': active_users
+                'active_users': active_users,
+                'duplicate_rooms': duplicates,
+                'rooms': rooms
             }
 
             return render(request, 'user/profile.html', context)
