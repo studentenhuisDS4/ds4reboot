@@ -103,6 +103,7 @@ $(document).ready(function () {
                     var total_el = $("#total-" + turf_type + " span");
                     fadeUpdateLabel(sum_el, json.new_value);
                     fadeUpdateLabel(total_el, json.new_value_total);
+                    $(".count-" + user_id).val('');
 
                     // Update wine totals (medium view class only views sum)
                     if (turf_type === 'wwijn' || turf_type === 'rwijn') {
