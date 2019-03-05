@@ -3,7 +3,7 @@
     <span class="uk-text-muted">{{ profile_user.movein_date }}</span>
     <hr>
     {% if request.user.is_superuser %}
-    <h4>Selecteer andere huisgenoot</h4>
+    <h4>Select a housemate</h4>
     <form id="profile-selector">
         <select class="uk-width-1-1 uk-form-small">
             <option value="0" selected="true" disabled>{{ profile_user}}</option>
@@ -12,6 +12,14 @@
             {% endfor %}
         </select>
     </form>
+    <h4>Fix these duplicate rooms</h4>
+    {% for id, user in duplicate_rooms.items %}
+        <span> {{ user.display_name }}: {{ user.room_number }} </span> <br/>
+    {% endfor %}
+    <h4>Taken room numbers</h4>
+    {% for id, user in rooms.items %}
+        <span> {{ user.display_name }}: {{ user.room_number }} </span> <br/>
+    {% endfor %}
     {% else %}
     <span class="uk-text-muted uk-text-small">
         Alleen als admin kun je andere profielen bekijken.
