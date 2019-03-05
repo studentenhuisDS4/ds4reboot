@@ -138,7 +138,7 @@ def profile(request, user_id=None):
             rooms = dict()
             duplicates = dict()
             for user in active_users:
-                if len({k: v for k, v in rooms.items() if k == user.room_number}) == 0:
+                if len({k: v for k, v in rooms.items() if v.room_number == user.room_number}) == 0:
                     rooms[user.user_id] = user
                 else:
                     duplicates[user.user_id] = user
