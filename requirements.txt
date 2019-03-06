@@ -6,3 +6,4 @@ psycopg2==2.7.6
 gunicorn==19.6.0
 openpyxl==2.3.5
 virtualenv==16.0.0
+django-progressive-web-app==0.1.1

@@ -1,6 +1,6 @@
 {% load group_check %}
 {% load static from staticfiles %}
-
+{% load progressive_web_app_meta from pwa %}
 <!DOCTYPE html>
 <html lang="en" class="uk-height-1-1">
 
@@ -25,8 +25,7 @@
     <link rel="stylesheet" href="/static/css/lf19.css" />
     <link rel="stylesheet" href="/static/css/background.css"/>
 
-    <script src="{% static 'register-sw.js' %}"></script>
-    <script src="{% static 'service-worker.js' %}"></script>
+    {% progressive_web_app_meta %}
 
     <script src="{% static 'js/jquery.js'%}"></script>
     <script src="{% static 'js/uikit.min.js'%}"></script>
