@@ -1,4 +1,5 @@
 var CACHE_NAME = 'ds4-cache-v1';
+// https://ezgif.com/svg-to-png icons
 
 self.addEventListener('install', function (e) {
     e.waitUntil(
@@ -20,7 +21,6 @@ self.addEventListener('install', function (e) {
                 '/static/css/base.css',
                 '/static/css/lf19.css',
                 '/static/css/background.css'
-
             ]).then(function () {
                 self.skipWaiting();
             });
