@@ -3,38 +3,38 @@
   "name": "DS4 9292 OV",
   "icons": [
     {
-      "src": "/static/img/icons/Icon-32.png",
-      "sizes": "48x48",
+      "src": "/static/img/icons/Icon-36.png",
+      "sizes": "36x34",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-48.png",
-      "sizes": "48x48",
+      "sizes": "48x46",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-72.png",
-      "sizes": "72x72",
+      "sizes": "72x69",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-96.png",
-      "sizes": "96x96",
+      "sizes": "96x92",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-144.png",
-      "sizes": "144x144",
+      "sizes": "144x138",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-192.png",
-      "sizes": "192x192",
+      "sizes": "192x184",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-512.png",
-      "sizes": "512x512",
+      "sizes": "512x492",
       "type": "image/png"
     }
   ],
