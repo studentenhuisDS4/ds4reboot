@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Checkout master
           command: |
-            ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /srv/ds4reboot/ && git checkout develop && git pull && . /venv/bin/activate && python3 manage.py migrate'
+            ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /srv/ds4reboot/ && git checkout develop && git pull && . /venv/bin/activate && pip install -r requirements.txt && &&python3 manage.py migrate'
       - run:
           name: Restart gunicorn
           command: |
