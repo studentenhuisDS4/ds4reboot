@@ -4,7 +4,7 @@
   "icons": [
     {
       "src": "/static/img/icons/Icon-36.png",
-      "sizes": "36x34",
+      "sizes": "36x36",
       "type": "image/png"
     },
     {
@@ -14,31 +14,31 @@
     },
     {
       "src": "/static/img/icons/Icon-72.png",
-      "sizes": "72x69",
+      "sizes": "72x72",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-96.png",
-      "sizes": "96x92",
+      "sizes": "96x96",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-144.png",
-      "sizes": "144x138",
+      "sizes": "144x144",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-192.png",
-      "sizes": "192x184",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
       "src": "/static/img/icons/Icon-512.png",
-      "sizes": "512x492",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/static/",
   "background_color": "#3367D6",
   "display": "standalone",
   "orientation": "portrait-primary",
