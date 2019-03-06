@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.urls import path
 
 urlpatterns = [
     url('^', include('django.contrib.auth.urls')),
@@ -24,5 +25,6 @@ urlpatterns = [
     url(r'^eetlijst/', include('eetlijst.urls')),
     url(r'^thesau/', include('thesau.urls')),
     url(r'^ds4admin/', include('ds4admin.urls')),
-    url(r'^admin/', admin.site.urls)
+    url(r'^admin/', admin.site.urls),
+    path('', include('pwa.urls')),
 ]

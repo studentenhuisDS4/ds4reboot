@@ -3,8 +3,8 @@
   "name": "DS4 9292 OV",
   "icons": [
     {
-      "src": "/static/img/icons/Icon-32.png",
-      "sizes": "48x48",
+      "src": "/static/img/icons/Icon-36.png",
+      "sizes": "36x36",
       "type": "image/png"
     },
     {
