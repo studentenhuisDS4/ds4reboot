@@ -8,6 +8,18 @@ self.addEventListener('install', function (e) {
                 '/static/js/base.js',
                 '/static/js/jquery.js',
                 '/static/js/flipclock.min.js',
+                '/static/js/components/notify.min.js',
+                '/static/js/components/datepicker.min.js',
+                '/static/js/components/tooltip.min.js',
+
+                '/static/css/uikit.almost-flat.min.css',
+                '/static/css/components/notify.almost-flat.min.css',
+                '/static/css/components/datepicker.almost-flat.min.css',
+                '/static/css/components/tooltip.almost-flat.min.css',
+                '/static/css/base.css',
+                '/static/css/lf19.css',
+                '/static/css/background.css'
+
             ]).then(function () {
                 self.skipWaiting();
             });
