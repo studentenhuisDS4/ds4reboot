@@ -16,7 +16,7 @@ from ds4reboot.secret_settings import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'base/static/js', 'service-worker.js')
+# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'base/static/js', 'service-worker.js')
 
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'pwa'
+    # 'pwa'
 ]
 
 INSTALLED_APPS += SECRET_APPS

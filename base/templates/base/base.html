@@ -1,6 +1,6 @@
 {% load group_check %}
 {% load static from staticfiles %}
-{% load progressive_web_app_meta from pwa %}
+{#{% load progressive_web_app_meta from pwa %}#}
 <!DOCTYPE html>
 <html lang="en" class="uk-height-1-1">
 
@@ -14,7 +14,7 @@
 
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/static/img/logo-icon.png">
-    <link rel="manifest" href="{% static '/manifest.json'%}" />
+{#    <link rel="manifest" href="{% static '/manifest.json'%}" />#}
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans|Roboto' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/static/css/uikit.almost-flat.min.css" />
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/static/css/lf19.css" />
     <link rel="stylesheet" href="/static/css/background.css"/>
 
-    {% progressive_web_app_meta %}
+{#    {% progressive_web_app_meta %}#}
 
     <script src="{% static 'js/jquery.js'%}"></script>
     <script src="{% static 'js/uikit.min.js'%}"></script>
