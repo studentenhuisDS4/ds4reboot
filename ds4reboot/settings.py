@@ -31,8 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    # 'pwa'
+    'django.contrib.humanize'
 ]
 
 INSTALLED_APPS += SECRET_APPS
