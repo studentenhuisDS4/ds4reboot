@@ -50,16 +50,19 @@ jobs:
       - run:
           name: Checkout master
           command: |
-            ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /root/docker/ds4reboot/ && git checkout develop && git pull'
+            ssh $SSH_USER@$SSH_HOST -o "StrictHostKeyChecking no" 'cd /root/docker/ds4reboot/ ;and git checkout develop ;and git pull'
       - run:
           name: Restart gunicorn
           command: |
-            ssh $SSH_USER@$SSH_HOST 'cd /root/docker/ && docker build .f ds4reboot.Dockerfile -t django-custom && docker-compose up -d'
+            ssh $SSH_USER@$SSH_HOST 'cd /root/docker/ ;and docker build .f ds4reboot.Dockerfile -t django-custom ;and docker-compose up -d'
 workflows:
   version: 2
   deploy:
     jobs:
+      - test
       - deploy:
+          requires:
+            - test
           filters:
             branches:
               only: develop
