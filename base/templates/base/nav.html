@@ -1,8 +1,10 @@
+{# lf-nav in case of LF #}
 <nav class="uk-navbar uk-margin-top lf-nav" style="margin-bottom:1.5em">
 
     <a class="uk-navbar-brand uk-visible-large uk-active-brand" href="/"><img src="/static/img/logo-icon.png"/></a>
 
     <ul class="uk-navbar-nav uk-hidden-small uk-block-primary">
+    {# uk-active-lf in case of LF #}
         <li {% if request.get_full_path == '/' %}class="uk-active-lf"{% endif %}><a href="/"><i
                 class="uk-icon-home"></i> Home</a></li>
         <li {% if '/bierlijst/' in request.get_full_path %}class="uk-active-lf"{% endif %}><a href="/bierlijst/"><i

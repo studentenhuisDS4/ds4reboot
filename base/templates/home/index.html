@@ -9,12 +9,13 @@
 {% block body_block %}
 
     <div class="uk-grid">
-        <div class="uk-width-1-2 panel-rotated-inv">
-            <div class="uk-hidden-small" style="width:50em;">
-                {% include 'home/lf_countdown.html' %}
-            </div>
-        </div>
-        <div class="uk-width-1-2 panel-rotated" style="margin-top:2em; margin-bottom:2em;">
+{#        <div class="uk-width-1-2 panel-rotated-inv">#}
+{#            <div class="uk-hidden-small" style="width:50em;">#}
+{#                {% include 'home/lf_countdown.html' %}#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="uk-width-1-2 panel-rotated" style="margin-top:2em; margin-bottom:2em;">#}
+        <div class="uk-width-1-1 {#panel-rotated#}" style="margin-top:2em; margin-bottom:2em;position:relative">
             {% if user.is_authenticated and request.user.username != 'huis' %}
                 <div class="uk-hidden-small" style="width:25em; position:absolute; top:0; right:0;">
                     {% include 'home/quick_access.html' %}
