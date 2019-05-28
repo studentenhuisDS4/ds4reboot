@@ -39,39 +39,39 @@
 
 }
 
-@media (max-width: 772px) {
-    .panel-rotated-inv {
-        margin-top: 0;
-        background-color: rgba(255, 255, 255, 0.9);
-        margin-left: 1em;
-        margin-right: 1em;
-    }
-}
+/*@media (max-width: 772px) {*/
+/*    .panel-rotated-inv {*/
+/*        margin-top: 0;*/
+/*        background-color: rgba(255, 255, 255, 0.9);*/
+/*        margin-left: 1em;*/
+/*        margin-right: 1em;*/
+/*    }*/
+/*}*/
 
-@media only screen and (min-width: 772px) {
-    .panel-rotated {
-        /* perspective function in transform property */
-        transform: perspective(1000px) rotateY(-30deg);
-    }
+/*@media only screen and (min-width: 772px) {*/
+/*    .panel-rotated {*/
+/*        !* perspective function in transform property *!*/
+/*        transform: perspective(1000px) rotateY(-30deg);*/
+/*    }*/
 
-    .panel-rotated-inv {
-        /* perspective function in transform property */
-        transform: perspective(1000px) rotateY(30deg);
-        margin-top: 6em;
-        margin-bottom: 2em;
-        position: relative;
-    }
-}
+/*    .panel-rotated-inv {*/
+/*        !* perspective function in transform property *!*/
+/*        transform: perspective(1000px) rotateY(30deg);*/
+/*        margin-top: 6em;*/
+/*        margin-bottom: 2em;*/
+/*        position: relative;*/
+/*    }*/
+/*}*/
 
 
-.flip-clock-label {
-    font-size: 30px;
-    color: #00a8e6 !important;
-    text-shadow: 0 1px #44a8e6 !important;
-}
+/*.flip-clock-label {*/
+/*    font-size: 30px;*/
+/*    color: #00a8e6 !important;*/
+/*    text-shadow: 0 1px #44a8e6 !important;*/
+/*}*/
 
-@-moz-document url-prefix() {
-  h1, p{
-    color:pink;
-  }
-}
+/*@-moz-document url-prefix() {*/
+/*  h1, p{*/
+/*    color:pink;*/
+/*  }*/
+/*}*/
