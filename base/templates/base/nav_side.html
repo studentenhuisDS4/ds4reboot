@@ -6,6 +6,7 @@
             <li {% if '/eetlijst/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/eetlijst/"><i class="uk-icon-cutlery" style="width:2em"></i> Eetlijst</a></li>
             <li {% if '/ds4admin/summary' in request.get_full_path %}class="uk-active"{% endif %}><a href="/ds4admin/summary"><i class="uk-icon-info" style="width:2em"></i> Huisinfo</a></li>
             <li {% if '/contact/' in request.get_full_path %}class="uk-active"{% endif %}><a href="/contact/"><i class="uk-icon-map-marker" style="width:2em"></i> Contact & Route</a></li>
+            <li class="warning-new"{% if '/wiki/' in request.get_full_path %}{% endif %}><a href="/wiki/"><i class="uk-icon-life-saver" style="width:2em"></i> Wiki (new!)</a></li>
         </ul>
         <p class="uk-text-center uk-text-muted uk-margin-large-top"><i class="uk-icon-heart-o"></i> DS4</p></div>
     </div>

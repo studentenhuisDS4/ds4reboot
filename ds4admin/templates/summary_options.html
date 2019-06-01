@@ -3,7 +3,6 @@
     <hr>
 
     {% if user.is_authenticated %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
         <script>
             var clipboard = new ClipboardJS('[data-clipboard-text]', function (trigger) {
                 return trigger;

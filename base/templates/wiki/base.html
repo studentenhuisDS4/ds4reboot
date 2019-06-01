@@ -1,0 +1,13 @@
+{% extends "wiki/base_site.html" %}
+
+{% block wiki_site_title %} - Wiki{% endblock %}
+
+{% block wiki_header_branding %}
+<a class="navbar-brand" href="/">Back to DS4</a>
+{% endblock %}
+
+{% block wiki_header_navlinks %}
+<ul class="nav navbar-nav">
+  <li class="active"><a href="{% url 'wiki:root' %}">DS4 Wiki</a></li>
+</ul>
+{% endblock %}
