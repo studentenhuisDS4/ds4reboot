@@ -1,25 +1,28 @@
 {% extends 'base/base.html' %}
+{% load static from staticfiles %}
 
 {% block title %} | Home{% endblock %}
-
-{#{% block add_to_header %}#}
-{#    <link rel="stylesheet" href="/static/css/background.css"/>#}
-{#{% endblock %}#}
 
 {% block body_block %}
 
     <div class="uk-grid">
-{#        <div class="uk-width-1-2 panel-rotated-inv">#}
-{#            <div class="uk-hidden-small" style="width:50em;">#}
-{#                {% include 'home/lf_countdown.html' %}#}
-{#            </div>#}
-{#        </div>#}
-{#        <div class="uk-width-1-2 panel-rotated" style="margin-top:2em; margin-bottom:2em;">#}
-        <div class="uk-width-1-1 {#panel-rotated#}" style="margin-top:2em; margin-bottom:2em;position:relative">
+        {#        <div class="uk-width-1-2 panel-rotated-inv">#}
+        {#            <div class="uk-hidden-small" style="width:50em;">#}
+        {#                {% include 'home/lf_countdown.html' %}#}
+        {#            </div>#}
+        {#        </div>#}
+        {#        <div class="uk-width-1-2 panel-rotated" style="margin-top:2em; margin-bottom:2em;">#}
+        <div class="uk-width-1-1 uk-hidden-small{#panel-rotated#}" style="margin-top:2em;">
             {% if user.is_authenticated and request.user.username != 'huis' %}
-                <div class="uk-hidden-small" style="width:25em; position:absolute; top:0; right:0;">
-                    {% include 'home/quick_access.html' %}
+                <div class="uk-grid">
+                    <div class="uk-width-1-3">
+                        {% include 'home/quick_access.html' %}
+                    </div>
+
+                    {% include 'home/notifications.html' %}
                 </div>
+            {% else %}
+                {% include 'base/login_form.html' %}
             {% endif %}
         </div>
     </div>
@@ -27,24 +30,22 @@
     <div class="uk-grid uk-visible-small">
         {% if user.is_authenticated and request.user.username != 'huis' %}
             <div class="uk-width-1-1">
-                <div style="margin-left:1em; margin-right:1em;">
-                    {% include 'home/quick_access.html' %}
-                </div>
+                {% include 'home/quick_access.html' %}
             </div>
+            {% include 'home/notifications.html' %}
         {% elif not user.is_authenticated %}
-            <div class="uk-grid uk-visible-small">
-                <div class="uk-width-1-1">
-                    <div style="margin-left:1em; margin-right:1em;">
-                        <div class="uk-panel uk-panel-box"
-                             style="margin-top:2em; background-color:rgba(255, 255, 255, 0.8);">
-                            <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="contact/"><i
-                                    class="uk-icon-map-marker"></i> Contact & Route</a></p>
-                            <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="user/login/"><i
-                                    class="uk-icon-sign-in"></i> Inloggen</a></p>
-                        </div>
+            <div class="uk-width-1-1">
+                <div style="margin-left:1em; margin-right:1em;">
+                    <div class="uk-panel uk-panel-box"
+                         style="margin-top:2em; background-color:rgba(255, 255, 255, 0.8);">
+                        <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="contact/"><i
+                                class="uk-icon-map-marker"></i> Contact & Route</a></p>
+                        <p><a class="uk-button uk-button-large uk-width-1-1 uk-button-primary" href="user/login/"><i
+                                class="uk-icon-sign-in"></i> Inloggen</a></p>
                     </div>
                 </div>
             </div>
+
         {% endif %}
     </div>
 {% endblock %}
