@@ -100,6 +100,7 @@ USE_TZ = False  # Use local time
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
+MEDIA_ROOT = '/var/www/media'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
