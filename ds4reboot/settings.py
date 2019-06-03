@@ -31,9 +31,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.humanize',
 
+    # Angular
+    'rest_framework',
+    'corsheaders',
 
+    # Wiki
     'django.contrib.sites.apps.SitesConfig',
     'django.contrib.humanize.apps.HumanizeConfig',
     'django_nyt.apps.DjangoNytConfig',
@@ -50,6 +53,8 @@ INSTALLED_APPS = [
 INSTALLED_APPS += SECRET_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,6 +83,7 @@ TEMPLATES = [
     },
 ]
 
+# Production
 WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -89,14 +95,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Frontend CORS
+# https://github.com/ottoyiu/django-cors-headers/#configuration
+CORS_ORIGIN_WHITELIST = [
+    "https://ds4.nl",
+    "http://localhost:8000"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'ds4.nl',
+]
+
+# Timezone
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Amsterdam'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False  # Use local time
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
+# Static & Media
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
@@ -107,7 +124,7 @@ STATICFILES_DIRS = [
 ]
 
 
+# Wiki part
 WIKI_ACCOUNT_HANDLING = True
 WIKI_ACCOUNT_SIGNUP_ALLOWED = True
-
 SITE_ID = 1
