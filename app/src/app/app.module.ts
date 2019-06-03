@@ -4,7 +4,6 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatTableModule} from '@angular/material';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {DinnerListComponent} from './dinner-list/dinner-list.component';
@@ -15,7 +14,10 @@ import {OrganizationComponent} from './organization/organization.component';
 import {ProfileComponent} from './profile/profile.component';
 import {NewsComponent} from './news/news.component';
 import {HttpClientModule} from '@angular/common/http';
-import { HomeComponent } from './home/home.component';
+import {HomeComponent} from './home/home.component';
+import {MaterialModule} from './material/material.module';
+import {LayoutComponent} from './layout/layout.component';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
     declarations: [
@@ -27,7 +29,8 @@ import { HomeComponent } from './home/home.component';
         OrganizationComponent,
         ProfileComponent,
         NewsComponent,
-        HomeComponent
+        HomeComponent,
+        LayoutComponent
     ],
     imports: [
         BrowserModule,
@@ -36,14 +39,9 @@ import { HomeComponent } from './home/home.component';
 
         // REST HTTP consumer
         HttpClientModule,
-
-        // Material
-        MatTableModule,
-        MatCardModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatButtonModule,
-
+        // Design & styling
+        MaterialModule,
+        FlexLayoutModule,
         // PWA
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
     ],

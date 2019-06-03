@@ -7,13 +7,14 @@ import {DinnerListComponent} from './dinner-list/dinner-list.component';
 import {OrganizationComponent} from './organization/organization.component';
 import {ContactComponent} from './contact/contact.component';
 import {NewsComponent} from './news/news.component';
+import {HomeComponent} from './home/home.component';
 
 // {
 //     path: '',
 //         component:
 // }
 
-const routes: Routes = [{path: '', redirectTo: 'contacts', pathMatch: 'full'},
+const routes: Routes = [{path: '', redirectTo: 'home', pathMatch: 'full'},
     {
         path: 'profile',
         component: ProfileComponent
@@ -35,6 +36,9 @@ const routes: Routes = [{path: '', redirectTo: 'contacts', pathMatch: 'full'},
     }, {
         path: 'news',   // This will probably be the home page.
         component: NewsComponent
+    }, {
+        path: 'home',   // This will probably be the home page.
+        component: HomeComponent
     },
 ];
 
