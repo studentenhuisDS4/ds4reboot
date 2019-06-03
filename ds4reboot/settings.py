@@ -111,7 +111,7 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Amsterdam'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False  # Use local time
+USE_TZ = True  # Use local time
 
 # Static & Media
 STATIC_URL = '/static/'
