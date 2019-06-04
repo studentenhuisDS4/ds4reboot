@@ -17,11 +17,13 @@ import {ProfileComponent} from './profile/profile.component';
 import {NewsComponent} from './news/news.component';
 import {HomeComponent} from './home/home.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LayoutComponent} from './layout/layout.component';
 import {HeaderComponent} from './navigation/header/header.component';
 import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.component';
 import {LoginComponent} from './login/login.component';
+import {AutoFocusDirective} from './directives/auto-focus.directive';
+import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
 
 
 @NgModule({
@@ -38,7 +40,8 @@ import {LoginComponent} from './login/login.component';
         LayoutComponent,
         HeaderComponent,
         SidenavListComponent,
-        LoginComponent
+        LoginComponent,
+        AutoFocusDirective
     ],
     imports: [
         BrowserModule,
@@ -52,9 +55,10 @@ import {LoginComponent} from './login/login.component';
         FlexLayoutModule,
         // PWA
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
     ],
-    providers: [],
+    providers: [AuthGuard],
     bootstrap: [AppComponent]
 })
 export class AppModule {

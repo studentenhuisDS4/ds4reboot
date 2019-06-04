@@ -1,20 +1,41 @@
-<mat-toolbar>
-    <span>LOGIN</span>
-</mat-toolbar>
-<mat-card class="my-card">
-    <mat-card-content>
-        <form class="my-form">
-            <mat-form-field class="full-width">
-                <mat-label>Email</mat-label>
-                <input matInput placeholder="Email" name="email" [(ngModel)]="login.username">
-            </mat-form-field>
-            <mat-form-field class="full-width">
-                <mat-label>Password</mat-label>
-                <input matInput placeholder="Password" name="password" [(ngModel)]="login.password">
-            </mat-form-field>
-        </form>
-    </mat-card-content>
-    <mat-card-actions>
-        <button mat-raised-button (click)="verifyLogin()" color="primary">LOGIN</button>
-    </mat-card-actions>
-</mat-card>
+<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+
+    <mat-card class="login-card">
+        <mat-card-header>
+            <mat-card-title>Login Required</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <form class="login-form" fxLayout="column">
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput placeholder="Email" name="email" [formControl]="emailFormControl"
+                           [errorStateMatcher]="matcher">
+                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        Please enter a valid email address
+                    </mat-error>
+                    <mat-error *ngIf="emailFormControl.hasError('required')">
+                        Email is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput placeholder="Password" name="password" [formControl]="passwordFormControl">
+                    <mat-error
+                        *ngIf="passwordFormControl.hasError('minlength') && !passwordFormControl.hasError('required')">
+                        Please enter a password longer than 4 characters
+                    </mat-error>
+                    <mat-error *ngIf="passwordFormControl.hasError('required')">
+                        Password is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+                <mat-error *ngIf="state">
+                    <strong>{{state}}</strong>
+                </mat-error>
+            </form>
+        </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-raised-button (click)="verifyLogin()" color="primary">LOGIN</button>
+        </mat-card-actions>
+    </mat-card>
+
+</div>

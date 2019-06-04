@@ -8,37 +8,59 @@ import {OrganizationComponent} from './organization/organization.component';
 import {ContactComponent} from './contact/contact.component';
 import {NewsComponent} from './news/news.component';
 import {HomeComponent} from './home/home.component';
-
+import {LoginComponent} from './login/login.component';
+import {
+    AuthGuardService as AuthGuard
+} from './services/auth-guard.service';
+// import {
+//     RoleGuardService as RoleGuard
+// } from './services/role-guard.service';
 // {
 //     path: '',
 //         component:
 // }
 
-const routes: Routes = [{path: '', redirectTo: 'home', pathMatch: 'full'},
+const routes: Routes = [
+    {path: '', redirectTo: 'home', pathMatch: 'full'},
+    {
+        path: 'login',
+        component: LoginComponent
+    },
     {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
+        canActivate: [AuthGuard]
     }, {
         path: 'admin',
-        component: AdminComponent
+        component: AdminComponent,
+        canActivate: [AuthGuard]
+        //    TODO: implement RoleGuard
+        //     data: {
+        //       expectedRole: 'admin'
+        //     }
     }, {
         path: 'turf-list',
-        component: TurfListComponent
+        component: TurfListComponent,
+        canActivate: [AuthGuard]
     }, {
         path: 'dinner-list',
-        component: DinnerListComponent
+        component: DinnerListComponent,
+        canActivate: [AuthGuard]
     }, {
         path: 'organization',
-        component: OrganizationComponent
+        component: OrganizationComponent,
+        canActivate: [AuthGuard]
     }, {
         path: 'contact',
         component: ContactComponent
     }, {
-        path: 'news',   // This will probably be the home page.
-        component: NewsComponent
+        path: 'news',   // This will probably be the injected into the home page.
+        component: NewsComponent,
+        canActivate: [AuthGuard]
     }, {
-        path: 'home',   // This will probably be the home page.
-        component: HomeComponent
+        path: 'home',
+        component: HomeComponent,
+        canActivate: [AuthGuard]
     },
 ];
 
