@@ -13,7 +13,9 @@ export class AuthService {
         console.log(environment.baseUrl);
     }
 
-    sendAuth(user: string, password: string) {
-        return this.httpClient.get(`${this.API_URL}/contacts`);
+    public sendAuth(username: string, password: string) {
+        return this.httpClient.post(`${this.API_URL}/auth-jwt/`, {
+            username, password
+        });
     }
 }
