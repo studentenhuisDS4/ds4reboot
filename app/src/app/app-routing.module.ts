@@ -39,11 +39,11 @@ const routes: Routes = [
         //       expectedRole: 'admin'
         //     }
     }, {
-        path: 'turf-list',
+        path: 'turf',
         component: TurfListComponent,
         canActivate: [AuthGuard]
     }, {
-        path: 'dinner-list',
+        path: 'dinner',
         component: DinnerListComponent,
         canActivate: [AuthGuard]
     }, {

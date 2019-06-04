@@ -24,6 +24,11 @@ export class AuthService {
         return !(new JwtHelperService().isTokenExpired(token));
     }
 
+    public getToken() {
+        const token = localStorage.getItem('token');
+        return localStorage.getItem('token');
+    }
+
     public sendAuth(username: string, password: string) {
         return this.httpClient.post<any>(`${this.API_URL}/auth-jwt/`, {
             username, password

@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 @Injectable({
     providedIn: 'root'
 })
-export class TurflistService {
+export class TurfListService {
 
     constructor(private  httpClient: HttpClient) {
     }

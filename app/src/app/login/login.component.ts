@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material';
@@ -21,6 +21,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class LoginComponent implements OnInit {
     state = '';
     DEBUG = environment.debug;
+    awaitingLogin = false;
 
     emailFormControl = new FormControl('', [
         Validators.required,
@@ -30,8 +31,14 @@ export class LoginComponent implements OnInit {
         Validators.required,
         Validators.minLength(4),
     ]);
-
     matcher = new MyErrorStateMatcher();
+
+    @HostListener('document:keypress', ['$event'])
+    handleKeyboardPress(event: any) {
+        if (event.which === 'Enter') {
+            this.verifyLogin();
+        }
+    }
 
     constructor(private authService: AuthService, private router: Router) {
     }
@@ -48,14 +55,17 @@ export class LoginComponent implements OnInit {
             if (!this.authService.isAuthenticated()) {
                 // Not logged in
                 this.state = 'logging in';
+                this.awaitingLogin = true;
                 this.authService.sendAuth(this.emailFormControl.value, this.passwordFormControl.value).subscribe((token) => {
                     this.state = 'logged in';
                     this.router.navigate(['home']);
+                    this.awaitingLogin = false;
                 }, (error => {
                     if (environment.debug) {
                         console.log('Login panel error', error);
                     }
                     this.state = 'error logging in';
+                    this.awaitingLogin = false;
                 }));
             } else {
                 // Logged in

@@ -95,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     },
 ]
-
+APPEND_SLASH = True
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -116,6 +116,7 @@ JWT_AUTH = {
 
 # Frontend CORS
 # https://github.com/ottoyiu/django-cors-headers/#configuration
+CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     "https://ds4.nl",
     "http://localhost:4200"

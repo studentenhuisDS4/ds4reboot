@@ -3,10 +3,10 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {MaterialModule} from './material/material.module';
 import {DinnerListComponent} from './dinner-list/dinner-list.component';
 import {TurfListComponent} from './turf-list/turf-list.component';
@@ -24,6 +24,7 @@ import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.compo
 import {LoginComponent} from './login/login.component';
 import {AutoFocusDirective} from './directives/auto-focus.directive';
 import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
+import {TokenInterceptor} from './services/interceptors/token.interceptor';
 
 
 @NgModule({
@@ -47,7 +48,6 @@ import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-
         // REST HTTP consumer
         HttpClientModule,
         // Design & styling
@@ -58,7 +58,11 @@ import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
         FormsModule,
         ReactiveFormsModule
     ],
-    providers: [AuthGuard],
+    providers: [AuthGuard, {
+        provide: HTTP_INTERCEPTORS,
+        useClass: TokenInterceptor,
+        multi: true
+    }],
     bootstrap: [AppComponent]
 })
 export class AppModule {
