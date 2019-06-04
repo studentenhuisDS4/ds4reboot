@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.urls import path
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 urlpatterns = [
     url('^', include('django.contrib.auth.urls')),
@@ -27,7 +28,11 @@ urlpatterns = [
     url(r'^ds4admin/', include('ds4admin.urls')),
     url(r'^admin/', admin.site.urls),
     path('wiki/notifications/', include('django_nyt.urls')),
-    path('wiki/', include('wiki.urls'))
+    path('wiki/', include('wiki.urls')),
+
+    path('auth-jwt/', obtain_jwt_token),
+    path('auth-jwt-refresh/', refresh_jwt_token),
+    path('auth-jwt-verify/', verify_jwt_token),
 
     # path('', include('pwa.urls')),
 ]

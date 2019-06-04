@@ -13,6 +13,7 @@ psycopg2 = "*"
 wiki = "==0.5.dev20181021091629"
 django = "==2.1.8"
 djangorestframework = "3.9.4"
+djangorestframework_jwt = "1.11.0"
 
 [requires]
 python_version = "3.7"

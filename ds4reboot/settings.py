@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
-
+import datetime
 import os
 from ds4reboot.secret_settings import *
 
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
     # Angular
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 
     # Wiki
@@ -94,6 +95,24 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'BEARER',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
+    'JWT_ALLOW_REFRESH': False
+}
 
 # Frontend CORS
 # https://github.com/ottoyiu/django-cors-headers/#configuration
