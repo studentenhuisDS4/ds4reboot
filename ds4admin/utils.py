@@ -48,7 +48,7 @@ def check_moveout_dinners(request):
             # Build up warning
             if throw_warning and request is not None:
                 messages.warning(request, 'User ' + h.display_name +
-                                 f" has {len(user_cost_days)} active UNPAYED dinners. "
+                                 f" has {len(user_cost_days)} active UNPAID dinners. "
                                  f"Please check this to avoid inconsistency on the TOTAL BALANCE.")
     return moveout_open_dinners, moveout_pending
 

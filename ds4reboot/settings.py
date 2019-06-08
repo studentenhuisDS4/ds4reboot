@@ -118,8 +118,8 @@ JWT_AUTH = {
 # https://github.com/ottoyiu/django-cors-headers/#configuration
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    "https://ds4.nl",
-    "http://localhost:4200"
+    "https://app.ds4.nl",
+    "http://localhost:4200",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
