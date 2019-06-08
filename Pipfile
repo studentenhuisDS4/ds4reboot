@@ -15,6 +15,7 @@ wiki = "==0.5.dev20181021091629"
 django = "==2.1.8"
 djangorestframework = "*"
 djangorestframework_jwt = "*"
+django-cors-headers = "==3.0.2"
 
 [requires]
 python_version = "3.7"
