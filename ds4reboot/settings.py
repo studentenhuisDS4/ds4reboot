@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
-
+import datetime
 import os
 from ds4reboot.secret_settings import *
 
@@ -31,9 +31,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.humanize',
 
+    # Angular
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
 
+    # Wiki
     'django.contrib.sites.apps.SitesConfig',
     'django.contrib.humanize.apps.HumanizeConfig',
     'django_nyt.apps.DjangoNytConfig',
@@ -50,6 +54,8 @@ INSTALLED_APPS = [
 INSTALLED_APPS += SECRET_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,6 +84,7 @@ TEMPLATES = [
     },
 ]
 
+# Production
 WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -88,15 +95,45 @@ AUTH_PASSWORD_VALIDATORS = [
         }
     },
 ]
+APPEND_SLASH = True
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'BEARER',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
+    'JWT_ALLOW_REFRESH': False
+}
+
+# Frontend CORS
+# https://github.com/ottoyiu/django-cors-headers/#configuration
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    "https://app.ds4.nl",
+    "http://localhost:4200",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'ds4.nl',
+]
+
+# Timezone
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Amsterdam'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = False  # Use local time
+USE_TZ = True  # Use local time
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
+# Static & Media
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
@@ -106,8 +143,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-
+# Wiki part
 WIKI_ACCOUNT_HANDLING = True
 WIKI_ACCOUNT_SIGNUP_ALLOWED = True
-
 SITE_ID = 1

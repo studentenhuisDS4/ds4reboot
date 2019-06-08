@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.utils import timezone
+
+from ds4admin.utils import check_moveout_dinners
+from eetlijst.models import DateList, UserList
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
 from django.contrib import messages
@@ -34,7 +37,8 @@ def hr(request):
         # generate necessary user lists
         active_users = User.objects.filter(is_active=True).exclude(username='admin')
         user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
-        moveout_list = Housemate.objects.filter(moveout_set=1).order_by('moveout_date')
+
+        moveout_open_dinners, moveout_pending = check_moveout_dinners(request)
 
         # calculate turf totals
         totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
@@ -51,7 +55,8 @@ def hr(request):
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
             'user_list': user_list,
-            'moveout_list': moveout_list,
+            'moveout_list': moveout_pending,
+            'moveout_open_dinners': moveout_open_dinners,
             'boetes': [BoetesReport.objects.get(type='w').boete_count, BoetesReport.objects.get(type='r').boete_count],
             'totals': totals,
         }

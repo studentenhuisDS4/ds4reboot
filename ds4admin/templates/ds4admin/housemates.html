@@ -1,26 +1,95 @@
 {% extends 'ds4admin/index.html' %}
 
 {% block content_block %}
-<table class="small-rows uk-table uk-table-hover">
-    <thead class="uk-h6">
-        <tr>
-            <th>Naam</th>
-            <th class="uk-text-center">Kamer</th>
-            <th>Nummer cell</th>
-            <th class="uk-visible-large">Nummer ouders</th>
-            <th class="uk-hidden-small">Toegevoegd</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for h in housemates %}
-        <tr>
-            <td>{{ h }}</td>
-            <td class="uk-text-center">{{ h.room_number }}</td>
-            <td>{{ h.cell_phone }}</td>
-            <td class="uk-visible-large">{{ h.parent_phone }}</td>
-            <td class="uk-hidden-small">{{ h.movein_date }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
+    <table class="basic-table small-rows uk-table uk-table-hover" style="margin-top: 2em">
+        <caption><h5 class="uk-text-muted" style="font-style:normal">Closed unpaid dinner days</h5></caption>
+        {% if not general_open_dinners|length == 0 %}
+            <thead class="uk-h6">
+            <tr>
+                <th>Date moveout</th>
+                <th>Cook</th>
+                <th>Cook in DS4?</th>
+                <th>People</th>
+                <th>Safe-to-remove?</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for dinner, users in general_open_dinners.items %}
+                <tr style="border-top:2pt solid gray">
+                    <td>{{ dinner.date }}</td>
+                    <td>{{ dinner.cook.housemate.display_name }}</td>
+                    <td><em>{{ dinner.cook.is_active }}</em></td>
+                    <td>Nr: {{ dinner.num_eating }}</td>
+                    <td>{% if dinner.cook.is_active == False %} Safe {% else %} <em>NOT SAFE!</em> {% endif %}</td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <b>Eaters:</b>
+                        {% for eater in users %}
+                            {% if eater.user.is_active %}
+                            {{ eater.user.housemate.display_name }},
+                            {% else %}
+                                <i style="color:orange">
+                                {{ eater.user.housemate.display_name }},
+                                </i>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% else %}
+            <tr>
+                <td class="uk-text-center uk-text-muted" style="padding:1em;">No housemates moved out since last HR!
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+    <table class="basic-table small-rows uk-table uk-table-hover" style="margin-top: 2em">
+        <caption><h5 class="uk-text-muted" style="font-style:normal">Old-housemate moveout details</h5></caption>
+        {% if not moveout_open_dinners|length == 0 %}
+            <thead class="uk-h6">
+            <tr>
+                <th>Name</th>
+                <th>Date moveout</th>
+                <th>Balance</th>
+                <th>Beer</th>
+                <th>Red wine (+fine closed)</th>
+                <th>White wine (+fine closed)</th>
+                <th>Fines open</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for i,values in moveout_open_dinners.items %}
+                <tr style="border-top:2pt solid gray">
+                    <td>{{ i.display_name }}</td>
+                    <td>{{ i.moveout_date }}</td>
+                    <td>{{ i.balance }}</td>
+                    <td>{{ i.sum_bier }}</td>
+                    <td>{{ i.sum_rwijn }} (+{{ i.boetes_geturfd_rwijn }})</td>
+                    <td>{{ i.sum_wwijn }} (+{{ i.boetes_geturfd_wwijn }})</td>
+                    <td>{{ i.boetes_open }}</td>
+                </tr>
+                {% for value in values %}
+                    <tr>
+                        <td></td>
+                        <td><em>Dinner ({{ value.num_eating }})</em></td>
+                        <td>{{ value.date }}</td>
+                        <td>Cook: <strong>{{ value.cook.housemate.display_name }}</strong></td>
+                        <td>{% if value.cook.is_active == True %}<strong>Cook active in DS4!</strong>{% else %}Cook
+                            moved out.{% endif %}</td>
+                        <td>{% if value.cook.is_active == True %}<em>NOT SAFE!</em> {% endif %}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+        {% else %}
+            <tr>
+                <td class="uk-text-center uk-text-muted" style="padding:1em;">No housemates moved out since last HR!
+                </td>
+            </tr>
+        {% endif %}
+    </table>
 {% endblock %}

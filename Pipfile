@@ -4,14 +4,17 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+django-rainbowtests = "*"
+psycopg2 = "*"
 
 [packages]
 gunicorn = "==19.9.0"
 openpyxl = "==2.3.5"
 virtualenv = "==16.0.0"
-psycopg2 = "*"
 wiki = "==0.5.dev20181021091629"
 django = "==2.1.8"
+djangorestframework = "*"
+djangorestframework_jwt = "*"
 
 [requires]
 python_version = "3.7"

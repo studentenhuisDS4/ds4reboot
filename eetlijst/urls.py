@@ -16,4 +16,6 @@ urlpatterns = [
     path('transfer/log/', views.transfer_log, name='transfer log'),
     url(r'^transfer/log/(?P<page>[0-9]+)/?$', views.transfer_log, name='transfer log'),
     url(r'^([0-9]{4})/([0-9]{2})/([0-9]+)/$', views.index, name='index'),
+
+    # path('',)
 ]
