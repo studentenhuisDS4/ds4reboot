@@ -318,7 +318,7 @@ def enroll(request):
             else:
                 # TODO: restyle instead of suggesting to refresh
                 return HttpResponse(JsonResponse(
-                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+                    {'result': 'The list is closed already. Please refresh page.', 'status': 'failure'}))
         elif enroll_type == 'sponge':
             date_entry.num_eating -= user_entry.list_count
             user_entry.list_count = 0
@@ -406,6 +406,10 @@ def close(request):
 
                     # if open
                     if date_entry.open:
+                        if date_entry.num_eating <= 1:
+                            messages.error(request, "You can't cook for yourself. I mean, you can, but dont be stoopid.")
+                            return redirect(request.META.get('HTTP_REFERER'))
+
                         date_entry.open = False
                         date_entry.close_time = timezone.now()
                         date_entry.save()
