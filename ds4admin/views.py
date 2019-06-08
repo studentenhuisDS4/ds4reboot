@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
 from django.views.decorators.http import require_POST, require_GET
 
+from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate
 from user.models import Housemate
 from eetlijst.models import HOLog
 from thesau.models import Report
@@ -100,6 +101,9 @@ def housemates(request):
         month = str(timezone.now().month).zfill(2)
         day = str(timezone.now().day).zfill(2)
 
+        general_open_dinners, open_days = check_dinners(request)
+        moveout_open_dinners, _ = check_moveout_dinners(request)
+
         # build context object
         context = {
             'breadcrumbs': ['admin'],
@@ -107,6 +111,9 @@ def housemates(request):
             'inactive': inactive_housemates,
             'current_day': timezone.now(),
             'focus_date': str(year) + '/' + str(month) + '/' + str(day),
+            'moveout_open_dinners': moveout_open_dinners,
+            'open_days': open_days,
+            'general_open_dinners': general_open_dinners
         }
 
         return render(request, 'ds4admin/housemates.html', context)
@@ -181,10 +188,19 @@ def remove_housemate(request):
 
             # get data from POST
             remove_id = int(request.POST.get('housemate'))
+            hm = Housemate.objects.get(user_id=remove_id)
+            unpayed_dinners = check_dinners_housemate(request, hm)
+            safe_to_remove = True
+            unsafe_string = ""
+            for dinner in unpayed_dinners:
+                if dinner.cook.is_active:
+                    safe_to_remove = False
+                    unsafe_string += f"(Cook: {dinner.cook.housemate.display_name}, date: {str(dinner.date)}), "
 
-            if not remove_id:
+            if not safe_to_remove:
+                messages.error(request, f"You can\'t deactivate {hm.display_name}. Please check unsafe dinners: {unsafe_string}")
+            elif not remove_id:
                 messages.error(request, 'Must specify housemate to be removed.')
-
             else:
                 # update housemate object
                 h = Housemate.objects.get(user_id=remove_id)
@@ -432,7 +448,7 @@ def create_user_post(request):
                              user.first_name + ') succesfull.')
 
             # get requested user
-            return redirect('/user/profiel/'+str(user.id)+'/')
+            return redirect('/user/profiel/' + str(user.id) + '/')
 
     except Exception as e:
         messages.error(request, 'The form couldnt be validated correctly. ' + str(e))

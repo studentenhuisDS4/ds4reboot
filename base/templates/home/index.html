@@ -1,6 +1,11 @@
 {% extends 'base/base.html' %}
 {% load static from staticfiles %}
 
+{% block add_to_header %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/css/background.css"/>
+{% endblock %}
+
 {% block title %} | Home{% endblock %}
 
 {% block body_block %}
