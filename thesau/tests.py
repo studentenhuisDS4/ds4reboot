@@ -65,10 +65,7 @@ class ThesauTest(TestCase):
 
     def test_closing_hr(self):
         print("Testing closing HR with old housemate on dinner day")
-
-        total_bal = Housemate.objects.filter(user__is_active=True).aggregate(Sum('balance'))['balance__sum']
-        self.assertEqual(total_bal, 0)
-
+        self.assert_total_balance()
         week_ago = datetime.now() - timedelta(days=7)
 
         # add users (normal, cook) to dinner entries
@@ -94,13 +91,13 @@ class ThesauTest(TestCase):
         data = {
             'close-date': week_ago.date(),
         }
-
         response = self.client.post(self.dinner_close_url, data, follow=True, HTTP_REFERER='/eetlijst/')
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 200)
-        datenew = DateList.objects.first()
-        self.assertFalse(datenew.open, "The dinner date was not closed!")
-        print(colors.yellow("Dinner closed: "), colors.blue(str(not datenew.open)))
+
+        date.refresh_from_db()
+        self.assertFalse(date.open, "The dinner date was not closed!")
+        print(colors.yellow("Dinner closed: "), colors.blue(str(not date.open)))
 
         data2 = {
             'housemate': self.hm_pietje2.id,
@@ -108,30 +105,36 @@ class ThesauTest(TestCase):
         response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/thesau/')
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 200)
-
         self.hm_pietje2.refresh_from_db()
-        self.assertIsNotNone(self.hm_pietje2.moveout_date)
-        print(colors.yellow("Housemate pietje2 removed (move-out date): "),
+        self.assertIsNone(self.hm_pietje2.moveout_date)
+        print(colors.blue("Housemate pietje2 not removed because of open dinners (move-out date): "),
               colors.blue(str(self.hm_pietje2.moveout_date)))
-
-        for h in Housemate.objects.all():
-            print(h, h.balance)
 
         data3 = {
             'cost-date': week_ago.date(),
             'cost-amount': 15
         }
         response = self.client.post(self.dinner_cost_url, data3, follow=True, HTTP_REFERER='/eetlijst/')
+        print(colors.yellow("Filled in costs."))
+        self.assert_total_balance()
+
+        print(colors.yellow("Submitting HR"))
+        response = self.client.post(self.hr_url, follow=True, HTTP_REFERER='/thesau/')
+        self.assert_total_balance()
+
+        data2 = {
+            'housemate': self.hm_pietje2.id,
+        }
+        response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/thesau/')
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 200)
+        self.hm_pietje2.refresh_from_db()
+        self.assertIsNotNone(self.hm_pietje2.moveout_date)
+        print(colors.blue("Housemate pietje2 now correctly removed (move-out date): "),
+              colors.blue(str(self.hm_pietje2.moveout_date)))
+        self.assert_total_balance()
+
+    def assert_total_balance(self):
         total_bal = Housemate.objects.filter(user__is_active=True).aggregate(Sum('balance'))['balance__sum']
         self.assertEqual(total_bal, 0)
-
-        for h in Housemate.objects.all():
-            print(h, h.balance)
-
-        response = self.client.post(self.hr_url, follow=True, HTTP_REFERER='/thesau/')
-        for h in Housemate.objects.all():
-            print(h, h.balance)
-
-        # date = DateList.objects.get(date=week_ago)
-        # print(date.open)
-        # self.assertIsNotNone(date.close_time)
+        print(colors.cyan("Balance correct: "), colors.blue(str(total_bal)))

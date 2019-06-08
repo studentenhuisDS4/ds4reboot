@@ -12,9 +12,9 @@
     {% if user.is_authenticated %}
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
+            {% include 'thesau/hr_moveout.html' %}
             {% include 'thesau/hr_summary.html' %}
             {% include 'thesau/hr_boetes.html' %}
-            {% include 'thesau/hr_eetlijst.html' %}
         </div>
         <div class="uk-width-medium-3-10" style="margin-top: 2.5em;">
             {% include 'thesau/hr_options.html' %}
