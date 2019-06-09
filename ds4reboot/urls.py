@@ -19,8 +19,10 @@ urlpatterns = [
                   url(r'^bierlijst/', include('bierlijst.urls')),
                   url(r'^eetlijst/', include('eetlijst.urls')),
                   url(r'^thesau/', include('thesau.urls')),
-                  url(r'^ds4admin/', include('ds4admin.urls')),
                   url(r'^admin/', admin.site.urls),
+
+                  path('ds4admin/', include('ds4admin.urls')),
+
                   path('wiki/notifications/', include('django_nyt.urls')),
                   path('wiki/', include('wiki.urls')),
 

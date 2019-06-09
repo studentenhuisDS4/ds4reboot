@@ -20,6 +20,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 })
 export class LoginComponent implements OnInit {
     state = '';
+    stateSecondary = '';
     DEBUG = environment.debug;
     awaitingLogin = false;
 
@@ -64,7 +65,12 @@ export class LoginComponent implements OnInit {
                     if (environment.debug) {
                         console.log('Login panel error', error);
                     }
-                    this.state = 'error logging in';
+                    if (error.status === 0) {
+                        this.state = 'Server did not respond!';
+                    } else if (error.status === 400) {
+                        this.state = 'Server responded with an error:';
+                        this.stateSecondary = error.error.non_field_errors[0];
+                    }
                     this.awaitingLogin = false;
                 }));
             } else {

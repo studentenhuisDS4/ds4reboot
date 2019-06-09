@@ -22,7 +22,8 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Password</mat-label>
-                    <input matInput placeholder="Password" name="password" type="password" [formControl]="passwordFormControl">
+                    <input matInput placeholder="Password" name="password" type="password"
+                           [formControl]="passwordFormControl">
                     <mat-error
                         *ngIf="passwordFormControl.hasError('minlength') && !passwordFormControl.hasError('required')">
                         Please enter a password longer than 4 characters
@@ -33,6 +34,8 @@
                 </mat-form-field>
                 <mat-error *ngIf="state">
                     <strong>{{state}}</strong>
+                    <br/>
+                    <em>{{stateSecondary}}</em>
                 </mat-error>
             </form>
         </mat-card-content>

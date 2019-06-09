@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
+from django.core.mail import send_mail
 from django.views.decorators.http import require_POST, require_GET
 
 from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate
+from ds4reboot import settings
 from user.models import Housemate
 from eetlijst.models import HOLog
 from thesau.models import Report
@@ -10,6 +12,16 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 from decimal import Decimal
+
+
+def test_mail(request):
+    subject = 'Root'
+    from_email = settings.DEFAULT_FROM_EMAIL
+    message = 'This is my test message'
+    recipient_list = ['davidzwa@gmail.com']
+    html_message = '<h1>This is my HTML test</h1>'
+
+    send_mail(subject, message, from_email, recipient_list, fail_silently=False, html_message=html_message)
 
 
 # view for ds4 admin page
@@ -198,7 +210,8 @@ def remove_housemate(request):
                     unsafe_string += f"(Cook: {dinner.cook.housemate.display_name}, date: {str(dinner.date)}), "
 
             if not safe_to_remove:
-                messages.error(request, f"You can\'t deactivate {hm.display_name}. Please check unsafe dinners: {unsafe_string}")
+                messages.error(request,
+                               f"You can\'t deactivate {hm.display_name}. Please check unsafe dinners: {unsafe_string}")
             elif not remove_id:
                 messages.error(request, 'Must specify housemate to be removed.')
             else:
