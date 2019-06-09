@@ -17,7 +17,7 @@ def send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['thesa
         msg_html = render_to_string('email/thesau_mail_dynamic.html',
                                     {'full_name': full_name,
                                      'balance': str(hm.balance),
-                                     'beers': str(hm.total_bier),
+                                     'beers': str(hm.sum_bier),
                                      'red_wine': str(hm.sum_rwijn),
                                      'white_wine': str(hm.sum_wwijn),
                                      'fine_wine': str(hm.boetes_open),
