@@ -58,7 +58,7 @@ jobs:
       - run:
           name: Collect static (django)
           command: |
-            ssh $SSH_USER@$SSH_HOST 'docker exec -u 0 -it django python ./manage.py collecstatic'
+            ssh $SSH_USER@$SSH_HOST 'docker exec -u 0 django python ./manage.py collecstatic'
 workflows:
   version: 2
   deploy:
