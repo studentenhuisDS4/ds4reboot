@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
-from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST, require_GET
 
-from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate
-from ds4reboot import settings
+from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate, send_moveout_mail
 from user.models import Housemate
 from eetlijst.models import HOLog
 from thesau.models import Report
@@ -15,13 +15,14 @@ from decimal import Decimal
 
 
 def test_mail(request):
-    subject = 'Root'
-    from_email = settings.DEFAULT_FROM_EMAIL
-    message = 'This is my test message'
-    recipient_list = ['davidzwa@gmail.com']
-    html_message = '<h1>This is my HTML test</h1>'
-
-    send_mail(subject, message, from_email, recipient_list, fail_silently=False, html_message=html_message)
+    if request.user.is_superuser:
+        hm = Housemate.objects.get(display_name__exact='Dale')
+        last_hr_date = datetime.now()
+        est_hr_perc = 50
+        send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['dale@ds4.nl'])
+        return HttpResponse('Sent')
+    else:
+        return HttpResponse('Denied')
 
 
 # view for ds4 admin page
@@ -216,12 +217,11 @@ def remove_housemate(request):
                 messages.error(request, 'Must specify housemate to be removed.')
             else:
                 # update housemate object
-                h = Housemate.objects.get(user_id=remove_id)
-                h.moveout_set = True
-                h.moveout_date = timezone.now()
+                hm.moveout_set = True
+                hm.moveout_date = timezone.now()
 
                 # So Django Authentication gives correct message (disabled account)
-                u = h.user
+                u = hm.user
                 u.is_active = False
 
                 # Get required database objects
@@ -238,15 +238,15 @@ def remove_housemate(request):
                 # Get old remainder and optimally calculate split cost to remove this housemate
                 remainder = huis.balance
 
-                split_cost = Decimal(round((h.balance + remainder) / len(other_housemates), 2))
+                split_cost = Decimal(round((hm.balance + remainder) / len(other_housemates), 2))
                 total_diff = len(active_users) * split_cost
-                new_remainder = -(total_diff - h.balance)
+                new_remainder = -(total_diff - hm.balance)
 
                 # Calculate the remainder for the house
                 huis.balance += new_remainder
 
                 # add log entry to eating list ho table
-                ho = HOLog(user=h.user, amount=h.balance, note='Verhuizen')
+                ho = HOLog(user=hm.user, amount=hm.balance, note='Verhuizen')
 
                 # Render email to send summary
                 last_hr_date = Report.objects.latest('report_date').report_date  # Assume housemate already lived here
@@ -258,29 +258,6 @@ def remove_housemate(request):
                 if est_hr_perc > 100:
                     est_hr_perc = 100
 
-                full_name = u.first_name + " " + u.last_name
-                # msg_html = render_to_string('email/thesau_mail_dynamic.html',
-                #                             {'full_name': full_name,
-                #                              'balance': str(h.balance),
-                #                              'beers': str(h.total_bier),
-                #                              'red_wine': str(h.sum_rwijn),
-                #                              'white_wine': str(h.sum_wwijn),
-                #                              'fine_wine': str(h.boetes_open),
-                #                              'fine_wine_turfed': str(h.boetes_geturfd_rwijn+h.boetes_geturfd_wwijn),
-                #                              'move_in_date': str(h.movein_date),
-                #                              'move_out_date': str(h.moveout_date.date()),
-                #                              'last_hr_date': str(last_hr_date),
-                #                              'est_hr_perc': str(est_hr_perc)
-                #                              })
-                # send_mail(
-                #     'DS4 housemate moved out - site report',
-                #     full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
-                #     'studentenhuis@gmail.com',
-                #     ['thesau@ds4.nl, president@ds4.nl'],
-                #     html_message=msg_html,
-                #     fail_silently=False,
-                # )
-
                 # Perform all required update operations
                 sum = 0
                 for o in other_housemates:
@@ -288,11 +265,16 @@ def remove_housemate(request):
                     sum += o.balance
                     o.save()
 
-                h.save()
+                hm.save()
                 u.save()
                 huis.save()
                 ho.save()
 
+                ##
+                # SEND MOVEOUT MAIL
+                # Targets: thesau@ds4.nl, dale@ds4.nl
+                ##
+                send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['thesau@ds4.nl', 'dale@ds4.nl'])
         else:
             return render(request, 'base/login_page.html')
 
