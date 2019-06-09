@@ -22,7 +22,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Password</mat-label>
-                    <input matInput placeholder="Password" name="password" [formControl]="passwordFormControl">
+                    <input matInput placeholder="Password" name="password" type="password" [formControl]="passwordFormControl">
                     <mat-error
                         *ngIf="passwordFormControl.hasError('minlength') && !passwordFormControl.hasError('required')">
                         Please enter a password longer than 4 characters

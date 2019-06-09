@@ -55,6 +55,10 @@ jobs:
           name: Restart gunicorn
           command: |
             ssh $SSH_USER@$SSH_HOST 'cd /root/docker/; docker build . -f ds4reboot.Dockerfile -t django-custom ;and docker-compose up -d'
+      - run:
+          name: Collect static (django)
+          command: |
+            ssh $SSH_USER@$SSH_HOST 'docker exec -u 0 -it django python ./manage.py collecstatic'
 workflows:
   version: 2
   deploy:

@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    baseUrl: 'https://ds4.nl:80',
+    baseUrl: 'https://ds4.nl',
     debug: false
 };
