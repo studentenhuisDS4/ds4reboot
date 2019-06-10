@@ -27,7 +27,6 @@ class ThesauTest(TestCase):
 
     def setUp(self):
         print(">> SETUP: Refreshing user huis, adding two custom users")
-        User.objects.filter(username='huis').delete()
         User.objects.create_superuser('huis', 'studentenhuisds4@gmail.com', 'Studentenhuis')
         Housemate.objects.create(user=User.objects.get(username='huis'), display_name='Huis')
 
@@ -51,6 +50,12 @@ class ThesauTest(TestCase):
     def tearDown(self):
         print(">> TEARDOWN: Delete user huis")
         User.objects.filter(username='pietje').delete()
+        User.objects.filter(username='pietje2').delete()
+        User.objects.filter(username='pietje3').delete()
+        User.objects.filter(username='huis').delete()
+        DateList.objects.all().delete()
+        UserList.objects.all().delete()
+        BoetesReport.objects.all().delete()
 
     def test_static_responses(self):
         print("Testing Thesau:")
@@ -65,6 +70,7 @@ class ThesauTest(TestCase):
 
     def test_closing_hr(self):
         print("Testing closing HR with old housemate on dinner day")
+
         self.assert_total_balance()
         week_ago = datetime.now() - timedelta(days=7)
 
@@ -99,8 +105,9 @@ class ThesauTest(TestCase):
         self.assertFalse(date.open, "The dinner date was not closed!")
         print(colors.yellow("Dinner closed: "), colors.blue(str(not date.open)))
 
+        self.hm_pietje2.refresh_from_db()
         data2 = {
-            'housemate': self.hm_pietje2.id,
+            'housemate': self.hm_pietje2.user_id,
         }
         response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/thesau/')
         self.assertIsNotNone(response)
@@ -123,7 +130,7 @@ class ThesauTest(TestCase):
         self.assert_total_balance()
 
         data2 = {
-            'housemate': self.hm_pietje2.id,
+            'housemate': self.hm_pietje2.user_id,
         }
         response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/thesau/')
         self.assertIsNotNone(response)

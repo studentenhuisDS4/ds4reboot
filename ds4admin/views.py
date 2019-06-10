@@ -5,6 +5,7 @@ from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST, require_GET
 
 from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate, send_moveout_mail
+from ds4reboot.secret_settings import DEBUG
 from user.models import Housemate
 from eetlijst.models import HOLog
 from thesau.models import Report
@@ -15,6 +16,9 @@ from decimal import Decimal
 
 
 def test_mail(request):
+    if DEBUG:
+        return HttpResponse('Didnt send: DEBUG==True')
+
     if request.user.is_superuser:
         hm = Housemate.objects.get(display_name__exact='Dale')
         last_hr_date = datetime.now()
@@ -201,6 +205,9 @@ def remove_housemate(request):
 
             # get data from POST
             remove_id = int(request.POST.get('housemate'))
+            hms = Housemate.objects.all()
+            for hm in hms:
+                print(hm, hm.user_id)
             hm = Housemate.objects.get(user_id=remove_id)
             unpayed_dinners = check_dinners_housemate(request, hm)
             safe_to_remove = True
@@ -274,7 +281,10 @@ def remove_housemate(request):
                 # SEND MOVEOUT MAIL
                 # Targets: thesau@ds4.nl, dale@ds4.nl
                 ##
-                send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['thesau@ds4.nl', 'dale@ds4.nl'])
+                if not DEBUG:
+                    send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['thesau@ds4.nl', 'dale@ds4.nl'])
+                else:
+                    print("Skipping mail because of DEBUG mode")
         else:
             return render(request, 'base/login_page.html')
 
