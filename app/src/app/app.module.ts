@@ -3,11 +3,11 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {BrowserAnimationsModule, NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {MaterialModule} from './material/material.module';
+import {MaterialModule} from '../material.module';
 import {DinnerListComponent} from './dinner-list/dinner-list.component';
 import {TurfListComponent} from './turf-list/turf-list.component';
 import {AdminComponent} from './admin/admin.component';
@@ -25,6 +25,7 @@ import {LoginComponent} from './login/login.component';
 import {AutoFocusDirective} from './directives/auto-focus.directive';
 import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
 import {TokenInterceptor} from './services/interceptors/token.interceptor';
+import { BottomNavComponent } from './navigation/bottom-nav/bottom-nav.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import {TokenInterceptor} from './services/interceptors/token.interceptor';
         HeaderComponent,
         SidenavListComponent,
         LoginComponent,
-        AutoFocusDirective
+        AutoFocusDirective,
+        BottomNavComponent
     ],
     imports: [
         BrowserModule,
