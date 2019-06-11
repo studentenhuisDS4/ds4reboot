@@ -16,8 +16,6 @@ from ds4reboot.secret_settings import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'base/static/js', 'service-worker.js')
-
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'user.apps.UserConfig',
@@ -137,10 +135,14 @@ USE_TZ = True  # Use local time
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/var/www/media'
+if DEBUG:
+    MEDIA_ROOT = './media'
+else:
+    MEDIA_ROOT = '/var/www/media'
+
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static")
 ]
 
 # Wiki part
