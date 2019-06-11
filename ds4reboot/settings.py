@@ -131,15 +131,23 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True  # Use local time
 
+# Generated uploads
+HR_REPORTS_FOLDER = 'hr_reports/'
+TEMP_FOLDER = 'temp/'
+
 # Static & Media
 STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
 if DEBUG:
-    MEDIA_ROOT = './media'
+    MEDIA_ROOT = './media/'
 else:
-    MEDIA_ROOT = '/var/www/media'
+    MEDIA_ROOT = '/var/www/media/'
 
+if not os.path.exists(MEDIA_ROOT + TEMP_FOLDER):
+    os.mkdir(MEDIA_ROOT + TEMP_FOLDER)
+if not os.path.exists(MEDIA_ROOT + HR_REPORTS_FOLDER):
+    os.mkdir(MEDIA_ROOT + HR_REPORTS_FOLDER)
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
