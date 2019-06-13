@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
 
     @HostListener('document:keypress', ['$event'])
     handleKeyboardPress(event: any) {
-        if (event.which === 'Enter') {
+        if (event.key === 'Enter') {
             this.verifyLogin();
         }
     }
