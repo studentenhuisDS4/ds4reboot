@@ -10,7 +10,7 @@ export class DinnerListService {
     URL_BASE = `${this.API_URL}/dinner/`;
 
     constructor(private  httpClient: HttpClient) {
-        console.log(this.URL_BASE);
+        // console.log(this.URL_BASE);
     }
 
     getDinnerList() {

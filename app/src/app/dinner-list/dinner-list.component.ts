@@ -13,7 +13,7 @@ export class DinnerListComponent implements OnInit {
 
     constructor(private dinnerListService: DinnerListService) {
         dinnerListService.getDinnerList().subscribe(result => {
-            this.dinners = result.slice(1).slice(-10);
+            this.dinners = result;
         }, error => {
             if (environment.debug) {
                 console.log('Error:', error);
@@ -22,6 +22,10 @@ export class DinnerListComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    clickNav() {
+        console.log('asd');
     }
 
 }
