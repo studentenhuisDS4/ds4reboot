@@ -1,3 +1,16 @@
+<mat-card>
+    <mat-card-header>
+        <div mat-card-avatar><i class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
+        </div>
+        <mat-card-title>
+            19:00
+        </mat-card-title>
+        <mat-card-subtitle>Dinner</mat-card-subtitle>
+        <mat-card-content>
+        </mat-card-content>
+    </mat-card-header>
+</mat-card>
+
 <table mat-table [dataSource]="dinners" class="mat-elevation-z8">
     <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
         <th mat-header-cell *matHeaderCellDef> {{column}} </th>

@@ -10,19 +10,24 @@
                  alt="triangle with all three sides equal" height="60px"/></a>
     </div>
 
-    <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
-        <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+    <div fxFlex fxLayout fxLayoutAlign="end">
+        <ul fxLayout fxLayoutGap="10px" class="navigation-items">
+<!--            <li fxHide.xs>-->
+<!--                <a routerLink="/turf">Turf</a>-->
+<!--            </li>-->
+<!--            <li fxHide.xs>-->
+<!--                <a routerLink="/dinner">Dinner</a>-->
+<!--            </li>-->
+<!--            <li fxHide.xs>-->
+<!--                <a routerLink="/admin">Admin</a>-->
+<!--            </li>-->
+<!--            <li fxHide.xs>-->
+<!--                <a routerLink="/profile">Profile</a>-->
+<!--            </li>-->
             <li>
-                <a routerLink="/turf">Turf</a>
-            </li>
-            <li>
-                <a routerLink="/dinner">Dinner</a>
-            </li>
-            <li>
-                <a routerLink="/admin">Admin</a>
-            </li>
-            <li>
-                <a routerLink="/profile">Profile</a>
+                <button mat-icon-button routerLink="profile">
+                    <mat-icon class="navbar-icon">perm_identity</mat-icon>
+                </button>
             </li>
             <li>
                 <button mat-icon-button (click)="logout()">
