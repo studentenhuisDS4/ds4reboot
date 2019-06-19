@@ -55,6 +55,7 @@ $warn: mat-color($app-warn);
     }
 
     i.active-link {
+        opacity:1.0;
         border:5px solid cyan;
     }
 }
