@@ -11,3 +11,9 @@ a:hover, a:active{
     display: inline-block;
     padding-left: 6px;
 }
+
+@import '../../theme';
+.list-item-active {
+    color: mat-color($ds4-app-warn) !important;
+    text-decoration-color: #3f51b5;
+}

@@ -10,6 +10,22 @@ table {
     padding-bottom: 3px;
 }
 
-.icon-large {
-    font-size: 45px;
+$ease-in: 0.25s;
+$ease-out: 0.25s;
+
+.page-content-card {
+    margin-top: -10px;
+
+    transition: margin-bottom $ease-out ease-in-out;
+    -moz-transition: margin-bottom $ease-out ease-in-out;
+    -webkit-transition: margin-bottom $ease-out ease-in-out;
+}
+
+.page-content-card:hover {
+    border: 2px solid orange;
+    margin-bottom: 10px !important;
+
+    transition: margin-bottom $ease-in ease-in-out;
+    -moz-transition: margin-bottom $ease-in ease-in-out;
+    -webkit-transition: margin-bottom $ease-in ease-in-out;
 }

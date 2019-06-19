@@ -12,20 +12,16 @@ export class DinnerListComponent implements OnInit {
     displayedColumns = ['id', 'date', 'cost', 'open'];
 
     constructor(private dinnerListService: DinnerListService) {
-        dinnerListService.getDinnerList().subscribe(result => {
-            this.dinners = result;
-        }, error => {
-            if (environment.debug) {
-                console.log('Error:', error);
-            }
-        });
+        // dinnerListService.getDinnerList().subscribe(result => {
+        //     this.dinners = result;
+        // }, error => {
+        //     if (environment.debug) {
+        //         console.log('Error:', error);
+        //     }
+        // });
     }
 
     ngOnInit() {
-    }
-
-    clickNav() {
-        console.log('asd');
     }
 
 }

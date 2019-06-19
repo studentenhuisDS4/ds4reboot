@@ -1,15 +1,7 @@
 $break-small: 320px;
 $break-medium: 576px;
 $break-large: 1200px;
-
-@import '~@angular/material/theming';
-$app-primary: mat-palette($mat-grey);
-$app-accent: mat-palette($mat-light-blue);
-$app-warn: mat-palette($mat-pink);
-
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent);
-$warn: mat-color($app-warn);
+@import '../../theme';
 
 .bottom-bar {
     justify-content: space-around;
@@ -34,6 +26,8 @@ $warn: mat-color($app-warn);
         max-width: 25%;
         cursor: pointer;
         opacity: 0.5;
+
+        border:5px solid mat-color($ds4-app-primary);
         outline: none;
 
         transition: all $ease-out ease-in-out;
@@ -48,15 +42,15 @@ $warn: mat-color($app-warn);
     i:hover {
         opacity: 1.0;
         border-radius: 80px;
-        background-color: $warn;
+        border: 5px solid mat-color($ds4-app-warn);
         transition: all $ease-in ease-in-out;
         -moz-transition: all $ease-in ease-in-out;
         -webkit-transition: all $ease-in ease-in-out;
     }
 
     i.active-link {
-        opacity:1.0;
-        border:5px solid cyan;
+        opacity: 1.0;
+        background-color: mat-color($ds4-app-warn);
     }
 }
 

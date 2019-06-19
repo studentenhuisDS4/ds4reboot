@@ -1,22 +1,140 @@
-<mat-card>
-    <mat-card-header>
-        <div mat-card-avatar><i class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
-        </div>
-        <mat-card-title>
-            19:00
-        </mat-card-title>
-        <mat-card-subtitle>Dinner</mat-card-subtitle>
+<section fxLayout="column" fxFlexAlign="stretch">
+    <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
+        <mat-card-header>
+            <div mat-card-avatar><i
+                class="material-icons vertical-align-middle padding-bottom-3 icon-large">person</i>
+            </div>
+            <mat-card-title>
+                Dinner list
+            </mat-card-title>
+            <mat-card-subtitle>Today: Wednesday</mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
+            Balance: 33.33 euro
         </mat-card-content>
-    </mat-card-header>
-</mat-card>
+    </mat-card>
+    <mat-card class="page-content-card mat-elevation-z23" fxFlexAlign="center" style="margin-bottom: -125px;">
+        <mat-card-header>
+            <div mat-card-avatar><i
+                class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
+            </div>
+            <mat-card-title fxFlexAlign="center">
+                TODAY - 19:00
+            </mat-card-title>
+            <mat-card-subtitle>Dinner (Wednesday)</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <mat-divider></mat-divider>
 
-<table mat-table [dataSource]="dinners" class="mat-elevation-z8">
-    <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
-        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-        <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
-    </ng-container>
+                <mat-list-item> +37.50
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item> 1x
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="page-content-card mat-elevation-z23" fxFlexAlign="center" style="margin-bottom: -125px;">
+        <mat-card-header>
+            <div mat-card-avatar><i
+                class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
+            </div>
+            <mat-card-title style="display: flex;">
+                Tuesday 18:00
+            </mat-card-title>
+            <mat-card-subtitle>Dinner</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <mat-divider></mat-divider>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+                <mat-list-item> +37.50
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item> 1x
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="page-content-card mat-elevation-z23" fxFlexAlign="center" style="margin-bottom: -125px;">
+        <mat-card-header>
+            <div mat-card-avatar><i
+                class="material-icons vertical-align-middle padding-bottom-3 icon-large">fastfood</i>
+            </div>
+            <mat-card-title style="display: flex;">
+                Monday 18:00
+            </mat-card-title>
+            <mat-card-subtitle>Quick 'n dirty - Dinner</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <mat-divider></mat-divider>
+
+                <mat-list-item> +37.50
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item> 1x
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="page-content-card mat-elevation-z23" fxFlexAlign="center" style="margin-bottom: -125px;">
+        <mat-card-header>
+            <div mat-card-avatar><i
+                class="material-icons vertical-align-middle padding-bottom-3 icon-large">close</i>
+            </div>
+            <mat-card-title style="display: flex;">
+                Sunday ??
+            </mat-card-title>
+            <mat-card-subtitle>No cook</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <mat-divider></mat-divider>
+
+                <mat-list-item> +37.50
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item> 1x
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="page-content-card mat-elevation-z23" fxFlexAlign="center" style="margin-bottom:75px;">
+        <mat-card-header>
+            <div mat-card-avatar><i
+                class="material-icons vertical-align-middle padding-bottom-3 icon-large">group</i>
+            </div>
+            <mat-card-title style="display: flex;">
+                Saturday BBQ 19:00
+            </mat-card-title>
+            <mat-card-subtitle>BBQ!</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-list>
+                <mat-divider></mat-divider>
+
+                <mat-list-item> +37.50
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item> 1x
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+</section>
+<!--<table mat-table [dataSource]="dinners" class="mat-elevation-z8">-->
+<!--    <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">-->
+<!--        <th mat-header-cell *matHeaderCellDef> {{column}} </th>-->
+<!--        <td mat-cell *matCellDef="let element"> {{element[column]}} </td>-->
+<!--    </ng-container>-->
+
+<!--    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>-->
+<!--    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>-->
+<!--</table>-->
