@@ -1,4 +1,9 @@
+from datetime import timedelta
+
+from django.utils.datetime_safe import datetime
 from rest_framework import serializers, viewsets
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.viewsets import GenericViewSet
 
 from eetlijst.models import DateList
 
@@ -10,14 +15,16 @@ class DinnerSerializer(serializers.ModelSerializer):
         read_only_field = []
 
 
-class DinnerViewSet(viewsets.ModelViewSet):
+class DinnerViewSet(ListModelMixin, GenericViewSet,
+                    RetrieveModelMixin):
     queryset = DateList.objects.order_by(
         '-date')
     serializer_class = DinnerSerializer
 
 
 # Week list
-# class DinnerWeekViewSet(viewsets.ModelViewSet):
-#     queryset = DateList.objects.filter(date__gte=).order_by(
-#         'date')
-#     serializer_class = DinnerSerializer
+class DinnerWeekViewSet(ListModelMixin, GenericViewSet):
+    week_ago = datetime.today() - timedelta(days=7)
+    queryset = DateList.objects.filter(date__gte=week_ago).order_by(
+        'date')
+    serializer_class = DinnerSerializer
