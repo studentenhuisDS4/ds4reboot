@@ -1,13 +1,15 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule, MatIconModule,
     MatInputModule, MatListModule, MatMenuModule, MatProgressSpinnerModule,
     MatSidenavModule,
     MatTableModule,
-    MatTabsModule, MatToolbarModule
+    MatTabsModule,
+    MatToolbarModule,
 } from '@angular/material';
 
 @NgModule({
@@ -28,6 +30,7 @@ import {
         MatListModule,
         MatMenuModule,
         MatProgressSpinnerModule,
+        MatBadgeModule
     ]
 })
 export class MaterialModule {

@@ -7,15 +7,19 @@ import {environment} from '../../environments/environment';
 })
 export class DinnerListService {
     API_URL = environment.baseUrl;
-    URL_BASE = `${this.API_URL}/dinner/`;
+    URL_WEEK = `${this.API_URL}/dinnerweek/`;
 
     constructor(private  httpClient: HttpClient) {
         // console.log(this.URL_BASE);
+        this.getDinnerWeek().then(result => {
+            console.log(result);
+        });
     }
 
-    getDinnerList() {
-        return this.httpClient.get<IDinnerDate[]>(`${this.URL_BASE}`);
+    getDinnerWeek() {
+        return this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
     }
+
 }
 
 export interface IDinnerDate {

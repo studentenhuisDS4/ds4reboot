@@ -1,16 +1,20 @@
 """ds4reboot URL Configuration
 """
 
-from django.conf.urls import include, url
+from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
-from eetlijst.api import DinnerViewSet
+from bierlijst.api.api import BoeteViewSet, TurfViewSet
+from eetlijst.api import DinnerViewSet, DinnerWeekViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
+router.register(r'dinnerweek', DinnerWeekViewSet, basename='dinnerweek')
+router.register(r'boete', BoeteViewSet, basename='boete')
+router.register(r'turf', TurfViewSet, basename='Turf')
 
 urlpatterns = \
     [

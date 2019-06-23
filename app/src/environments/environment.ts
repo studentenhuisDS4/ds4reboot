@@ -4,6 +4,7 @@
 
 export const environment = {
     production: false,
+    // baseUrl: 'http://192.168.0.109:8000',
     baseUrl: 'http://localhost:8000',
     // baseUrl: 'https://ds4.nl',
     debug: true

@@ -3,7 +3,7 @@
     "index": "/index.html",
     "assetGroups": [
         {
-            "name": "app",
+            "name": "DS4",
             "installMode": "prefetch",
             "resources": {
                 "files": [
