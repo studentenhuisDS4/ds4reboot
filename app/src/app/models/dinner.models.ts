@@ -5,7 +5,8 @@ export interface IDinnerDate {
     open: boolean;
     date: string;
 
-    cook: string;
+    cook: number;
+    cook_name: string;
 
     signup_time: Date;
     close_time: Date;

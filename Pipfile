@@ -16,6 +16,7 @@ django = "==2.1.8"
 djangorestframework = "*"
 djangorestframework_jwt = "*"
 django-cors-headers = "==3.0.2"
+django-debug-toolbar = "==2.0"
 
 [requires]
 python_version = "3.7"

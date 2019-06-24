@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {IDinnerDate} from '../services/models/dinner.models';
+import {IDinnerDate} from '../models/dinner.models';
 
 @Component({
     selector: 'app-dinner-list',
