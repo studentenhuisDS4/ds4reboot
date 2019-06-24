@@ -333,7 +333,8 @@ def turf_item(request, user_id):
                 h.sum_bier += turf_count
                 h.total_bier += turf_count
 
-                success_message = '%s heeft %s bier geturft.' % (str(turf_user).capitalize(), int(turf_count))
+                success_message = '%s heeft %s bier geturfd.' % (
+                str(turf_user.housemate.display_name).capitalize(), int(turf_count))
                 success_message = success_message if turf_count == 1 else success_message.replace('bier',
                                                                                                   'biertjes')
             else:
@@ -348,7 +349,8 @@ def turf_item(request, user_id):
                 h.sum_wwijn += Decimal(turf_count)
                 h.total_wwijn += Decimal(turf_count)
 
-                success_message = '%s heeft %s witte wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+                success_message = '%s heeft %s witte wijn geturfd.' % (
+                    str(turf_user.housemate.display_name).capitalize(), turf_count)
             else:
                 success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
                 return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
@@ -363,7 +365,8 @@ def turf_item(request, user_id):
                 success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
                 return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
 
-            success_message = '%s heeft %s rode wijn geturft.' % (str(turf_user).capitalize(), turf_count)
+            success_message = '%s heeft %s rode wijn geturfd.' % (
+                str(turf_user.housemate.display_name).capitalize(), turf_count)
 
             new_value = h.sum_rwijn
             sum_type = 'sum_rwijn'
