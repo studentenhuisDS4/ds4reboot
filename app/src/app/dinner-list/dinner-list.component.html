@@ -17,47 +17,50 @@
             <button mat-button (click)="toggleHelpMenu()">Switch today</button>
         </mat-card-footer>
     </mat-card>
-    <mat-card class="page-content-card selectable mat-elevation-z23" fxFlexAlign="center" [@slideInOut]="helpMenuOpen">
-        <mat-card-header>
-            <div mat-card-avatar><i
-                class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
-            </div>
-            <mat-card-title fxFlexAlign="center">
-                Yesterday - ETA Time
-            </mat-card-title>
-            <mat-card-subtitle>Dinner-type (Day)</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            Big content
-            <mat-list>
-                <mat-divider></mat-divider>
-                <mat-list-item> Cost
-                </mat-list-item>
-                <mat-divider></mat-divider>
-                <mat-list-item> Eaters
-                </mat-list-item>
-                <mat-divider></mat-divider>
-                <mat-list-item> Cost2
-                </mat-list-item>
-                <mat-divider></mat-divider>
-                <mat-list-item> Eaters
-                </mat-list-item>
-                <mat-divider></mat-divider>
-            </mat-list>
-        </mat-card-content>
-    </mat-card>
-    <mat-card class="page-content-card selectable mat-elevation-z23" fxFlexAlign="center" [@slideInOut]="helpMenuOpen">
+    <!--    <mat-card class="page-content-card selectable mat-elevation-z5" fxFlexAlign="center" [@slideInOut]="helpMenuOpen">-->
+    <!--        <mat-card-header>-->
+    <!--            <div mat-card-avatar><i-->
+    <!--                class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>-->
+    <!--            </div>-->
+    <!--            <mat-card-title fxFlexAlign="center">-->
+    <!--                Yesterday - ETA Time-->
+    <!--            </mat-card-title>-->
+    <!--            <mat-card-subtitle>Dinner-type (Day)</mat-card-subtitle>-->
+    <!--        </mat-card-header>-->
+    <!--        <mat-card-content>-->
+    <!--            Big content-->
+    <!--            <mat-list>-->
+    <!--                <mat-divider></mat-divider>-->
+    <!--                <mat-list-item> Cost-->
+    <!--                </mat-list-item>-->
+    <!--                <mat-divider></mat-divider>-->
+    <!--                <mat-list-item> Eaters-->
+    <!--                </mat-list-item>-->
+    <!--                <mat-divider></mat-divider>-->
+    <!--                <mat-list-item> Cost2-->
+    <!--                </mat-list-item>-->
+    <!--                <mat-divider></mat-divider>-->
+    <!--                <mat-list-item> Eaters-->
+    <!--                </mat-list-item>-->
+    <!--                <mat-divider></mat-divider>-->
+    <!--            </mat-list>-->
+    <!--        </mat-card-content>-->
+    <!--    </mat-card>-->
+    <mat-card class="page-content-card selectable mat-elevation-z5" fxFlexAlign="center" [@slideInOut]="helpMenuOpen"
+              *ngFor="let dinner of dinnersWeek">
         <mat-card-header>
             <div mat-card-avatar><i
                 class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
             </div>
             <mat-card-title style="display: flex;">
-                TODAY - ETA Time
+                {{convertDateToWeekday(dinner.date)}} - ETA Time
             </mat-card-title>
             <mat-card-subtitle>Dinner</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            Small content
+            <span style="display:block">Cook: {{ dinner.cook ? dinner.cook : "None" }}</span>
+            <span style="display:block">People: {{ dinner.num_eating }}</span>
         </mat-card-content>
     </mat-card>
+    {{ dinnersWeek.length == 0 ? "No dinners created this week." : ""}}
 </section>

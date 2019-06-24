@@ -26,7 +26,6 @@ import {AutoFocusDirective} from './directives/auto-focus.directive';
 import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
 import {TokenInterceptor} from './services/interceptors/token.interceptor';
 import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
-import {MatBadgeModule} from '@angular/material';
 
 
 @NgModule({

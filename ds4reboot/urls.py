@@ -8,7 +8,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 from bierlijst.api.api import BoeteViewSet, TurfViewSet
-from eetlijst.api import DinnerViewSet, DinnerWeekViewSet
+from eetlijst.api.api import DinnerViewSet, DinnerWeekViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
