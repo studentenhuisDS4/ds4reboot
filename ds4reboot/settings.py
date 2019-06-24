@@ -16,8 +16,6 @@ from ds4reboot.secret_settings import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'base/static/js', 'service-worker.js')
-
 INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'user.apps.UserConfig',
@@ -49,13 +47,11 @@ INSTALLED_APPS = [
     'wiki.plugins.notifications.apps.NotificationsConfig',
     'wiki.plugins.images.apps.ImagesConfig',
     'wiki.plugins.macros.apps.MacrosConfig',
-    'debug_toolbar'
 ]
 
 INSTALLED_APPS += SECRET_APPS
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.security.SecurityMiddleware',

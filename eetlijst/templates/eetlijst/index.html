@@ -5,27 +5,52 @@
 {% block title %} | Eetlijst{% endblock %}
 
 {% block add_to_header %}
-<link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css">
-<script src="/static/js/components/datepicker.min.js"></script>
+    <link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css">
+    <script src="/static/js/components/datepicker.min.js"></script>
 {% endblock %}
 
 {% block body_block %}
 
     {% if user.is_authenticated %}
-    <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
-        <div class="uk-width-medium-7-10 uk-visible-large">
-            {% include 'eetlijst/table.html' %}
+        <form class="closing-button" method="post" action="/eetlijst/close/" style="display: inline;
+                {% if not focus_close_date %}
+                    display: none;
+                {% else %}
+                    display: block;
+                {% endif %}">
+            {% csrf_token %}
+            <input type="hidden" name="close-date" value="{{ focus_close_date|sub_date }}">
+            {% if focus_open == True %}
+                <button class="uk-button uk-button-large uk-button-primary">
+                    <i class="uk-icon-shopping-cart date-{{ focus_close_date|sub_date }}">
+                    </i>
+                    Close list as cook
+                </button>
+            {% elif focus_open == False %}
+                <button class="uk-button uk-button-large uk-button-danger">
+                    <i class="uk-icon-shopping-cart date-{{ focus_close_date|sub_date }}">
+                    </i>
+                    Open list {% if focus_close_cost == True %}(+ restore cost) {% endif %}
+                </button>
+            {% endif %}
+            <br/>
+            <br/>
+        </form>
+
+        <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
+            <div class="uk-width-medium-7-10 uk-visible-large">
+                {% include 'eetlijst/table.html' %}
+            </div>
+            <div class="uk-width-medium-6-10 uk-hidden-large">
+                {% include 'eetlijst/table.html' %}
+            </div>
+            <div class="uk-width-medium-3-10 uk-visible-large">
+                {% include 'eetlijst/options.html' %}
+            </div>
+            <div class="uk-width-medium-4-10 uk-hidden-large">
+                {% include 'eetlijst/options.html' %}
+            </div>
         </div>
-        <div class="uk-width-medium-6-10 uk-hidden-large">
-            {% include 'eetlijst/table.html' %}
-        </div>
-        <div class="uk-width-medium-3-10 uk-visible-large">
-            {% include 'eetlijst/options.html' %}
-        </div>
-        <div class="uk-width-medium-4-10 uk-hidden-large">
-            {% include 'eetlijst/options.html' %}
-        </div>
-    </div>
 
     {% else %}
         {% include 'base/login_form.html' %}
