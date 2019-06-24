@@ -20,12 +20,22 @@ export class AuthService {
         if (token === null) {
             return false;
         }
+
+        if (environment.debug) {
+            this.validateAuth(token).subscribe(result => {
+                console.log('%c[Auth]/debug=true: %ctoken marked and verified as valid!', 'color: green', 'color: blue');
+            }, error => {
+                console.log('Token didnt validate...', error);
+                this.logout();
+                this.router.navigateByUrl('/login');
+            });
+        }
+
         // TODO consider checking with server
         return !(new JwtHelperService().isTokenExpired(token));
     }
 
     public getToken() {
-        const token = localStorage.getItem('token');
         return localStorage.getItem('token');
     }
 

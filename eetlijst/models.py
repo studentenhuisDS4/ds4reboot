@@ -9,6 +9,7 @@ class DateList(models.Model):
     cook = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     signup_time = models.DateTimeField(null=True)
     close_time = models.DateTimeField(null=True)
+    eta_time = models.DateTimeField(null=True)
     date = models.DateField()
 
     num_eating = models.IntegerField(default=0)

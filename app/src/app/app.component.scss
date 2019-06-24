@@ -2,10 +2,28 @@ mat-sidenav-container, mat-sidenav-content, mat-sidenav {
     height: 100%;
 }
 
+@import 'theme';
+mat-sidenav-content {
+    background-color: mat-color($ds4-app-primary);
+
+
+    main {
+        margin-bottom: 64px;
+    }
+
+    @media (max-width: 599px) {
+        main {
+            margin-bottom: 56px;
+            margin-top: 8px;
+        }
+    }
+}
+
 mat-sidenav {
     width: 250px;
 }
 
 main {
     padding: 10px;
+    box-sizing: border-box;
 }
