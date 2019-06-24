@@ -233,16 +233,16 @@ $(document).ready(function () {
                             $(this).attr('disabled', false);
                             // If user is cook add shopping cart
                             if (json.login_user == user_id) {
-                                $(".uk-icon-shopping-cart.date-" + enroll_date).fadeIn(100);
+                                $(".closing-button").fadeIn(100);
                             }
                             else {
-                                $(".uk-icon-shopping-cart.date-" + enroll_date).fadeOut(100);
+                                $(".closing-button").fadeOut(100);
                             }
                         }
                         else {
                             cook_el.fadeOut(100);
                             $(".btn-signup:disabled").attr('disabled', false);
-                            $(".uk-icon-shopping-cart.date-" + enroll_date).fadeOut(100);
+                            $(".closing-button").fadeOut(100);
                         }
                     }
                     else if (enroll_type == 'sponge') {

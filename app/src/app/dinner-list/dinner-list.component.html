@@ -17,19 +17,19 @@
             <button mat-button (click)="toggleHelpMenu()">Switch today</button>
         </mat-card-footer>
     </mat-card>
-    <mat-card class="page-content-card selectable mat-elevation-z5" fxFlexAlign="center" [@slideInOut]="helpMenuOpen"
+    <mat-card class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center" [@slideInOut]="helpMenuOpen"
               *ngFor="let dinner of dinnersWeek">
         <mat-card-header>
             <div mat-card-avatar><i
                 class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
             </div>
             <mat-card-title style="display: flex;">
-                {{convertDateToWeekday(dinner.date)}} - ETA Time
+                {{convertDateToWeekday(dinner.date)}} {{ dinner.eta_time ? "-" + dinner.eta_time : ""}}
             </mat-card-title>
             <mat-card-subtitle>Dinner</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <span style="display:block">Cook: {{ dinner.cook_name ? dinner.cook_name : "None" }}</span>
+            <span style="display:block">Cook: <em>{{ dinner.cook_name ? dinner.cook_name : "None" }}</em></span>
             <span style="display:block">People: {{ dinner.num_eating }}</span>
         </mat-card-content>
     </mat-card>

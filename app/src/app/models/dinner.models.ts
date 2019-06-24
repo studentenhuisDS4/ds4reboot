@@ -10,4 +10,5 @@ export interface IDinnerDate {
 
     signup_time: Date;
     close_time: Date;
+    eta_time: Date;
 }

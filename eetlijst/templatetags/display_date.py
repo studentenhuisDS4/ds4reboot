@@ -15,7 +15,10 @@ def disp_date(date):
 # display date as YYYY-MM-DD
 @register.filter
 def sub_date(date):
-    return date.isoformat()
+    if date is not None:
+        return date.isoformat()
+    else:
+        return None
 
 # build date string for url
 @register.filter

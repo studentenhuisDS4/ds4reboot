@@ -31,6 +31,8 @@ def index(request, year=None, month=None, day=None):
 
     # check if user has costs to fill
     open_days = []
+    focus_close_date = None
+    focus_close_cost = False
     if request.user.is_authenticated:
         try:
             open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by(
@@ -63,11 +65,16 @@ def index(request, year=None, month=None, day=None):
 
     # get open/closed status for week and check for cook
     try:
-        focus_open = DateList.objects.get(date=focus_date).open
+        focussed_date = DateList.objects.get(date=focus_date)
+        focus_open = focussed_date.open
         cook = DateList.objects.get(date=focus_date).cook
 
         if cook:
             focus_cook = True
+            if cook == request.user:
+                focus_close_date = focus_date
+                if focussed_date.cost is not None:
+                    focus_close_cost = True
         else:
             focus_cook = False
 
@@ -140,6 +147,8 @@ def index(request, year=None, month=None, day=None):
         'user_date_entries': user_date_entries,
         'focus_date': str(year) + '-' + str(month) + '-' + str(day),
         'focus_cook': focus_cook,
+        'focus_close_date': focus_close_date,
+        'focus_close_cost': focus_close_cost,
         'focus_open': focus_open,
         'user_open': user_open,
         'open_days': open_days,
