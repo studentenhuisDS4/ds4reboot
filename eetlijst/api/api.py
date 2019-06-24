@@ -6,17 +6,20 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 from eetlijst.models import DateList
+from user.api.api import SimpleUserSerializer
 
 
 class DinnerSerializer(serializers.ModelSerializer):
+    cook = SimpleUserSerializer()
+
     class Meta:
         model = DateList
         fields = '__all__'  # Change back to specifics when model is stable
-        read_only_field = []
+        read_only_fields = ()
+        depth = 1
 
 
-class DinnerViewSet(ListModelMixin, GenericViewSet,
-                    RetrieveModelMixin):
+class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     queryset = DateList.objects.order_by(
         '-date')
     serializer_class = DinnerSerializer

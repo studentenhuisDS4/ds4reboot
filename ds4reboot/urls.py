@@ -8,7 +8,8 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
 from bierlijst.api.api import BoeteViewSet, TurfViewSet
-from eetlijst.api import DinnerViewSet, DinnerWeekViewSet
+from ds4reboot import settings
+from eetlijst.api.api import DinnerViewSet, DinnerWeekViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
@@ -35,3 +36,14 @@ urlpatterns = \
         path('auth-jwt-refresh/', refresh_jwt_token),
         path('auth-jwt-verify/', verify_jwt_token),
     ] + router.urls
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [
+                      path('__debug__/', include(debug_toolbar.urls)),
+
+                      # For django versions before 2.0:
+                      # url(r'^__debug__/', include(debug_toolbar.urls)),
+
+                  ] + urlpatterns

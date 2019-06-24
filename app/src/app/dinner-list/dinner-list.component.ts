@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {DinnerListService, IDinnerDate} from '../services/dinner-list.service';
+import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {IDinnerDate} from '../models/dinner.models';
 
 @Component({
     selector: 'app-dinner-list',
@@ -17,25 +18,19 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
                 opacity: '0',
                 height: '0px',
                 overflow: 'hidden',
-                width: '0px'
+                // width: '0px'
             })),
-            transition('in => out', animate('200ms ease-in-out')),
-            transition('out => in', animate('400ms ease-in-out'))
+            transition('in => out', animate('150ms ease-in-out')),
+            transition('out => in', animate('200ms ease-in-out'))
         ])
     ]
 })
 export class DinnerListComponent implements OnInit {
-    dinners: IDinnerDate[] = [];
-    displayedColumns = ['id', 'date', 'cost', 'open'];
-    helpMenuOpen = 'out';
+    dinnersWeek: IDinnerDate[] = [];
+    helpMenuOpen = 'in';
+
     constructor(private dinnerListService: DinnerListService) {
-        // dinnerListService.getDinnerList().subscribe(result => {
-        //     this.dinners = result;
-        // }, error => {
-        //     if (environment.debug) {
-        //         console.log('Error:', error);
-        //     }
-        // });
+        this.loadDinnerWeek();
     }
 
     ngOnInit() {
@@ -43,5 +38,15 @@ export class DinnerListComponent implements OnInit {
 
     toggleHelpMenu(): void {
         this.helpMenuOpen = this.helpMenuOpen === 'out' ? 'in' : 'out';
+    }
+
+    loadDinnerWeek() {
+        this.dinnerListService.getDinnerWeek().then(result => {
+            this.dinnersWeek = result;
+        });
+    }
+
+    convertDateToWeekday(date: string) {
+        return this.dinnerListService.dayNames[(new Date(date)).getDay()];
     }
 }
