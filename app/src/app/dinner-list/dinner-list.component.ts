@@ -12,33 +12,34 @@ import {IDinnerDate} from '../models/dinner.models';
             state('in', style({
                 overflow: 'hidden',
                 height: '100px',
-                width: '250px',
             })),
             state('out', style({
                 opacity: '0',
                 height: '0px',
                 overflow: 'hidden',
-                // width: '0px'
+                'z-index': '-2',
             })),
             transition('in => out', animate('150ms ease-in-out')),
             transition('out => in', animate('200ms ease-in-out'))
         ]),
         trigger('slideOpen', [
-            state('1132', style({
-                'margin-bottom': '0px',
+            state('false', style({
+                'margin-bottom': '-70px',
             })),
-            state('*', style({
-                'margin-bottom': '-50px',
+            state('true', style({
+                'margin-bottom': '10px',
             })),
-            transition('* => 1132', animate('150ms ease-in-out')),
-            transition('1132 => *', animate('200ms ease-in-out'))
+            transition('* => *', animate('150ms ease-in-out')),
         ])
     ]
 })
 export class DinnerListComponent implements OnInit {
     dinnersWeek: IDinnerDate[] = [];
+    dinners: IDinnerDate[] = [];
+    showWeek = true;
+
     weekCollapse = 'in';
-    dayCollapse = '1132';
+    dayCollapse = 'none';
 
     constructor(private dinnerListService: DinnerListService) {
         this.loadDinnerWeek();
@@ -47,18 +48,25 @@ export class DinnerListComponent implements OnInit {
     ngOnInit() {
     }
 
-    toggleHelpMenu(): void {
+    toggleWeek(): void {
+        this.weekCollapse = this.weekCollapse === 'out' ? 'in' : 'out';
+        this.showWeek = !this.showWeek;
+        if (!this.showWeek) {
+            this.dinners = [this.dinnersWeek[0]];
+        } else {
+            this.dinners = this.dinnersWeek;
+        }
         this.weekCollapse = this.weekCollapse === 'out' ? 'in' : 'out';
     }
 
     openDinner(dinner: IDinnerDate): void {
-        this.dayCollapse = dinner.id.toString();
-        console.table(this.dayCollapse);
+        this.dayCollapse = this.dayCollapse === dinner.id.toString() ? 'none' : dinner.id.toString();
     }
 
     loadDinnerWeek() {
         this.dinnerListService.getDinnerWeek().then(result => {
             this.dinnersWeek = result;
+            this.dinners = this.dinnersWeek;
         });
     }
 

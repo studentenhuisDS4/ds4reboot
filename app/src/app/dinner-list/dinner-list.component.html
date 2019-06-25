@@ -9,18 +9,13 @@
             </mat-card-title>
             <mat-card-subtitle>Person</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content>
-            Information content
-        </mat-card-content>
         <mat-card-footer>
-            <button mat-button (click)="toggleHelpMenu()">Show days</button>
-            <button mat-button (click)="toggleHelpMenu()">Switch today</button>
+            <button mat-button (click)="toggleWeek()">Show {{showWeek ? "TODAY" : "WEEK"}}</button>
         </mat-card-footer>
     </mat-card>
     <mat-card class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center"
-              *ngFor="let dinner of dinnersWeek" [@slideInOut]="weekCollapse"
-              [@slideOpen]="dayCollapse == dinner.id" (click)="openDinner(dinner)">
-        {{dayCollapse == dinner.id}}
+              *ngFor="let dinner of dinners" [@slideInOut]="weekCollapse"
+              [@slideOpen]="dayCollapse == dinner.id.toString()" (click)="openDinner(dinner)">
         <mat-card-header>
             <div mat-card-avatar><i
                 class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
