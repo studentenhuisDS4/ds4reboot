@@ -1,12 +1,15 @@
 """ds4reboot URL Configuration
 """
+from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.static import static
 
-from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
+from ds4reboot.secret_settings import DEBUG
 from bierlijst.api.api import BoeteViewSet, TurfViewSet
 from ds4reboot import settings
 from eetlijst.api.api import DinnerViewSet, DinnerWeekViewSet
@@ -37,13 +40,5 @@ urlpatterns = \
         path('auth-jwt-verify/', verify_jwt_token),
     ] + router.urls
 
-if settings.DEBUG:
-    import debug_toolbar
-
-    urlpatterns = [
-                      path('__debug__/', include(debug_toolbar.urls)),
-
-                      # For django versions before 2.0:
-                      # url(r'^__debug__/', include(debug_toolbar.urls)),
-
-                  ] + urlpatterns
+if DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

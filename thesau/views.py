@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
+from django.core.files import File
+from django.core.files.base import ContentFile
 from django.db.models import Sum
 from django.shortcuts import render, redirect
-from django.utils import timezone
+from django.utils.datetime_safe import datetime
 
 from ds4admin.utils import check_moveout_dinners
-from eetlijst.models import DateList, UserList
+from ds4reboot.settings import TEMP_FOLDER, MEDIA_ROOT, HR_REPORTS_FOLDER
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
 from django.contrib import messages
@@ -16,7 +18,7 @@ def index(request):
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # get reports archive
-        report_list = Report.objects.all()
+        report_list = Report.objects.all().order_by('id')
 
         # build context object
         context = {
@@ -137,7 +139,7 @@ def submit_hr(request):
                     'Gecompenseerd saldo'])
 
         latest_hr_date = latest_hr.report_date
-        now_date = timezone.now().date()
+        now_date = datetime.now().date()
 
         for u in moveout_list:
 
@@ -161,18 +163,24 @@ def submit_hr(request):
 
                 # This action comes from remove_housemate in ds4admin page
                 u.balance = 0.00
-                u.save()
 
     # save the file
-    date = timezone.now()
+    date = datetime.now()
     months = {1: 'januari', 2: 'februari', 3: 'maart', 4: 'april', 5: 'mei', 6: 'juni', 7: 'juli',
               8: 'augustus', 9: 'september', 10: 'oktober', 11: 'november', 12: 'december'}
 
-    path = 'static/hr_reports/HR_%s_%s.xlsx' % (date.year, months[date.month])
+    temp_path = MEDIA_ROOT + TEMP_FOLDER + f"HR_{date.year}_{months[date.month]}.xlsx"
 
+    wb.save(temp_path)
+    file_ref = open(temp_path, 'rb')
+    file_content = File(file_ref)
     # create report entry in database
-    r = Report(report_user=request.user, report_name='HR %s %s' % (months[date.month], date.year),
-               report_date=date, report_path=path)
+    r = Report(report_user=request.user,
+               report_name='HR %s-%s-%s (%s:%s)' % (date.day, months[date.month], date.year, date.hour, date.minute),
+               report_date=date)
+    r.report_file.save(f"HR_{date.year}_{months[date.month]}.xlsx", file_content)
+    r.save()
+    file_ref.close()
 
     # Save users, workbook, boetes and report
     report_users = user_list | moveout_list
@@ -183,7 +191,7 @@ def submit_hr(request):
         else:
             open_balance = 0
 
-        ur = UserReport(user=u.user, report=Report.objects.latest('id'),
+        ur = UserReport(user=u.user, report=r,
                         hr_bier=u.sum_bier, hr_wwijn=u.sum_wwijn, hr_rwijn=u.sum_rwijn,
                         hr_boete_rwijn=u.boetes_geturfd_rwijn, hr_boete_wwijn=u.boetes_geturfd_wwijn,
                         eetlijst_balance=open_balance)
@@ -195,11 +203,16 @@ def submit_hr(request):
         u.boetes_geturfd_rwijn = 0
         u.boetes_geturfd_wwijn = 0
 
+    ##
+    # SAVE AT THE END
+    ##
+    for u in report_users:
         u.save()
 
-    wb.save(path)
+    for u in moveout_list:
+        u.save()
+
     boetes_wwijn.save()
     boetes_rwijn.save()
-    r.save()
 
     return redirect('/thesau/')

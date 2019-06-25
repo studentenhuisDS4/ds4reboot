@@ -2,20 +2,20 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import models
 
-
 # model for thesau reports
-class Report(models.Model):
+from ds4reboot.settings import HR_REPORTS_FOLDER
 
+
+class Report(models.Model):
     # basic data
     report_user = models.ForeignKey(User, on_delete=models.CASCADE)
     report_name = models.CharField(max_length=30)
     report_date = models.DateField(default=timezone.now)
-    report_path = models.CharField(max_length=50)
+    report_file = models.FileField(upload_to=HR_REPORTS_FOLDER)
 
 
 # model for report data
 class UserReport(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
 
@@ -34,7 +34,5 @@ class UserReport(models.Model):
 
 # model for HR boetes
 class BoetesReport(models.Model):
-
     type = models.CharField(max_length=30)
     boete_count = models.IntegerField(default=0)
-

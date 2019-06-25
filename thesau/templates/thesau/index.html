@@ -1,6 +1,5 @@
 {% extends 'base/base.html' %}
 
-
 {% block title %} | Thesau{% endblock %}
 
 {% block add_to_header %}
@@ -32,7 +31,7 @@
                             <td>{{ r.report_name }}</td>
                             <td>{{ r.report_user.housemate }}</td>
                             <td>{{ r.report_date }}</td>
-                            <td class="uk-text-center"><a href="/{{ r.report_path }}"><i class="uk-icon-file"></i> (xlsx)</a></td>
+                            <td class="uk-text-center"><a href="{{ r.report_file.url }}"><i class="uk-icon-file"></i> (xlsx)</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
