@@ -28,7 +28,7 @@ import {convertStringToDate, dayNames, IDinnerDate, weekDates} from '../models/d
             })),
             state('true', style({
                 'max-width': '100%',
-                'position': 'absolute',
+                position: 'absolute',
                 top: '200px',
                 'z-index': 2,
                 'margin-bottom': '10px',
@@ -93,7 +93,6 @@ export class DinnerListComponent implements OnInit {
             weekDates(new Date()).forEach(day => {
                 const findDay = result.find(r => convertStringToDate(r.date) === day.getDay());
                 if (!findDay) {
-                    console.log(findDay, day);
                     result.push({
                         id: null,
                         date: day,
