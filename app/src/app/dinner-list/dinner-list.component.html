@@ -15,7 +15,7 @@
     </mat-card>
     <mat-card class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center"
               *ngFor="let dinner of dinners" [@slideInOut]="weekCollapse"
-              [@slideOpen]="dayCollapse == dinner.id.toString()" (click)="openDinner(dinner)">
+              [@slideOpen]="dayCollapse == dinner.date.toString()" (click)="openDinner(dinner)">
         <mat-card-header>
             <div mat-card-avatar><i
                 class="material-icons vertical-align-middle padding-bottom-3 icon-large">local_dining</i>
