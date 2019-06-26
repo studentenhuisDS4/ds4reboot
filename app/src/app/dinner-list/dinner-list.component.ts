@@ -19,8 +19,8 @@ import {convertStringToDate, dayNames, IDinnerDate, weekDates} from '../models/d
                 overflow: 'hidden',
                 'z-index': '-2',
             })),
-            transition('in => out', animate('150ms ease-in-out')),
-            transition('out => in', animate('200ms ease-in-out'))
+            transition('in => out', animate('20ms ease-in-out')),
+            transition('out => in', animate('20ms ease-in-out'))
         ]),
         trigger('slideOpen', [
             state('false', style({
