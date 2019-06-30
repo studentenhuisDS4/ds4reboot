@@ -3,7 +3,7 @@ export interface IDinnerDate {
     num_eating: number;
     cost: number;
     open: boolean;
-    date: string;
+    date: Date;
 
     cook: number;
 

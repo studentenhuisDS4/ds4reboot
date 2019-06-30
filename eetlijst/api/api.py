@@ -27,8 +27,14 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 
 # Week list
 class DinnerWeekViewSet(ListModelMixin, GenericViewSet):
-    queryset = DateList.objects \
-        .filter(date__gte=datetime.now() - timedelta(days=datetime.now().weekday())) \
-        .filter(date__lte=datetime.now() + timedelta(days=(7 - datetime.now().weekday()))) \
-        .order_by('date')
     serializer_class = DinnerSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all dinners
+        entered this week.
+        """
+        return DateList.objects \
+            .filter(date__gte=datetime.now() - timedelta(days=datetime.now().weekday())) \
+            .filter(date__lte=datetime.now() + timedelta(days=(7 - datetime.now().weekday()))) \
+            .order_by('date')
