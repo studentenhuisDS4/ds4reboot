@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {convertStringToDate, dayNames, IDinnerDate, weekDates} from '../models/dinner.models';
+import {compareAsc, isSameDay} from 'date-fns';
+import {environment} from '../../environments/environment';
 
 @Component({
     selector: 'app-dinner-list',
@@ -19,8 +21,8 @@ import {convertStringToDate, dayNames, IDinnerDate, weekDates} from '../models/d
                 overflow: 'hidden',
                 'z-index': '-2',
             })),
-            transition('in => out', animate('150ms ease-in-out')),
-            transition('out => in', animate('200ms ease-in-out'))
+            transition('in => out', animate('20ms ease-in-out')),
+            transition('out => in', animate('20ms ease-in-out'))
         ]),
         trigger('slideOpen', [
             state('false', style({
@@ -33,7 +35,7 @@ import {convertStringToDate, dayNames, IDinnerDate, weekDates} from '../models/d
                 'z-index': 2,
                 'margin-bottom': '10px',
             })),
-            transition('* => *', animate('300ms ease-in-out')),
+            transition('* => *', animate('200ms ease-in-out')),
         ])
     ]
 })
@@ -61,7 +63,9 @@ export class DinnerListComponent implements OnInit {
             if (todayDinner) {
                 this.dinners = [todayDinner];
             } else {
-                this.dinners = [this.dinnersWeek[0]];
+                console.log('Error happened while finding today! Resorting to week overview.');
+                this.dinners = this.dinnersWeek;
+                this.showWeek = true;
             }
         } else {
             this.dinners = this.dinnersWeek;
@@ -71,27 +75,31 @@ export class DinnerListComponent implements OnInit {
 
     // Animation on day
     openDinner(dinner: IDinnerDate): void {
+        if (environment.debug) {
+            console.log('Dinner day pressed.', dinner);
+        }
         this.dayCollapse = this.dayCollapse === dinner.date.toString() ? 'none' : dinner.date.toString();
     }
 
 
     findToday() {
         const today = new Date();
+        let foundDinner = null;
         if (this.dinnersWeek != null) {
             this.dinnersWeek.forEach(dinner => {
-                if (dinner.date === today.getDate().toString()) {
-                    return dinner;
+                if (isSameDay(dinner.date, today)) {
+                    foundDinner = dinner;
                 }
             });
         }
-        return null;
+        return foundDinner;
     }
 
     loadDinnerWeek() {
         this.dinnersWeek = [];
         this.dinnerListService.getDinnerWeek().then(result => {
             weekDates(new Date()).forEach(day => {
-                const findDay = result.find(r => convertStringToDate(r.date) === day.getDay());
+                const findDay = result.find(r => isSameDay(r.date, day));
                 if (!findDay) {
                     result.push({
                         id: null,
@@ -99,7 +107,7 @@ export class DinnerListComponent implements OnInit {
                         signup_time: null, close_time: null, eta_time: null,
                         num_eating: null, open: true, cost: null, cook: null,
                     });
-                    result.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                    result.sort((a, b) => compareAsc(a.date, b.date));
                 }
             });
             this.dinnersWeek = result;
@@ -110,6 +118,5 @@ export class DinnerListComponent implements OnInit {
     convertDateToWeekday(date: string) {
         return dayNames[(new Date(date)).getDay()];
     }
-
 
 }

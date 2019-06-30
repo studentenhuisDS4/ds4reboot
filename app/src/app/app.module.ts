@@ -26,6 +26,8 @@ import {AutoFocusDirective} from './directives/auto-focus.directive';
 import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
 import {TokenInterceptor} from './services/interceptors/token.interceptor';
 import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
+import {CalendarModule, DateAdapter} from 'angular-calendar';
+import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 
 
 @NgModule({
@@ -58,7 +60,12 @@ import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
         // PWA
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        // Angular Calendar
+        CalendarModule.forRoot({
+            provide: DateAdapter,
+            useFactory: adapterFactory
+        })
     ],
     providers: [AuthGuard, {
         provide: HTTP_INTERCEPTORS,
