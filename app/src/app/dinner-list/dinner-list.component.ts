@@ -98,7 +98,6 @@ export class DinnerListComponent implements OnInit {
     loadDinnerWeek() {
         this.dinnersWeek = [];
         this.dinnerListService.getDinnerWeek().then(result => {
-            console.table(weekDates(new Date()));
             weekDates(new Date()).forEach(day => {
                 const findDay = result.find(r => isSameDay(r.date, day));
                 if (!findDay) {
