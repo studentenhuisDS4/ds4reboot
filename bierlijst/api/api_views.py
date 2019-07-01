@@ -24,6 +24,7 @@ class TurfViewSet(ListModelMixin,
 
     @action(detail=False, methods=['post'])
     def turf_beer(self, request):
+
         # print(self.get_object())
         return Response({'status': 'under-construction', 'amount': 0})
 
