@@ -6,14 +6,13 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from eetlijst.api.api import DinnerSerializer
+from eetlijst.api.api import DinnerSchema
 from eetlijst.models import DateList
 
 
 class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
-    queryset = DateList.objects.order_by(
-        '-date')
-    serializer_class = DinnerSerializer
+    queryset = DateList.objects.order_by('-date')
+    serializer_class = DinnerSchema
 
     @action(detail=True, methods=['post'])
     def signup(self, request, pk=None):
@@ -37,8 +36,9 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 
 
 # Week list
-class DinnerWeekViewSet(ListModelMixin, GenericViewSet):
-    serializer_class = DinnerSerializer
+class DinnerWeekViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    serializer_class = DinnerSchema
+    queryset = DateList.objects.order_by('-date')
 
     def get_queryset(self):
         """

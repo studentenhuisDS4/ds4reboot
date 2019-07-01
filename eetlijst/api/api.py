@@ -1,13 +1,27 @@
-from rest_framework import serializers
-from eetlijst.models import DateList
-from user.api.api import SimpleUserSerializer
+from rest_marshmallow import Schema, fields
+
+from user.api.api import UserInfoSchema
 
 
-class DinnerSerializer(serializers.ModelSerializer):
-    cook = SimpleUserSerializer()
+class UserDinnerSchema(Schema):
+    id = fields.Int()
+    user = fields.Nested(UserInfoSchema)
 
-    class Meta:
-        model = DateList
-        fields = '__all__'  # Change back to specifics when model is stable
-        read_only_fields = ()
-        depth = 1
+    list_date = fields.DateTime()
+    list_cook = fields.Bool()
+    list_count = fields.Int()
+
+
+class DinnerSchema(Schema):
+    id = fields.Int()
+
+    date = fields.Date(required=True)
+    num_eating = fields.Int()
+    userlist_set = fields.Nested(UserDinnerSchema, many=True, dump_only=True)
+    cook = fields.Nested(UserInfoSchema)
+    open = fields.Bool()
+    cost = fields.Decimal()
+
+    signup_time = fields.DateTime()
+    close_time = fields.DateTime()
+    eta_time = fields.DateTime()

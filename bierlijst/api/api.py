@@ -1,7 +1,4 @@
 from rest_framework import serializers
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
 
 from bierlijst.models import Turf, Boete
 

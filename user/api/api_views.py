@@ -1,13 +1,26 @@
 from django.contrib.auth.models import User
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.permissions import BasePermission
 from rest_framework.viewsets import GenericViewSet
 
-from user.api.api import SimpleUserSerializer
+from user.api.api import UserSchema, UserInfoSchema, FullUserSerializer
+
+
+class IsSuperUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_superuser
+
+
+class FullProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = FullUserSerializer
+
+    permission_classes = [IsSuperUser, ]
 
 
 class ProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     queryset = User.objects.filter(is_active=True)
-    serializer_class = SimpleUserSerializer
+    serializer_class = UserInfoSchema
 
     # def get_serializer_class(self):
     #     lookup = self.lookup_url_kwarg or self.lookup_field

@@ -5,7 +5,6 @@ from django.db import models
 
 # model for eetlijst date logging
 class DateList(models.Model):
-
     cook = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     signup_time = models.DateTimeField(null=True)
     close_time = models.DateTimeField(null=True)
@@ -19,7 +18,6 @@ class DateList(models.Model):
 
 # model for eetlijst signup logging
 class UserList(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
 
@@ -31,7 +29,6 @@ class UserList(models.Model):
 
 # model for transfer logging
 class Transfer(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     from_user = models.CharField(max_length=30)
     to_user = models.CharField(max_length=30)
@@ -42,7 +39,6 @@ class Transfer(models.Model):
 
 # model for ho logging
 class HOLog(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     time = models.DateTimeField(default=timezone.now)

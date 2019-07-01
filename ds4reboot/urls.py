@@ -13,7 +13,7 @@ from ds4reboot.secret_settings import DEBUG
 from ds4reboot import settings
 from eetlijst.api.api_views import DinnerViewSet, DinnerWeekViewSet
 from bierlijst.api.api_views import BoeteViewSet, TurfViewSet
-from user.api.api_views import ProfileViewSet
+from user.api.api_views import ProfileViewSet, FullProfileViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
@@ -21,6 +21,7 @@ router.register(r'dinnerweek', DinnerWeekViewSet, basename='dinnerweek')
 router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
 router.register(r'profile', ProfileViewSet, basename='Profile')
+router.register(r'profile-full', FullProfileViewSet, basename='Full profile')
 
 urlpatterns = \
     [
