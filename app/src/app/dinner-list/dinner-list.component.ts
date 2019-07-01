@@ -80,6 +80,9 @@ export class DinnerListComponent implements OnInit {
 
     // Animation on day
     openDinner(dinner: IDinnerDate): void {
+        if (environment.debug) {
+            console.log('Dinner day pressed.', dinner);
+        }
         this.dayCollapse = this.dayCollapse === dinner.date.toString() ? 'none' : dinner.date.toString();
     }
 
