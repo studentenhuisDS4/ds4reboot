@@ -1,6 +1,6 @@
 {
-  "name": "app",
-  "short_name": "app",
+  "name": "DS4",
+  "short_name": "DS4",
   "theme_color": "#03A9F4",
   "background_color": "#03A9F4",
   "display": "standalone",

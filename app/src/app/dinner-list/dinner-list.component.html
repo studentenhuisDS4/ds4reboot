@@ -1,31 +1,34 @@
 <section fxLayout="column" fxFlexAlign="stretch">
     <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
         <mat-card-header>
-            <div mat-card-avatar><i
-                class="material-icons vertical-align-middle padding-bottom-3 icon-large">person</i>
-            </div>
             <mat-card-title>
-                Dinner list
+                <mat-card-title>
+                    {{user ? "Dinners for " + user.housemate.display_name : ""}}
+                </mat-card-title>
+                <mat-card-subtitle>
+                    Balance: {{user ? "&euro;" + user.housemate.balance : "?"}}
+                </mat-card-subtitle>
             </mat-card-title>
-            <mat-card-subtitle>Person</mat-card-subtitle>
         </mat-card-header>
         <mat-card-footer>
+            <div fxFlex></div>
             <button mat-button (click)="toggleWeek()">Show {{showWeek ? "TODAY" : "WEEK"}}</button>
         </mat-card-footer>
     </mat-card>
     <mat-card class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center"
-              *ngFor="let dinner of dinners" [@slideInOut]="weekCollapse"
+              *ngFor="let dinner of weekDinners" [@slideInOut]="weekCollapse"
               [@slideOpen]="dayCollapse == dinner.date.toString()" (click)="openDinner(dinner)">
         <mat-card-header>
             <div mat-card-avatar>
                 <i
-                    class="material-icons vertical-align-middle padding-bottom-3 icon-large" [matBadge]="dinner.num_eating"
+                    class="material-icons vertical-align-middle padding-bottom-3 icon-large"
+                    [matBadge]="dinner.num_eating"
                     matBadgeColor="primary">
                     local_dining
                 </i>
             </div>
             <mat-card-title style="display: flex;">
-                {{convertDateToWeekday(dinner.date)}} {{ dinner.eta_time ? "-" + dinner.eta_time : ""}}
+                {{getWeekday(dinner.date)}} {{ dinner.eta_time ? "-" + dinner.eta_time : ""}}
                 <span class="fill-remaining-space"></span>
             </mat-card-title>
             <mat-card-subtitle>{{dinner.date | date : 'MMMM d'}}</mat-card-subtitle>
@@ -33,8 +36,49 @@
         <mat-card-content>
             <span
                 style="display:block">Cook: <em>{{ dinner.cook ? dinner.cook.housemate.display_name : "None" }}</em></span>
-            <span style="display:block">People: {{ dinner.num_eating }}</span>
         </mat-card-content>
     </mat-card>
-    {{ dinnersWeek.length == 0 ? "No dinners created this week." : ""}}
+    <mat-card class="page-content-card mat-elevation-z24" fxFlexAlign="center"
+              [@slideInOut]="todayCollapse" *ngIf="todayDinner">
+        <mat-card-header>
+            <div mat-card-avatar>
+                <i class="material-icons vertical-align-middle padding-bottom-3 icon-large"
+                   [matBadge]="todayDinner.num_eating" matBadgeColor="primary">
+                    local_dining
+                </i>
+            </div>
+            <mat-card-title style="display: flex;">
+                {{getWeekday(todayDinner.date)}} {{ todayDinner.eta_time ? "-" + todayDinner.eta_time : ""}}
+            </mat-card-title>
+            <mat-card-subtitle>{{todayDinner.date | date : 'MMMM d'}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <span
+                style="display:block">Cook: <em>{{ todayDinner.cook ? todayDinner.cook.housemate.display_name : "None" }}</em></span>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-raised-button (click)="signupDinner(todayDinner)"
+                    *ngIf="todayDinner.close_time == null">
+                Signup
+            </button>
+            <button mat-raised-button (click)="signupDinner(todayDinner)" color="accent"
+                    *ngIf="todayDinner.cook == null">
+                Cook
+            </button>
+            <button mat-raised-button (click)="signupDinner(todayDinner)" color="accent"
+                    *ngIf="todayDinner.cook">
+                Close
+            </button>
+            <button mat-raised-button (click)="signupDinner(todayDinner)" color="primary"
+                    *ngIf="todayDinner.close_time">
+                Fill-in costs
+            </button>
+        </mat-card-actions>
+    </mat-card>
+    <span fxFlexAlign="center" style="color:white;">{{ weekDinners.length == 0 ? "Loading dinners." : ""}}</span>
+    <!--    <button fxFlexAlign="end" color="primary" mat-fab>-->
+    <!--        <mat-icon>calendar_today</mat-icon>-->
+    <!--    </button>-->
 </section>
+
+

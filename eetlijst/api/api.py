@@ -1,40 +1,27 @@
-from datetime import timedelta
+from rest_marshmallow import Schema, fields
 
-from django.utils.datetime_safe import datetime
-from rest_framework import serializers, viewsets
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.viewsets import GenericViewSet
-
-from eetlijst.models import DateList
-from user.api.api import SimpleUserSerializer
+from user.api.api import UserInfoSchema
 
 
-class DinnerSerializer(serializers.ModelSerializer):
-    cook = SimpleUserSerializer()
+class UserDinnerSchema(Schema):
+    id = fields.Int()
+    user = fields.Nested(UserInfoSchema)
 
-    class Meta:
-        model = DateList
-        fields = '__all__'  # Change back to specifics when model is stable
-        read_only_fields = ()
-        depth = 1
-
-
-class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
-    queryset = DateList.objects.order_by(
-        '-date')
-    serializer_class = DinnerSerializer
+    list_date = fields.DateTime()
+    list_cook = fields.Bool()
+    list_count = fields.Int()
 
 
-# Week list
-class DinnerWeekViewSet(ListModelMixin, GenericViewSet):
-    serializer_class = DinnerSerializer
+class DinnerSchema(Schema):
+    id = fields.Int()
 
-    def get_queryset(self):
-        """
-        This view should return a list of all dinners
-        entered this week.
-        """
-        return DateList.objects \
-            .filter(date__gte=datetime.now() - timedelta(days=datetime.now().weekday())) \
-            .filter(date__lte=datetime.now() + timedelta(days=(7 - datetime.now().weekday()))) \
-            .order_by('date')
+    date = fields.Date(required=True)
+    num_eating = fields.Int()
+    userlist_set = fields.Nested(UserDinnerSchema, many=True, dump_only=True)
+    cook = fields.Nested(UserInfoSchema)
+    open = fields.Bool()
+    cost = fields.Decimal()
+
+    signup_time = fields.DateTime()
+    close_time = fields.DateTime()
+    eta_time = fields.DateTime()

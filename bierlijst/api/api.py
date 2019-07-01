@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
+from rest_marshmallow import Schema, fields
 
 from bierlijst.models import Turf, Boete
 
@@ -13,30 +11,14 @@ class TurfSerializer(serializers.ModelSerializer):
         read_only_field = []
 
 
+# Action schema
+class TurfSchema(Schema):
+    amount = fields.Int(required=True, dump_only=True)
+    user_id = fields.Int(required=True, dump_only=True)
+
+
 class BoeteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Boete
         fields = '__all__'
         read_only_field = []
-
-
-class TurfViewSet(ListModelMixin,
-                  RetrieveModelMixin,
-                  GenericViewSet):
-    queryset = Turf.objects.order_by(
-        '-turf_time')
-    serializer_class = TurfSerializer
-
-
-class BoeteViewSet(ListModelMixin,
-                   RetrieveModelMixin,
-                   GenericViewSet):
-    queryset = Boete.objects.order_by(
-        '-created_time')
-    serializer_class = BoeteSerializer
-
-
-class TurfAPIView(APIView):
-    def post(self):
-        # turf beer
-        print('WIP')

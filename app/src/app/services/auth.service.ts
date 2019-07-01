@@ -4,6 +4,7 @@ import {environment} from '../../environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
+import {ITokenClaims} from '../models/auth.model';
 
 @Injectable({
     providedIn: 'root'
@@ -11,6 +12,7 @@ import {Router} from '@angular/router';
 export class AuthService {
 
     API_URL: string = environment.baseUrl;
+    jwtHelper: JwtHelperService = new JwtHelperService();
 
     constructor(private  httpClient: HttpClient, private router: Router) {
     }
@@ -32,11 +34,18 @@ export class AuthService {
         }
 
         // TODO consider checking with server
-        return !(new JwtHelperService().isTokenExpired(token));
+        return !(this.jwtHelper.isTokenExpired(token));
     }
 
     public getToken() {
         return localStorage.getItem('token');
+    }
+
+    public getTokenClaims(): ITokenClaims {
+        const token = localStorage.getItem('token');
+        if (token != null) {
+            return this.jwtHelper.decodeToken(token);
+        }
     }
 
     public sendAuth(username: string, password: string) {

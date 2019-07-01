@@ -1,3 +1,5 @@
+import {IProfile} from './profile.model';
+
 export interface IDinnerDate {
     id: number;
     num_eating: number;
@@ -5,7 +7,7 @@ export interface IDinnerDate {
     open: boolean;
     date: Date;
 
-    cook: number;
+    cook: IProfile;
 
     signup_time: Date;
     close_time: Date;
