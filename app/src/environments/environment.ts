@@ -4,9 +4,9 @@
 
 export const environment = {
     production: false,
-    // baseUrl: 'http://192.168.0.109:8000',
-    baseUrl: 'http://localhost:8000',
-    // baseUrl: 'https://ds4.nl',
+    // baseUrl: 'http://192.168.0.109:8000/api/v1',
+    baseUrl: 'http://localhost:8000/api/v1',
+    // baseUrl: 'https://ds4.nl/api/v1',
     debug: true
 };
 

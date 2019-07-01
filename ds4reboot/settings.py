@@ -115,6 +115,8 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': False
 }
 
+API_BASE_URL = 'api/v1/'
+
 # Frontend CORS
 # https://github.com/ottoyiu/django-cors-headers/#configuration
 CORS_ORIGIN_ALLOW_ALL = False

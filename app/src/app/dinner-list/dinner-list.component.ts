@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {convertStringToDate, dayNames, IDinnerDate, weekDates} from '../models/dinner.models';
+import {dayNames, IDinnerDate, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
-import {environment} from '../../environments/environment';
+import {ProfileService} from '../services/profile.service';
+import {IProfile} from '../models/profile.model';
 
 @Component({
     selector: 'app-dinner-list',
@@ -11,22 +12,19 @@ import {environment} from '../../environments/environment';
     styleUrls: ['./dinner-list.component.scss'],
     animations: [
         trigger('slideInOut', [
-            state('in', style({
-                overflow: 'hidden',
-                height: '100px',
+            state('show', style({
+                opacity: '1.0',
             })),
-            state('out', style({
+            state('hide', style({
                 opacity: '0',
-                height: '0px',
-                overflow: 'hidden',
-                'z-index': '-2',
+                display: 'none',
             })),
-            transition('in => out', animate('20ms ease-in-out')),
-            transition('out => in', animate('20ms ease-in-out'))
+            transition('show => hide', animate('100ms ease-in-out')),
+            transition('hide => show', animate('150ms ease-in-out')),
         ]),
         trigger('slideOpen', [
             state('false', style({
-                'margin-bottom': '-70px',
+                'margin-bottom': '-50px',
             })),
             state('true', style({
                 'max-width': '100%',
@@ -40,44 +38,48 @@ import {environment} from '../../environments/environment';
     ]
 })
 export class DinnerListComponent implements OnInit {
-    dinnersWeek: IDinnerDate[] = [];
-    dinners: IDinnerDate[] = [];
-    showWeek = true;
+    weekDinners: IDinnerDate[] = [];
+    todayDinner: IDinnerDate;
 
-    weekCollapse = 'in';
+    showWeek = false;
+    weekCollapse = 'hide';
+    todayCollapse = 'show';
     dayCollapse = 'none';
 
-    constructor(private dinnerListService: DinnerListService) {
+    user: IProfile = null;
+
+    constructor(private dinnerListService: DinnerListService, private profileService: ProfileService) {
         this.loadDinnerWeek();
+        this.profileService.getProfile().then(result => {
+            this.user = result;
+        });
+        // console.log(this.profileService.getUserId());
     }
 
     ngOnInit() {
     }
 
+    signupDinner(dinner: IDinnerDate) {
+        console.log('Test complete');
+    }
+
     // Animation on week
     toggleWeek(): void {
-        this.weekCollapse = this.weekCollapse === 'out' ? 'in' : 'out';
         this.showWeek = !this.showWeek;
         if (!this.showWeek) {
-            const todayDinner = this.findToday();
-            if (todayDinner) {
-                this.dinners = [todayDinner];
-            } else {
+            this.todayDinner = this.findToday();
+            if (!this.todayDinner) {
                 console.log('Error happened while finding today! Resorting to week overview.');
-                this.dinners = this.dinnersWeek;
                 this.showWeek = true;
             }
-        } else {
-            this.dinners = this.dinnersWeek;
         }
-        this.weekCollapse = this.weekCollapse === 'out' ? 'in' : 'out';
+        // Trigger animation
+        this.weekCollapse = this.weekCollapse === 'show' ? 'hide' : 'show';
+        this.todayCollapse = this.weekCollapse === 'hide' ? 'show' : 'hide';
     }
 
     // Animation on day
     openDinner(dinner: IDinnerDate): void {
-        if (environment.debug) {
-            console.log('Dinner day pressed.', dinner);
-        }
         this.dayCollapse = this.dayCollapse === dinner.date.toString() ? 'none' : dinner.date.toString();
     }
 
@@ -85,8 +87,8 @@ export class DinnerListComponent implements OnInit {
     findToday() {
         const today = new Date();
         let foundDinner = null;
-        if (this.dinnersWeek != null) {
-            this.dinnersWeek.forEach(dinner => {
+        if (this.weekDinners != null) {
+            this.weekDinners.forEach(dinner => {
                 if (isSameDay(dinner.date, today)) {
                     foundDinner = dinner;
                 }
@@ -96,7 +98,8 @@ export class DinnerListComponent implements OnInit {
     }
 
     loadDinnerWeek() {
-        this.dinnersWeek = [];
+        this.weekDinners = [];
+        // Push nonexistent days on the pile as well.
         this.dinnerListService.getDinnerWeek().then(result => {
             weekDates(new Date()).forEach(day => {
                 const findDay = result.find(r => isSameDay(r.date, day));
@@ -110,12 +113,12 @@ export class DinnerListComponent implements OnInit {
                     result.sort((a, b) => compareAsc(a.date, b.date));
                 }
             });
-            this.dinnersWeek = result;
-            this.dinners = this.dinnersWeek;
+            this.weekDinners = result;
+            this.todayDinner = this.findToday();
         });
     }
 
-    convertDateToWeekday(date: string) {
+    getWeekday(date: Date) {
         return dayNames[(new Date(date)).getDay()];
     }
 

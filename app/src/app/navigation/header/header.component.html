@@ -12,26 +12,14 @@
 
     <div fxFlex fxLayout fxLayoutAlign="end">
         <ul fxLayout fxLayoutGap="10px" class="navigation-items">
-<!--            <li fxHide.xs>-->
-<!--                <a routerLink="/turf">Turf</a>-->
-<!--            </li>-->
-<!--            <li fxHide.xs>-->
-<!--                <a routerLink="/dinner">Dinner</a>-->
-<!--            </li>-->
-<!--            <li fxHide.xs>-->
-<!--                <a routerLink="/admin">Admin</a>-->
-<!--            </li>-->
-<!--            <li fxHide.xs>-->
-<!--                <a routerLink="/profile">Profile</a>-->
-<!--            </li>-->
             <li>
                 <button mat-icon-button routerLink="profile">
-                    <mat-icon class="navbar-icon">perm_identity</mat-icon>
+                    <mat-icon>perm_identity</mat-icon>
                 </button>
             </li>
             <li>
                 <button mat-icon-button (click)="logout()">
-                    <mat-icon class="navbar-icon">exit_to_app</mat-icon>
+                    <mat-icon>exit_to_app</mat-icon>
                 </button>
             </li>
         </ul>

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.viewsets import GenericViewSet
 
 from user.models import Housemate
 
@@ -23,5 +25,5 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('password', 'last_login', 'email', 'date_joined','is_staff', 'is_active', 'is_superuser')
+        exclude = ('password', 'last_login', 'email', 'date_joined', 'is_staff', 'is_active', 'is_superuser')
         readOnly = '__all__'
