@@ -1,43 +1,69 @@
+import traceback
+
+from django.contrib.auth.models import User
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from bierlijst.api.api import BoeteSerializer, TurfSerializer
+from bierlijst.api.api import BoeteSerializer, TurfSerializer, TurfSchema, BEER, WWINE, RWINE
 from bierlijst.models import Turf, Boete
+from ds4reboot.api.utils import log_exception, log_validation_errors
+from user.api.api import HousemateSchema
+from user.models import Housemate
 
 
 class TurfViewSet(ListModelMixin,
                   RetrieveModelMixin,
                   GenericViewSet):
-    queryset = Turf.objects.order_by(
-        '-turf_time')
+    queryset = Turf.objects.order_by('-turf_time')
     serializer_class = TurfSerializer
 
     @action(detail=True, methods=['post'])
-    def cancel(self, request, pk=None):
-        return Response({'status': 'under-construction', 'amount': 0})
-
-    @action(detail=True, methods=['post'])
-    def filter(self, request, pk=None):
+    def log(self, request, pk=None):
         return Response({'status': 'under-construction', 'amount': 0})
 
     @action(detail=False, methods=['post'])
-    def turf_beer(self, request):
+    def turf_item(self, request):
+        try:
+            serializer = TurfSchema(data=request.data)
+            if not serializer.is_valid():
+                return log_validation_errors(serializer.errors)
+            else:
+                # Auto-generate data
+                serializer.validated_data['turf_by'] = self.request.user.username
+                serializer.validated_data['turf_to'] = User.objects.get(
+                    id=serializer.validated_data['turf_user_id']).username
+                turf_obj = serializer.save()
 
-        # print(self.get_object())
+                # Update and serialize housemate
+                hm_turf = Housemate.objects.get(user_id__exact=turf_obj.turf_user)
+                if turf_obj.turf_type == BEER:
+                    hm_turf.sum_bier += turf_obj.turf_count
+                elif turf_obj.turf_type == WWINE:
+                    hm_turf.sum_wwijn += turf_obj.turf_count
+                elif turf_obj.turf_type == RWINE:
+                    hm_turf.sum_rwijn += turf_obj.turf_count
+                hm_turf.save()
+                hm_json = HousemateSchema(hm_turf, many=False)
+
+                # Return turf and housemate data
+                return Response(
+                    {'status': 'success', 'result': serializer.validated_data, 'housemate': hm_json.data})
+        except Exception as e:
+            tb = traceback.format_exc()
+            return log_exception(e, tb)
+
+    @action(detail=False, methods=['post'])
+    def turf_edit(self, request):
+        input = request
+        # (success, data) = self.save_turf_data(request)
         return Response({'status': 'under-construction', 'amount': 0})
 
-    @action(detail=True, methods=['post'])
-    def turf_wine(self, request, pk=None):
-        return Response({'status': 'under-construction', 'amount': 0})
-
-    @action(detail=True, methods=['post'])
-    def turf_house(self, request, pk=None):
-        return Response({'status': 'under-construction', 'amount': 0})
-
-    @action(detail=True, methods=['post'])
-    def turf_crate(self, request, pk=None):
+    @action(detail=False, methods=['post'])
+    def turf_remove(self, request):
+        input = request
+        # (success, data) = self.save_turf_data(request)
         return Response({'status': 'under-construction', 'amount': 0})
 
 

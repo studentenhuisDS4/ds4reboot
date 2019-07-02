@@ -70,7 +70,7 @@ def show_log(request, page=1):
 
     try:
         if int(filters['housemate']):
-            beer_logs = beer_logs.filter(turf_user_id=int(filters['housemate']))
+            beer_logs = beer_logs.filter(turf_user=int(filters['housemate']))
         if filters['beer_amount']:
             beer_logs = beer_logs.filter(turf_count__gte=int(filters['beer_amount']))
         if filters['final_date']:
@@ -298,91 +298,94 @@ def reset_boetes(request):
 def turf_item(request, user_id):
     if request.user.is_authenticated:
 
-        # Get user and turf type from POST
-        turf_user = User.objects.get(pk=user_id)
-        turf_type = request.POST.get('turf_type')
+        try:
+            # Get user and turf type from POST
+            turf_user = User.objects.get(pk=user_id)
+            turf_type = request.POST.get('turf_type')
 
-        if request.POST.get('count'):
+            if request.POST.get('count'):
 
-            # validate count input
-            try:
-                turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
+                # validate count input
+                try:
+                    turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
-            except ValueError:
-                return HttpResponse(
-                    json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
+                except ValueError:
+                    return HttpResponse(
+                        json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
 
-            if turf_type == 'bier' and not float(turf_count).is_integer():
-                return HttpResponse(
-                    json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
+                if turf_type == 'bier' and not float(turf_count).is_integer():
+                    return HttpResponse(
+                        json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
 
-            if turf_count >= 1000:
-                return HttpResponse(
-                    json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
+                if turf_count >= 1000:
+                    return HttpResponse(
+                        json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
 
-        else:
-            turf_count = 1
-
-        h = Housemate.objects.get(user_id=user_id)
-
-        # add entry to database
-        new_value = 0
-        sum_type = ''
-        if turf_type == 'bier':
-            if h.sum_bier + turf_count >= 0:
-                h.sum_bier += turf_count
-                h.total_bier += turf_count
-
-                success_message = '%s heeft %s bier geturfd.' % (
-                str(turf_user.housemate.display_name).capitalize(), int(turf_count))
-                success_message = success_message if turf_count == 1 else success_message.replace('bier',
-                                                                                                  'biertjes')
             else:
-                success_message = 'Je kan geen negatief aantal biertjes hebben.'
-                return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+                turf_count = 1
 
-            new_value = h.sum_bier
-            sum_type = 'sum_bier'
+            h = Housemate.objects.get(user_id=user_id)
 
-        elif turf_type == 'wwijn':
-            if h.sum_wwijn + turf_count >= 0:
-                h.sum_wwijn += Decimal(turf_count)
-                h.total_wwijn += Decimal(turf_count)
+            # add entry to database
+            new_value = 0
+            sum_type = ''
+            if turf_type == 'bier':
+                if h.sum_bier + turf_count >= 0:
+                    h.sum_bier += turf_count
+                    h.total_bier += turf_count
 
-                success_message = '%s heeft %s witte wijn geturfd.' % (
+                    success_message = '%s heeft %s bier geturfd.' % (
+                    str(turf_user.housemate.display_name).capitalize(), int(turf_count))
+                    success_message = success_message if turf_count == 1 else success_message.replace('bier',
+                                                                                                      'biertjes')
+                else:
+                    success_message = 'Je kan geen negatief aantal biertjes hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+
+                new_value = h.sum_bier
+                sum_type = 'sum_bier'
+
+            elif turf_type == 'wwijn':
+                if h.sum_wwijn + turf_count >= 0:
+                    h.sum_wwijn += Decimal(turf_count)
+                    h.total_wwijn += Decimal(turf_count)
+
+                    success_message = '%s heeft %s witte wijn geturfd.' % (
+                        str(turf_user.housemate.display_name).capitalize(), turf_count)
+                else:
+                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+
+                new_value = h.sum_wwijn
+                sum_type = 'sum_wwijn'
+            elif turf_type == 'rwijn':
+                if h.sum_rwijn + turf_count >= 0:
+                    h.sum_rwijn += Decimal(turf_count)
+                    h.total_rwijn += Decimal(turf_count)
+                else:
+                    success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
+                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+
+                success_message = '%s heeft %s rode wijn geturfd.' % (
                     str(turf_user.housemate.display_name).capitalize(), turf_count)
+
+                new_value = h.sum_rwijn
+                sum_type = 'sum_rwijn'
+
+            h.save()
+            if sum_type != '':
+                new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
             else:
-                success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
-                return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+                return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
 
-            new_value = h.sum_wwijn
-            sum_type = 'sum_wwijn'
-        elif turf_type == 'rwijn':
-            if h.sum_rwijn + turf_count >= 0:
-                h.sum_rwijn += Decimal(turf_count)
-                h.total_rwijn += Decimal(turf_count)
-            else:
-                success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
-                return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+            t = Turf(turf_user=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count,
+                     turf_type=turf_type)
+            t.save()
 
-            success_message = '%s heeft %s rode wijn geturfd.' % (
-                str(turf_user.housemate.display_name).capitalize(), turf_count)
-
-            new_value = h.sum_rwijn
-            sum_type = 'sum_rwijn'
-
-        h.save()
-        if sum_type != '':
-            new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
-        else:
-            return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
-
-        t = Turf(turf_user_id=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count,
-                 turf_type=turf_type)
-        t.save()
-
-        return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
-                                        'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
+            return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
+                                            'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
+        except Exception as e:
+            print(e)
 
     else:
         return HttpResponse(

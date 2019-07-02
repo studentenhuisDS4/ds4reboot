@@ -7,7 +7,7 @@ from django.db import models
 class Turf(models.Model):
 
     # user info
-    turf_user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    turf_user = models.ForeignKey(User, on_delete=models.CASCADE)
     turf_to = models.CharField(max_length=30)
     turf_by = models.CharField(max_length=30)
 

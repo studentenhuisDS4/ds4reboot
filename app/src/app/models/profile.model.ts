@@ -17,6 +17,7 @@ export interface IHousemate {
     boetes_total: number;
     sum_bier: number;
     sum_rwijn: number;
+    sum_wwijn: number;
     total_bier: number;
     total_rwijn: number;
     total_wwijn: number;
@@ -31,5 +32,4 @@ export interface IProfile {
 
     user_permissions: IPermission[];
     groups: IGroup[];
-
 }

@@ -5,6 +5,7 @@ import {dayNames, IDinnerDate, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {ProfileService} from '../services/profile.service';
 import {IProfile} from '../models/profile.model';
+import {environment} from '../../environments/environment';
 
 @Component({
     selector: 'app-dinner-list',

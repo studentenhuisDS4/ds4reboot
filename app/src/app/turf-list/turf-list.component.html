@@ -1,5 +1,21 @@
 <p>
-  turf-list works!
+    TURF-LIST
 </p>
-
-Here you should be able to turf any products the house offers.
+<br/>
+Sum of beer: {{user? user.housemate.sum_bier : ""}}
+<button mat-raised-button *ngIf="user" (click)="turfItem()" style="margin-right:5px;" color="warn">Turf beer</button>
+<br/><br/>
+Sum of red wine: {{user? user.housemate.sum_rwijn : ""}}
+<button mat-raised-button *ngIf="user" (click)="turfItem('red-wine')" style="margin-right:5px;" color="warn">Turf red wine</button>
+<br/><br/>
+Sum of white wine: {{user? user.housemate.sum_wwijn : ""}}
+<button mat-raised-button *ngIf="user" (click)="turfItem('white-wine')" style="margin-right:5px;" color="warn">Turf white wine</button>
+<br/><br/>
+Future updates: <br/>
+<ol>
+    <li>turf-matrix</li>
+    <li>crate-turf (incl. house)</li>
+    <li>quick log</li>
+    <li>boetepanel</li>
+    <li>splitting wine across housemates.</li>
+</ol>

@@ -57,21 +57,22 @@
                 style="display:block">Cook: <em>{{ todayDinner.cook ? todayDinner.cook.housemate.display_name : "None" }}</em></span>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-raised-button (click)="signupDinner(todayDinner)"
-                    *ngIf="todayDinner.close_time == null">
-                Signup
+            <button mat-raised-button color="primary"
+                    (click)="signupDinner(todayDinner)" [disabled]="todayDinner.close_time">
+                <mat-icon>add</mat-icon>
             </button>
             <button mat-raised-button (click)="signupDinner(todayDinner)" color="accent"
                     *ngIf="todayDinner.cook == null">
-                Cook
+                <mat-icon>shopping_cart</mat-icon>
             </button>
             <button mat-raised-button (click)="signupDinner(todayDinner)" color="accent"
-                    *ngIf="todayDinner.cook">
-                Close
+                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time) : false">
+                <mat-icon>remove_shopping_cart</mat-icon>
             </button>
+            <div fxFlex></div>
             <button mat-raised-button (click)="signupDinner(todayDinner)" color="primary"
                     *ngIf="todayDinner.close_time">
-                Fill-in costs
+                <mat-icon>attach_money</mat-icon>
             </button>
         </mat-card-actions>
     </mat-card>

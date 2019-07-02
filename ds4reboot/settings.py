@@ -107,6 +107,7 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework.authentication.BasicAuthentication',
     ),
+    # 'EXCEPTION_HANDLER': 'ds4reboot.apps.common.drf.exception_handler',
 }
 
 JWT_AUTH = {
