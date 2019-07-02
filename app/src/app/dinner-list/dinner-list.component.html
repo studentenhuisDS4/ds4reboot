@@ -71,7 +71,7 @@
             </button>
             <div fxFlex></div>
             <button mat-raised-button (click)="signupDinner(todayDinner)" color="primary"
-                    *ngIf="todayDinner.close_time">
+                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time && todayDinner.cost == null) : false ">
                 <mat-icon>attach_money</mat-icon>
             </button>
         </mat-card-actions>

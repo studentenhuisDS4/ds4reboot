@@ -10,7 +10,7 @@
         <mat-card-content>
             <form class="login-form" fxLayout="column">
                 <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
+                    <mat-label>Username</mat-label>
                     <input matInput placeholder="Email" name="email" [formControl]="emailFormControl"
                            [errorStateMatcher]="matcher">
                     <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">

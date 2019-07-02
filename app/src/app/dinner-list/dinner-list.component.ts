@@ -6,6 +6,7 @@ import {compareAsc, isSameDay} from 'date-fns';
 import {ProfileService} from '../services/profile.service';
 import {IProfile} from '../models/profile.model';
 import {environment} from '../../environments/environment';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
     selector: 'app-dinner-list',
@@ -49,7 +50,7 @@ export class DinnerListComponent implements OnInit {
 
     user: IProfile = null;
 
-    constructor(private dinnerListService: DinnerListService, private profileService: ProfileService) {
+    constructor(private dinnerListService: DinnerListService, private profileService: ProfileService, private snackBar: MatSnackBar) {
         this.loadDinnerWeek();
         this.profileService.getProfile().then(result => {
             this.user = result;
@@ -61,7 +62,7 @@ export class DinnerListComponent implements OnInit {
     }
 
     signupDinner(dinner: IDinnerDate) {
-        console.log('Test complete');
+        this.openSnackBar('Under construction, sorry!', 'Ok!');
     }
 
     // Animation on week
@@ -124,6 +125,13 @@ export class DinnerListComponent implements OnInit {
 
     getWeekday(date: Date) {
         return dayNames[(new Date(date)).getDay()];
+    }
+
+    openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {
+            duration: 2000,
+            verticalPosition: 'top',
+        });
     }
 
 }
