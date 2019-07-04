@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
-from eetlijst.models import HOLog, Transfer, UserDinner
+from eetlijst.models import HOLog, Transfer, UserDinner, Dinner
 from user.models import Housemate
 
 
@@ -312,6 +312,9 @@ def enroll(request):
         # get or create rows as necessary
         user_entry, user_created = UserDinner.objects.get_or_create(user=enroll_user.user, dinner_date=enroll_date)
         date_entry, date_created = Dinner.objects.get_or_create(date=enroll_date)
+
+        if not user_entry.dinner:
+            user_entry.dinner = date_entry
 
         # modify models as appropriate
         if enroll_type == 'signup':
