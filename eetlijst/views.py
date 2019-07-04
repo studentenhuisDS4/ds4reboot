@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
-from eetlijst.models import HOLog, Transfer, Dinner, UserDinner
+from eetlijst.models import HOLog, Transfer, UserDinner
 from user.models import Housemate
 
 
@@ -416,7 +416,8 @@ def close(request):
                     # if open
                     if date_entry.open:
                         if date_entry.num_eating <= 1:
-                            messages.error(request, "You can't cook for yourself. I mean, you can, but dont be stoopid.")
+                            messages.error(request,
+                                           "You can't cook for yourself. I mean, you can, but dont be stoopid.")
                             return redirect(request.META.get('HTTP_REFERER'))
 
                         date_entry.open = False
