@@ -31,7 +31,7 @@ urlpatterns = \
         path('eetlijst/', include('eetlijst.urls')),
         path('thesau/', include('thesau.urls')),
         path('admin/', admin.site.urls),
-
+        path('organisation/', include('organisation.urls')),
         path('ds4admin/', include('ds4admin.urls')),
 
         path('wiki/notifications/', include('django_nyt.urls')),

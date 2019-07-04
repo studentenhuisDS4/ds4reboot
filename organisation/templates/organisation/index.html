@@ -1,0 +1,16 @@
+{% extends 'base/base.html' %}
+
+
+
+{% block body_block %}
+
+
+    <table>
+        {% for r in active_users %}
+            <tr>
+                <td>{{ r.housemate.display_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
