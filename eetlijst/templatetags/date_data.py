@@ -1,5 +1,5 @@
 from django.template.defaulttags import register
-from eetlijst.models import DateList, UserList
+from eetlijst.models import Dinner, UserDinner
 import datetime as dt
 
 # retrieve value from 2D dictionary by tuple index
@@ -16,9 +16,9 @@ def get_dict(dict, key_user, key_date):
 def is_cook(date, id):
 
     try:
-        cook = UserList.objects.get(user_id=id, list_date=date).list_cook
+        cook = UserDinner.objects.get(user_id=id, dinner_date=date).is_cook
 
-    except UserList.DoesNotExist:
+    except UserDinner.DoesNotExist:
         return 0
 
     return cook
@@ -28,9 +28,9 @@ def is_cook(date, id):
 def day_total(date):
 
     try:
-        num = DateList.objects.get(date=date).num_eating
+        num = Dinner.objects.get(date=date).num_eating
 
-    except DateList.DoesNotExist:
+    except Dinner.DoesNotExist:
         return 0
 
     return int(num)
@@ -40,9 +40,9 @@ def day_total(date):
 def cost(date, id):
 
     try:
-        cost = UserList.objects.get(user_id=id, list_date=date).list_cost
+        cost = UserDinner.objects.get(user_id=id, dinner_date=date).split_cost
 
-    except UserList.DoesNotExist:
+    except UserDinner.DoesNotExist:
         cost = 0
 
     if not cost:
@@ -55,14 +55,14 @@ def cost(date, id):
 def cost_entered(date):
 
     try:
-        date_entry = DateList.objects.get(date=date)
+        date_entry = Dinner.objects.get(date=date)
 
         if date_entry.cost:
             entered = True
         else:
             entered = False
 
-    except UserList.DoesNotExist:
+    except UserDinner.DoesNotExist:
         entered = False
 
     return entered

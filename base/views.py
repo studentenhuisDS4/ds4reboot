@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.utils import timezone
 
-from eetlijst.models import DateList, UserList
+from eetlijst.models import Dinner, UserDinner
 from user.models import Housemate
 
 
@@ -28,13 +28,13 @@ def home_page(request):
 
         # load eetlijst data
         try:
-            eating_with = UserList.objects.get(list_date=timezone.now(), user_id=request.user.id).list_count
+            eating_with = UserDinner.objects.get(dinner_date=timezone.now(), user_id=request.user.id).count
 
-        except UserList.DoesNotExist:
+        except UserDinner.DoesNotExist:
             eating_with = 0
 
         try:
-            data_date = DateList.objects.get(date=timezone.now())
+            data_date = Dinner.objects.get(date=timezone.now())
 
             if data_date.cook:
 
@@ -44,7 +44,7 @@ def home_page(request):
             else:
                 eetlijst_info = ['Geen', data_date.num_eating, eating_with, data_date.open]
 
-        except DateList.DoesNotExist:
+        except Dinner.DoesNotExist:
             eetlijst_info = ['Geen', 0, 0, True]
 
         today = timezone.now()

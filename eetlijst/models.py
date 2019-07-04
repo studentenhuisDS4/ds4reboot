@@ -4,7 +4,7 @@ from django.db import models
 
 
 # model for eetlijst date logging
-class DateList(models.Model):
+class Dinner(models.Model):
     cook = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     signup_time = models.DateTimeField(null=True)
     close_time = models.DateTimeField(null=True)
@@ -17,14 +17,15 @@ class DateList(models.Model):
 
 
 # model for eetlijst signup logging
-class UserList(models.Model):
+class UserDinner(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(default=timezone.now)
+    count = models.IntegerField(default=0)
+    is_cook = models.BooleanField(default=False)
+    split_cost = models.DecimalField(null=True, max_digits=5, decimal_places=2)
 
-    list_date = models.DateField()
-    list_cook = models.BooleanField(default=False)
-    list_count = models.IntegerField(default=0)
-    list_cost = models.DecimalField(null=True, max_digits=5, decimal_places=2)
+    dinner = models.ForeignKey(Dinner, on_delete=models.CASCADE, null=True)
+    dinner_date = models.DateField()
 
 
 # model for transfer logging

@@ -1,6 +1,7 @@
 import traceback
 
 from django.contrib.auth.models import User
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
@@ -49,7 +50,8 @@ class TurfViewSet(ListModelMixin,
 
                 # Return turf and housemate data
                 return Response(
-                    {'status': 'success', 'result': serializer.validated_data, 'housemate': hm_json.data})
+                    {'status': 'success', 'result': serializer.validated_data, 'housemate': hm_json.data},
+                    status=status.HTTP_201_CREATED)
         except Exception as e:
             tb = traceback.format_exc()
             return log_exception(e, tb)

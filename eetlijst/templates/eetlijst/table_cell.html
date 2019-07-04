@@ -5,25 +5,25 @@
     {% get_dict user_date_entries u.user.id d.1 as success %}
 
     <span class="td-signups" style="display: inline-block;">
-        {% if success.list_cost != None %} {{ success.list_cost }} {% endif %}
+        {% if success.split_cost != None %} {{ success.split_cost }} {% endif %}
     </span>
     <span style="display: inline-block;">
-        {% if success.list_cost != None %} <span class="td-bracket"> ( </span> {% endif %}
+        {% if success.split_cost != None %} <span class="td-bracket"> ( </span> {% endif %}
         <img class="td-cook
-        {% if success == 0 or success.list_cook == 0 %} eetlijst-item-hidden {% endif %}"
+        {% if success == 0 or success.is_cook == 0 %} eetlijst-item-hidden {% endif %}"
              src="/static/img/chefs_hat.png"
              alt=""
              style="{% if d.1|cost:u.user.id == 0 %} margin-top: -4px;{% else %}margin-top: -3px; width: 12px; height: 12px;{% endif %}" />
         <i class="td-enroll uk-icon-times
-        {% if success.list_count == 0 or success == 0 %} eetlijst-item-hidden {% endif %}
-        {% if success.list_cost == None %} uk-icon-small{% endif %}" > </i>
+        {% if success.count == 0 or success == 0 %} eetlijst-item-hidden {% endif %}
+        {% if success.split_cost == None %} uk-icon-small{% endif %}" > </i>
         <span class="td-count
-        {% if success.list_count == 0 %} eetlijst-item-hidden {% endif %}
-        {% if success.list_cost == None %} uk-text-small {% endif %} ">
-            {% if success.list_count > 1 %}
-                {{ success.list_count }}
+        {% if success.count == 0 %} eetlijst-item-hidden {% endif %}
+        {% if success.split_cost == None %} uk-text-small {% endif %} ">
+            {% if success.count > 1 %}
+                {{ success.count }}
             {% endif %}
         </span>
-        {% if success.list_cost != None %} <span class="td-bracket"> ) </span> {% endif %}
+        {% if success.split_cost != None %} <span class="td-bracket"> ) </span> {% endif %}
     </span>
 </td>

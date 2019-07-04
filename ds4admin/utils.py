@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.datetime_safe import datetime
 
-from eetlijst.models import DateList, UserList
+from eetlijst.models import Dinner, UserDinner
 from thesau.models import Report
 from user.models import Housemate
 
@@ -41,10 +41,10 @@ def send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['thesa
 
 
 def check_dinners(request):
-    open_days = DateList.objects.filter(open=False, cost__exact=None)
+    open_days = Dinner.objects.filter(open=False, cost__exact=None)
     general_open_dinners = dict()
     for day in open_days:
-        userlist_day = UserList.objects.filter(list_date=day.date)
+        userlist_day = UserDinner.objects.filter(dinner_date=day.date)
         if userlist_day is not None:
             general_open_dinners[day] = userlist_day
 
@@ -52,7 +52,7 @@ def check_dinners(request):
 
 
 def check_moveout_dinners(request):
-    open_days = DateList.objects.filter(open=False, cost__exact=None)
+    open_days = Dinner.objects.filter(open=False, cost__exact=None)
     moveout_list = Housemate.objects.filter(moveout_set=1).order_by('moveout_date')
     moveout_open_dinners = dict()
 
@@ -70,7 +70,7 @@ def check_moveout_dinners(request):
                 moveout_pending.append(h)
 
                 for day in open_days:
-                    userlist_day = UserList.objects.filter(list_date=day.date, user_id=h.user_id).first()
+                    userlist_day = UserDinner.objects.filter(dinner_date=day.date, user_id=h.user_id).first()
                     if userlist_day is not None:
                         user_cost_days.append(day)
                         if day.cook.is_active:
@@ -88,10 +88,10 @@ def check_moveout_dinners(request):
 
 
 def check_dinners_housemate(request, hm):
-    open_days = DateList.objects.filter(open=False, cost__exact=None)
+    open_days = Dinner.objects.filter(open=False, cost__exact=None)
     open_days_user = []
     for day in open_days:
-        userlist_day = UserList.objects.filter(list_date=day.date, user_id=hm.user_id)
+        userlist_day = UserDinner.objects.filter(dinner_date=day.date, user_id=hm.user_id)
         if len(userlist_day) == 1:
             open_days_user.append(day)
     return open_days_user
