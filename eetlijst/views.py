@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
-from eetlijst.models import HOLog, Transfer, Dinner, UserDinner
+from eetlijst.models import HOLog, Transfer, UserDinner, Dinner
 from user.models import Housemate
 
 
@@ -313,6 +313,9 @@ def enroll(request):
         user_entry, user_created = UserDinner.objects.get_or_create(user=enroll_user.user, dinner_date=enroll_date)
         date_entry, date_created = Dinner.objects.get_or_create(date=enroll_date)
 
+        if not user_entry.dinner:
+            user_entry.dinner = date_entry
+
         # modify models as appropriate
         if enroll_type == 'signup':
             user_entry.count += 1
@@ -416,7 +419,8 @@ def close(request):
                     # if open
                     if date_entry.open:
                         if date_entry.num_eating <= 1:
-                            messages.error(request, "You can't cook for yourself. I mean, you can, but dont be stoopid.")
+                            messages.error(request,
+                                           "You can't cook for yourself. I mean, you can, but dont be stoopid.")
                             return redirect(request.META.get('HTTP_REFERER'))
 
                         date_entry.open = False
