@@ -7,9 +7,7 @@ from rest_marshmallow import Schema, fields
 
 from bierlijst.models import Turf, Boete
 from ds4reboot.api.utils import Map, is_integer
-
 from ds4reboot.api.validators import UniqueModelValidator
-from user.models import Housemate
 
 BEER = 'beer'
 RWINE = 'red-wine'
@@ -53,6 +51,8 @@ class TurfSchema(Schema):
         turf_obj = Turf(**valid_data)
         turf_obj.save()
         return turf_obj
+
+    # def update(self, instance, validated_data):
 
 
 class BoeteSerializer(serializers.ModelSerializer):

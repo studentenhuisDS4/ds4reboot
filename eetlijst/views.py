@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
-from eetlijst.models import HOLog, Transfer, DateList, UserList
+from eetlijst.models import HOLog, Transfer, Dinner, UserDinner
 from user.models import Housemate
 
 
@@ -35,7 +35,7 @@ def index(request, year=None, month=None, day=None):
     focus_close_cost = False
     if request.user.is_authenticated:
         try:
-            open_costs = DateList.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by(
+            open_costs = Dinner.objects.filter(cook=request.user).filter(cost=None).filter(open=False).order_by(
                 'date')
 
             if open_costs:
@@ -57,7 +57,7 @@ def index(request, year=None, month=None, day=None):
             else:
                 user_open = False
 
-        except DateList.DoesNotExist:
+        except Dinner.DoesNotExist:
             user_open = False
 
     else:
@@ -65,9 +65,9 @@ def index(request, year=None, month=None, day=None):
 
     # get open/closed status for week and check for cook
     try:
-        focussed_date = DateList.objects.get(date=focus_date)
+        focussed_date = Dinner.objects.get(date=focus_date)
         focus_open = focussed_date.open
-        cook = DateList.objects.get(date=focus_date).cook
+        cook = Dinner.objects.get(date=focus_date).cook
 
         if cook:
             focus_cook = True
@@ -78,7 +78,7 @@ def index(request, year=None, month=None, day=None):
         else:
             focus_cook = False
 
-    except DateList.DoesNotExist:
+    except Dinner.DoesNotExist:
         focus_open = True
         focus_cook = False
 
@@ -90,9 +90,9 @@ def index(request, year=None, month=None, day=None):
         n_date = prev_monday + dt.timedelta(days=n)
 
         try:
-            open = DateList.objects.get(date=n_date).open
+            open = Dinner.objects.get(date=n_date).open
 
-        except DateList.DoesNotExist:
+        except Dinner.DoesNotExist:
             open = True
 
         if n_date == focus_date:
@@ -124,7 +124,7 @@ def index(request, year=None, month=None, day=None):
     date_entries = {}
     user_date_entries = {}
     for date in date_list:
-        date_entries[date] = UserList.objects.filter(list_date=date_list[date][1])
+        date_entries[date] = UserDinner.objects.filter(dinner_date=date_list[date][1])
         for entry in date_entries[date]:
             user_date_entries[(entry.user_id, date_list[date][1])] = entry
 
@@ -310,27 +310,27 @@ def enroll(request):
         enroll_type = request.POST.get('enroll_type')
 
         # get or create rows as necessary
-        user_entry, user_created = UserList.objects.get_or_create(user=enroll_user.user, list_date=enroll_date)
-        date_entry, date_created = DateList.objects.get_or_create(date=enroll_date)
+        user_entry, user_created = UserDinner.objects.get_or_create(user=enroll_user.user, dinner_date=enroll_date)
+        date_entry, date_created = Dinner.objects.get_or_create(date=enroll_date)
 
         # modify models as appropriate
         if enroll_type == 'signup':
-            user_entry.list_count += 1
+            user_entry.count += 1
             date_entry.num_eating += 1
-            type_amount = user_entry.list_count
+            type_amount = user_entry.count
             if date_entry.open:
-                if user_entry.list_count == 1:
+                if user_entry.count == 1:
                     success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
                 else:
                     success_message = '%s is %s keer ingeschreven.' % (
-                        str(enroll_user).capitalize(), int(user_entry.list_count))
+                        str(enroll_user).capitalize(), int(user_entry.count))
             else:
                 # TODO: restyle instead of suggesting to refresh
                 return HttpResponse(JsonResponse(
                     {'result': 'The list is closed already. Please refresh page.', 'status': 'failure'}))
         elif enroll_type == 'sponge':
-            date_entry.num_eating -= user_entry.list_count
-            user_entry.list_count = 0
+            date_entry.num_eating -= user_entry.count
+            user_entry.count = 0
             if date_entry.open:
                 success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
                 type_amount = 0
@@ -342,14 +342,14 @@ def enroll(request):
             if date_entry.cook and not date_entry.cook == enroll_user.user:
                 return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'failure'}))
             elif date_entry.cook == enroll_user.user:
-                user_entry.list_cook = False
+                user_entry.is_cook = False
                 date_entry.num_eating -= 1
                 date_entry.cook = None
                 date_entry.signup_time = None
                 success_message = '%s kookt niet meer.' % (str(enroll_user).capitalize())
                 type_amount = 0
             else:
-                user_entry.list_cook = True
+                user_entry.is_cook = True
                 date_entry.signup_time = timezone.now()
                 date_entry.cook = enroll_user.user
                 date_entry.num_eating += 1
@@ -363,7 +363,7 @@ def enroll(request):
         date_entry.save()
 
         # clean up if necessary
-        if user_entry.list_count == 0 and user_entry.list_cook == False:
+        if user_entry.count == 0 and user_entry.is_cook == False:
             user_entry.delete()
 
         if date_entry.num_eating == 0:
@@ -404,7 +404,7 @@ def close(request):
         date = request.POST.get('close-date')
 
         # get or create rows as necessary
-        date_entry, date_created = DateList.objects.get_or_create(date=date)
+        date_entry, date_created = Dinner.objects.get_or_create(date=date)
 
         if date_entry.cook:
 
@@ -424,7 +424,7 @@ def close(request):
                         date_entry.save()
 
                         # Build up allergy string
-                        userlist_entries = UserList.objects.filter(list_date=date)
+                        userlist_entries = UserDinner.objects.filter(dinner_date=date)
                         allergy_status = ""
 
                         for userlist_entry in userlist_entries:
@@ -464,20 +464,20 @@ def close(request):
 
                 # update userlist objects
                 try:
-                    users_enrolled = UserList.objects.filter(list_date=date_entry.date)
-                except UserList.DoesNotExist:
+                    users_enrolled = UserDinner.objects.filter(dinner_date=date_entry.date)
+                except UserDinner.DoesNotExist:
                     messages.error(request, 'No users signed up for selected date.')
                     return redirect(request.META.get('HTTP_REFERER'))
 
                 for u in users_enrolled:
                     h = Housemate.objects.get(user=u.user)
 
-                    h.balance -= u.list_count * split_cost
+                    h.balance -= u.count * split_cost
 
-                    if u.list_cook:
+                    if u.is_cook:
                         h.balance -= split_cost
 
-                    u.list_cost = None
+                    u.split_cost = None
 
                     u.save()
                     h.save()
@@ -530,9 +530,9 @@ def cost(request):
 
         # get or create rows as necessary
         try:
-            date_entry = DateList.objects.get(date=date)
+            date_entry = Dinner.objects.get(date=date)
 
-        except DateList.DoesNotExist:
+        except Dinner.DoesNotExist:
             messages.error(request, 'No vaild entry for date.')
             return redirect(request.META.get('HTTP_REFERER'))
         if date_entry.num_eating <= 1:
@@ -541,8 +541,8 @@ def cost(request):
             return redirect(request.META.get('HTTP_REFERER'))
 
         try:
-            users_enrolled = UserList.objects.filter(list_date=date)
-        except UserList.DoesNotExist:
+            users_enrolled = UserDinner.objects.filter(dinner_date=date)
+        except UserDinner.DoesNotExist:
             messages.error(request, 'No users signed up for selected date.')
             return redirect(request.META.get('HTTP_REFERER'))
 
@@ -576,12 +576,12 @@ def cost(request):
                 for u in users_enrolled:
                     h = Housemate.objects.get(user=u.user)
 
-                    h.balance -= u.list_count * split_cost
-                    u.list_cost = -1 * u.list_count * split_cost
+                    h.balance -= u.count * split_cost
+                    u.split_cost = -1 * u.count * split_cost
 
-                    if u.list_cook:
+                    if u.is_cook:
                         h.balance -= split_cost
-                        u.list_cost = cost_amount - split_cost * (1 + u.list_count)
+                        u.split_cost = cost_amount - split_cost * (1 + u.count)
 
                     u.save()
                     h.save()

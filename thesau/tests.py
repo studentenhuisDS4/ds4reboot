@@ -12,7 +12,7 @@ from django.utils.datetime_safe import datetime
 from rainbowtests import colors
 
 import eetlijst
-from eetlijst.models import DateList, UserList
+from eetlijst.models import Dinner, UserDinner
 from thesau.models import Report, BoetesReport
 from thesau.urls import urlpatterns
 from user.models import Housemate
@@ -53,8 +53,8 @@ class ThesauTest(TestCase):
         User.objects.filter(username='pietje2').delete()
         User.objects.filter(username='pietje3').delete()
         User.objects.filter(username='huis').delete()
-        DateList.objects.all().delete()
-        UserList.objects.all().delete()
+        Dinner.objects.all().delete()
+        UserDinner.objects.all().delete()
         BoetesReport.objects.all().delete()
 
     def test_static_responses(self):
@@ -75,16 +75,16 @@ class ThesauTest(TestCase):
         week_ago = datetime.now() - timedelta(days=7)
 
         # add users (normal, cook) to dinner entries
-        dinnerpietje = UserList.objects.create(list_date=week_ago, user=self.user)
-        dinnerpietje.list_cook = True
+        dinnerpietje = UserDinner.objects.create(dinner_date=week_ago, user=self.user)
+        dinnerpietje.is_cook = True
         dinnerpietje.save()
 
-        dinnerpietje2 = UserList.objects.create(list_date=week_ago, user=self.user2)
-        dinnerpietje2.list_count = 1
+        dinnerpietje2 = UserDinner.objects.create(dinner_date=week_ago, user=self.user2)
+        dinnerpietje2.count = 1
         dinnerpietje2.save()
 
         # add cook to date
-        date = DateList.objects.create(date=week_ago)
+        date = Dinner.objects.create(date=week_ago)
         date.cook = self.user
         date.num_eating = 2
         date.save()
@@ -109,7 +109,7 @@ class ThesauTest(TestCase):
         data2 = {
             'housemate': self.hm_pietje2.user_id,
         }
-        response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/thesau/')
+        response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/admin/')
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 200)
         self.hm_pietje2.refresh_from_db()
@@ -126,13 +126,13 @@ class ThesauTest(TestCase):
         self.assert_total_balance()
 
         print(colors.yellow("Submitting HR"))
-        response = self.client.post(self.hr_url, follow=True, HTTP_REFERER='/thesau/')
+        response = self.client.post(self.hr_url, follow=True, HTTP_REFERER='/admin/')
         self.assert_total_balance()
 
         data2 = {
             'housemate': self.hm_pietje2.user_id,
         }
-        response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/thesau/')
+        response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/admin/')
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 200)
         self.hm_pietje2.refresh_from_db()

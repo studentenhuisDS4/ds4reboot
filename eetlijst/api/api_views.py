@@ -7,11 +7,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from eetlijst.api.api import DinnerSchema
-from eetlijst.models import DateList
+from eetlijst.models import Dinner
 
 
 class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
-    queryset = DateList.objects.order_by('-date')
+    queryset = Dinner.objects.order_by('-date')
     serializer_class = DinnerSchema
 
     @action(detail=True, methods=['post'])
@@ -38,14 +38,14 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 # Week list
 class DinnerWeekViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = DinnerSchema
-    queryset = DateList.objects.order_by('-date')
+    queryset = Dinner.objects.order_by('-date')
 
     def get_queryset(self):
         """
         This view should return a list of all dinners
         entered this week.
         """
-        return DateList.objects \
+        return Dinner.objects \
             .filter(date__gte=datetime.now() - timedelta(days=datetime.now().weekday())) \
             .filter(date__lte=datetime.now() + timedelta(days=(7 - datetime.now().weekday()))) \
             .order_by('date')
