@@ -4,6 +4,7 @@ import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/form
 import {ErrorStateMatcher} from '@angular/material';
 import {Router} from '@angular/router';
 import {environment} from '../../environments/environment';
+import {SnackBarService} from '../services/snackBar.service';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -41,7 +42,9 @@ export class LoginComponent implements OnInit {
         }
     }
 
-    constructor(private authService: AuthService, private router: Router) {
+    constructor(private authService: AuthService,
+                private router: Router,
+                private snackBarService: SnackBarService) {
     }
 
     ngOnInit() {
@@ -62,14 +65,25 @@ export class LoginComponent implements OnInit {
                     this.router.navigate(['home']);
                     this.awaitingLogin = false;
                 }, (error => {
+                    this.snackBarService.openSnackBar('asd', 'asd');
                     if (environment.debug) {
                         console.log('Login panel error', error);
                     }
-                    if (error.status === 0) {
-                        this.state = 'Server did not respond!';
-                    } else if (error.status === 400) {
-                        this.state = 'Server responded with an error:';
-                        this.stateSecondary = error.error.non_field_errors[0];
+
+                    if (error.status !== 400) {
+                        if (error.status === 0) {
+                            this.state = 'Server did not respond!';
+                        } else if (error.status === 400) {
+                            this.state = 'Server responded with an error:';
+                            this.stateSecondary = error.error.non_field_errors[0];
+                        }
+                    } else {
+                        if (error.error && error.error.non_field_errors) {
+                            this.state = error.error.non_field_errors[0];
+                        } else {
+                            this.state = 'Server didnt accept this login. We sent a report to fix this!';
+                            //  TODO log error
+                        }
                     }
                     this.awaitingLogin = false;
                 }));

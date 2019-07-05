@@ -4,7 +4,7 @@ import {TurfType} from '../models/turf.model';
 import {ProfileService} from '../services/profile.service';
 import {IProfile} from '../models/profile.model';
 import {IStatus} from '../models/api.model';
-import {MatSnackBar} from '@angular/material';
+import {SnackBarService} from '../services/snackBar.service';
 
 @Component({
     selector: 'app-turf-list',
@@ -14,7 +14,9 @@ import {MatSnackBar} from '@angular/material';
 export class TurfListComponent implements OnInit {
     user: IProfile = null;
 
-    constructor(private turfListService: TurfListService, private profileService: ProfileService, private snackBar: MatSnackBar) {
+    constructor(private turfListService: TurfListService,
+                private profileService: ProfileService,
+                private snackBarService: SnackBarService) {
         this.profileService.getProfile().then(result => {
             this.user = result;
         });
@@ -32,15 +34,8 @@ export class TurfListComponent implements OnInit {
         }).then(result => {
             if (result.status === IStatus.SUCCESS) {
                 this.user.housemate = result.housemate;
-                this.openSnackBar(`Turved 1 beer. Total: ${this.user.housemate.sum_bier}`, 'Ok');
+                this.snackBarService.openSnackBar(`Turved 1 beer. Total: ${this.user.housemate.sum_bier}`, 'Ok');
             }
-        });
-    }
-
-    openSnackBar(message: string, action: string) {
-        this.snackBar.open(message, action, {
-            duration: 2000,
-            verticalPosition: 'top',
         });
     }
 
