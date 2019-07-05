@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         Dinner = apps.get_model('eetlijst', 'Dinner')
         for user_dinner in UserDinner.objects.all():
             try:
-                dinner = Dinner.objects.get(date=user_dinner.dinner_date)
+                dinner = Dinner.objects.get(date=user_dinner.list_date)
                 user_dinner.dinner = dinner
                 user_dinner.save()
             except Exception as e:

@@ -1,5 +1,7 @@
+from marshmallow import post_dump, pre_dump
 from rest_marshmallow import Schema, fields
 
+from ds4reboot.api.fields import RelatedNested
 from user.api.api import UserInfoSchema
 
 
@@ -7,7 +9,7 @@ class UserDinnerSchema(Schema):
     id = fields.Int()
     user = fields.Nested(UserInfoSchema)
 
-    dinner_date = fields.DateTime()
+    dinner_date = fields.Date()
     is_cook = fields.Bool()
     count = fields.Int()
 
@@ -36,9 +38,8 @@ class DinnerSchema(Schema):
 
     date = fields.Date(required=True)
     num_eating = fields.Int()
-    userlist_set = fields.Nested(UserDinnerSchema, many=True)
+    userdinner_set = RelatedNested(UserDinnerSchema, many=True)
     cook = fields.Nested(UserInfoSchema)
-    # cook_id = fields.Int(validate=[UniqueModelValidator(type=User)])
     open = fields.Bool()
     cost = fields.Decimal()
 
