@@ -48,9 +48,9 @@ export class AuthService {
         }
     }
 
-    public sendAuth(username: string, password: string) {
+    public sendAuth(usernameOrEmail: string, password: string) {
         return this.httpClient.post<any>(`${this.API_URL}/auth-jwt/`, {
-            username, password
+            'username-or-email': usernameOrEmail, password
         }).pipe(
             tap(result => localStorage.setItem('token', result.token.toString()),
                 e => {
