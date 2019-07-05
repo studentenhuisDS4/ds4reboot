@@ -165,6 +165,13 @@ def login_user(request):
         username = request.POST['username']
         password = request.POST['password']
 
+        try:
+            findUser = User._default_manager.get(username__iexact=username)
+        except User.DoesNotExist:
+            findUser = None
+        if findUser is not None:
+            caseSensitiveUsername = findUser.get_username
+
         user = authenticate(username=username, password=password)
 
         if not user:
