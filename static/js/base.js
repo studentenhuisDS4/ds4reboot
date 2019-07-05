@@ -170,7 +170,7 @@ $(document).ready(function () {
                 url_ext = Math.floor((Math.random() * 13*5) + 1);
             }
 
-            currAudio.volume = 1;
+            currAudio.volume = 0.5;
             if (url_ext <= 13) {
                 last_file = url_ext;
 
