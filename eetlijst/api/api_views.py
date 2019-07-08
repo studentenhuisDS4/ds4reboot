@@ -1,9 +1,15 @@
+import traceback
 from datetime import timedelta
 
+from django.db.models import Sum
 from django.utils.datetime_safe import datetime
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
+from ds4reboot.api.utils import log_validation_errors, log_exception, Map
 from eetlijst.api.api import DinnerSchema, UserDinnerSchema
 from eetlijst.models import Dinner, UserDinner
 
@@ -13,9 +19,76 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     serializer_class = DinnerSchema
 
 
-class UserDinnerViewSet(ModelViewSet):
+class UserDinnerViewSet(ListModelMixin, GenericViewSet):
     queryset = UserDinner.objects.order_by('-dinner_date')
     serializer_class = UserDinnerSchema
+
+    default_status = status.HTTP_200_OK
+    return_status = default_status
+
+    @action(detail=False, methods=['post'])
+    def signup(self, request):
+        self.return_status = self.default_status
+
+        try:
+            serializer = UserDinnerSchema(data=request.data)
+            if not serializer.is_valid():
+                return log_validation_errors(serializer.errors)
+
+            # actual action
+            user_dinner, created = serializer.save()
+            user_dinner.count += 1
+            user_dinner.save()
+            dinner, user_dinners = self.__update_dinner(user_dinner)
+
+            if created:
+                self.return_status = status.HTTP_201_CREATED
+
+            return Response(
+                {'status': 'success', 'result': {'dinner': DinnerSchema(dinner).data}}, status=self.return_status)
+        except Exception as e:
+            print(e)
+            print(traceback.format_exc())
+            return log_exception(e)
+
+    @action(detail=False, methods=['post'])
+    def signoff(self, request):
+        self.return_status = self.default_status
+
+        try:
+            serializer = UserDinnerSchema(data=request.data)
+            if not serializer.is_valid():
+                return log_validation_errors(serializer.errors)
+
+            # actual action
+            user_dinner, created = serializer.save()
+            user_dinner.count = 0
+            user_dinner.save()
+            print(user_dinner.count, 'asd')
+            dinner, user_dinners = self.__update_dinner(user_dinner)
+
+            if created:
+                self.return_status = status.HTTP_201_CREATED
+
+            return Response(
+                {'status': 'success', 'result': {'dinner': DinnerSchema(dinner).data}}, status=self.return_status)
+        except Exception as e:
+            print(e)
+            print(traceback.format_exc())
+            return log_exception(e)
+
+    def __update_dinner(self, input):
+        # Collect and update
+        user_dinners = UserDinner.objects.filter(dinner_date=input.dinner_date)
+        user_dinners.filter(count__exact=0).delete()
+
+        total = user_dinners.aggregate(total=Sum('count'))['total']
+        dinner, created_dinner = Dinner.objects.get_or_create(date=user_dinners[0].dinner_date)
+        dinner.num_eating = total
+        dinner.save()
+        user_dinners.update(dinner=dinner)
+
+        return dinner, user_dinners
 
 
 # Week list

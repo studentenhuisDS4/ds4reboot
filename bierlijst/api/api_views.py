@@ -57,13 +57,13 @@ class TurfViewSet(ListModelMixin,
             tb = traceback.format_exc()
             return log_exception(e, tb)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=True, methods=['post'])
     def turf_edit(self, request):
         input = request
         # (success, data) = self.save_turf_data(request)
         return Response({'status': 'under-construction', 'amount': 0})
 
-    @action(detail=False, methods=['post'])
+    @action(detail=True, methods=['post'])
     def turf_remove(self, request):
         input = request
         # (success, data) = self.save_turf_data(request)

@@ -1,5 +1,6 @@
 import traceback
 
+from rest_framework import status
 from rest_framework.exceptions import ValidationError, APIException
 from rest_framework.response import Response
 
@@ -51,12 +52,12 @@ def log_exception(e, tb=None):
     if DEBUG:
         print(e)
     if tb:
-        return APIException({'exception': str(e), 'traceback': tb})
+        return Response({'exception': str(e), 'traceback': tb}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
-        return APIException({'exception': str(e)})
+        return Response({'exception': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def log_validation_errors(errors):
     if DEBUG:
         print(errors)
-    return ValidationError({'errors': errors})
+    return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)

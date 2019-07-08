@@ -45,15 +45,16 @@ class TurfSchema(Schema):
             errors['turf_count'] = ['Value of turf_count must have less than or equal to 2 decimal places.']
         if errors:
             raise ValidationError(errors)
-        print(type(data.turf_count))
 
     def create(self, valid_data, *args, **kwargs):
         turf_obj = Turf(**valid_data)
         turf_obj.save()
         return turf_obj
 
-    # def update(self, instance, validated_data):
-    # TODO
+    # def update(self, valid_data, *args, **kwargs):
+    #     turf_obj = Turf.objects.filter(**valid_data)
+    #     turf_obj.save()
+    #     return turf_obj
 
 
 class BoeteSerializer(serializers.ModelSerializer):
