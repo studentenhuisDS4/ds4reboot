@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from django.utils import timezone
 from django.db import models
+from django.utils import timezone
 
 
 # model to account for turfing beer/wine
@@ -32,11 +32,3 @@ class Boete(models.Model):
 
     boete_count = models.IntegerField(default=1)
     boete_note = models.CharField(max_length=100)
-
-
-# model for plotly streaming tokens
-#
-# class StreamingToken(models.Model):
-#
-#     token = models.CharField(max_length=10)
-#     token_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

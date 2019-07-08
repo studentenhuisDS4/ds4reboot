@@ -12,6 +12,7 @@ from ds4reboot import settings
 from ds4reboot.api.auth import CustomJWTSerializer
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_views import DinnerViewSet, DinnerWeekViewSet
+from organisation.api.api_views import KeukenDienstViewSet
 from user.api.api_views import ProfileViewSet, FullProfileViewSet
 
 router = DefaultRouter()
@@ -21,6 +22,7 @@ router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
 router.register(r'profile', ProfileViewSet, basename='Profile')
 router.register(r'profile-full', FullProfileViewSet, basename='Full profile')
+router.register(r'keukendienst', KeukenDienstViewSet, basename='Keukendienst')
 
 urlpatterns = \
     [

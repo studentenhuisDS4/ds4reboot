@@ -6,9 +6,11 @@
 
 
     <table>
-        {% for r in active_users %}
+        {% for r in keukendiensts %}
             <tr>
-                <td>{{ r.housemate.display_name }}</td>
+                <td>{{ r.deadline }}</td>
+                <td>{{ r.done }}</td>
+                <td>{{ r.user.housemate.display_name }}</td>
             </tr>
         {% endfor %}
     </table>
