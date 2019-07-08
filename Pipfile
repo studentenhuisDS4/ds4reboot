@@ -17,7 +17,7 @@ djangorestframework = "*"
 djangorestframework_jwt = "*"
 django-cors-headers = "==3.0.2"
 django-rest-marshmallow = "==4.0.0"
-marshmallow = "==3.0.0rc8"
+marshmallow = "==2.19.5"
 
 [requires]
 python_version = "3.7"

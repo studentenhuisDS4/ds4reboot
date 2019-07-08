@@ -53,6 +53,7 @@ class TurfSchema(Schema):
         return turf_obj
 
     # def update(self, instance, validated_data):
+    # TODO
 
 
 class BoeteSerializer(serializers.ModelSerializer):

@@ -1,5 +1,6 @@
 import traceback
 
+from rest_framework.exceptions import ValidationError, APIException
 from rest_framework.response import Response
 
 from ds4reboot.secret_settings import DEBUG
@@ -45,14 +46,17 @@ def is_integer(decimal):
     return decimal % 1 == 0
 
 
-def log_exception(e, tb):
+def log_exception(e, tb=None):
     # TODO log
     if DEBUG:
         print(e)
-    return Response({'exception': str(e), 'traceback': tb})
+    if tb:
+        return APIException({'exception': str(e), 'traceback': tb})
+    else:
+        return APIException({'exception': str(e)})
 
 
 def log_validation_errors(errors):
     if DEBUG:
         print(errors)
-    return Response({'errors': errors})
+    return ValidationError({'errors': errors})

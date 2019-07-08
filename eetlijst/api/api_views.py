@@ -1,38 +1,21 @@
 from datetime import timedelta
 
 from django.utils.datetime_safe import datetime
-from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from eetlijst.api.api import DinnerSchema
-from eetlijst.models import Dinner
+from eetlijst.api.api import DinnerSchema, UserDinnerSchema
+from eetlijst.models import Dinner, UserDinner
 
 
 class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     queryset = Dinner.objects.order_by('-date')
     serializer_class = DinnerSchema
 
-    @action(detail=True, methods=['post'])
-    def signup(self, request, pk=None):
-        print(pk)
-        return Response({'status': 'under-construction', 'amount': 1})
 
-    @action(detail=True, methods=['post'])
-    def cook(self, request, pk=None):
-        print(pk)
-        return Response({'status': 'under-construction', 'amount': 1})
-
-    @action(detail=True, methods=['post'])
-    def close(self, request, pk=None):
-        print(pk)
-        return Response({'status': 'under-construction', 'amount': 1})
-
-    @action(detail=True, methods=['post'])
-    def cost(self, request, pk=None):
-        print(pk)
-        return Response({'status': 'under-construction', 'cost': 1})
+class UserDinnerViewSet(ModelViewSet):
+    queryset = UserDinner.objects.order_by('-dinner_date')
+    serializer_class = UserDinnerSchema
 
 
 # Week list
