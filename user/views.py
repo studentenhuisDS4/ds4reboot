@@ -1,11 +1,10 @@
-from django.contrib.auth.models import User
-from user.models import Housemate
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import redirect
 from django.contrib import messages
-import json
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.shortcuts import redirect
+from django.shortcuts import render
+
+from user.models import Housemate
 
 
 # display users index
@@ -162,20 +161,20 @@ def login_user(request):
     if request.method == 'POST':
 
         # get credentials from post and authenticate user
-        username = request.POST['username'].lower()
+        username_or_email = request.POST['username'].lower()
         password = request.POST['password']
 
         try:
-            findUser = User._default_manager.get(username__iexact=username)
+            findUser = User.objects.get(username__iexact=username_or_email)
         except User.DoesNotExist:
-            findUser = None
-        if findUser is not None:
-            caseSensitiveUsername = findUser.get_username
+            try:
+                findUser = User.objects.get(email__iexact=username_or_email)
+            except User.DoesNotExist:
+                findUser = None
 
-        user = authenticate(username=username, password=password)
-
-        if not user:
-            user = authenticate(username=username.lower(), password=password)
+        user = authenticate(username=username_or_email, password=password)
+        if not user and findUser is not None:
+            user = authenticate(username=findUser.get_username(), password=password)
 
         if user:
             if user.is_active:
