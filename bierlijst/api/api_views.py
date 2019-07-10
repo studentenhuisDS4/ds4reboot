@@ -55,6 +55,7 @@ class TurfViewSet(ListModelMixin,
                     status=status.HTTP_201_CREATED)
         except Exception as e:
             tb = traceback.format_exc()
+            print(tb)
             return log_exception(e, tb)
 
     @action(detail=True, methods=['post'])

@@ -41,8 +41,8 @@ class TurfSchema(Schema):
             errors['turf_count'] = ['Value of turf_count cannot be 0.']
         elif data.turf_type == BEER and not is_integer(data.turf_count):
             errors['turf_count'] = ['Value of turf_count must be integer for this turf_type.']
-        elif data.turf_type != BEER and data.turf_count.as_tuple().exponent < -2:
-            errors['turf_count'] = ['Value of turf_count must have less than or equal to 2 decimal places.']
+        # elif data.turf_type != BEER and data.turf_count.as_tuple().exponent < -2:
+        #     errors['turf_count'] = ['Value of turf_count must have less than or equal to 2 decimal places.']
         if errors:
             raise ValidationError(errors)
 
