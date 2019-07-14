@@ -348,12 +348,12 @@ def enroll(request):
                 user_entry.is_cook = False
                 date_entry.num_eating -= 1
                 date_entry.cook = None
-                date_entry.signup_time = None
+                date_entry.cook_signup_time = None
                 success_message = '%s kookt niet meer.' % (str(enroll_user).capitalize())
                 type_amount = 0
             else:
                 user_entry.is_cook = True
-                date_entry.signup_time = timezone.now()
+                date_entry.cook_signup_time = timezone.now()
                 date_entry.cook = enroll_user.user
                 date_entry.num_eating += 1
                 success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())

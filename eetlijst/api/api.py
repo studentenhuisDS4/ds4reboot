@@ -4,31 +4,10 @@ from marshmallow.validate import Range
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema, fields
 
-from ds4reboot.api.fields import RelatedNested
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import UniqueModelValidator
 from eetlijst.models import UserDinner
 from user.api.api import UserInfoSchema
-
-
-class UserDinnerSchema(Schema):
-    pass
-
-
-class DinnerSchema(Schema):
-    id = fields.Int()
-
-    date = fields.Date(required=True)
-    num_eating = fields.Int()
-    # userdinner_set = RelatedNested(UserDinnerSchema, many=True)  # throws Marshmallow error (unknown partial)
-    userdinners = fields.Function(lambda dinner: UserDinnerSchema(dinner.userdinner_set.all(), many=True).data)
-    cook = fields.Nested(UserInfoSchema)
-    open = fields.Bool()
-    cost = fields.Decimal()
-
-    signup_time = fields.DateTime()
-    close_time = fields.DateTime()
-    eta_time = fields.DateTime()
 
 
 class UserDinnerSchema(Schema):
@@ -55,3 +34,18 @@ class UserDinnerSchema(Schema):
 
     def update(self, instance, validated_data):
         return instance, False
+
+
+class DinnerSchema(Schema):
+    id = fields.Int()
+
+    date = fields.Date()
+    num_eating = fields.Int()
+    userdinners = fields.Function(lambda dinner: UserDinnerSchema(dinner.userdinner_set.all(), many=True).data)
+    cook = fields.Nested(UserInfoSchema)
+    open = fields.Bool()
+    cost = fields.Decimal()
+
+    cook_signup_time = fields.DateTime()
+    close_time = fields.DateTime()
+    eta_time = fields.DateTime()
