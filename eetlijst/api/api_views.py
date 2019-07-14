@@ -45,7 +45,12 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
                 self.return_status = status.HTTP_201_CREATED
 
             return Response(
-                {'status': 'success', 'result': {'dinner': DinnerSchema(dinner).data}}, status=self.return_status)
+                {'status': 'success',
+                 'result': {
+                     'dinner': DinnerSchema(dinner).data,
+                     'user_dinners': UserDinnerSchema(user_dinners, many=True, exclude=['dinner']).data
+                 }},
+                status=self.return_status)
         except Exception as e:
             print(e)
             print(traceback.format_exc())
@@ -64,29 +69,37 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             user_dinner, created = serializer.save()
             user_dinner.count = 0
             user_dinner.save()
-            print(user_dinner.count, 'asd')
-            dinner, user_dinners = self.__update_dinner(user_dinner)
 
+            dinner, user_dinners = self.__update_dinner(user_dinner)
             if created:
                 self.return_status = status.HTTP_201_CREATED
 
             return Response(
-                {'status': 'success', 'result': {'dinner': DinnerSchema(dinner).data}}, status=self.return_status)
+                {'status': 'success',
+                 'result': {
+                     'dinner': DinnerSchema(dinner).data,
+                     'user_dinners': UserDinnerSchema(user_dinners, many=True, exclude=['dinner']).data
+                 }},
+                status=self.return_status)
         except Exception as e:
             print(e)
             print(traceback.format_exc())
             return log_exception(e)
 
-    def __update_dinner(self, input):
+    def __update_dinner(self, input_ud):
         # Collect and update
-        user_dinners = UserDinner.objects.filter(dinner_date=input.dinner_date)
+        user_dinners = UserDinner.objects.filter(dinner_date=input_ud.dinner_date)
         user_dinners.filter(count__exact=0).delete()
 
         total = user_dinners.aggregate(total=Sum('count'))['total']
-        dinner, created_dinner = Dinner.objects.get_or_create(date=user_dinners[0].dinner_date)
-        dinner.num_eating = total
-        dinner.save()
-        user_dinners.update(dinner=dinner)
+        dinner = None
+        if total:
+            dinner, created_dinner = Dinner.objects.get_or_create(date=input_ud.dinner_date)
+            dinner.num_eating = total
+            dinner.save()
+            user_dinners.update(dinner=dinner)
+        else:
+            Dinner.objects.filter(date=input_ud.dinner_date).delete()
 
         return dinner, user_dinners
 
