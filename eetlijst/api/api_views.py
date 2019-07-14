@@ -1,7 +1,7 @@
 import traceback
 from datetime import timedelta
 
-from django.db.models import Sum
+from django.db.models import Sum, Count, Case, When, Value
 from django.utils.datetime_safe import datetime
 from rest_framework import status
 from rest_framework.decorators import action
@@ -9,7 +9,7 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ds4reboot.api.utils import log_validation_errors, log_exception, Map
+from ds4reboot.api.utils import log_validation_errors, log_exception, Map, illegal_action
 from eetlijst.api.api import DinnerSchema, UserDinnerSchema
 from eetlijst.models import Dinner, UserDinner
 
@@ -39,7 +39,7 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             user_dinner, created = serializer.save()
             user_dinner.count += 1
             user_dinner.save()
-            dinner, user_dinners = self.__update_dinner(user_dinner)
+            dinner = self.__update_dinner(user_dinner)
 
             if created:
                 self.return_status = status.HTTP_201_CREATED
@@ -48,7 +48,6 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
                 {'status': 'success',
                  'result': {
                      'dinner': DinnerSchema(dinner).data,
-                     'user_dinners': UserDinnerSchema(user_dinners, many=True, exclude=['dinner']).data
                  }},
                 status=self.return_status)
         except Exception as e:
@@ -69,8 +68,8 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             user_dinner, created = serializer.save()
             user_dinner.count = 0
             user_dinner.save()
+            dinner = self.__update_dinner(user_dinner)
 
-            dinner, user_dinners = self.__update_dinner(user_dinner)
             if created:
                 self.return_status = status.HTTP_201_CREATED
 
@@ -78,30 +77,73 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
                 {'status': 'success',
                  'result': {
                      'dinner': DinnerSchema(dinner).data,
-                     'user_dinners': UserDinnerSchema(user_dinners, many=True, exclude=['dinner']).data
                  }},
                 status=self.return_status)
         except Exception as e:
-            print(e)
-            print(traceback.format_exc())
-            return log_exception(e)
+            return log_exception(e, tb=traceback.format_exc())
+
+    @action(detail=False, methods=['post'])
+    def cook(self, request):
+        self.return_status = self.default_status
+
+        try:
+            serializer = UserDinnerSchema(data=request.data)
+            if not serializer.is_valid():
+                return log_validation_errors(serializer.errors)
+
+            # actual action
+            user_dinner, created = serializer.save()
+            if request.data.get('signoff') and request.data['signoff']:
+                user_dinner.is_cook = False
+            else:
+                ddate = user_dinner.dinner_date
+                cook_dinner = UserDinner.objects.filter(dinner_date=ddate, is_cook=True).first()
+                if cook_dinner is None or cook_dinner.user == user_dinner.user:
+                    user_dinner.is_cook = not user_dinner.is_cook
+                    user_dinner.save()
+                else:
+                    return illegal_action(
+                        "{cook} is already signed up as cook.".format(cook=cook_dinner.user.housemate.display_name))
+
+            dinner = self.__update_dinner(user_dinner)
+            if created:
+                self.return_status = status.HTTP_201_CREATED
+
+            return Response(
+                {'status': 'success',
+                 'result': {
+                     'dinner': DinnerSchema(dinner).data,
+                 }},
+                status=self.return_status)
+        except Exception as e:
+            return log_exception(e, traceback.format_exc())
 
     def __update_dinner(self, input_ud):
         # Collect and update
         user_dinners = UserDinner.objects.filter(dinner_date=input_ud.dinner_date)
-        user_dinners.filter(count__exact=0).delete()
+        final_ud = user_dinners.annotate(sum_count=Count(
+            Case(
+                When(is_cook=True, then=Value(1)), When(count__gt=0, then='count'),
+                default=Value(0),
+            )))
 
-        total = user_dinners.aggregate(total=Sum('count'))['total']
+        total = final_ud.aggregate(total=Sum('sum_count'))['total']
         dinner = None
         if total:
+            cook_ud = user_dinners.filter(is_cook=True).first()
+
             dinner, created_dinner = Dinner.objects.get_or_create(date=input_ud.dinner_date)
             dinner.num_eating = total
+            if cook_ud:
+                dinner.cook = cook_ud.user
+            else:
+                dinner.cook = None
             dinner.save()
             user_dinners.update(dinner=dinner)
         else:
             Dinner.objects.filter(date=input_ud.dinner_date).delete()
 
-        return dinner, user_dinners
+        return dinner
 
 
 # Week list

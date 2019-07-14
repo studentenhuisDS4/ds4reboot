@@ -1,10 +1,10 @@
-import traceback
-
 from rest_framework import status
-from rest_framework.exceptions import ValidationError, APIException
 from rest_framework.response import Response
 
 from ds4reboot.secret_settings import DEBUG
+
+FAILURE = {'status': 'failure'}
+SUCCESS = {'status': 'success'}
 
 
 # Map dict to dereferencable object
@@ -49,15 +49,23 @@ def is_integer(decimal):
 
 def log_exception(e, tb=None):
     # TODO log
-    if DEBUG:
-        print(e)
-    if tb:
-        return Response({'exception': str(e), 'traceback': tb}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    else:
-        return Response({'exception': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    context = FAILURE
+    context.update({'exception': str(e)})
+    if tb and DEBUG:
+        print(tb)
+        context.update({'tb': tb})
+
+    return Response(context, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def log_validation_errors(errors):
     if DEBUG:
         print(errors)
-    return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+    context = FAILURE
+    return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+def illegal_action(message):
+    context = FAILURE
+    context.update({'message': message})
+    return Response(context, status=status.HTTP_403_FORBIDDEN)
