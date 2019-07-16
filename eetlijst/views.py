@@ -590,8 +590,6 @@ def cost(request):
                     u.save()
                     h.save()
 
-                h = Housemate.objects.get(user=request.user)
-
             except:
                 messages.error(request, 'Server internal error during calculation of cost.')
 

@@ -62,10 +62,24 @@ def log_validation_errors(errors):
     if DEBUG:
         print(errors)
     context = FAILURE
+    context.update({'errors': errors})
     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
-def illegal_action(message):
+def illegal_action(message, data=None):
+    context = {}
+
     context = FAILURE
     context.update({'message': message})
+    if data:
+        context.update({'result': data})
     return Response(context, status=status.HTTP_403_FORBIDDEN)
+
+
+def success_action(data, status=status.HTTP_200_OK):
+    return Response(
+        {'status': 'success',
+         'result': {
+             'dinner': data,
+         }},
+        status=status)

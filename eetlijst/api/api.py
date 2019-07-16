@@ -1,17 +1,20 @@
+from pprint import pprint
+
 from django.contrib.auth.models import User
 from marshmallow import validates_schema
-from marshmallow.validate import Range
+from marshmallow.validate import Range, NoneOf
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema, fields
 
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import UniqueModelValidator
-from eetlijst.models import UserDinner
+from eetlijst.models import UserDinner, Dinner
 from user.api.api import UserInfoSchema
 
 
 class UserDinnerSchema(Schema):
-    user_id = fields.Int(required=True)
+    # none of house/admin
+    user_id = fields.Int(required=True, validate=NoneOf([1, 2], error="House or Admin cant join dinner."))
     dinner_date = fields.Date(required=True)
 
     # Tighten the strictness on data validation
@@ -25,27 +28,36 @@ class UserDinnerSchema(Schema):
     def validate_count(self, data):
         data = Map(data)
         errors = {}
+        pprint(self.context)
         if errors:
             raise ValidationError(errors)
 
     def create(self, valid_data, *args, **kwargs):
-        user_dinner, _ = UserDinner.objects.get_or_create(**valid_data)
-        return user_dinner, True
+        map_data = Map(valid_data)
+        dinner, _ = Dinner.objects.get_or_create(date=map_data.dinner_date)
+        valid_data.update({'dinner_id': dinner.id})
+        user_dinner, created = UserDinner.objects.get_or_create(**valid_data)
+        return user_dinner, created
 
+    # Our update is not done here, and somehow currently not working anyway (bug?)
     def update(self, instance, validated_data):
         return instance, False
 
 
 class DinnerSchema(Schema):
-    id = fields.Int()
+    # print(requirements)
+    id = fields.Int(dump_only=True)
+    date = fields.Date(dump_only=True)
+    num_eating = fields.Int(dump_only=True)
+    userdinners = fields.Function(lambda dinner: UserDinnerSchema(dinner.userdinner_set.all(), many=True).data,
+                                  dump_only=True)
+    cook = fields.Nested(UserInfoSchema, dump_only=True)
+    open = fields.Bool(dump_only=True)
+    cook_signup_time = fields.DateTime(dump_only=True)
+    close_time = fields.DateTime(dump_only=True)
+    cost_time = fields.DateTime(dump_only=True)
 
-    date = fields.Date()
-    num_eating = fields.Int()
-    userdinners = fields.Function(lambda dinner: UserDinnerSchema(dinner.userdinner_set.all(), many=True).data)
-    cook = fields.Nested(UserInfoSchema)
-    open = fields.Bool()
-    cost = fields.Decimal()
+    cost = fields.Decimal(required=True, validate=[
+        Range(min=1, error="The cost must be bigger than 1 euro. What are you thinking?", )])
+    eta_time = fields.Time(required=True)
 
-    cook_signup_time = fields.DateTime()
-    close_time = fields.DateTime()
-    eta_time = fields.DateTime()

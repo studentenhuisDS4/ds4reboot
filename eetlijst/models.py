@@ -8,7 +8,8 @@ class Dinner(models.Model):
     cook = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     cook_signup_time = models.DateTimeField(null=True)
     close_time = models.DateTimeField(null=True)
-    eta_time = models.DateTimeField(null=True)
+    cost_time = models.DateTimeField(null=True)
+    eta_time = models.TimeField(null=True)
     date = models.DateField()
 
     num_eating = models.IntegerField(default=0)
@@ -24,7 +25,7 @@ class UserDinner(models.Model):
     is_cook = models.BooleanField(default=False)
     split_cost = models.DecimalField(null=True, max_digits=5, decimal_places=2)
 
-    dinner = models.ForeignKey(Dinner, on_delete=models.CASCADE, null=True)
+    dinner = models.ForeignKey(Dinner, on_delete=models.CASCADE, null=False)
     dinner_date = models.DateField()
 
 

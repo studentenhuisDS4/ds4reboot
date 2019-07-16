@@ -7,13 +7,14 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from ds4reboot.api.utils import log_validation_errors, log_exception, illegal_action
+from ds4reboot.api.utils import log_validation_errors, log_exception, illegal_action, success_action
 from eetlijst.api.api import DinnerSchema, UserDinnerSchema
 from eetlijst.models import Dinner, UserDinner
 from user.models import Housemate
+
+DINNER_CLOSED_MESSAGE = "This dinner has been closed. It needs to be opened again to adjust it"
 
 
 class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
@@ -23,23 +24,31 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     @action(detail=True, methods=['post'])
     def close(self, request, pk=None):
         dinner = self.get_object()
+        house_balance_unshare = None
 
-        # actual action
         try:
+            # actual action
             if dinner.cook == request.user:
                 if dinner.num_eating <= 1:
                     # TODO easter egg
                     return illegal_action(
-                        "(Sven, is that you?) Stop fucking around and get back to cramming exams. Jeez.".format(
-                            cook=dinner.cook.housemate.display_name))
+                        "(Sven, is that you?) Cant cook for yourself. ## Annoyed-server badge awarded ##."
+                            .format(cook=dinner.cook.housemate.display_name))
                 if dinner.open:
                     dinner.open = False
                     dinner.close_time = timezone.now()
                 else:
-                    # unshare costs
+                    if dinner.cost:
+                        house_balance_unshare = self.__unshare_costs(dinner)
+                        dinner.cost = None
                     dinner.open = True
                     dinner.close_time = None
                 dinner.save()
+
+                return success_action(data={
+                    'house_balance_unshare': house_balance_unshare,
+                    'dinner': DinnerSchema(dinner).data,
+                }, status=status.HTTP_202_ACCEPTED)
             else:
                 if dinner.cook:
                     # TODO easter egg
@@ -50,24 +59,18 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                     # TODO easter egg
                     return illegal_action(
                         "No user is signed up as cook, so the list can't be closed.")
-
-            return Response(
-                {'status': 'success',
-                 'result': {
-                     'dinner': DinnerSchema(dinner).data,
-                 }},
-                status=status.HTTP_202_ACCEPTED)
         except Exception as e:
             return log_exception(e, traceback.format_exc())
 
     @action(detail=True, methods=['post'])
-    def cost(self, request):
+    def cost(self, request, pk=None):
         dinner = self.get_object()
+        house_balance_before = None
 
         try:
-            serializer = UserDinnerSchema(data=request.data)
-            if not serializer.is_valid():
-                return log_validation_errors(serializer.errors)
+            result = DinnerSchema().load(data=request.data, partial=("eta_time",))  # validation only, never save
+            if result.errors:
+                return log_validation_errors(result.errors)
 
             # actual action
             if dinner.cook:
@@ -75,57 +78,99 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                     return illegal_action(
                         "Dinner is still open. Close it before sharing costs.")
                 else:
-                    # share costs here
-                    dinner.cost =
-                dinner.save()
+                    if dinner.cost:
+                        house_balance_before = self.__unshare_costs(dinner)
+                        dinner.cost = None
+                        dinner.cost_time = None
+                    house_balance = self.__share_costs(dinner, result.data['cost'])
+                    dinner.cost = result.data['cost']
+                    dinner.cost_time = timezone.now()
+                    dinner.save()
+
+                return success_action(data={
+                    'house_balance_before': house_balance_before,
+                    'house_balance': house_balance,
+                    'dinner': DinnerSchema(dinner).data,
+                }, status=status.HTTP_202_ACCEPTED)
             else:
                 if dinner.cook:
+                    # TODO easter egg
                     return illegal_action(
-                        "{cook} is signed up as cook, so this user set the food costs.".format(
+                        "{cook} is signed up as cook, so this user must set the food costs.".format(
                             cook=dinner.cook.housemate.display_name))
                 else:
                     # TODO easter egg
                     return illegal_action(
                         "No user is signed up as cook... you hacker.")
+        except Exception as e:
+            return log_exception(e, traceback.format_exc())
 
-            return Response(
-                {'status': 'success',
-                 'result': {
-                     'dinner': DinnerSchema(dinner).data,
-                 }},
-                status=status.HTTP_202_ACCEPTED)
+    @action(detail=True, methods=['post'])
+    def eta_time(self, request, pk=None):
+        dinner = self.get_object()
+
+        try:
+            serializer = DinnerSchema(data=request.data, exclude=('cost',))
+            if not serializer.is_valid():
+                return log_validation_errors(serializer.errors)
+            else:
+                serializer.save()
+
+
         except Exception as e:
             return log_exception(e, traceback.format_exc())
 
     def __share_costs(self, dinner, cost):
-        dinner.userdinner_set.all()
+        dinner_uds = dinner.userdinner_set.all()
+
+        # update housemate objects for users who signed up
+        house_hm = Housemate.objects.get(display_name='Huis')
+        remainder = house_hm.balance
+        split_cost = Decimal(round((cost - remainder) / dinner.num_eating, 2))
+        house_hm.balance = dinner.num_eating * split_cost - cost + remainder
+
+        # update userdinner set belonging to dinner
+        for dinner_ud in dinner_uds:
+            hm = dinner_ud.user.housemate
+            hm.balance -= dinner_ud.count * split_cost
+            dinner_ud.split_cost = -1 * dinner_ud.count * split_cost
+
+            if dinner_ud.is_cook:
+                hm.balance -= split_cost - cost
+                dinner_ud.split_cost = cost - split_cost * (1 + dinner_ud.count)
+
+            dinner_ud.save()
+            hm.save()
+        house_hm.save()
+
+        # TODO check balances and LOG to file
+        return house_hm.balance
 
     def __unshare_costs(self, dinner):
         dinner.userdinner_set.all()
 
         # Reverse existing costs
-        cost_amount = -dinner.cost
+        cost_revert = -dinner.cost
 
         # update housemate objects for users who signed up
-        huis = Housemate.objects.get(display_name='Huis')
-        remainder = huis.balance
-        split_cost = Decimal(round((cost_amount - remainder) / dinner.num_eating, 2))
-        huis.balance = dinner.num_eating * split_cost - cost_amount + remainder
+        house_hm = Housemate.objects.get(display_name='Huis')
+        remainder = house_hm.balance
+        split_cost_inv = Decimal(round((cost_revert - remainder) / dinner.num_eating, 2))
+        house_hm.balance = dinner.num_eating * split_cost_inv - cost_revert + remainder
 
-        for u in users_enrolled:
-            h = Housemate.objects.get(user=u.user)
+        dinner_uds = dinner.userdinner_set.all()
+        for dinner_ud in dinner_uds:
+            hm = dinner_ud.user.housemate
+            hm.balance -= dinner_ud.count * split_cost_inv
+            if dinner_ud.is_cook:
+                hm.balance += cost_revert - split_cost_inv
+            dinner_ud.split_cost = None
+            dinner_ud.save()
+            hm.save()
+        house_hm.save()
 
-            h.balance -= u.count * split_cost
-
-            if u.is_cook:
-                h.balance -= split_cost
-
-            u.split_cost = None
-
-            u.save()
-            h.save()
-
-        huis.save()
+        # TODO check balances and LOG to file
+        return house_hm.balance
 
 
 class UserDinnerViewSet(ListModelMixin, GenericViewSet):
@@ -143,26 +188,20 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             serializer = UserDinnerSchema(data=request.data)
             if not serializer.is_valid():
                 return log_validation_errors(serializer.errors)
+            user_dinner, created = serializer.save()
 
             # actual action
-            user_dinner, created = serializer.save()
-            user_dinner.count += 1
-            user_dinner.save()
-            dinner = self.__update_dinner(user_dinner)
-
-            if created:
-                self.return_status = status.HTTP_201_CREATED
-
-            return Response(
-                {'status': 'success',
-                 'result': {
-                     'dinner': DinnerSchema(dinner).data,
-                 }},
-                status=self.return_status)
+            if user_dinner.dinner.open:
+                user_dinner.count += 1
+                user_dinner.save()
+                dinner = self.__update_dinner(user_dinner)
+                if created:
+                    self.return_status = status.HTTP_201_CREATED
+                return success_action(DinnerSchema(dinner).data, self.return_status)
+            else:
+                return illegal_action(DINNER_CLOSED_MESSAGE, data=DinnerSchema(user_dinner.dinner).data)
         except Exception as e:
-            print(e)
-            print(traceback.format_exc())
-            return log_exception(e)
+            return log_exception(e, tb=traceback.format_exc())
 
     @action(detail=False, methods=['post'])
     def signoff(self, request):
@@ -172,22 +211,18 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             serializer = UserDinnerSchema(data=request.data)
             if not serializer.is_valid():
                 return log_validation_errors(serializer.errors)
+            user_dinner, created = serializer.save()
 
             # actual action
-            user_dinner, created = serializer.save()
-            user_dinner.count = 0
-            user_dinner.save()
-            dinner = self.__update_dinner(user_dinner)
-
-            if created:
-                self.return_status = status.HTTP_201_CREATED
-
-            return Response(
-                {'status': 'success',
-                 'result': {
-                     'dinner': DinnerSchema(dinner).data,
-                 }},
-                status=self.return_status)
+            if user_dinner.dinner.open:
+                user_dinner.count = 0
+                user_dinner.save()
+                dinner = self.__update_dinner(user_dinner)
+                if created:
+                    self.return_status = status.HTTP_201_CREATED
+                return success_action(DinnerSchema(dinner).data, self.return_status)
+            else:
+                return illegal_action(DINNER_CLOSED_MESSAGE, data=DinnerSchema(user_dinner.dinner).data)
         except Exception as e:
             return log_exception(e, tb=traceback.format_exc())
 
@@ -199,31 +234,24 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             serializer = UserDinnerSchema(data=request.data)
             if not serializer.is_valid():
                 return log_validation_errors(serializer.errors)
+            user_dinner, created = serializer.save()
 
             # actual action
-            user_dinner, created = serializer.save()
-            if request.data.get('signoff') and request.data['signoff']:
-                user_dinner.is_cook = False
-            else:
-                ddate = user_dinner.dinner_date
-                cook_dinner = UserDinner.objects.filter(dinner_date=ddate, is_cook=True).first()
-                if cook_dinner is None or cook_dinner.user == user_dinner.user:
-                    user_dinner.is_cook = not user_dinner.is_cook
-                    user_dinner.save()
+            if user_dinner.dinner.open:
+                if request.data.get('signoff'):
+                    user_dinner.is_cook = False
                 else:
-                    return illegal_action(
-                        "{cook} is already signed up as cook.".format(cook=cook_dinner.user.housemate.display_name))
-
-            dinner = self.__update_dinner(user_dinner)
-            if created:
-                self.return_status = status.HTTP_201_CREATED
-
-            return Response(
-                {'status': 'success',
-                 'result': {
-                     'dinner': DinnerSchema(dinner).data,
-                 }},
-                status=self.return_status)
+                    cook_dinner = UserDinner.objects.filter(dinner_date=user_dinner.dinner_date, is_cook=True).first()
+                    if cook_dinner is None or cook_dinner.user == user_dinner.user:
+                        user_dinner.is_cook = not user_dinner.is_cook
+                        user_dinner.save()
+                    else:
+                        return illegal_action(
+                            "{cook} is already signed up as cook.".format(cook=cook_dinner.user.housemate.display_name))
+                dinner = self.__update_dinner(user_dinner)
+                return success_action(DinnerSchema(dinner).data, self.return_status)
+            else:
+                return illegal_action(DINNER_CLOSED_MESSAGE, data=DinnerSchema(user_dinner.dinner).data)
         except Exception as e:
             return log_exception(e, traceback.format_exc())
 
@@ -239,15 +267,16 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
             )))
 
         dinner = None
+        # if SQL count > 0
         if ud_annotated['sum_count']:
             cook_ud = user_dinners.filter(is_cook=True).first()
 
-            dinner, created_dinner = Dinner.objects.get_or_create(date=input_ud.dinner_date)
+            dinner = Dinner.objects.get(date=input_ud.dinner_date)
             dinner.num_eating = ud_annotated['sum_count']
             if cook_ud:
                 dinner.cook = cook_ud.user
                 if dinner.cook_signup_time is None:
-                    dinner.cook_signup_time = timezone.localtime()
+                    dinner.cook_signup_time = timezone.now()
             else:
                 dinner.cook = None
                 dinner.cook_signup_time = None
