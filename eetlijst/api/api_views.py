@@ -1,6 +1,7 @@
 import traceback
 from datetime import timedelta
 from decimal import Decimal
+from pprint import pprint
 
 from django.db.models import Sum, Case, When, Value, F, Q
 from django.utils import timezone
@@ -9,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
-from ds4reboot.api.utils import log_validation_errors, log_exception, illegal_action, success_action
+from ds4reboot.api.utils import log_validation_errors, log_exception, illegal_action, success_action, Map
 from eetlijst.api.api import DinnerSchema, UserDinnerSchema
 from eetlijst.models import Dinner, UserDinner
 from user.models import Housemate
@@ -105,6 +106,11 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
         except Exception as e:
             return log_exception(e, traceback.format_exc())
 
+    ###
+    # action:       eta_time
+    # function:     set an eta_time
+    # restriction:  user needs to be cook
+    ###
     @action(detail=True, methods=['post'])
     def eta_time(self, request, pk=None):
         dinner = self.get_object()
@@ -114,8 +120,18 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
             if not serializer.is_valid():
                 return log_validation_errors(serializer.errors)
             else:
-                serializer.save()
+                if not dinner.cook:
+                    return illegal_action("Set yourself as cook before setting the ETA.")
+                elif dinner.cook.id is not request.user.id:
+                    return illegal_action("Only {name} can set an ETA (as he/she is cook).".format(
+                        name=dinner.cook.housemate.display_name))
+                else:
+                    dinner.eta_time = Map(request.data).eta_time
+                    dinner.save()
 
+                    serializer = DinnerSchema(dinner)
+                    serializer.data['eta_time'] = dinner.eta_time
+                    return success_action(serializer.data)
 
         except Exception as e:
             return log_exception(e, traceback.format_exc())
@@ -242,7 +258,7 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
                     user_dinner.is_cook = False
                 else:
                     cook_dinner = UserDinner.objects.filter(dinner_date=user_dinner.dinner_date, is_cook=True).first()
-                    if cook_dinner is None or cook_dinner.user == user_dinner.user:
+                    if cook_dinner is None or cook_dinner.user.id == user_dinner.user.id:
                         user_dinner.is_cook = not user_dinner.is_cook
                         user_dinner.save()
                     else:

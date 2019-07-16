@@ -48,8 +48,8 @@ def is_integer(decimal):
 
 
 def log_exception(e, tb=None):
+    context = {'status': FAILURE}
     # TODO log
-    context = FAILURE
     context.update({'exception': str(e)})
     if tb and DEBUG:
         print(tb)
@@ -59,17 +59,17 @@ def log_exception(e, tb=None):
 
 
 def log_validation_errors(errors):
+    # TODO log
     if DEBUG:
         print(errors)
-    context = FAILURE
+    context = {'status': FAILURE}
     context.update({'errors': errors})
+    print(context)
     return Response(context, status=status.HTTP_400_BAD_REQUEST)
 
 
 def illegal_action(message, data=None):
-    context = {}
-
-    context = FAILURE
+    context = {'status': FAILURE}
     context.update({'message': message})
     if data:
         context.update({'result': data})
