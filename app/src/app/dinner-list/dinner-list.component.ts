@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {dayNames, IDinnerDate, weekDates} from '../models/dinner.models';
+import {dayNames, IDinner, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {ProfileService} from '../services/profile.service';
 import {IProfile} from '../models/profile.model';
@@ -40,8 +40,8 @@ import {MatSnackBar} from '@angular/material';
     ]
 })
 export class DinnerListComponent implements OnInit {
-    weekDinners: IDinnerDate[] = [];
-    todayDinner: IDinnerDate;
+    weekDinners: IDinner[] = [];
+    todayDinner: IDinner;
 
     showWeek = false;
     weekCollapse = 'hide';
@@ -55,13 +55,15 @@ export class DinnerListComponent implements OnInit {
         this.profileService.getProfile().then(result => {
             this.user = result;
         });
-        // console.log(this.profileService.getUserId());
+        this.dinnerListService.signUp(14, new Date()).then(result => {
+            console.log(result);
+        });
     }
 
     ngOnInit() {
     }
 
-    signupDinner(dinner: IDinnerDate) {
+    signupDinner(dinner: IDinner) {
         this.openSnackBar('Under construction, sorry!', 'Ok!');
     }
 
@@ -81,7 +83,7 @@ export class DinnerListComponent implements OnInit {
     }
 
     // Animation on day
-    openDinner(dinner: IDinnerDate): void {
+    openDinner(dinner: IDinner): void {
         if (environment.debug) {
             console.log('Dinner day pressed.', dinner);
         }

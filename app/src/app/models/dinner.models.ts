@@ -1,8 +1,18 @@
-import {IProfile} from './profile.model';
+import {IHousemate, IProfile} from './profile.model';
 
-export interface IDinnerDate {
+export interface IUserDinner {
+    id: number;
+    housemate: IHousemate;
+    dinner_date: Date;
+    count: number;
+    is_cook: boolean;
+    split_cost: number;
+}
+
+export interface IDinner {
     id: number;
     num_eating: number;
+    userdinners: IUserDinner[];
     cost: number;
     open: boolean;
     date: Date;

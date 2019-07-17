@@ -19,23 +19,23 @@ export class TurfListService {
     }
 
     getTurfDay() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getTurfWeek() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getTurfList() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getBoeteHR() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getBoeteOpen() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
 }

@@ -113,7 +113,7 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'BEARER',
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
-    'JWT_ALLOW_REFRESH': False
+    'JWT_ALLOW_REFRESH': True
 }
 
 API_BASE_URL = 'api/v1/'

@@ -254,7 +254,7 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
 
             # actual action
             if user_dinner.dinner.open:
-                if request.data.get('signoff'):
+                if request.data.get('sign_off'):
                     user_dinner.is_cook = False
                 else:
                     cook_dinner = UserDinner.objects.filter(dinner_date=user_dinner.dinner_date, is_cook=True).first()
