@@ -264,7 +264,6 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
                         return illegal_action(
                             "{cook} is already signed up as cook.".format(cook=cook_dinner.user.housemate.display_name))
                 dinner = self.__update_dinner(user_dinner)
-                print(dinner)
                 return success_action(DinnerSchema(dinner).data, self.return_status)
             else:
                 return illegal_action(DINNER_CLOSED_MESSAGE, data=DinnerSchema(user_dinner.dinner).data)

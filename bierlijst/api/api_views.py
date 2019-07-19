@@ -1,5 +1,4 @@
 import traceback
-from pprint import pprint
 
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -10,7 +9,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from bierlijst.api.api import BoeteSerializer, TurfSerializer, TurfSchema, BEER, WWINE, RWINE
 from bierlijst.models import Turf, Boete
-from ds4reboot.api.utils import log_exception, log_validation_errors
+from ds4reboot.api.utils import log_exception, log_validation_errors, success_action
 from user.api.api import HousemateSchema
 from user.models import Housemate
 
@@ -20,10 +19,6 @@ class TurfViewSet(ListModelMixin,
                   GenericViewSet):
     queryset = Turf.objects.order_by('-turf_time')
     serializer_class = TurfSerializer
-
-    @action(detail=True, methods=['post'])
-    def log(self, request, pk=None):
-        return Response({'status': 'under-construction', 'amount': 0})
 
     @action(detail=False, methods=['post'])
     def turf_item(self, request):
@@ -50,13 +45,9 @@ class TurfViewSet(ListModelMixin,
                 hm_json = HousemateSchema(hm_turf, many=False)
 
                 # Return turf and housemate data
-                return Response(
-                    {'status': 'success', 'result': serializer.validated_data, 'housemate': hm_json.data},
-                    status=status.HTTP_201_CREATED)
+                return success_action(hm_json.data, status=status.HTTP_201_CREATED)
         except Exception as e:
-            tb = traceback.format_exc()
-            print(tb)
-            return log_exception(e, tb)
+            return log_exception(e, traceback.format_exc())
 
     @action(detail=True, methods=['post'])
     def turf_edit(self, request):

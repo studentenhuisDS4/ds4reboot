@@ -13,7 +13,3 @@ export enum TurfType {
     RWINE = 'red-wine',
     WWINE = 'white-wine'
 }
-
-export interface ITurfResult extends IResult {
-    housemate: IHousemate;
-}

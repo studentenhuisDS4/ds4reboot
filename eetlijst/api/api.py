@@ -1,27 +1,28 @@
-from pprint import pprint
-
 from django.contrib.auth.models import User
-from marshmallow import validates_schema, post_dump
+from marshmallow import validates_schema
 from marshmallow.validate import Range, NoneOf
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema, fields
 
 from ds4reboot.api.utils import Map
-from ds4reboot.api.validators import UniqueModelValidator
+from ds4reboot.api.validators import UniqueModelValidator, ModelAttributeValidator
 from eetlijst.models import UserDinner, Dinner
 from user.api.api import UserInfoSchema
 
 
 class UserDinnerSchema(Schema):
     # none of house/admin
-    user_id = fields.Int(required=True, validate=NoneOf([1, 2], error="House or Admin cant join dinner."))
+    user_id = fields.Int(required=True, validate=[NoneOf([1, 2], error="House or Admin cant join dinner."),
+                                                  UniqueModelValidator(type=User),
+                                                  ModelAttributeValidator(type=User,
+                                                                          attribute='is_active')])
     dinner_date = fields.Date(required=True)
 
     # Tighten the strictness on data validation
     id = fields.Int(dump_only=True)
     split_cost = fields.Decimal(dump_only=True, max_digits=5, decimal_places=2)
     is_cook = fields.Bool(dump_only=True)
-    user = fields.Nested(UserInfoSchema, dump_only=True, validate=[UniqueModelValidator(type=User)])
+    user = fields.Nested(UserInfoSchema, dump_only=True)
     count = fields.Int(dump_only=True, validate=Range(min=0))
 
     @validates_schema
@@ -59,4 +60,3 @@ class DinnerSchema(Schema):
     cost = fields.Decimal(required=True, validate=[
         Range(min=1, error="The cost must be bigger than 1 euro. What are you thinking?", )])
     eta_time = fields.Time(required=True)
-

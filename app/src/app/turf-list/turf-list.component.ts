@@ -31,9 +31,9 @@ export class TurfListComponent implements OnInit {
             turf_note: `${this.user.username} turved in BETA phase. Prev_amount${this.user.housemate.sum_bier}`,
             turf_type: turfType,
             turf_user_id: this.user.id
-        }).then(result => {
-            if (result.status === IStatus.SUCCESS) {
-                this.user.housemate = result.housemate;
+        }).then(output => {
+            if (output.status === IStatus.SUCCESS) {
+                this.user.housemate = output.result;
                 this.snackBarService.openSnackBar(`Turved 1 beer. Total: ${this.user.housemate.sum_bier}`, 'Ok');
             }
         });
