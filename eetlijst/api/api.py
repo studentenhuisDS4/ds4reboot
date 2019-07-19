@@ -28,7 +28,6 @@ class UserDinnerSchema(Schema):
     def validate_count(self, data):
         data = Map(data)
         errors = {}
-        pprint(self.context)
         if errors:
             raise ValidationError(errors)
 

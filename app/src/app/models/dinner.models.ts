@@ -2,6 +2,8 @@ import {IHousemate, IProfile} from './profile.model';
 
 export interface IUserDinner {
     id: number;
+
+    user_id: number;
     housemate: IHousemate;
     dinner_date: Date;
     count: number;
@@ -22,6 +24,13 @@ export interface IDinner {
     signup_time: Date;
     close_time: Date;
     eta_time: Date;
+}
+
+export function userEntry(dinner: IDinner, user: IProfile): IUserDinner {
+    if (dinner && dinner.userdinners) {
+        return dinner.userdinners.find(ud => ud.user_id === user.id);
+    }
+    return null;
 }
 
 export const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

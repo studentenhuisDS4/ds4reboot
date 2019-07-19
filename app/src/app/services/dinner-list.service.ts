@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {IDinner} from '../models/dinner.models';
 import {Time} from '@angular/common';
+import {IResult} from '../models/api.model';
 
 @Injectable({
     providedIn: 'root'
@@ -27,21 +28,21 @@ export class DinnerListService {
     }
 
     signUp(userId: number, dinnerDate: Date) {
-        return this.httpClient.post<IDinner>(this.URL_SIGNUP, {
+        return this.httpClient.post<IResult<IDinner>>(this.URL_SIGNUP, {
             user_id: userId,
             dinner_date: dinnerDate
         }).toPromise();
     }
 
     signOff(userId: number, dinnerDate: Date) {
-        return this.httpClient.post<IDinner>(this.URL_SIGNOFF, {
+        return this.httpClient.post<IResult<IDinner>>(this.URL_SIGNOFF, {
             user_id: userId,
             dinner_date: dinnerDate
         }).toPromise();
     }
 
     cook(userId: number, dinnerDate: Date, signOff: boolean = false) {
-        return this.httpClient.post<IDinner>(this.URL_COOK, {
+        return this.httpClient.post<IResult<IDinner>>(this.URL_COOK, {
             user_id: userId,
             dinner_date: dinnerDate,
             sign_off: signOff // if user wants to explicitly sign off instead of invert
@@ -50,15 +51,15 @@ export class DinnerListService {
 
     // The following dont require user_id, because login supplies that information
     close(dinner: IDinner) {
-        return this.httpClient.post<IDinner>(this.URL_CLOSE.replace('{ID}', dinner.id.toString()), {}).toPromise();
+        return this.httpClient.post<IResult<IDinner>>(this.URL_CLOSE.replace('{ID}', dinner.id.toString()), {}).toPromise();
     }
 
     cost(dinner: IDinner) {
-        return this.httpClient.post<IDinner>(this.URL_COST.replace('{ID}', dinner.id.toString()), {}).toPromise();
+        return this.httpClient.post<IResult<IDinner>>(this.URL_COST.replace('{ID}', dinner.id.toString()), {}).toPromise();
     }
 
     eta_time(dinner: IDinner, etaTime: Time) {
-        return this.httpClient.post<IDinner>(this.URL_ETA_TIME.replace('{ID}', dinner.id.toString()), {
+        return this.httpClient.post<IResult<IDinner>>(this.URL_ETA_TIME.replace('{ID}', dinner.id.toString()), {
             eta_time: etaTime
         }).toPromise();
     }

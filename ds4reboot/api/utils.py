@@ -79,7 +79,6 @@ def illegal_action(message, data=None):
 def success_action(data, status=status.HTTP_200_OK):
     return Response(
         {'status': 'success',
-         'result': {
-             'dinner': data,
-         }},
+         'result': data,
+         },
         status=status)

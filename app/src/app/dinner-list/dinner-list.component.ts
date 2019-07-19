@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {dayNames, IDinner, weekDates} from '../models/dinner.models';
+import {dayNames, IDinner, IUserDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {ProfileService} from '../services/profile.service';
 import {IProfile} from '../models/profile.model';
@@ -41,7 +41,7 @@ import {MatSnackBar} from '@angular/material';
 })
 export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
-    todayDinner: IDinner;
+    todayDinner: IDinner | { date: Date; userdinners: any[]; cost: null; cook: null; signup_time: null; eta_time: null; id: null; close_time: null; open: boolean; num_eating: null };
 
     showWeek = false;
     weekCollapse = 'hide';
@@ -55,16 +55,43 @@ export class DinnerListComponent implements OnInit {
         this.profileService.getProfile().then(result => {
             this.user = result;
         });
-        this.dinnerListService.signUp(14, new Date()).then(result => {
-            console.log(result);
-        });
     }
 
     ngOnInit() {
     }
 
+    signOffDinner(dinner: IDinner) {
+        this.dinnerListService.signOff(this.user.id, dinner.date).then(output => {
+                this.openSnackBar(`${this.user.housemate.display_name} cancelled for dinner.`, 'Ok');
+                this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed sign-off action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
     signupDinner(dinner: IDinner) {
-        this.openSnackBar('Under construction, sorry!', 'Ok!');
+        this.dinnerListService.signUp(this.user.id, dinner.date).then(output => {
+                this.openSnackBar(`Signup +1 for ${this.user.housemate.display_name} successful!`, 'Ok');
+                this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
+    cookDinner(dinner: IDinner, signOff = false) {
+        this.dinnerListService.cook(this.user.id, dinner.date, signOff).then(output => {
+                if (output.result && output.result.cook && output.result.cook.id == this.user.id) {
+                    this.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
+                } else {
+                    this.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
+                }
+                this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
     }
 
     // Animation on week
@@ -111,12 +138,7 @@ export class DinnerListComponent implements OnInit {
             weekDates(new Date()).forEach(day => {
                 const findDay = result.find(r => isSameDay(r.date, day));
                 if (!findDay) {
-                    result.push({
-                        id: null,
-                        date: day,
-                        signup_time: null, close_time: null, eta_time: null,
-                        num_eating: null, open: true, cost: null, cook: null,
-                    });
+                    result.push(this.createEmptyDinner(day));
                     result.sort((a, b) => compareAsc(a.date, b.date));
                 }
             });
@@ -132,8 +154,29 @@ export class DinnerListComponent implements OnInit {
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {
             duration: 2000,
-            verticalPosition: 'top',
+            verticalPosition: 'bottom',
         });
     }
 
+    private updateDinner(dinner: IDinner, day: Date) {
+        if (dinner) {
+            return dinner;
+        } else {
+            return this.createEmptyDinner(day);
+        }
+    }
+
+    private createEmptyDinner(day: Date): IDinner {
+        return {
+            id: null,
+            date: day,
+            signup_time: null, close_time: null, eta_time: null,
+            num_eating: null, open: true, cost: null, cook: null,
+            userdinners: [],
+        };
+    }
+
+    private getUserEntry(todayDinner: IDinner, user: IProfile) {
+        return userEntry(todayDinner, user);
+    }
 }
