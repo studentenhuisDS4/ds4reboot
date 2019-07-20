@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Sum
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -148,6 +147,7 @@ def index(request, year=None, month=None, day=None):
         'focus_date': str(year) + '-' + str(month) + '-' + str(day),
         'focus_cook': focus_cook,
         'focus_close_date': focus_close_date,
+        'focus_close_date_new': focus_date,
         'focus_close_cost': focus_close_cost,
         'focus_open': focus_open,
         'user_open': user_open,
@@ -301,8 +301,8 @@ def enroll(request):
     try:
         user_id = request.POST.get('user_id')
     except:
-        return HttpResponse(JsonResponse(
-            {'result': 'Error: Could not find requested user.', 'status': 'failure'}))
+        return JsonResponse(
+            {'result': 'Error: Could not find requested user.', 'status': 'failure'})
 
     if request.user.is_authenticated:
         enroll_user = Housemate.objects.get(user_id=user_id)
@@ -314,9 +314,6 @@ def enroll(request):
         dinner.save()
         user_entry, user_created = UserDinner.objects.get_or_create(user=enroll_user.user, dinner_date=dinner.date,
                                                                     dinner=dinner)
-
-        if not user_entry.dinner:
-            user_entry.dinner = dinner
 
         # modify models as appropriate
         if enroll_type == 'signup':
@@ -331,8 +328,8 @@ def enroll(request):
                         str(enroll_user).capitalize(), int(user_entry.count))
             else:
                 # TODO: restyle instead of suggesting to refresh
-                return HttpResponse(JsonResponse(
-                    {'result': 'The list is closed already. Please refresh page.', 'status': 'failure'}))
+                return JsonResponse(
+                    {'result': 'The list is closed already. Please refresh page.', 'status': 'failure'})
         elif enroll_type == 'sponge':
             dinner.num_eating -= user_entry.count
             user_entry.count = 0
@@ -341,11 +338,11 @@ def enroll(request):
                 type_amount = 0
             else:
                 # TODO: restyle instead of suggesting to refresh
-                return HttpResponse(JsonResponse(
-                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+                return JsonResponse(
+                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'})
         elif enroll_type == 'cook':
             if dinner.cook and not dinner.cook == enroll_user.user:
-                return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'failure'}))
+                return JsonResponse({'result': 'There is already a cook.', 'status': 'failure'})
             elif dinner.cook == enroll_user.user:
                 user_entry.is_cook = False
                 dinner.num_eating -= 1
@@ -361,7 +358,7 @@ def enroll(request):
                 success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())
                 type_amount = 1
         else:
-            return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'}))
+            return JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'})
 
         user_entry.timestamp = timezone.now()
         user_entry.save()
@@ -392,12 +389,10 @@ def enroll(request):
                      'enroll_amount': str(type_amount),
                      'total_amount': str(dinner.num_eating)}
 
-        return HttpResponse(JsonResponse(json_data))
+        return JsonResponse(json_data)
 
     else:
         return render(request, 'base/login_page.html')
-
-    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # close eetlijst
@@ -409,6 +404,10 @@ def close(request):
         date = request.POST.get('close-date')
 
         # get or create rows as necessary
+        if date == 'None':
+            messages.error(request,
+                           "The given dinner date was not given. Now it is loaded you should try once more!")
+            return redirect(request.META.get('HTTP_REFERER'))
         date_entry, date_created = Dinner.objects.get_or_create(date=date)
 
         if date_entry.cook:

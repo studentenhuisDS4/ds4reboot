@@ -5,6 +5,7 @@ from django.db.models import Sum
 from django.test import TestCase
 # Create your tests here.
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from rainbowtests import colors
 
@@ -17,6 +18,7 @@ from user.models import Housemate
 
 class ThesauTest(TestCase):
     skip_nonstatic = ['hr report', 'submit hr']
+    dinner_enroll_url = reverse('enroll')
     dinner_close_url = reverse('close')
     dinner_cost_url = reverse('cost')
     remove_housemate_url = reverse('remove housemate')
@@ -136,4 +138,61 @@ class ThesauTest(TestCase):
         self.assertIsNotNone(self.hm_pietje2.moveout_date)
         print(colors.blue("Housemate pietje2 now correctly removed (move-out date): "),
               colors.blue(str(self.hm_pietje2.moveout_date)))
+        assert_total_balance()
+
+    def test_hr(self):
+        print("Testing closing HR with old housemate on dinner day")
+
+        assert_total_balance()
+        week_ago = datetime.now() - timedelta(days=7)
+
+        # add users (normal, cook) to dinner entries
+        dinner = Dinner.objects.create(date=week_ago)
+        dinnerpietje = UserDinner.objects.create(dinner_date=week_ago, user=self.user, dinner=dinner)
+        dinnerpietje.is_cook = True
+        dinnerpietje.save()
+
+        dinnerpietje2 = UserDinner.objects.create(dinner_date=week_ago, user=self.user2, dinner=dinner)
+        dinnerpietje2.count = 1
+        dinnerpietje2.save()
+
+        # add cook to date
+        dinner.cook = self.user
+        dinner.num_eating = 2
+        dinner.save()
+
+        logged_in = self.client.login(username='pietje', password='PietjePuk')
+        print(colors.yellow("Loggin in user for authenticated parts: "), colors.blue(logged_in))
+        self.assertTrue(logged_in)
+
+        print(colors.yellow("Closing dinner date: "), colors.blue(datetime.now().date()))
+        data = {
+            'close-date': week_ago.date(),
+        }
+        response = self.client.post(self.dinner_close_url, data, follow=True, HTTP_REFERER='/eetlijst/')
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 200)
+
+        dinner.refresh_from_db()
+        self.assertFalse(dinner.open, "The dinner date was not closed!")
+        print(colors.yellow("Dinner closed: "), colors.blue(str(not dinner.open)))
+
+        self.hm_pietje2.refresh_from_db()
+        data2 = {
+            'housemate': self.hm_pietje2.user_id,
+        }
+        response = self.client.post(self.remove_housemate_url, data2, follow=True, HTTP_REFERER='/admin/')
+        self.assertIsNotNone(response)
+        self.assertEqual(response.status_code, 200)
+        self.hm_pietje2.refresh_from_db()
+        self.assertIsNone(self.hm_pietje2.moveout_date)
+        print(colors.blue("Housemate pietje2 not removed because of open dinners (move-out date): "),
+              colors.blue(str(self.hm_pietje2.moveout_date)))
+
+        data3 = {
+            'cost-date': week_ago.date(),
+            'cost-amount': 15
+        }
+        response = self.client.post(self.dinner_cost_url, data3, follow=True, HTTP_REFERER='/eetlijst/')
+        print(colors.yellow("Filled in costs."))
         assert_total_balance()
