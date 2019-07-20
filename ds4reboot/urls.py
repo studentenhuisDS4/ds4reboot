@@ -11,7 +11,7 @@ from bierlijst.api.api_views import BoeteViewSet, TurfViewSet
 from ds4reboot import settings
 from ds4reboot.api.auth import CustomJWTSerializer
 from ds4reboot.secret_settings import DEBUG
-from eetlijst.api.api_views import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
+from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from user.api.api_views import ProfileViewSet, FullProfileViewSet
 
 router = DefaultRouter()

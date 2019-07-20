@@ -10,7 +10,7 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 from ds4reboot.api.utils import log_validation_errors, log_exception, illegal_action, success_action, Map
-from eetlijst.api.api import DinnerSchema, UserDinnerSchema
+from eetlijst.api.serializers.dinner import DinnerSchema, UserDinnerSchema
 from eetlijst.models import Dinner, UserDinner
 from user.models import Housemate
 
@@ -317,3 +317,4 @@ class DinnerWeekViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             .filter(date__gte=timezone.now() - timedelta(days=timezone.now().weekday())) \
             .filter(date__lte=timezone.now() + timedelta(days=(7 - timezone.now().weekday()))) \
             .order_by('date')
+
