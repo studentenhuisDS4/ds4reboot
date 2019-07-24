@@ -317,4 +317,3 @@ class DinnerWeekViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             .filter(date__gte=timezone.now() - timedelta(days=timezone.now().weekday())) \
             .filter(date__lte=timezone.now() + timedelta(days=(7 - timezone.now().weekday()))) \
             .order_by('date')
-

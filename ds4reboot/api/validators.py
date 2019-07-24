@@ -36,27 +36,38 @@ class UniqueModelValidator(Validator):
 
 
 class ModelAttributeValidator(Validator):
-    default_message = "Unique row of {modelType} must exist by ID."
-    value_message = "{attribute} is not valid for {modelType}."
+    default_message = "Unique row of {modelType} must exist by {filter}."
+    filter_message = "{filter} filter did not give a {modelType} model."
+    attr_message = "{attribute} is not valid for {modelType}."
 
-    def __init__(self, type, attribute, value=True, error=None):
+    # Attribute is optional
+    def __init__(self, type, filter, attribute=None, error=None):
         if type is None or type(type) == ModelBase:
             raise ValueError(
                 'The type must be a django database model.',
             )
         try:
-            getattr(type, attribute)
+            getattr(type, filter)
         except AttributeError:
             raise ValueError(
-                'That attribute does not exist on this model.',
+                'That columns does not exist on this model.',
             )
 
+        if attribute:
+            try:
+                getattr(type, attribute)
+            except AttributeError:
+                raise ValueError(
+                    'That attribute does not exist on this model.',
+                )
+
+        self.filter = filter
         self.attribute = attribute
         self.modelType = type
-        self.value = value
         self.error = error
 
-        self.default_message = self.default_message.format(modelType=self.modelType)
+        self.default_message = self.default_message.format(modelType=self.modelType,
+                                                           filter=self.filter)
 
     def _repr_args(self):
         return 'type={!r}'.format(
@@ -65,7 +76,7 @@ class ModelAttributeValidator(Validator):
 
     def _format_error(self, model, message):
         return (self.error or message).format(
-            attribute=self.attribute, modelType=model
+            modelType=model, filter=self.filter, attribute=self.attribute,
         )
 
     def _format_default(self, value, message):
@@ -75,10 +86,11 @@ class ModelAttributeValidator(Validator):
 
     def __call__(self, value):
         try:
-            model = self.modelType.objects.get(id=value)
-
-            if not getattr(model, self.attribute):
-                raise ValidationError(self._format_error(model=model, message=self.value_message))
-
+            filter = {self.filter: value}
+            model = self.modelType.objects.get(**filter)
+            if not model:
+                raise ValidationError(self._format_error(model=model, message=self.filter_message))
+            if self.attribute and not getattr(model, self.attribute):
+                raise ValidationError(self._format_error(model=model, message=self.attr_message))
         except self.modelType.DoesNotExist:
             raise ValidationError(self._format_default(value, message=self.default_message))

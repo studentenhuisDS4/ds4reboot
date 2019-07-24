@@ -82,3 +82,10 @@ def success_action(data, status=status.HTTP_200_OK):
          'result': data,
          },
         status=status)
+
+def unimplemented_action(data, status=status.HTTP_200_OK):
+    return Response(
+        {'status': 'under-construction',
+         'result': data,
+         },
+        status=status)

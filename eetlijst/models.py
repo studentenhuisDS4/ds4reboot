@@ -31,6 +31,7 @@ class UserDinner(models.Model):
 
 # model for transfer logging
 class Transfer(models.Model):
+    parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     from_user = models.CharField(max_length=30)
     to_user = models.CharField(max_length=30)
