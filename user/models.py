@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import models
@@ -7,7 +9,18 @@ from base.models import SoftDeletionModel
 
 
 def get_active_users():
-    return User.objects.filter(is_active=True).exclude(username__in=['huis', 'admin'])
+    return User.objects.filter(is_active=True).exclude(username__in=['huis', 'admin']).order_by(
+        'housemate__movein_date')
+
+
+# TODO untested
+def get_total_balance():
+    total_balance = 0
+    for u in get_active_users():
+        total_balance += u.housemate.balance
+
+    total_balance += Housemate.objects.get(display_name='Huis').balance
+    return total_balance
 
 
 class Housemate(SoftDeletionModel):
@@ -58,3 +71,37 @@ class Housemate(SoftDeletionModel):
 
     def __str__(self):
         return self.display_name
+
+
+def share_cost(housemates, cost, hm_payback):
+    if len(housemates) < 2:
+        raise ValueError("Not enough people to split")
+    else:
+        num_split = len(housemates)
+
+    house_hm = Housemate.objects.get(display_name='Huis')
+    remainder = house_hm.balance
+    split_cost = Decimal(round((cost - remainder) / num_split, 2))
+    house_hm.balance = num_split * split_cost - cost + remainder
+
+    # TODO check balances and LOG to file
+    total_balance_before = get_total_balance()
+
+    # update userdinner set belonging to dinner
+    for housemate in housemates:
+        if hm_payback and housemate.id == hm_payback.id:
+            housemate.balance -= split_cost - cost
+        else:
+            housemate.balance -= split_cost
+        housemate.save()
+    house_hm.save()
+
+    # TODO check balances and LOG to file
+    total_balance_after = get_total_balance()
+
+    return {
+        'split_cost': split_cost,
+        'delta_remainder': house_hm.balance - remainder,
+        'total_balance_before': total_balance_before,
+        'total_balance_after': total_balance_after
+    }

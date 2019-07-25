@@ -6,7 +6,7 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 from ds4reboot.api.utils import illegal_action, success_action, unimplemented_action
-from eetlijst.api.serializers.transfer_cost import TransferCostSchema, SplitCostSchema
+from eetlijst.api.serializers.transfer_cost import TransferCostSchema, SplitTransferSchema
 from eetlijst.models import Transfer
 
 
@@ -15,12 +15,11 @@ class TransferCostViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
     def get_queryset(self):
         """
-        This view should return a list of all dinners
+        This view should return a list of all transfers
         entered this week.
         """
         return Transfer.objects \
-            .filter(time__gte=timezone.now() - timedelta(days=timezone.now().weekday())) \
-            .filter(time__lte=timezone.now() + timedelta(days=(7 - timezone.now().weekday()))) \
+            .filter(time__gte=timezone.now() - timedelta(days=7)) \
             .order_by('time')
 
     @action(detail=False, methods=['post'])
@@ -34,10 +33,10 @@ class TransferCostViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def split(self, request):
-        serializer = SplitCostSchema(data=request.data, context={'user_id': request.user.id})
+        serializer = SplitTransferSchema(data=request.data, context={'user_id': request.user.id})
 
         if serializer.is_valid():
             serializer.save()
-            return unimplemented_action(data={})
+            return success_action(serializer.data)
         else:
             return illegal_action(serializer.errors)

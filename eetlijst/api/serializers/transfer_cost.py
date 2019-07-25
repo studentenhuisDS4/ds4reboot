@@ -6,9 +6,9 @@ from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
 from ds4reboot.api.validators import ModelAttributeValidator
-from eetlijst.models import Transfer
+from eetlijst.models import Transfer, SplitTransfer
 from user.api.api import UserInfoSchema
-from user.models import get_active_users
+from user.models import get_active_users, share_cost
 
 
 class BaseTransferSchema(Schema):
@@ -66,15 +66,14 @@ class TransferCostSchema(BaseTransferSchema):
         return data
 
 
-class SplitCostSchema(BaseTransferSchema):
-    affected_users_id = fields.List(required=True,
-                                    cls_or_instance=fields.Int(validate=[
-                                        ModelAttributeValidator(type=User, filter='id', attribute='is_active')]),
-                                    validate=[
-                                        Length(min=2, error="Splitting cost requires more than 1 affected user.")])
+class SplitTransferSchema(BaseTransferSchema):
+    affected_users = fields.List(required=True,
+                                 cls_or_instance=fields.Int(validate=[
+                                     ModelAttributeValidator(type=User, filter='id', attribute='is_active')]),
+                                 validate=[
+                                     Length(min=2, error="Splitting cost requires more than 1 affected user.")])
     user_id = fields.Int(validate=[ModelAttributeValidator(type=User, filter='id', attribute='is_active')])
 
-    affected_users = fields.Nested(nested=UserInfoSchema, many=True, dump_only=True)
     delta_remainder = fields.Decimal(max_digits=5, decimal_places=2, dump_only=True)
     total_balance_before = fields.Decimal(max_digits=5, decimal_places=2, dump_only=True)
     total_balance_after = fields.Decimal(max_digits=5, decimal_places=2, dump_only=True)
@@ -82,8 +81,8 @@ class SplitCostSchema(BaseTransferSchema):
 
     @pre_load
     def provide_affected_users(self, data):
-        if not "affected_users_id" in data:
-            data["affected_users_id"] = [user.id for user in get_active_users()]
+        if not "affected_users" in data:
+            data["affected_users"] = [user.id for user in get_active_users()]
 
     @pre_load
     def validate_users(self, data):
@@ -94,5 +93,17 @@ class SplitCostSchema(BaseTransferSchema):
         return data
 
     def create(self, data):
+        split_transfer = SplitTransfer(**data)
+        ids = split_transfer.affected_users
+        housemates = []
+        for id in ids:
+            housemates.append(User.objects.get(id=id).housemate)
 
-        return data
+        result = share_cost(housemates=housemates, cost=split_transfer.amount, hm_payback=split_transfer.user.housemate)
+
+        split_transfer.note = "split_cost"
+        split_transfer.total_balance_before = result["total_balance_before"]
+        split_transfer.total_balance_after = result["total_balance_after"]
+        split_transfer.delta_remainder = result["delta_remainder"]
+        split_transfer.save()
+        return split_transfer

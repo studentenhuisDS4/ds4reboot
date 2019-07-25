@@ -24,7 +24,6 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     @action(detail=True, methods=['post'])
     def close(self, request, pk=None):
         dinner = self.get_object()
-        house_balance_unshare = None
 
         try:
             # actual action
@@ -39,16 +38,12 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                     dinner.close_time = timezone.now()
                 else:
                     if dinner.cost:
-                        house_balance_unshare = self.__unshare_costs(dinner)
-                        dinner.cost = None
+                        dinner.unshare_cost()
                     dinner.open = True
                     dinner.close_time = None
                 dinner.save()
 
-                return success_action(data={
-                    'house_balance_unshare': house_balance_unshare,
-                    'dinner': DinnerSchema(dinner).data,
-                }, status=status.HTTP_202_ACCEPTED)
+                return success_action(data={'dinner': DinnerSchema(dinner).data, }, status=status.HTTP_202_ACCEPTED)
             else:
                 if dinner.cook:
                     # TODO easter egg
@@ -65,7 +60,6 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     @action(detail=True, methods=['post'])
     def cost(self, request, pk=None):
         dinner = self.get_object()
-        house_balance_before = None
 
         try:
             result = DinnerSchema().load(data=request.data, partial=("eta_time",))  # validation only, never save
@@ -79,17 +73,11 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                         "Dinner is still open. Close it before sharing costs.")
                 else:
                     if dinner.cost:
-                        house_balance_before = self.__unshare_costs(dinner)
-                        dinner.cost = None
-                        dinner.cost_time = None
-                    house_balance = self.__share_costs(dinner, result.data['cost'])
-                    dinner.cost = result.data['cost']
-                    dinner.cost_time = timezone.now()
+                        dinner.unshare_cost()
+                    dinner.share_cost(result.data['cost'])
                     dinner.save()
 
                 return success_action(data={
-                    'house_balance_before': house_balance_before,
-                    'house_balance': house_balance,
                     'dinner': DinnerSchema(dinner).data,
                 }, status=status.HTTP_202_ACCEPTED)
             else:
@@ -105,11 +93,6 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
         except Exception as e:
             return log_exception(e, traceback.format_exc())
 
-    ###
-    # action:       eta_time
-    # function:     set an eta_time
-    # restriction:  user needs to be cook
-    ###
     @action(detail=True, methods=['post'])
     def eta_time(self, request, pk=None):
         dinner = self.get_object()
@@ -134,58 +117,6 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 
         except Exception as e:
             return log_exception(e, traceback.format_exc())
-
-    def __share_costs(self, dinner, cost):
-        dinner_uds = dinner.userdinner_set.all()
-
-        # update housemate objects for users who signed up
-        house_hm = Housemate.objects.get(display_name='Huis')
-        remainder = house_hm.balance
-        split_cost = Decimal(round((cost - remainder) / dinner.num_eating, 2))
-        house_hm.balance = dinner.num_eating * split_cost - cost + remainder
-
-        # update userdinner set belonging to dinner
-        for dinner_ud in dinner_uds:
-            hm = dinner_ud.user.housemate
-            hm.balance -= dinner_ud.count * split_cost
-            dinner_ud.split_cost = -1 * dinner_ud.count * split_cost
-
-            if dinner_ud.is_cook:
-                hm.balance -= split_cost - cost
-                dinner_ud.split_cost = cost - split_cost * (1 + dinner_ud.count)
-
-            dinner_ud.save()
-            hm.save()
-        house_hm.save()
-
-        # TODO check balances and LOG to file
-        return house_hm.balance
-
-    def __unshare_costs(self, dinner):
-        dinner.userdinner_set.all()
-
-        # Reverse existing costs
-        cost_revert = -dinner.cost
-
-        # update housemate objects for users who signed up
-        house_hm = Housemate.objects.get(display_name='Huis')
-        remainder = house_hm.balance
-        split_cost_inv = Decimal(round((cost_revert - remainder) / dinner.num_eating, 2))
-        house_hm.balance = dinner.num_eating * split_cost_inv - cost_revert + remainder
-
-        dinner_uds = dinner.userdinner_set.all()
-        for dinner_ud in dinner_uds:
-            hm = dinner_ud.user.housemate
-            hm.balance -= dinner_ud.count * split_cost_inv
-            if dinner_ud.is_cook:
-                hm.balance += cost_revert - split_cost_inv
-            dinner_ud.split_cost = None
-            dinner_ud.save()
-            hm.save()
-        house_hm.save()
-
-        # TODO check balances and LOG to file
-        return house_hm.balance
 
 
 class UserDinnerViewSet(ListModelMixin, GenericViewSet):
