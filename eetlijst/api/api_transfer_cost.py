@@ -40,3 +40,7 @@ class TransferCostViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
             return success_action(serializer.data)
         else:
             return illegal_action(serializer.errors)
+
+    @action(detail=False,methods=['post'])
+    def filter(self, request):
+

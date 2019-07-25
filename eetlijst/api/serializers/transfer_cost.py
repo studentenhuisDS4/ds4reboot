@@ -1,7 +1,7 @@
 # from marshmallow import Schema, fields
 from django.contrib.auth.models import User
 from marshmallow import fields, pre_load
-from marshmallow.validate import NoneOf, Length
+from marshmallow.validate import NoneOf, Length, OneOf
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
@@ -107,3 +107,12 @@ class SplitTransferSchema(BaseTransferSchema):
         split_transfer.delta_remainder = result["delta_remainder"]
         split_transfer.save()
         return split_transfer
+
+
+class FilterSchema(Schema):
+    amount_min = fields.Decimal(max_digits=4, decimal_places=2)
+    amount_max = fields.Decimal(max_digits=4, decimal_places=2)
+    aggregate_time = fields.Str(validate=OneOf(['year', 'month', 'day']))
+    aggregate_user = fields.List(required=True,
+                                 cls_or_instance=fields.Int(validate=[
+                                     ModelAttributeValidator(type=User, filter='id')]))
