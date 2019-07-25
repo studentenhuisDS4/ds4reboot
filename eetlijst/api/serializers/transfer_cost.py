@@ -1,42 +1,98 @@
 # from marshmallow import Schema, fields
-from marshmallow import fields, validates
+from django.contrib.auth.models import User
+from marshmallow import fields, pre_load
+from marshmallow.validate import NoneOf, Length
+from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
 from ds4reboot.api.validators import ModelAttributeValidator
 from eetlijst.models import Transfer
 from user.api.api import UserInfoSchema
-from user.models import Housemate
+from user.models import get_active_users
 
 
-class TransferCostSchema(Schema):
+class BaseTransferSchema(Schema):
+    amount = fields.Decimal(required=True, max_digits=4, decimal_places=2)
+
     id = fields.Int(dump_only=True)
     time = fields.DateTime(dump_only=True)
     user = fields.Nested(UserInfoSchema, dump_only=True)
 
-    from_user = fields.Str(required=True, validate=[ModelAttributeValidator(type=Housemate, filter='display_name')])
-    to_user = fields.Str(required=True, validate=[ModelAttributeValidator(type=Housemate, filter='display_name')])
-    amount = fields.Decimal(required=True, max_digits=4, decimal_places=2)
+
+class TransferCostSchema(BaseTransferSchema):
+    from_user_id = fields.Int(required=True,
+                              load_only=True,
+                              validate=[NoneOf([1, 2], error="House or Admin cant share costs."),
+                                        ModelAttributeValidator(type=User, filter='id',
+                                                                attribute='is_active')])
+    to_user_id = fields.Int(required=True,
+                            load_only=True,
+                            validate=[NoneOf([1, 2], error="House or Admin cant share costs."),
+                                      ModelAttributeValidator(type=User, filter='id',
+                                                              attribute='is_active')])
+    user_id = fields.Int(load_only=True)
+    from_user = fields.Nested(UserInfoSchema, dump_only=True)
+    to_user = fields.Nested(UserInfoSchema, dump_only=True)
 
     def create(self, data):
-        transfer = Transfer.objects.create(**data)
+        transfer = Transfer(**data)
+
+        from_hm = transfer.from_user.housemate
+        from_hm.balance -= transfer.amount
+
+        to_hm = transfer.to_user.housemate
+        to_hm.balance += transfer.amount
+
+        transfer.save()
+        from_hm.save()
+        to_hm.save()
         return transfer
 
+    # validate from_user, to_user not equal and in active users
+    @pre_load
+    def validate_users(self, data):
+        if "user_id" in self.context:
+            user_id = self.context["user_id"]
+            if data["from_user_id"] == user_id or data["to_user_id"] == user_id:
+                data["user_id"] = self.context["user_id"]
+            else:
+                raise ValidationError("This transfer does not involve the signed-in user and thus is not allowed.")
+        else:
+            raise ValueError("The user_id value was not specified in the Schema context.")
 
-class SplitCostSchema(Schema):
-    id = fields.Int(dump_only=True)
-    time = fields.DateTime(dump_only=True)
-    user = fields.Nested(UserInfoSchema, dump_only=True)
-
-    from_users = fields.List(fields.Str(validate=[ModelAttributeValidator(type=Housemate, filter='display_name')]),
-                             required=True)
-    to_user = fields.Str(required=True, validate=[ModelAttributeValidator(type=Housemate, filter='display_name')])
-    amount = fields.Decimal(required=True, max_digits=4, decimal_places=2)
+        if "from_user_id" in data and "to_user_id" in data:
+            if data['from_user_id'] == data['to_user_id']:
+                raise ValidationError("The transfer can only happen between two different users.")
+        return data
 
 
-class AllCostSchema(Schema):
-    id = fields.Int(dump_only=True)
-    time = fields.DateTime(dump_only=True)
-    user = fields.Nested(UserInfoSchema, dump_only=True)
-    
-    to_user = fields.Str(required=True, validate=[ModelAttributeValidator(type=Housemate, filter='display_name')])
-    amount = fields.Decimal(required=True, max_digits=4, decimal_places=2)
+class SplitCostSchema(BaseTransferSchema):
+    affected_users_id = fields.List(required=True,
+                                    cls_or_instance=fields.Int(validate=[
+                                        ModelAttributeValidator(type=User, filter='id', attribute='is_active')]),
+                                    validate=[
+                                        Length(min=2, error="Splitting cost requires more than 1 affected user.")])
+    user_id = fields.Int(validate=[ModelAttributeValidator(type=User, filter='id', attribute='is_active')])
+
+    affected_users = fields.Nested(nested=UserInfoSchema, many=True, dump_only=True)
+    delta_remainder = fields.Decimal(max_digits=5, decimal_places=2, dump_only=True)
+    total_balance_before = fields.Decimal(max_digits=5, decimal_places=2, dump_only=True)
+    total_balance_after = fields.Decimal(max_digits=5, decimal_places=2, dump_only=True)
+    note = fields.Str(max_length=20)
+
+    @pre_load
+    def provide_affected_users(self, data):
+        if not "affected_users_id" in data:
+            data["affected_users_id"] = [user.id for user in get_active_users()]
+
+    @pre_load
+    def validate_users(self, data):
+        if "user_id" in self.context:
+            data["user_id"] = self.context["user_id"]
+        else:
+            raise ValueError("The user_id value was not specified in the Schema context.")
+        return data
+
+    def create(self, data):
+
+        return data

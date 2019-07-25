@@ -6,6 +6,10 @@ from django.db import models
 from base.models import SoftDeletionModel
 
 
+def get_active_users():
+    return User.objects.filter(is_active=True).exclude(username__in=['huis', 'admin'])
+
+
 class Housemate(SoftDeletionModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=12)

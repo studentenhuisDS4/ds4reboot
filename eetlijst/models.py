@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 from django.db import models
 
@@ -31,20 +32,24 @@ class UserDinner(models.Model):
 
 # model for transfer logging
 class Transfer(models.Model):
-    parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    from_user = models.CharField(max_length=30)
-    to_user = models.CharField(max_length=30)
-
     time = models.DateTimeField(default=timezone.now)
+
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='user_from_transfer')
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='user_to_transfer')
     amount = models.DecimalField(max_digits=4, decimal_places=2)
 
 
 # model for ho logging
-class HOLog(models.Model):
+class SplitTransfer(models.Model):
+    time = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    time = models.DateTimeField(default=timezone.now)
     amount = models.DecimalField(max_digits=4, decimal_places=2)
     note = models.CharField(max_length=20)  # types: ho, transfer, dinner
-    total_balance = models.DecimalField(default=0, decimal_places=2, max_digits=4)
+
+    # debugging
+    total_balance_after = models.DecimalField(default=0, decimal_places=2, max_digits=4)
+    total_balance_before = models.DecimalField(default=0, decimal_places=2, max_digits=4, null=True)
+    delta_remainder = models.DecimalField(null=True, decimal_places=2, max_digits=5)
+    affected_users = ArrayField(models.IntegerField(null=False), default=list)

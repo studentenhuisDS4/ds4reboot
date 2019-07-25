@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
-from eetlijst.models import HOLog, Transfer, UserDinner, Dinner
+from eetlijst.models import SplitTransfer, Transfer, UserDinner, Dinner
 from user.models import Housemate
 
 
@@ -135,7 +135,7 @@ def index(request, year=None, month=None, day=None):
     total_balance += Housemate.objects.get(display_name='Huis').balance
 
     # get most recent HO items and transfers
-    ho_list = HOLog.objects.all().order_by('-id')[:5]
+    ho_list = SplitTransfer.objects.all().order_by('-id')[:5]
     tr_list = Transfer.objects.all().order_by('-id')[:5]
 
     # build context object
@@ -238,7 +238,7 @@ def add_ho(request):
         overall_balance = active_balance + inactive_balance + huis.balance
 
         # add entry to ho table
-        ho = HOLog(user=h.user, amount=amount, note=note, total_balance=overall_balance)
+        ho = SplitTransfer(user=h.user, amount=amount, note=note, total_balance=overall_balance)
         ho.save()
 
     else:
@@ -625,7 +625,7 @@ def ho_log(request, page=1):
     for filt in filters_str:
         filters[filt] = request.GET.get(filt, 0)
 
-    ho_logs = HOLog.objects.order_by('-time')
+    ho_logs = SplitTransfer.objects.order_by('-time')
 
     try:
         if int(filters['housemate']):
