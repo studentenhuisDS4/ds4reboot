@@ -12,7 +12,7 @@ from ds4reboot import settings
 from ds4reboot.api.auth import CustomJWTSerializer
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
-from eetlijst.api.api_transfer_cost import TransferCostViewSet
+from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
 from user.api.api_views import ProfileViewSet, FullProfileViewSet
 
 router = DefaultRouter()
@@ -20,6 +20,7 @@ router.register(r'dinner', DinnerViewSet, basename='dinner')
 router.register(r'dinnerweek', DinnerWeekViewSet, basename='dinnerweek')
 router.register(r'userdinner', UserDinnerViewSet, basename='userdinner')
 router.register(r'transfer', TransferCostViewSet, basename='transfer')
+router.register(r'split-cost', SplitCostViewSet, basename='split-cost')
 router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
 router.register(r'profile', ProfileViewSet, basename='Profile')
