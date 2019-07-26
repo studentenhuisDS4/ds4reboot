@@ -7,6 +7,7 @@ from django.db import models
 # model for housemates (linked to auth user)
 from base.models import SoftDeletionModel
 
+DIET_LENGTH = 300
 
 def get_active_users():
     return User.objects.filter(is_active=True).exclude(username__in=['huis', 'admin']).order_by(
@@ -41,7 +42,7 @@ class Housemate(SoftDeletionModel):
 
     # eetlijst related values
     balance = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    diet = models.CharField(max_length=100, blank=True)
+    diet = models.CharField(max_length=DIET_LENGTH, blank=True)
 
     # store boete counts and status
     boetes_open = models.IntegerField(default=0)

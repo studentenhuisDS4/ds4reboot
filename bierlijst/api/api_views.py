@@ -10,7 +10,7 @@ from rest_framework.viewsets import GenericViewSet
 from bierlijst.api.api import BoeteSerializer, TurfSerializer, TurfSchema, BEER, WWINE, RWINE
 from bierlijst.models import Turf, Boete
 from ds4reboot.api.utils import log_exception, log_validation_errors, success_action
-from user.api.api import HousemateSchema
+from user.api.serializers.user import HousemateSchema
 from user.models import Housemate
 
 

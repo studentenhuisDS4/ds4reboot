@@ -1,9 +1,10 @@
 from django.db.models.base import ModelBase
+from marshmallow import ValidationError
 from marshmallow.validate import Validator
-from rest_framework.exceptions import ValidationError
 
 
 class UniqueModelValidator(Validator):
+    """ ModelAttributeValidator does more and better """
     default_message = "Unique row of {modelType} must exist."
 
     def __init__(self, type=None, error=None):
@@ -36,6 +37,7 @@ class UniqueModelValidator(Validator):
 
 
 class ModelAttributeValidator(Validator):
+    """ ModelAttributeValidator checks unique filter result and optional checks for attribute not None. """
     default_message = "Unique row of {modelType} must exist by {filter}."
     filter_message = "{filter} filter did not give a {modelType} model."
     attr_message = "{attribute} is not valid for {modelType}."
@@ -94,3 +96,25 @@ class ModelAttributeValidator(Validator):
                 raise ValidationError(self._format_error(model=model, message=self.attr_message))
         except self.modelType.DoesNotExist:
             raise ValidationError(self._format_default(value, message=self.default_message))
+
+
+class TextValidator(Validator):
+    """ ModelAttributeValidator checks unique filter result and optional checks for attribute not None. """
+    default_message = "Value contains illegal symbols. Only text is allowed."
+
+    # Attribute is optional
+    def __init__(self, error=None):
+        self.error = error
+
+    def _repr_args(self):
+        return 'error={!r}'.format(
+            self.error
+        )
+
+    def _format_default(self, message):
+        return self.error or message
+
+    def __call__(self, value):
+        print(value)
+        if not value.isalpha():
+            raise ValidationError(self._format_default(self.default_message))

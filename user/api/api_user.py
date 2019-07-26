@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
+from rest_framework import viewsets, mixins
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import BasePermission
 from rest_framework.viewsets import GenericViewSet
 
-from user.api.api import UserSchema, UserInfoSchema, FullUserSerializer
+from user.api.serializers.user import UserInfoSchema, UserSchema
 
 
 class IsSuperUser(BasePermission):
@@ -11,15 +12,18 @@ class IsSuperUser(BasePermission):
         return request.user and request.user.is_superuser
 
 
-class FullProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
+class FullProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(is_active=True)
-    serializer_class = FullUserSerializer
+    serializer_class = UserSchema
 
     permission_classes = [IsSuperUser, ]
 
 
-class ProfileViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
-    queryset = User.objects.filter(is_active=True)
+class ProfileViewSet(mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.ListModelMixin,
+                     GenericViewSet):
+    queryset = User.objects.filter(is_active=True).exclude(username='admin')
     serializer_class = UserInfoSchema
 
     # def get_serializer_class(self):

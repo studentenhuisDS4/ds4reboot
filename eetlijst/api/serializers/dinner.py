@@ -7,7 +7,7 @@ from rest_marshmallow import Schema, fields
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import UniqueModelValidator, ModelAttributeValidator
 from eetlijst.models import UserDinner, Dinner
-from user.api.api import UserInfoSchema
+from user.api.serializers.user import UserInfoSchema
 
 
 class UserDinnerSchema(Schema):

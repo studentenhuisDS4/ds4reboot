@@ -13,7 +13,7 @@ from ds4reboot.api.auth import CustomJWTSerializer
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
-from user.api.api_views import ProfileViewSet, FullProfileViewSet
+from user.api.api_user import ProfileViewSet, FullProfileViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')

@@ -7,7 +7,7 @@ from rest_marshmallow import Schema
 
 from ds4reboot.api.validators import ModelAttributeValidator
 from eetlijst.models import Transfer, SplitTransfer
-from user.api.api import UserInfoSchema
+from user.api.serializers.user import UserInfoSchema
 from user.models import get_active_users, share_cost
 
 
