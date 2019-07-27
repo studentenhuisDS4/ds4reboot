@@ -115,6 +115,5 @@ class TextValidator(Validator):
         return self.error or message
 
     def __call__(self, value):
-        print(value)
         if not value.isalpha():
             raise ValidationError(self._format_default(self.default_message))
