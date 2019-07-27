@@ -205,9 +205,6 @@ def remove_housemate(request):
 
             # get data from POST
             remove_id = int(request.POST.get('housemate'))
-            hms = Housemate.objects.all()
-            for hm in hms:
-                print(hm, hm.user_id)
             hm = Housemate.objects.get(user_id=remove_id)
             unpayed_dinners = check_dinners_housemate(request, hm)
             safe_to_remove = True

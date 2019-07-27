@@ -7,7 +7,7 @@ from rest_marshmallow import Schema, fields
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import UniqueModelValidator, ModelAttributeValidator
 from eetlijst.models import UserDinner, Dinner
-from user.api.serializers.user import UserInfoSchema
+from user.api.serializers.user import UserSchema
 
 
 class UserDinnerSchema(Schema):
@@ -22,7 +22,7 @@ class UserDinnerSchema(Schema):
     id = fields.Int(dump_only=True)
     split_cost = fields.Decimal(dump_only=True, max_digits=5, decimal_places=2)
     is_cook = fields.Bool(dump_only=True)
-    user = fields.Nested(UserInfoSchema, dump_only=True)
+    user = fields.Nested(UserSchema, dump_only=True)
     count = fields.Int(dump_only=True, validate=Range(min=0))
 
     @validates_schema
@@ -51,7 +51,7 @@ class DinnerSchema(Schema):
     num_eating = fields.Int(dump_only=True)
     userdinners = fields.Function(lambda dinner: UserDinnerSchema(dinner.userdinner_set.all(), many=True).data,
                                   dump_only=True)
-    cook = fields.Nested(UserInfoSchema, dump_only=True)
+    cook = fields.Nested(UserSchema, dump_only=True)
     open = fields.Bool(dump_only=True)
     cook_signup_time = fields.DateTime(dump_only=True)
     close_time = fields.DateTime(dump_only=True)

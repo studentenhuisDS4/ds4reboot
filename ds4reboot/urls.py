@@ -13,7 +13,7 @@ from ds4reboot.api.auth import CustomJWTSerializer
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
-from user.api.api_user import ProfileViewSet, FullProfileViewSet
+from user.api.api_user import UserViewSet, UserActionViewSet, UserFullViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
@@ -23,8 +23,9 @@ router.register(r'transfer', TransferCostViewSet, basename='transfer')
 router.register(r'split-cost', SplitCostViewSet, basename='split-cost')
 router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
-router.register(r'profile', ProfileViewSet, basename='Profile')
-router.register(r'profile-full', FullProfileViewSet, basename='Full profile')
+router.register(r'user', UserViewSet, basename='User')
+router.register(r'user-full', UserFullViewSet, basename='User full')
+router.register(r'user-action', UserActionViewSet, basename='User action')
 
 urlpatterns = \
     [

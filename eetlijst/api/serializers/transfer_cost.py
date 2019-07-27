@@ -7,7 +7,7 @@ from rest_marshmallow import Schema
 
 from ds4reboot.api.validators import ModelAttributeValidator
 from eetlijst.models import Transfer, SplitTransfer
-from user.api.serializers.user import UserInfoSchema
+from user.api.serializers.user import UserSchema
 from user.models import get_active_users, share_cost
 
 
@@ -16,7 +16,7 @@ class BaseTransferSchema(Schema):
 
     id = fields.Int(dump_only=True)
     time = fields.DateTime(dump_only=True)
-    user = fields.Nested(UserInfoSchema, dump_only=True)
+    user = fields.Nested(UserSchema, dump_only=True)
 
 
 class TransferCostSchema(BaseTransferSchema):
@@ -31,8 +31,8 @@ class TransferCostSchema(BaseTransferSchema):
                                       ModelAttributeValidator(type=User, filter='id',
                                                               attribute='is_active')])
     user_id = fields.Int(load_only=True)
-    from_user = fields.Nested(UserInfoSchema, dump_only=True)
-    to_user = fields.Nested(UserInfoSchema, dump_only=True)
+    from_user = fields.Nested(UserSchema, dump_only=True)
+    to_user = fields.Nested(UserSchema, dump_only=True)
 
     def create(self, data):
         transfer = Transfer(**data)

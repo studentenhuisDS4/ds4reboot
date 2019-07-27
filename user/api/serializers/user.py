@@ -27,22 +27,33 @@ class GroupSchema(Schema):
 class HousemateSchema(Schema):
     user_id = fields.Int(required=True)
     display_name = fields.Str(required=True, validate=[Length(min=4)])
-    diet = fields.Str(validate=[Length(min=4, max=DIET_LENGTH)])
     room_number = fields.Int(required=True)
 
-    movein_date = fields.Date()
-    balance = fields.Decimal(max_digits=7, decimal_places=2)
-    boetes_total = fields.Int()
-    sum_bier = fields.Int()
-    sum_rwijn = fields.Decimal(decimal_places=2, max_digits=8)
-    sum_wwijn = fields.Decimal(decimal_places=2, max_digits=8)
-    total_bier = fields.Int()
-    total_rwijn = fields.Decimal(decimal_places=2, max_digits=8)
-    total_wwijn = fields.Decimal(decimal_places=2, max_digits=8)
+    diet = fields.Str(validate=[Length(min=4, max=DIET_LENGTH)])
+    cell_phone = fields.Str()
+
+    movein_date = fields.Date(dump_only=True)
+    balance = fields.Decimal(dump_only=True, max_digits=7, decimal_places=2)
+    sum_bier = fields.Int(dump_only=True)
+    sum_rwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
+    sum_wwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
+    boetes_total = fields.Int(dump_only=True)
+
+
+class HousemateFullSchema(HousemateSchema):
+    boetes_geturfd_rwijn = fields.Int(dump_only=True)
+    boetes_geturfd_wwijn = fields.Int(dump_only=True)
+    total_bier = fields.Int(dump_only=True)
+    total_rwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
+    total_wwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
+    moveout_set = fields.Boolean(default=False, dump_only=True)
+    moveout_date = fields.Date(dump_only=True)
+
+    movein_date = fields.Date(default=timezone.now())
 
 
 # Necessities only
-class UserInfoSchema(Schema):
+class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(dump_only=True)
 
@@ -66,12 +77,13 @@ class UserInfoSchema(Schema):
 
 
 # Full detail
-class UserSchema(UserInfoSchema):
+class UserFullSchema(UserSchema):
     is_active = fields.Bool(default=True)
     is_staff = fields.Bool(default=False)
     is_superuser = fields.Bool(default=False)
     last_login = fields.DateTime()
     date_joined = fields.DateTime(default=timezone.now())
+    housemate = fields.Nested(HousemateFullSchema, exclude=('user_id',), required=True)
 
     # only settable by admin
     username = fields.Str(required=True, validate=[Length(min=4)])

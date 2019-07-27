@@ -1,4 +1,6 @@
+from marshmallow import Schema
 from rest_framework import status
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from ds4reboot.secret_settings import DEBUG
@@ -43,6 +45,15 @@ class Map(dict):
         del self.__dict__[key]
 
 
+class EmptySchema(Schema):
+    pass
+
+
+class IsSuperUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_superuser
+
+
 def is_integer(decimal):
     return decimal % 1 == 0
 
@@ -82,6 +93,7 @@ def success_action(data, status=status.HTTP_200_OK):
          'result': data,
          },
         status=status)
+
 
 def unimplemented_action(data, status=status.HTTP_200_OK):
     return Response(

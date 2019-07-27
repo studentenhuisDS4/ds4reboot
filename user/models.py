@@ -9,6 +9,7 @@ from base.models import SoftDeletionModel
 
 DIET_LENGTH = 300
 
+
 def get_active_users():
     return User.objects.filter(is_active=True).exclude(username__in=['huis', 'admin']).order_by(
         'housemate__movein_date')
@@ -89,12 +90,12 @@ def share_cost(housemates, cost, hm_payback):
     total_balance_before = get_total_balance()
 
     # update userdinner set belonging to dinner
+    if hm_payback:
+        hm_payback.balance += cost
     for housemate in housemates:
-        if hm_payback and housemate.id == hm_payback.id:
-            housemate.balance -= split_cost - cost
-        else:
-            housemate.balance -= split_cost
+        housemate.balance -= split_cost
         housemate.save()
+
     house_hm.save()
 
     # TODO check balances and LOG to file
