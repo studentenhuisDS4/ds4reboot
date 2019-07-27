@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
-from marshmallow import fields, ValidationError
+from marshmallow import fields
 from marshmallow.validate import Length
-from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
 from ds4reboot.api.validators import TextValidator
