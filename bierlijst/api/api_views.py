@@ -9,7 +9,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from bierlijst.api.api import BoeteSerializer, TurfSerializer, TurfSchema, BEER, WWINE, RWINE
 from bierlijst.models import Turf, Boete
-from ds4reboot.api.utils import log_exception, log_validation_errors, success_action
+from ds4reboot.api.utils import log_exception, log_validation_errors, success_action, unimplemented_action
 from user.api.serializers.user import HousemateSchema
 from user.models import Housemate
 
@@ -19,6 +19,7 @@ class TurfViewSet(ListModelMixin,
                   GenericViewSet):
     queryset = Turf.objects.order_by('-turf_time')
     serializer_class = TurfSerializer
+    filter_fields = '__all__'
 
     @action(detail=False, methods=['post'])
     def turf_item(self, request):
@@ -53,13 +54,13 @@ class TurfViewSet(ListModelMixin,
     def turf_edit(self, request):
         input = request
         # (success, data) = self.save_turf_data(request)
-        return Response({'status': 'under-construction', 'amount': 0})
+        return unimplemented_action({})
 
     @action(detail=True, methods=['post'])
     def turf_remove(self, request):
         input = request
         # (success, data) = self.save_turf_data(request)
-        return Response({'status': 'under-construction', 'amount': 0})
+        return unimplemented_action({})
 
 
 class BoeteViewSet(ListModelMixin,
@@ -68,11 +69,12 @@ class BoeteViewSet(ListModelMixin,
     queryset = Boete.objects.order_by(
         '-created_time')
     serializer_class = BoeteSerializer
+    filter_fields = '__all__'
 
     @action(detail=True, methods=['post'])
     def turf_boete(self, request, pk=None):
-        return Response({'status': 'under-construction', 'amount': 0})
+        return unimplemented_action({})
 
     @action(detail=True, methods=['post'])
     def create_boete(self, request, pk=None):
-        return Response({'status': 'under-construction', 'amount': 0})
+        return unimplemented_action({})
