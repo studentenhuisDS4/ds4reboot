@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'bierlijst.apps.BierlijstConfig',
     'eetlijst.apps.EetlijstConfig',
     'thesau.apps.ThesauConfig',
+    'organisation.apps.OrganisationConfig',
     'ds4admin.apps.Ds4AdminConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -143,6 +144,7 @@ USE_TZ = True  # Use local time
 
 # Generated uploads
 HR_REPORTS_FOLDER = 'hr_reports/'
+RECEIPTS_FOLDER = 'receipts/'
 TEMP_FOLDER = 'temp/'
 
 # Static & Media

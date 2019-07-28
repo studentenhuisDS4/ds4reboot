@@ -39,8 +39,9 @@ class TurfSchema(Schema):
         errors = {}
         if data.turf_count == 0:
             errors['turf_count'] = ['Value of turf_count cannot be 0.']
-        elif data.turf_type == BEER and not is_integer(data.turf_count):
+        elif data.turf_type == BEER and not is_integer(data.turf_count) and data.turf_count.as_tuple() is not None:
             errors['turf_count'] = ['Value of turf_count must be integer for this turf_type.']
+        # TODO bug on decimal check
         # elif data.turf_type != BEER and data.turf_count.as_tuple().exponent < -2:
         #     errors['turf_count'] = ['Value of turf_count must have less than or equal to 2 decimal places.']
         if errors:
