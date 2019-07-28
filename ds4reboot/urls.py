@@ -13,7 +13,7 @@ from ds4reboot.api.auth import CustomJWTSerializer
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
-from organisation.api.api_views import KeukenDienstViewSet
+from organisation.api.api_views import KeukenDienstViewSet, ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet
 
 router = DefaultRouter()
@@ -28,6 +28,7 @@ router.register(r'user', UserViewSet, basename='User')
 router.register(r'user-full', UserFullViewSet, basename='User full')
 router.register(r'user-action', UserActionViewSet, basename='User action')
 router.register(r'keukendienst', KeukenDienstViewSet, basename='Keukendienst')
+router.register(r'receipt', ReceiptViewSet, basename='Receipts')
 
 
 urlpatterns = \
@@ -44,6 +45,7 @@ urlpatterns = \
 
         path('wiki/notifications/', include('django_nyt.urls')),
         path('wiki/', include('wiki.urls')),
+        path('plugins/', include('attachments.urls', namespace='plugins')),
 
         path(f'{settings.API_BASE_URL}auth-jwt/', ObtainJSONWebToken.as_view(serializer_class=CustomJWTSerializer)),
         path(f'{settings.API_BASE_URL}auth-jwt-refresh/', refresh_jwt_token),

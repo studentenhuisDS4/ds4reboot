@@ -30,12 +30,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'url_filter',
+    'attachments',
 
-    # Angular
+    # API/ Angular
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'url_filter',
 
     # Wiki
     'django.contrib.sites.apps.SitesConfig',
@@ -104,7 +105,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_FILTER_BACKENDS': [
-         'url_filter.integrations.drf.DjangoFilterBackend',
+        'url_filter.integrations.drf.DjangoFilterBackend',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -169,3 +170,7 @@ STATICFILES_DIRS = [
 WIKI_ACCOUNT_HANDLING = True
 WIKI_ACCOUNT_SIGNUP_ALLOWED = True
 SITE_ID = 1
+
+# Attachments
+DELETE_ATTACHMENTS_FROM_DISK = False
+FILE_UPLOAD_MAX_SIZE = 3024000  # ~3MB
