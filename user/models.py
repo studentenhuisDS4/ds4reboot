@@ -33,6 +33,7 @@ class Housemate(SoftDeletionModel):
     room_number = models.IntegerField(null=True)
     movein_date = models.DateField(default=timezone.now)
     moveout_date = models.DateField(null=True)
+    sublet_date = models.DateField(null=True)
 
     # flag user for moveout (null=normal, false=ready for deletion, true=deleted)
     moveout_set = models.NullBooleanField()

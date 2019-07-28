@@ -1,12 +1,12 @@
 import rest_marshmallow
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils import timezone
-from marshmallow import fields, validates_schema
+from marshmallow import fields
 from marshmallow.validate import Length
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
-from ds4reboot.api.validators import TextValidator
+from ds4reboot.api.validators import TextValidator, UniqueModelValidator
 from user.models import DIET_LENGTH, Housemate
 
 # stupid local fix for bug
@@ -20,7 +20,7 @@ class PermissionSchema(Schema):
 
 
 class GroupSchema(Schema):
-    id = fields.Int()
+    id = fields.Int(required=True, validate=[UniqueModelValidator(type=Group, error="This group does not exist")])
     name = fields.Str()
 
 
@@ -50,6 +50,7 @@ class HousemateFullSchema(HousemateSchema):
     moveout_date = fields.Date(dump_only=True)
 
     movein_date = fields.Date(default=timezone.now())
+    sublet_date = fields.Date()
 
 
 # Necessities only
