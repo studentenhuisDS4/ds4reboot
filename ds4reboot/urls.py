@@ -45,7 +45,6 @@ urlpatterns = \
 
         path('wiki/notifications/', include('django_nyt.urls')),
         path('wiki/', include('wiki.urls')),
-        path('plugins/', include('attachments.urls', namespace='plugins')),
 
         path(f'{settings.API_BASE_URL}auth-jwt/', ObtainJSONWebToken.as_view(serializer_class=CustomJWTSerializer)),
         path(f'{settings.API_BASE_URL}auth-jwt-refresh/', refresh_jwt_token),

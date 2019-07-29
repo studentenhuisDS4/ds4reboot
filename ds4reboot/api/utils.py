@@ -4,6 +4,7 @@ from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from ds4reboot.secret_settings import DEBUG
+from ds4reboot.settings import MEDIA_URL
 
 FAILURE = {'status': 'failure'}
 SUCCESS = {'status': 'success'}
@@ -87,6 +88,14 @@ def illegal_action(message, data=None):
     return Response(context, status=status.HTTP_403_FORBIDDEN)
 
 
+def failed_parse(message, data=None):
+    context = {'status': FAILURE}
+    context.update({'message': message})
+    if data:
+        context.update({'result': data})
+    return Response(context, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+
 def success_action(data, status=status.HTTP_200_OK):
     return Response(
         {'status': 'success',
@@ -101,3 +110,14 @@ def unimplemented_action(data, status=status.HTTP_200_OK):
          'result': data,
          },
         status=status)
+
+
+def full_media_url(request):
+    return get_base(request) + MEDIA_URL
+
+
+def get_base(request):
+    if request.is_secure():
+        return "https://" + request.get_host()
+    else:
+        return "http://" + request.get_host()

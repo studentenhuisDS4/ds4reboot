@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'attachments',
+    'plugins',
 
     # API/ Angular
     'rest_framework',
@@ -153,7 +153,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
 if DEBUG:
-    MEDIA_ROOT = './media/'
+    # The final slash fucks up file upload...
+    MEDIA_ROOT = './media'
 else:
     MEDIA_ROOT = '/var/www/media/'
 

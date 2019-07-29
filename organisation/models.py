@@ -3,7 +3,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Manager
 from django.utils import timezone
-from attachments.models import Attachment
 
 from base.models import SoftDeletionModel
 

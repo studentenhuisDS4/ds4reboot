@@ -13,7 +13,6 @@ from user.api.serializers.user import UserSchema
 class UserDinnerSchema(Schema):
     # none of house/admin
     user_id = fields.Int(required=True, validate=[NoneOf([1, 2], error="House or Admin cant join dinner."),
-                                                  UniqueModelValidator(type=User),
                                                   ModelAttributeValidator(type=User, filter='id',
                                                                           attribute='is_active')])
     dinner_date = fields.Date(required=True)
