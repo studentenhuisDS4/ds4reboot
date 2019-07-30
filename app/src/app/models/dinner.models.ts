@@ -3,7 +3,7 @@ import {IHousemate, IUser} from './profile.model';
 export interface IUserDinner {
     id: number;
 
-    user_id: number;
+    user: IUser;
     housemate: IHousemate;
     dinner_date: Date;
     count: number;
@@ -28,7 +28,7 @@ export interface IDinner {
 
 export function userEntry(dinner: IDinner, user: IUser): IUserDinner {
     if (dinner && dinner.userdinners) {
-        return dinner.userdinners.find(ud => ud.user_id === user.id);
+        return dinner.userdinners.find(ud => ud.user.id === user.id);
     }
     return null;
 }
