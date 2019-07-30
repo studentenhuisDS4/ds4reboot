@@ -62,6 +62,10 @@ jobs:
           name: Collect static (django)
           command: |
             ssh $SSH_USER@$SSH_HOST 'docker exec -u 0 django python ./manage.py collectstatic --noinput'
+      - run:
+          name: Migrate (django)
+          command: |
+            ssh $SSH_USER@$SSH_HOST 'docker exec -u 0 django python ./manage.py migrate'
 workflows:
   version: 2
   deploy:
