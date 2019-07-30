@@ -43,7 +43,7 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                     dinner.close_time = None
                 dinner.save()
 
-                return success_action(data={'dinner': DinnerSchema(dinner).data, }, status=status.HTTP_202_ACCEPTED)
+                return success_action(data=DinnerSchema(dinner).data, status=status.HTTP_202_ACCEPTED)
             else:
                 if dinner.cook:
                     # TODO easter egg

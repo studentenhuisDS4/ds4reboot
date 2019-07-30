@@ -1,4 +1,4 @@
-import {IHousemate, IProfile} from './profile.model';
+import {IHousemate, IUser} from './profile.model';
 
 export interface IUserDinner {
     id: number;
@@ -19,14 +19,14 @@ export interface IDinner {
     open: boolean;
     date: Date;
 
-    cook: IProfile;
+    cook: IUser;
 
     signup_time: Date;
     close_time: Date;
     eta_time: Date;
 }
 
-export function userEntry(dinner: IDinner, user: IProfile): IUserDinner {
+export function userEntry(dinner: IDinner, user: IUser): IUserDinner {
     if (dinner && dinner.userdinners) {
         return dinner.userdinners.find(ud => ud.user_id === user.id);
     }

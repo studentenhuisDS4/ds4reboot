@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {dayNames, IDinner, IUserDinner, userEntry, weekDates} from '../models/dinner.models';
+import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {ProfileService} from '../services/profile.service';
-import {IProfile} from '../models/profile.model';
+import {IUser} from '../models/profile.model';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material';
 
@@ -41,14 +41,16 @@ import {MatSnackBar} from '@angular/material';
 })
 export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
-    todayDinner: IDinner | { date: Date; userdinners: any[]; cost: null; cook: null; signup_time: null; eta_time: null; id: null; close_time: null; open: boolean; num_eating: null };
+    todayDinner: IDinner;
 
     showWeek = false;
     weekCollapse = 'hide';
     todayCollapse = 'show';
     dayCollapse = 'none';
 
-    user: IProfile = null;
+    user: IUser = null;
+
+    @Input() miniView = false;
 
     constructor(private dinnerListService: DinnerListService, private profileService: ProfileService, private snackBar: MatSnackBar) {
         this.loadDinnerWeek();
@@ -88,6 +90,26 @@ export class DinnerListComponent implements OnInit {
                     this.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
                 }
                 this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
+    closeDinner(dinner: IDinner) {
+        const cost = dinner.cost;
+        this.dinnerListService.close(dinner).then(output => {
+                const d: IDinner = output.result;    // (TODO API) Hack for now...
+                if (d && !d.open) {
+                    this.openSnackBar(`Dinner closed.`, 'Ok');
+                } else {
+                    if (cost && !d.cost) {
+                        this.openSnackBar(`Dinner opened (cost refunded).`, 'Ok');
+                    } else {
+                        this.openSnackBar(`Dinner opened.`, 'Ok');
+                    }
+                }
+                this.todayDinner = this.updateDinner(d, d.date);
             },
             error => {
                 this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
@@ -176,7 +198,7 @@ export class DinnerListComponent implements OnInit {
         };
     }
 
-    private getUserEntry(todayDinner: IDinner, user: IProfile) {
+    private getUserEntry(todayDinner: IDinner, user: IUser) {
         return userEntry(todayDinner, user);
     }
 }

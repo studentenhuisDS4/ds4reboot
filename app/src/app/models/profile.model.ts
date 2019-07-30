@@ -23,7 +23,7 @@ export interface IHousemate {
     total_wwijn: number;
 }
 
-export interface IProfile {
+export interface IUser {
     id: number;
     last_name: string;
     first_name: string;

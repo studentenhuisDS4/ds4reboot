@@ -1,5 +1,7 @@
+<br *ngIf="miniView"/>
+
 <section fxLayout="column" fxFlexAlign="stretch">
-    <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
+    <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;" *ngIf="!miniView">
         <mat-card-header>
             <mat-card-title>
                 <mat-card-title>
@@ -49,6 +51,7 @@
             </div>
             <mat-card-title style="display: flex;">
                 {{getWeekday(todayDinner.date)}} {{ todayDinner.eta_time ? "-" + todayDinner.eta_time : ""}}
+                {{ todayDinner.open ? "" : "(closed)"}}
             </mat-card-title>
             <mat-card-subtitle>{{todayDinner.date | date : 'MMMM d'}}</mat-card-subtitle>
         </mat-card-header>
@@ -68,25 +71,26 @@
                 {{getUserEntry(todayDinner, user)?.count}}
             </button>
             <button mat-raised-button (click)="cookDinner(todayDinner)"
-                    [color]="todayDinner.cook == null ? 'accent' : 'primary'"
-                    [disabled]="todayDinner.cook && todayDinner.cook.id !== user.id">
-                <mat-icon>shopping_cart</mat-icon>
+                    [color]="todayDinner.cook == null ? 'accent' : 'warn'"
+                    [disabled]="todayDinner.cook && todayDinner.cook.id !== user.id || !todayDinner.open">
+                <mat-icon *ngIf="!todayDinner.cook">shopping_cart</mat-icon>
+                <mat-icon *ngIf="todayDinner.cook">remove_shopping_cart</mat-icon>
             </button>
-            <button mat-raised-button (click)="signupDinner(todayDinner)" color="accent"
-                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time) : false">
-                <mat-icon>remove_shopping_cart</mat-icon>
+            <button mat-raised-button (click)="closeDinner(todayDinner)"
+                    [color]="todayDinner.open ? 'accent' : 'warn'"
+                    *ngIf="user && todayDinner && todayDinner.num_eating > 1 && todayDinner.cook ? (todayDinner.cook.id == user.id) : false">
+                <mat-icon *ngIf="todayDinner.open">lock</mat-icon>
+                <mat-icon *ngIf="!todayDinner.open">lock_open</mat-icon>
             </button>
             <div fxFlex></div>
-            <button mat-raised-button (click)="signupDinner(todayDinner)" color="primary"
-                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time && todayDinner.cost == null) : false ">
-                <mat-icon>attach_money</mat-icon>
-            </button>
+
+            <!--            <button mat-raised-button (click)="costDinner(todayDinner)" color="primary"-->
+<!--                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time && todayDinner.cost == null) : false ">-->
+<!--                <mat-icon>attach_money</mat-icon>-->
+<!--            </button>-->
         </mat-card-actions>
     </mat-card>
     <span fxFlexAlign="center" style="color:white;">{{ weekDinners.length == 0 ? "Loading dinners." : ""}}</span>
-    <!--    <button fxFlexAlign="end" color="primary" mat-fab>-->
-    <!--        <mat-icon>calendar_today</mat-icon>-->
-    <!--    </button>-->
 </section>
 
 

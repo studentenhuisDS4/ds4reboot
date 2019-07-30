@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {TurfListService} from '../services/turf-list.service';
 import {TurfType} from '../models/turf.model';
 import {ProfileService} from '../services/profile.service';
-import {IProfile} from '../models/profile.model';
+import {IUser} from '../models/profile.model';
 import {IStatus} from '../models/api.model';
 import {SnackBarService} from '../services/snackBar.service';
 
@@ -12,7 +12,9 @@ import {SnackBarService} from '../services/snackBar.service';
     styleUrls: ['./turf-list.component.scss']
 })
 export class TurfListComponent implements OnInit {
-    user: IProfile = null;
+    user: IUser = null;
+
+    @Input() miniView = false;
 
     constructor(private turfListService: TurfListService,
                 private profileService: ProfileService,
