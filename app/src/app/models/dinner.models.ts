@@ -27,7 +27,7 @@ export interface IDinner {
 }
 
 export function userEntry(dinner: IDinner, user: IUser): IUserDinner {
-    if (dinner && dinner.userdinners) {
+    if (dinner && dinner.userdinners && user) {
         return dinner.userdinners.find(ud => ud.user.id === user.id);
     }
     return null;
