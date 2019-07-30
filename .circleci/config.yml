@@ -33,6 +33,7 @@ jobs:
           key: v1-dependencies-{{ checksum "Pipfile" }}
       - run:
           command: |
+            python manage.py migrate
             python manage.py test
       - store_test_results:
           path: test-results
