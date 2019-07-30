@@ -1,17 +1,36 @@
-import {IProfile} from './profile.model';
+import {IHousemate, IUser} from './profile.model';
 
-export interface IDinnerDate {
+export interface IUserDinner {
+    id: number;
+
+    user: IUser;
+    housemate: IHousemate;
+    dinner_date: Date;
+    count: number;
+    is_cook: boolean;
+    split_cost: number;
+}
+
+export interface IDinner {
     id: number;
     num_eating: number;
+    userdinners: IUserDinner[];
     cost: number;
     open: boolean;
     date: Date;
 
-    cook: IProfile;
+    cook: IUser;
 
     signup_time: Date;
     close_time: Date;
     eta_time: Date;
+}
+
+export function userEntry(dinner: IDinner, user: IUser): IUserDinner {
+    if (dinner && dinner.userdinners) {
+        return dinner.userdinners.find(ud => ud.user.id === user.id);
+    }
+    return null;
 }
 
 export const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

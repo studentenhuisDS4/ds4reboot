@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {ITurfItem, ITurfResult} from '../models/turf.model';
+import {ITurfItem} from '../models/turf.model';
+import {IHousemate} from '../models/profile.model';
+import {IResult} from '../models/api.model';
 
 @Injectable({
     providedIn: 'root'
@@ -15,27 +17,27 @@ export class TurfListService {
     }
 
     turfItem(turfItemData: ITurfItem) {
-        return this.httpClient.post<ITurfResult>(`${this.URL_TURF}`, turfItemData).toPromise();
+        return this.httpClient.post<IResult<IHousemate>>(`${this.URL_TURF}`, turfItemData).toPromise();
     }
 
     getTurfDay() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getTurfWeek() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getTurfList() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getBoeteHR() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
     getBoeteOpen() {
-        return null; // this.httpClient.get<IDinnerDate[]>(`${this.URL_WEEK}`).toPromise();
+        return null; // this.httpClient.get<IDinner[]>(`${this.URL_WEEK}`).toPromise();
     }
 
 }

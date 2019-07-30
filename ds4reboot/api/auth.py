@@ -18,11 +18,12 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
 
     def validate(self, attrs):
         password = attrs.get("password")
-        user_obj = User.objects.filter(email=attrs.get("username-or-email").lower()).first() or User.objects.filter(
-            username=attrs.get("username-or-email").lower()).first()
+        user_obj = User.objects.filter(email__iexact=attrs.get("username-or-email")).first() or User.objects.filter(
+            username__iexact=attrs.get("username-or-email")).first()
+        print(password)
         if user_obj is not None:
             credentials = {
-                'username': user_obj.username.lower(),
+                'username': user_obj.username,
                 'password': password
             }
             if all(credentials.values()):

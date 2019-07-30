@@ -1,8 +1,8 @@
-export interface IResult {
+export interface IResult<T> {
     exception: string;
     traceback: string;
     errors: string[];
-    result: any;
+    result: T;
 
     status: IStatus;
 }

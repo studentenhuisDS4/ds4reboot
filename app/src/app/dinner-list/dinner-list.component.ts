@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {dayNames, IDinnerDate, weekDates} from '../models/dinner.models';
+import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {ProfileService} from '../services/profile.service';
-import {IProfile} from '../models/profile.model';
+import {IUser} from '../models/profile.model';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material';
 
@@ -40,29 +40,80 @@ import {MatSnackBar} from '@angular/material';
     ]
 })
 export class DinnerListComponent implements OnInit {
-    weekDinners: IDinnerDate[] = [];
-    todayDinner: IDinnerDate;
+    weekDinners: IDinner[] = [];
+    todayDinner: IDinner;
 
     showWeek = false;
     weekCollapse = 'hide';
     todayCollapse = 'show';
     dayCollapse = 'none';
 
-    user: IProfile = null;
+    user: IUser = null;
+
+    @Input() miniView = false;
 
     constructor(private dinnerListService: DinnerListService, private profileService: ProfileService, private snackBar: MatSnackBar) {
         this.loadDinnerWeek();
         this.profileService.getProfile().then(result => {
             this.user = result;
         });
-        // console.log(this.profileService.getUserId());
     }
 
     ngOnInit() {
     }
 
-    signupDinner(dinner: IDinnerDate) {
-        this.openSnackBar('Under construction, sorry!', 'Ok!');
+    signOffDinner(dinner: IDinner) {
+        this.dinnerListService.signOff(this.user.id, dinner.date).then(output => {
+                this.openSnackBar(`${this.user.housemate.display_name} cancelled for dinner.`, 'Ok');
+                this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed sign-off action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
+    signupDinner(dinner: IDinner) {
+        this.dinnerListService.signUp(this.user.id, dinner.date).then(output => {
+                this.openSnackBar(`Signup +1 for ${this.user.housemate.display_name} successful!`, 'Ok');
+                this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
+    cookDinner(dinner: IDinner, signOff = false) {
+        this.dinnerListService.cook(this.user.id, dinner.date, signOff).then(output => {
+                if (output.result && output.result.cook && output.result.cook.id == this.user.id) {
+                    this.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
+                } else {
+                    this.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
+                }
+                this.todayDinner = this.updateDinner(output.result, dinner.date);
+            },
+            error => {
+                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
+    closeDinner(dinner: IDinner) {
+        const cost = dinner.cost;
+        this.dinnerListService.close(dinner).then(output => {
+                const d: IDinner = output.result;    // (TODO API) Hack for now...
+                if (d && !d.open) {
+                    this.openSnackBar(`Dinner closed.`, 'Ok');
+                } else {
+                    if (cost && !d.cost) {
+                        this.openSnackBar(`Dinner opened (cost refunded).`, 'Ok');
+                    } else {
+                        this.openSnackBar(`Dinner opened.`, 'Ok');
+                    }
+                }
+                this.todayDinner = this.updateDinner(d, d.date);
+            },
+            error => {
+                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
     }
 
     // Animation on week
@@ -81,7 +132,7 @@ export class DinnerListComponent implements OnInit {
     }
 
     // Animation on day
-    openDinner(dinner: IDinnerDate): void {
+    openDinner(dinner: IDinner): void {
         if (environment.debug) {
             console.log('Dinner day pressed.', dinner);
         }
@@ -109,12 +160,7 @@ export class DinnerListComponent implements OnInit {
             weekDates(new Date()).forEach(day => {
                 const findDay = result.find(r => isSameDay(r.date, day));
                 if (!findDay) {
-                    result.push({
-                        id: null,
-                        date: day,
-                        signup_time: null, close_time: null, eta_time: null,
-                        num_eating: null, open: true, cost: null, cook: null,
-                    });
+                    result.push(this.createEmptyDinner(day));
                     result.sort((a, b) => compareAsc(a.date, b.date));
                 }
             });
@@ -130,8 +176,29 @@ export class DinnerListComponent implements OnInit {
     openSnackBar(message: string, action: string) {
         this.snackBar.open(message, action, {
             duration: 2000,
-            verticalPosition: 'top',
+            verticalPosition: 'bottom',
         });
     }
 
+    private updateDinner(dinner: IDinner, day: Date) {
+        if (dinner) {
+            return dinner;
+        } else {
+            return this.createEmptyDinner(day);
+        }
+    }
+
+    private createEmptyDinner(day: Date): IDinner {
+        return {
+            id: null,
+            date: day,
+            signup_time: null, close_time: null, eta_time: null,
+            num_eating: null, open: true, cost: null, cook: null,
+            userdinners: [],
+        };
+    }
+
+    private getUserEntry(todayDinner: IDinner, user: IUser) {
+        return userEntry(todayDinner, user);
+    }
 }

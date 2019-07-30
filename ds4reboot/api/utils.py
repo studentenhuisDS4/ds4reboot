@@ -1,8 +1,13 @@
-import traceback
-
+from marshmallow import Schema
+from rest_framework import status
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from ds4reboot.secret_settings import DEBUG
+from ds4reboot.settings import MEDIA_URL
+
+FAILURE = {'status': 'failure'}
+SUCCESS = {'status': 'success'}
 
 
 # Map dict to dereferencable object
@@ -41,18 +46,78 @@ class Map(dict):
         del self.__dict__[key]
 
 
+class EmptySchema(Schema):
+    pass
+
+
+class IsSuperUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_superuser
+
+
 def is_integer(decimal):
     return decimal % 1 == 0
 
 
-def log_exception(e, tb):
+def log_exception(e, tb=None):
+    context = {'status': FAILURE}
     # TODO log
-    if DEBUG:
-        print(e)
-    return Response({'exception': str(e), 'traceback': tb})
+    context.update({'exception': str(e)})
+    if tb and DEBUG:
+        print(tb)
+        context.update({'tb': tb})
+
+    return Response(context, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def log_validation_errors(errors):
+    # TODO log
     if DEBUG:
         print(errors)
-    return Response({'errors': errors})
+    context = {'status': FAILURE}
+    context.update({'errors': errors})
+    print(context)
+    return Response(context, status=status.HTTP_400_BAD_REQUEST)
+
+
+def illegal_action(message, data=None):
+    context = {'status': FAILURE}
+    context.update({'message': message})
+    if data:
+        context.update({'result': data})
+    return Response(context, status=status.HTTP_403_FORBIDDEN)
+
+
+def failed_parse(message, data=None):
+    context = {'status': FAILURE}
+    context.update({'message': message})
+    if data:
+        context.update({'result': data})
+    return Response(context, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+
+def success_action(data, status=status.HTTP_200_OK):
+    return Response(
+        {'status': 'success',
+         'result': data,
+         },
+        status=status)
+
+
+def unimplemented_action(data, status=status.HTTP_200_OK):
+    return Response(
+        {'status': 'under-construction',
+         'result': data,
+         },
+        status=status)
+
+
+def full_media_url(request):
+    return get_base(request) + MEDIA_URL
+
+
+def get_base(request):
+    if request.is_secure():
+        return "https://" + request.get_host()
+    else:
+        return "http://" + request.get_host()

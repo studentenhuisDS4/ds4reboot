@@ -5,14 +5,13 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Sum
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
-from eetlijst.models import HOLog, Transfer, UserDinner, Dinner
+from eetlijst.models import SplitTransfer, Transfer, UserDinner, Dinner
 from user.models import Housemate
 
 
@@ -136,7 +135,7 @@ def index(request, year=None, month=None, day=None):
     total_balance += Housemate.objects.get(display_name='Huis').balance
 
     # get most recent HO items and transfers
-    ho_list = HOLog.objects.all().order_by('-id')[:5]
+    ho_list = SplitTransfer.objects.all().order_by('-id')[:5]
     tr_list = Transfer.objects.all().order_by('-id')[:5]
 
     # build context object
@@ -148,6 +147,7 @@ def index(request, year=None, month=None, day=None):
         'focus_date': str(year) + '-' + str(month) + '-' + str(day),
         'focus_cook': focus_cook,
         'focus_close_date': focus_close_date,
+        'focus_close_date_new': focus_date,
         'focus_close_cost': focus_close_cost,
         'focus_open': focus_open,
         'user_open': user_open,
@@ -238,7 +238,7 @@ def add_ho(request):
         overall_balance = active_balance + inactive_balance + huis.balance
 
         # add entry to ho table
-        ho = HOLog(user=h.user, amount=amount, note=note, total_balance=overall_balance)
+        ho = SplitTransfer(user=h.user, amount=amount, note=note, total_balance=overall_balance)
         ho.save()
 
     else:
@@ -301,8 +301,8 @@ def enroll(request):
     try:
         user_id = request.POST.get('user_id')
     except:
-        return HttpResponse(JsonResponse(
-            {'result': 'Error: Could not find requested user.', 'status': 'failure'}))
+        return JsonResponse(
+            {'result': 'Error: Could not find requested user.', 'status': 'failure'})
 
     if request.user.is_authenticated:
         enroll_user = Housemate.objects.get(user_id=user_id)
@@ -310,18 +310,17 @@ def enroll(request):
         enroll_type = request.POST.get('enroll_type')
 
         # get or create rows as necessary
-        user_entry, user_created = UserDinner.objects.get_or_create(user=enroll_user.user, dinner_date=enroll_date)
-        date_entry, date_created = Dinner.objects.get_or_create(date=enroll_date)
-
-        if not user_entry.dinner:
-            user_entry.dinner = date_entry
+        dinner, date_created = Dinner.objects.get_or_create(date=enroll_date)
+        dinner.save()
+        user_entry, user_created = UserDinner.objects.get_or_create(user=enroll_user.user, dinner_date=dinner.date,
+                                                                    dinner=dinner)
 
         # modify models as appropriate
         if enroll_type == 'signup':
             user_entry.count += 1
-            date_entry.num_eating += 1
+            dinner.num_eating += 1
             type_amount = user_entry.count
-            if date_entry.open:
+            if dinner.open:
                 if user_entry.count == 1:
                     success_message = '%s is ingeschreven.' % (str(enroll_user).capitalize())
                 else:
@@ -329,48 +328,48 @@ def enroll(request):
                         str(enroll_user).capitalize(), int(user_entry.count))
             else:
                 # TODO: restyle instead of suggesting to refresh
-                return HttpResponse(JsonResponse(
-                    {'result': 'The list is closed already. Please refresh page.', 'status': 'failure'}))
+                return JsonResponse(
+                    {'result': 'The list is closed already. Please refresh page.', 'status': 'failure'})
         elif enroll_type == 'sponge':
-            date_entry.num_eating -= user_entry.count
+            dinner.num_eating -= user_entry.count
             user_entry.count = 0
-            if date_entry.open:
+            if dinner.open:
                 success_message = '%s is uitgeschreven.' % (str(enroll_user).capitalize())
                 type_amount = 0
             else:
                 # TODO: restyle instead of suggesting to refresh
-                return HttpResponse(JsonResponse(
-                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'}))
+                return JsonResponse(
+                    {'result': 'There list is closed already. Please refresh page.', 'status': 'failure'})
         elif enroll_type == 'cook':
-            if date_entry.cook and not date_entry.cook == enroll_user.user:
-                return HttpResponse(JsonResponse({'result': 'There is already a cook.', 'status': 'failure'}))
-            elif date_entry.cook == enroll_user.user:
+            if dinner.cook and not dinner.cook == enroll_user.user:
+                return JsonResponse({'result': 'There is already a cook.', 'status': 'failure'})
+            elif dinner.cook == enroll_user.user:
                 user_entry.is_cook = False
-                date_entry.num_eating -= 1
-                date_entry.cook = None
-                date_entry.signup_time = None
+                dinner.num_eating -= 1
+                dinner.cook = None
+                dinner.cook_signup_time = None
                 success_message = '%s kookt niet meer.' % (str(enroll_user).capitalize())
                 type_amount = 0
             else:
                 user_entry.is_cook = True
-                date_entry.signup_time = timezone.now()
-                date_entry.cook = enroll_user.user
-                date_entry.num_eating += 1
+                dinner.cook_signup_time = timezone.now()
+                dinner.cook = enroll_user.user
+                dinner.num_eating += 1
                 success_message = '%s kookt voor het huis.' % (str(enroll_user).capitalize())
                 type_amount = 1
         else:
-            return HttpResponse(JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'}))
+            return JsonResponse({'result': 'Invalid submit button.', 'status': 'failure'})
 
         user_entry.timestamp = timezone.now()
         user_entry.save()
-        date_entry.save()
+        dinner.save()
 
         # clean up if necessary
         if user_entry.count == 0 and user_entry.is_cook == False:
             user_entry.delete()
 
-        if date_entry.num_eating == 0:
-            date_entry.delete()
+        if dinner.num_eating == 0:
+            dinner.delete()
 
         # collect json data for jquery to check
         try:
@@ -388,14 +387,12 @@ def enroll(request):
                      'enroll_date': str(enroll_date),
                      'enroll_type': str(enroll_type),
                      'enroll_amount': str(type_amount),
-                     'total_amount': str(date_entry.num_eating)}
+                     'total_amount': str(dinner.num_eating)}
 
-        return HttpResponse(JsonResponse(json_data))
+        return JsonResponse(json_data)
 
     else:
         return render(request, 'base/login_page.html')
-
-    return redirect(request.META.get('HTTP_REFERER'))
 
 
 # close eetlijst
@@ -407,6 +404,10 @@ def close(request):
         date = request.POST.get('close-date')
 
         # get or create rows as necessary
+        if date == 'None':
+            messages.error(request,
+                           "The given dinner date was not given. Now it is loaded you should try once more!")
+            return redirect(request.META.get('HTTP_REFERER'))
         date_entry, date_created = Dinner.objects.get_or_create(date=date)
 
         if date_entry.cook:
@@ -590,8 +591,6 @@ def cost(request):
                     u.save()
                     h.save()
 
-                h = Housemate.objects.get(user=request.user)
-
             except:
                 messages.error(request, 'Server internal error during calculation of cost.')
 
@@ -626,7 +625,7 @@ def ho_log(request, page=1):
     for filt in filters_str:
         filters[filt] = request.GET.get(filt, 0)
 
-    ho_logs = HOLog.objects.order_by('-time')
+    ho_logs = SplitTransfer.objects.order_by('-time')
 
     try:
         if int(filters['housemate']):

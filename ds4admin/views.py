@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST, require_GET
 from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate, send_moveout_mail
 from ds4reboot.secret_settings import DEBUG
 from user.models import Housemate
-from eetlijst.models import HOLog
+from eetlijst.models import SplitTransfer
 from thesau.models import Report
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -205,9 +205,6 @@ def remove_housemate(request):
 
             # get data from POST
             remove_id = int(request.POST.get('housemate'))
-            hms = Housemate.objects.all()
-            for hm in hms:
-                print(hm, hm.user_id)
             hm = Housemate.objects.get(user_id=remove_id)
             unpayed_dinners = check_dinners_housemate(request, hm)
             safe_to_remove = True
@@ -253,7 +250,7 @@ def remove_housemate(request):
                 huis.balance += new_remainder
 
                 # add log entry to eating list ho table
-                ho = HOLog(user=hm.user, amount=hm.balance, note='Verhuizen')
+                ho = SplitTransfer(user=hm.user, amount=hm.balance, note='Verhuizen')
 
                 # Render email to send summary
                 last_hr_date = Report.objects.latest('report_date').report_date  # Assume housemate already lived here

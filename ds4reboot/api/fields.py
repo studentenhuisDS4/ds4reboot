@@ -2,6 +2,7 @@ from marshmallow import ValidationError
 from marshmallow.fields import Nested
 
 
+
 class RelatedNested(Nested):
 
     def _serialize(self, nested_obj, attr, obj, **kwargs):

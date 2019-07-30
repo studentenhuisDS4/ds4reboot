@@ -19,16 +19,16 @@
                     display: block;
                 {% endif %}">
             {% csrf_token %}
-            <input type="hidden" name="close-date" value="{{ focus_close_date|sub_date }}">
+            <input type="hidden" name="close-date" value="{{ focus_close_date_new|sub_date }}">
             {% if focus_open == True %}
                 <button class="uk-button uk-button-large uk-button-primary">
-                    <i class="uk-icon-shopping-cart date-{{ focus_close_date|sub_date }}">
+                    <i class="uk-icon-shopping-cart date-{{ focus_close_date_new|sub_date }}">
                     </i>
                     Close list as cook
                 </button>
             {% elif focus_open == False %}
                 <button class="uk-button uk-button-large uk-button-danger">
-                    <i class="uk-icon-shopping-cart date-{{ focus_close_date|sub_date }}">
+                    <i class="uk-icon-shopping-cart date-{{ focus_close_date_new|sub_date }}">
                     </i>
                     Open list {% if focus_close_cost == True %}(+ restore cost) {% endif %}
                 </button>

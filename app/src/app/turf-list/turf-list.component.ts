@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {TurfListService} from '../services/turf-list.service';
 import {TurfType} from '../models/turf.model';
 import {ProfileService} from '../services/profile.service';
-import {IProfile} from '../models/profile.model';
+import {IUser} from '../models/profile.model';
 import {IStatus} from '../models/api.model';
 import {SnackBarService} from '../services/snackBar.service';
 
@@ -12,7 +12,9 @@ import {SnackBarService} from '../services/snackBar.service';
     styleUrls: ['./turf-list.component.scss']
 })
 export class TurfListComponent implements OnInit {
-    user: IProfile = null;
+    user: IUser = null;
+
+    @Input() miniView = false;
 
     constructor(private turfListService: TurfListService,
                 private profileService: ProfileService,
@@ -31,9 +33,9 @@ export class TurfListComponent implements OnInit {
             turf_note: `${this.user.username} turved in BETA phase. Prev_amount${this.user.housemate.sum_bier}`,
             turf_type: turfType,
             turf_user_id: this.user.id
-        }).then(result => {
-            if (result.status === IStatus.SUCCESS) {
-                this.user.housemate = result.housemate;
+        }).then(output => {
+            if (output.status === IStatus.SUCCESS) {
+                this.user.housemate = output.result;
                 this.snackBarService.openSnackBar(`Turved 1 beer. Total: ${this.user.housemate.sum_bier}`, 'Ok');
             }
         });

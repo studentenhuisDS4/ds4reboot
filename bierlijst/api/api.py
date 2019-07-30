@@ -39,20 +39,23 @@ class TurfSchema(Schema):
         errors = {}
         if data.turf_count == 0:
             errors['turf_count'] = ['Value of turf_count cannot be 0.']
-        elif data.turf_type == BEER and not is_integer(data.turf_count):
+        elif data.turf_type == BEER and not is_integer(data.turf_count) and data.turf_count.as_tuple() is not None:
             errors['turf_count'] = ['Value of turf_count must be integer for this turf_type.']
-        elif data.turf_type != BEER and data.turf_count.as_tuple().exponent < -2:
-            errors['turf_count'] = ['Value of turf_count must have less than or equal to 2 decimal places.']
+        # TODO bug on decimal check
+        # elif data.turf_type != BEER and data.turf_count.as_tuple().exponent < -2:
+        #     errors['turf_count'] = ['Value of turf_count must have less than or equal to 2 decimal places.']
         if errors:
             raise ValidationError(errors)
-        print(type(data.turf_count))
 
     def create(self, valid_data, *args, **kwargs):
         turf_obj = Turf(**valid_data)
         turf_obj.save()
         return turf_obj
 
-    # def update(self, instance, validated_data):
+    # def update(self, valid_data, *args, **kwargs):
+    #     turf_obj = Turf.objects.filter(**valid_data)
+    #     turf_obj.save()
+    #     return turf_obj
 
 
 class BoeteSerializer(serializers.ModelSerializer):

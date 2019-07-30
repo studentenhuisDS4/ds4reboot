@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'bierlijst.apps.BierlijstConfig',
     'eetlijst.apps.EetlijstConfig',
     'thesau.apps.ThesauConfig',
+    'organisation.apps.OrganisationConfig',
     'ds4admin.apps.Ds4AdminConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,11 +30,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'plugins',
 
-    # Angular
+    # API/ Angular
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'url_filter',
 
     # Wiki
     'django.contrib.sites.apps.SitesConfig',
@@ -52,8 +55,8 @@ INSTALLED_APPS = [
 INSTALLED_APPS += SECRET_APPS
 
 MIDDLEWARE = [
+    'django.middleware.gzip.GZipMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -101,6 +104,9 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'url_filter.integrations.drf.DjangoFilterBackend',
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
@@ -113,7 +119,7 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'BEARER',
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
-    'JWT_ALLOW_REFRESH': False
+    'JWT_ALLOW_REFRESH': True
 }
 
 API_BASE_URL = 'api/v1/'
@@ -139,6 +145,7 @@ USE_TZ = True  # Use local time
 
 # Generated uploads
 HR_REPORTS_FOLDER = 'hr_reports/'
+RECEIPTS_FOLDER = 'receipts/'
 TEMP_FOLDER = 'temp/'
 
 # Static & Media
@@ -146,7 +153,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/static/'
 MEDIA_URL = '/media/'
 if DEBUG:
-    MEDIA_ROOT = './media/'
+    # The final slash fucks up file upload...
+    MEDIA_ROOT = './media'
 else:
     MEDIA_ROOT = '/var/www/media/'
 
@@ -163,3 +171,7 @@ STATICFILES_DIRS = [
 WIKI_ACCOUNT_HANDLING = True
 WIKI_ACCOUNT_SIGNUP_ALLOWED = True
 SITE_ID = 1
+
+# Attachments
+DELETE_ATTACHMENTS_FROM_DISK = False
+FILE_UPLOAD_MAX_SIZE = 3024000  # ~3MB

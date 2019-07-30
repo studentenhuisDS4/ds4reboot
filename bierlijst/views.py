@@ -1,12 +1,11 @@
 # from gcm.models import get_device_model
-import json
 from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Sum, Q
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
@@ -310,16 +309,14 @@ def turf_item(request, user_id):
                     turf_count = Decimal(round(Decimal(request.POST.get('count')), 2))
 
                 except ValueError:
-                    return HttpResponse(
-                        json.dumps({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'}))
+                    return JsonResponse({'result': 'Error: Count moet een nummer zijn.', 'status': 'failure'})
 
                 if turf_type == 'bier' and not float(turf_count).is_integer():
-                    return HttpResponse(
-                        json.dumps({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'}))
+                    return JsonResponse({'result': 'Error: Je moet een heel biertje turven.', 'status': 'failure'})
 
                 if turf_count >= 1000:
-                    return HttpResponse(
-                        json.dumps({'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'}))
+                    return JsonResponse(
+                        {'result': 'Error: Je kunt niet meer dan 999 items turven.', 'status': 'failure'})
 
             else:
                 turf_count = 1
@@ -335,12 +332,12 @@ def turf_item(request, user_id):
                     h.total_bier += turf_count
 
                     success_message = '%s heeft %s bier geturfd.' % (
-                    str(turf_user.housemate.display_name).capitalize(), int(turf_count))
+                        str(turf_user.housemate.display_name).capitalize(), int(turf_count))
                     success_message = success_message if turf_count == 1 else success_message.replace('bier',
                                                                                                       'biertjes')
                 else:
                     success_message = 'Je kan geen negatief aantal biertjes hebben.'
-                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+                    return JsonResponse({'result': success_message, 'status': 'failure'})
 
                 new_value = h.sum_bier
                 sum_type = 'sum_bier'
@@ -354,7 +351,7 @@ def turf_item(request, user_id):
                         str(turf_user.housemate.display_name).capitalize(), turf_count)
                 else:
                     success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
-                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+                    return JsonResponse({'result': success_message, 'status': 'failure'})
 
                 new_value = h.sum_wwijn
                 sum_type = 'sum_wwijn'
@@ -364,7 +361,7 @@ def turf_item(request, user_id):
                     h.total_rwijn += Decimal(turf_count)
                 else:
                     success_message = 'Je kan geen negatief aantal wijnflessen hebben.'
-                    return HttpResponse(json.dumps({'result': success_message, 'status': 'failure'}))
+                    return JsonResponse({'result': success_message, 'status': 'failure'})
 
                 success_message = '%s heeft %s rode wijn geturfd.' % (
                     str(turf_user.housemate.display_name).capitalize(), turf_count)
@@ -376,20 +373,19 @@ def turf_item(request, user_id):
             if sum_type != '':
                 new_value_total = Housemate.objects.aggregate(sum=Sum(sum_type))['sum']
             else:
-                return HttpResponse(json.dumps({'result': 'Error: Turf type not recognized.', 'status': 'failure'}))
+                return JsonResponse({'result': 'Error: Turf type not recognized.', 'status': 'failure'})
 
             t = Turf(turf_user=turf_user, turf_to=turf_user.username, turf_by=request.user, turf_count=turf_count,
                      turf_type=turf_type)
             t.save()
 
-            return HttpResponse(json.dumps({'result': success_message, 'status': 'success',
-                                            'new_value': str(new_value), 'new_value_total': str(new_value_total)}))
+            return JsonResponse({'result': success_message, 'status': 'success',
+                                 'new_value': str(new_value), 'new_value_total': str(new_value_total)})
         except Exception as e:
             print(e)
 
     else:
-        return HttpResponse(
-            json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+        return JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'})
 
 
 # handle turf post requests
@@ -409,9 +405,8 @@ def list_medals(request):
                 else:
                     medals += [0]
 
-            return HttpResponse(json.dumps(
-                {'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}}))
+            return JsonResponse(
+                {'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}})
 
         else:
-            return HttpResponse(
-                json.dumps({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'}))
+            return JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'})
