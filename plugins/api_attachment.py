@@ -1,4 +1,5 @@
 import traceback
+from json import JSONDecodeError
 from pprint import pprint
 
 from PIL import Image
@@ -30,7 +31,11 @@ class AttachmentsUploadMixin():
         marsh = AttachmentsSchema().load(data=request.data)
         if not marsh.errors:
             # Flatten data important to the creation of subclass
-            json_data = json.loads(request.data['json_data'])
+            try:
+                json_data = json.loads(request.data['json_data'])
+            except JSONDecodeError as e:
+                return log_exception(f"The attachments were found, but the json_data field was not parsable.")
+
             for key, value in json_data.items():
                 request.data[key] = value
             request.data.pop('json_data')

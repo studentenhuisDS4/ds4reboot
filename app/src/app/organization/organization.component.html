@@ -1,5 +1,13 @@
-<p>
-  organization works!
-</p>
+<h1>Receipt upload</h1>
 
-We should have receipts, calendar, keukendienst, etc. here!
+<form #imageForm=ngForm (ngSubmit)="submitImage(files)">
+    <mat-form-field>
+        <label for="file-input">Receipt attachment (photo/pdf)</label>
+        <input matInput class="form-control" id="file-input" #files type="file" (change)="handleFileInput($event.target.files)" multiple/>
+    </mat-form-field>
+    <mat-form-field>
+        <button mat-raised-button color="accent" type="submit" [disabled]="!files || !imageForm.valid">
+            <i class="material-icons">save</i> Upload
+        </button>
+    </mat-form-field>
+</form>
