@@ -1,5 +1,72 @@
-<p>
-  profile works!
-</p>
+<section fxLayout="column" fxFlexAlign="stretch">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Create user (under construction)
+            </mat-card-title>
+        </mat-card-header>
 
-Here you should be able to adjust everything your profile requires.
+        <div class="container"
+             fxLayout
+             fxLayout.xs="column"
+             fxLayoutAlign="center"
+             fxLayoutGap="10px"
+             fxLayoutGap.xs="0"
+             style=" background-color: rgba(255,255,255,0.2);">
+            <div fxFlex="10%" style="background-color: #a0cdd8"></div>
+            <div fxFlex="10%">
+                <h1>Summary</h1>
+                <div class="user-details-container">
+                    <img class="user-image" src="https://randomuser.me/api/portraits/lego/3.jpg"/>
+                    <span class="user-title">Jankooo Jankers {{housemateForm.get('display_name')?.value}}</span>
+                    <p class="user-bio">{{userForm.get('email')?.value}}</p>
+                </div>
+            </div>
+            <div class="item item-2" fxFlex>
+                <h1>Profile</h1>
+                <form [formGroup]="userForm" fxLayout="column">
+                    <mat-form-field>
+                        <input matInput placeholder="Email" type="email" formControlName="email" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="First name" type="text" formControlName="first_name" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Last name" type="text" formControlName="last_name" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Password" type="password" formControlName="password" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Password (repeat)" type="password" required
+                               formControlName="password_repeat"/>
+                    </mat-form-field>
+                </form>
+            </div>
+            <div class="item item-3" fxFlex>
+                <h1>Housemate</h1>
+                <form [formGroup]="housemateForm" fxLayout="column">
+                    <mat-form-field>
+                        <input matInput placeholder="Nickname" type="text" formControlName="display_name" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Room number" type="number" formControlName="room_number" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Room number" type="date" formControlName="movein_date" required/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Diet" type="text" formControlName="diet"/>
+                    </mat-form-field>
+
+                    <button mat-raised-button color="primary" type="button" (click)="createUser()">Create user</button>
+                </form>
+            </div>
+            <div fxFlex="10%" style="background-color: #a0cdd8"></div>
+        </div>
+    </mat-card>
+
+    <!--<p>-->
+    <!--    <a [routerLink]="['/register']">Register</a>-->
+    <!--</p>-->
+</section>
