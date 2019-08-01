@@ -16,12 +16,17 @@ export class UserService {
     }
 
     // Jwt-claim based profile getter (guaranteed by guard)
-    getProfile(user: number = this.auth.getTokenClaims().user_id) {
+    getProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
         return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {}).toPromise();
     }
 
-    getFullProfile(user: number = this.auth.getTokenClaims().user_id) {
+    getFullProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
         return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${user.toString()}/`, {})
+            .toPromise();
+    }
+
+    getActiveUsers(): Promise<IUser[]> {
+        return this.httpClient.get<IUser[]>(`${this.API_URL}/user/`, {})
             .toPromise();
     }
 

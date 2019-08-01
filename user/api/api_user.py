@@ -23,7 +23,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
 
 
 class UserFullViewSet(viewsets.ModelViewSet):
-    queryset = get_active_users()
+    queryset = User.objects.exclude(username__in=['admin', 'huis'])
     serializer_class = UserFullSchema
 
     permission_classes = [IsSuperUser, ]

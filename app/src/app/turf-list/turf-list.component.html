@@ -12,11 +12,6 @@
             </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            Beer: {{user ? user.housemate.sum_bier : ""}}
-            Red wine: {{user ? user.housemate.sum_rwijn : ""}}
-            White wine: {{user ? user.housemate.sum_wwijn : ""}}
-        </mat-card-content>
-        <mat-card-actions>
             <div fxFlex>
                 <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem()" style="margin-right:5px;"
                         color="accent">+1
@@ -43,17 +38,29 @@
                         color="primary">-1 white
                 </button>
             </div>
+        </mat-card-content>
+        <mat-card-actions>
+            Beer: {{user ? user.housemate.sum_bier : ""}}
+            Red wine: {{user ? user.housemate.sum_rwijn : ""}}
+            White wine: {{user ? user.housemate.sum_wwijn : ""}}<br/>
+            <mat-list dense>
+                <mat-list-item *ngFor="let user of turfUsers">
+                    {{ user.housemate.display_name }}
+                    <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem('beer', '1', user)"
+                            style="margin-right:5px;"
+                            color="accent">+1
+                        beer
+                    </button>
+                    <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem('beer', '-1', user)"
+                            style="margin-right:5px;"
+                            color="accent">-1
+                        beer
+                    </button>
+                </mat-list-item>
+                <mat-list-item>
+                    HA you start at the the bottom you sjaarsch!
+                </mat-list-item>
+            </mat-list>
         </mat-card-actions>
     </mat-card>
 </section>
-
-
-<!--<br/><br/>-->
-<!--Future updates: <br/>-->
-<!--<ol>-->
-<!--    <li>turf-matrix</li>-->
-<!--    <li>crate-turf (incl. house)</li>-->
-<!--    <li>quick log</li>-->
-<!--    <li>boetepanel</li>-->
-<!--    <li>splitting wine across housemates.</li>-->
-<!--</ol>-->
