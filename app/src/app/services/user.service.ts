@@ -3,11 +3,13 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {IUser} from '../models/profile.model';
 import {AuthService} from './auth.service';
+import {FormGroup} from '@angular/forms';
+import {map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
-export class ProfileService {
+export class UserService {
 
     API_URL: string = environment.baseUrl;
 
@@ -24,4 +26,15 @@ export class ProfileService {
         return this.auth.getTokenClaims().user_id;
     }
 
+    checkUsername(username: string) {
+        return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?username__iexact=${username}`);
+    }
+
+    checkEmail(email: string) {
+        return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?email__iexact=${email}`);
+    }
+
+    createOrUpdate(userForm: FormGroup) {
+        return this.httpClient.post<IUser>(`${this.API_URL}/user-full/`, userForm.value).toPromise();
+    }
 }

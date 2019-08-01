@@ -19,6 +19,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
                   GenericViewSet):
     queryset = get_active_users()
     serializer_class = UserSchema
+    filter_fields = '__all__'
 
 
 class UserFullViewSet(viewsets.ModelViewSet):
@@ -26,6 +27,7 @@ class UserFullViewSet(viewsets.ModelViewSet):
     serializer_class = UserFullSchema
 
     permission_classes = [IsSuperUser, ]
+    filter_fields = '__all__'
 
 
 class UserActionViewSet(viewsets.GenericViewSet):

@@ -3,7 +3,7 @@ import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
-import {ProfileService} from '../services/profile.service';
+import {UserService} from '../services/user.service';
 import {IUser} from '../models/profile.model';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material';
@@ -52,7 +52,7 @@ export class DinnerListComponent implements OnInit {
 
     @Input() miniView = false;
 
-    constructor(private dinnerListService: DinnerListService, private profileService: ProfileService, private snackBar: MatSnackBar) {
+    constructor(private dinnerListService: DinnerListService, private profileService: UserService, private snackBar: MatSnackBar) {
         this.loadDinnerWeek();
         this.profileService.getProfile().then(result => {
             this.user = result;
