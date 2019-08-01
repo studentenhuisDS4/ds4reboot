@@ -4,7 +4,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
-import {IUser} from '../models/profile.model';
+import {IUser} from '../models/user.model';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material';
 

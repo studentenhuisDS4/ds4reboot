@@ -1,4 +1,4 @@
-import {IHousemate} from './profile.model';
+import {IHousemate} from './user.model';
 import {IResult} from './api.model';
 
 export interface ITurfItem {

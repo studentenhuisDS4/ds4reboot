@@ -30,6 +30,9 @@ export interface IUser {
     username: string;
     housemate: IHousemate;
 
+    is_superuser: boolean;
+    is_active: boolean;
+
     user_permissions: IPermission[];
     groups: IGroup[];
 }

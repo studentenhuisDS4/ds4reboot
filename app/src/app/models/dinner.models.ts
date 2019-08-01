@@ -1,4 +1,4 @@
-import {IHousemate, IUser} from './profile.model';
+import {IHousemate, IUser} from './user.model';
 
 export interface IUserDinner {
     id: number;

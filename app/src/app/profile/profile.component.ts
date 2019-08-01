@@ -4,6 +4,7 @@ import {SnackBarService} from '../services/snackBar.service';
 import {UserService} from '../services/user.service';
 import {format} from 'date-fns';
 import {emailValidator, usernameValidator} from '../services/validators/async.validator';
+import {IUser} from '../models/user.model';
 
 @Component({
     selector: 'app-profile',
@@ -14,6 +15,7 @@ export class ProfileComponent implements OnInit {
     public userForm: FormGroup;
     lastFirstName = '';
     lastLastName = '';
+    user: IUser;
 
     input: any = {
         email: String,
@@ -32,6 +34,10 @@ export class ProfileComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.userService.getFullProfile().then(result => {
+            this.user = result;
+        });
+
         this.userForm = new FormGroup({
             email: new FormControl('',
                 {

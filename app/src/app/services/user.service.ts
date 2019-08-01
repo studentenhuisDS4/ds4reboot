@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {IUser} from '../models/profile.model';
+import {IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
-import {map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +18,11 @@ export class UserService {
     // Jwt-claim based profile getter (guaranteed by guard)
     getProfile(user: number = this.auth.getTokenClaims().user_id) {
         return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {}).toPromise();
+    }
+
+    getFullProfile(user: number = this.auth.getTokenClaims().user_id) {
+        return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${user.toString()}/`, {})
+            .toPromise();
     }
 
     // Jwt-claim based user-id getter (guaranteed by guard)

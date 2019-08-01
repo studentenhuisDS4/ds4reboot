@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {ITurfItem} from '../models/turf.model';
-import {IHousemate} from '../models/profile.model';
+import {IHousemate} from '../models/user.model';
 import {IResult} from '../models/api.model';
 
 @Injectable({
