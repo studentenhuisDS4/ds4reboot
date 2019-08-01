@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TurfListService} from '../services/turf-list.service';
 import {TurfType} from '../models/turf.model';
-import {ProfileService} from '../services/profile.service';
-import {IUser} from '../models/profile.model';
+import {UserService} from '../services/user.service';
+import {IUser} from '../models/user.model';
 import {IStatus} from '../models/api.model';
 import {SnackBarService} from '../services/snackBar.service';
 
@@ -17,7 +17,7 @@ export class TurfListComponent implements OnInit {
     @Input() miniView = false;
 
     constructor(private turfListService: TurfListService,
-                private profileService: ProfileService,
+                private profileService: UserService,
                 private snackBarService: SnackBarService) {
         this.profileService.getProfile().then(result => {
             this.user = result;

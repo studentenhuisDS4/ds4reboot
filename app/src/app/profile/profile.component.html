@@ -1,5 +1,91 @@
-<p>
-  profile works!
-</p>
-
-Here you should be able to adjust everything your profile requires.
+<section fxLayout="column" fxFlexAlign="stretch">
+    <mat-card>
+        <div *ngIf="!(user?.is_superuser)">
+            You are not allowed to create a new user. Profile editing comes later.
+        </div>
+        <div class="container" *ngIf="user?.is_superuser"
+             fxLayout
+             fxLayout.xs="column"
+             fxLayoutAlign="center"
+             fxLayoutGap="10px"
+             fxLayoutGap.xs="0">
+            <div fxFlex="5%" style="background-color: #b2e7f2"></div>
+            <div fxFlex="20%">
+                <h1>Summary</h1>
+                <div class="user-details-container">
+                    <img class="user-image" src="https://randomuser.me/api/portraits/lego/3.jpg"/>
+                    <span class="user-title">Jankooo Jankers {{userForm.get('housemate.display_name')?.value}}</span>
+                    <p class="user-bio" *ngIf="userForm.get('email')?.value">{{userForm.get('email')?.value}}</p>
+                    <p class="user-bio" *ngIf="userForm.get('username')?.value">{{userForm.get('username')?.value}}</p>
+                </div>
+            </div>
+            <div class="item item-2" fxFlex>
+                <h1>Profile</h1>
+                <form [formGroup]="userForm" fxLayout="column">
+                    <mat-form-field>
+                        <input matInput placeholder="Email" type="email" formControlName="email" required/>
+                        <mat-error *ngIf="E('email')?.required">Email is required.</mat-error>
+                        <mat-error *ngIf="E('email')?.email || E('email')?.pattern">
+                            Email incorrect.
+                        </mat-error>
+                        <mat-error *ngIf="E('email')?.emailExists">This email exists already.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="First name" type="text" formControlName="first_name" required/>
+                        <mat-error *ngIf="E('first_name')?.required">First name is required.</mat-error>
+                        <mat-error *ngIf="E('first_name')?.minlength">First name needs to be >=2 characters.</mat-error>
+                        <mat-error *ngIf="E('first_name')?.maxlength">First name needs to be <=30 characters.
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Last name" type="text" formControlName="last_name" required/>
+                        <mat-error *ngIf="E('last_name')?.required">Username is required.</mat-error>
+                        <mat-error *ngIf="E('last_name')?.minlength">Username needs to be >=2 characters.</mat-error>
+                        <mat-error *ngIf="E('last_name')?.maxlength">Username needs to be <=150 characters.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Username" type="text" formControlName="username" required/>
+                        <mat-error *ngIf="E('username')?.required">Username is required.</mat-error>
+                        <mat-error *ngIf="E('username')?.minlength">Username needs to be >=4 characters.</mat-error>
+                        <mat-error *ngIf="E('username')?.maxlength">Username needs to be <=150 characters.</mat-error>
+                        <mat-error *ngIf="E('username')?.usernameExists">Username exists already.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Password" type="password" formControlName="password" required/>
+                        <mat-error *ngIf="E('password')?.required">Password is required.</mat-error>
+                        <mat-error *ngIf="E('password')?.minlength">Password needs to be >=6 characters.</mat-error>
+                        <mat-error *ngIf="E('password')?.maxlength">Password needs to be <=150 characters.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <input matInput placeholder="Password (repeat)" type="password" required
+                               formControlName="password_repeat"/>
+                        <mat-error *ngIf="E('password_repeat')?.required">Password is required.</mat-error>
+                        <mat-error *ngIf="E('password_repeat')?.minlength">Password needs to be >=6 characters.</mat-error>
+                        <mat-error *ngIf="E('password_repeat')?.maxlength">Password needs to be <=150 characters.</mat-error>
+                        <mat-error *ngIf="E('password_repeat')?.isNotMatching">Passwords are not equivalent.</mat-error>
+                    </mat-form-field>
+                </form>
+            </div>
+            <div class="item item-3" fxFlex>
+                <h1>Housemate</h1>
+                <form [formGroup]="userForm" fxLayout="column" novalidate>
+                    <mat-form-field formGroupName="housemate">
+                        <input matInput placeholder="Nickname" type="text" formControlName="display_name" required/>
+                    </mat-form-field>
+                    <mat-form-field formGroupName="housemate">
+                        <input matInput placeholder="Room number" type="number" formControlName="room_number" required/>
+                    </mat-form-field>
+                    <mat-form-field formGroupName="housemate">
+                        <input matInput placeholder="Movein-date" type="date" formControlName="movein_date" required/>
+                    </mat-form-field>
+                    <mat-form-field formGroupName="housemate">
+                        <input matInput placeholder="Diet" type="text" formControlName="diet"/>
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" type="button"
+                            [disabled]="!userForm.valid" (click)="createUser()">Create user</button>
+                </form>
+            </div>
+            <div fxFlex="5%" style="background-color: #b2e7f2"></div>
+        </div>
+    </mat-card>
+</section>

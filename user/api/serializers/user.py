@@ -26,10 +26,10 @@ class GroupSchema(Schema):
 
 class HousemateSchema(Schema):
     user_id = fields.Int(required=True)
-    display_name = fields.Str(required=True, validate=[Length(min=4)])
+    display_name = fields.Str(required=True, validate=[Length(min=2)])
     room_number = fields.Int(required=True)
 
-    diet = fields.Str(validate=[Length(min=4, max=DIET_LENGTH)])
+    diet = fields.Str(validate=[Length(max=DIET_LENGTH)])
     cell_phone = fields.Str()
 
     movein_date = fields.Date(dump_only=True)
@@ -59,8 +59,8 @@ class UserSchema(Schema):
     username = fields.Str(dump_only=True)
 
     email = fields.Email(required=True)
-    first_name = fields.Str(required=True, validate=[Length(min=2), TextValidator()])
-    last_name = fields.Str(required=True, validate=[Length(min=2), TextValidator()], )
+    first_name = fields.Str(required=True, validate=[Length(min=2)])
+    last_name = fields.Str(required=True, validate=[Length(min=2)], )
     housemate = fields.Nested(HousemateSchema, exclude=('user_id',), required=True)
 
     def update(self, instance, validated_data):
@@ -89,7 +89,7 @@ class UserFullSchema(UserSchema):
     # only settable by admin
     username = fields.Str(required=True, validate=[Length(min=4)])
     # TODO move somewhere so it can be adjusted and hashed by users as well
-    password = fields.Str(required=True, load_only=True)
+    password = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
     groups = fields.Function(
         lambda user: GroupSchema(user.groups.all(), many=True).data,
         dump_only=True)

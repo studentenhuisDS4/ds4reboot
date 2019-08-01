@@ -3,8 +3,8 @@ import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
-import {ProfileService} from '../services/profile.service';
-import {IUser} from '../models/profile.model';
+import {UserService} from '../services/user.service';
+import {IUser} from '../models/user.model';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material';
 
@@ -52,7 +52,7 @@ export class DinnerListComponent implements OnInit {
 
     @Input() miniView = false;
 
-    constructor(private dinnerListService: DinnerListService, private profileService: ProfileService, private snackBar: MatSnackBar) {
+    constructor(private dinnerListService: DinnerListService, private profileService: UserService, private snackBar: MatSnackBar) {
         this.loadDinnerWeek();
         this.profileService.getProfile().then(result => {
             this.user = result;
@@ -66,6 +66,7 @@ export class DinnerListComponent implements OnInit {
         this.dinnerListService.signOff(this.user.id, dinner.date).then(output => {
                 this.openSnackBar(`${this.user.housemate.display_name} cancelled for dinner.`, 'Ok');
                 this.todayDinner = this.updateDinner(output.result, dinner.date);
+                this.updateWeek();
             },
             error => {
                 this.openSnackBar(`Failed sign-off action for ${this.user.housemate.display_name}!`, 'Shit');
@@ -76,6 +77,7 @@ export class DinnerListComponent implements OnInit {
         this.dinnerListService.signUp(this.user.id, dinner.date).then(output => {
                 this.openSnackBar(`Signup +1 for ${this.user.housemate.display_name} successful!`, 'Ok');
                 this.todayDinner = this.updateDinner(output.result, dinner.date);
+                this.updateWeek();
             },
             error => {
                 this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
@@ -90,6 +92,7 @@ export class DinnerListComponent implements OnInit {
                     this.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
                 }
                 this.todayDinner = this.updateDinner(output.result, dinner.date);
+                this.updateWeek();
             },
             error => {
                 this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
@@ -110,6 +113,7 @@ export class DinnerListComponent implements OnInit {
                     }
                 }
                 this.todayDinner = this.updateDinner(d, d.date);
+                this.updateWeek();
             },
             error => {
                 this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
@@ -151,6 +155,17 @@ export class DinnerListComponent implements OnInit {
             });
         }
         return foundDinner;
+    }
+
+    updateWeek() {
+        this.weekDinners.forEach((dinner, index) => {
+            if (isSameDay(dinner.date, this.todayDinner.date)) {
+                this.weekDinners[index].num_eating = this.todayDinner.num_eating;
+                this.weekDinners[index].cook = this.todayDinner.cook;
+                this.weekDinners[index].userdinners = this.todayDinner.userdinners;
+                this.weekDinners[index].open = this.todayDinner.open;
+            }
+        });
     }
 
     loadDinnerWeek() {
