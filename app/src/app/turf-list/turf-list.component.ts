@@ -35,20 +35,26 @@ export class TurfListComponent implements OnInit {
     }
 
     turfItem(turfType: TurfType = TurfType.BEER, amount = 1, turfUser = null) {
-        if (!turfUser) {
+        if (turfUser == null) {
             turfUser = this.user;
         }
+        if (this.user.id !== turfUser.id) {
+            if (!confirm('Different housemate/kutSjaarsch. Confirm please.')) {
+                return;
+            }
+        }
+        console.log(turfType);
         this.busy = true;
         this.turfListService.turfItem({
             turf_count: amount,
-            turf_note: `${this.user.username} turved in BETA phase. Prev_amount${this.user.housemate.sum_bier}`,
+            turf_note: `${turfUser.housemate.display_name} turved in BETA phase. Prev_amount${turfUser.housemate.sum_bier}`,
             turf_type: turfType,
             turf_user_id: turfUser.id
         }).then(output => {
             if (output.status === IStatus.SUCCESS) {
                 this.user.housemate = output.result;
                 this.snackBarService.openSnackBar(
-                    `Turved ${amount} ${turfType} on ${turfUser.housemate.id}. Total: ${this.user.housemate.sum_bier}`,
+                    `Turved ${amount} ${turfType} on ${turfUser.housemate.display_name}. Total: ${turfUser.housemate.sum_bier}`,
                     this.easterEggService.easterEggo());
             }
             this.busy = false;
