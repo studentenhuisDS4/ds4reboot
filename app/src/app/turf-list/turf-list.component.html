@@ -17,16 +17,32 @@
             White wine: {{user ? user.housemate.sum_wwijn : ""}}
         </mat-card-content>
         <mat-card-actions>
-            <button mat-raised-button *ngIf="user" (click)="turfItem()" style="margin-right:5px;" color="accent">+1
-                beer
-            </button>
-            <div fxFlex></div>
-            <button mat-raised-button *ngIf="user" (click)="turfItem('red-wine')" style="margin-right:5px;"
-                    color="warn">+1 red
-            </button>
-            <button mat-raised-button *ngIf="user" (click)="turfItem('white-wine')" style="margin-right:5px;"
-                    color="primary">+1 white
-            </button>
+            <div fxFlex>
+                <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem()" style="margin-right:5px;"
+                        color="accent">+1
+                    beer
+                </button>
+                <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem('beer', -1)"
+                        style="margin-right:5px;" color="accent">-1
+                    beer
+                </button>
+            </div>
+            <div fxFlex>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('red-wine')" style="margin-right:5px;"
+                        color="warn">+1 red
+                </button>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('red-wine', -1)" style="margin-right:5px;"
+                        color="warn">-1 red
+                </button>
+            </div>
+            <div fxFlex>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('white-wine')" style="margin-right:5px;"
+                        color="primary">+1 white
+                </button>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('white-wine',-1)" style="margin-right:5px;"
+                        color="primary">-1 white
+                </button>
+            </div>
         </mat-card-actions>
     </mat-card>
 </section>

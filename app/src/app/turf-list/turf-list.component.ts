@@ -13,6 +13,7 @@ import {SnackBarService} from '../services/snackBar.service';
 })
 export class TurfListComponent implements OnInit {
     user: IUser = null;
+    busy = false;
 
     @Input() miniView = false;
 
@@ -27,17 +28,19 @@ export class TurfListComponent implements OnInit {
     ngOnInit() {
     }
 
-    turfItem(turfType: TurfType = TurfType.BEER) {
+    turfItem(turfType: TurfType = TurfType.BEER, amount = 1) {
+        this.busy = true;
         this.turfListService.turfItem({
-            turf_count: 1,
+            turf_count: amount,
             turf_note: `${this.user.username} turved in BETA phase. Prev_amount${this.user.housemate.sum_bier}`,
             turf_type: turfType,
             turf_user_id: this.user.id
         }).then(output => {
             if (output.status === IStatus.SUCCESS) {
                 this.user.housemate = output.result;
-                this.snackBarService.openSnackBar(`Turved 1 beer. Total: ${this.user.housemate.sum_bier}`, 'Ok');
+                this.snackBarService.openSnackBar(`Turved ${amount} ${turfType}. Total: ${this.user.housemate.sum_bier}`, 'Ok');
             }
+            this.busy = false;
         });
     }
 
