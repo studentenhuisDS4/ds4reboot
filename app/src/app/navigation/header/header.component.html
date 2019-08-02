@@ -1,5 +1,5 @@
 <mat-toolbar color="primary">
-    <div fxHide.gt-xs>
+    <div>
         <button mat-icon-button (click)="onToggleSidenav()">
             <mat-icon>menu</mat-icon>
         </button>
@@ -12,17 +12,17 @@
 
     <div fxFlex fxLayout fxLayoutAlign="end">
         <ul fxLayout fxLayoutGap="0px" class="navigation-items">
-            <li>
-                <button mat-icon-button (click)="loginHouse()">
-                    <mat-icon>house</mat-icon>
-                </button>
-            </li>
-            <li>
-                <button mat-icon-button routerLink="profile">
+            <li class="nav-item">
+                <button mat-icon-button [routerLink]="['/profile']" routerLinkActive="nav-item-active">
                     <mat-icon>perm_identity</mat-icon>
                 </button>
             </li>
-            <li>
+            <li class="nav-item nav-icon-border">
+                <button mat-icon-button (click)="loginHouse()" [disabled]="isHouse">
+                    <mat-icon>house</mat-icon>
+                </button>
+            </li>
+            <li class="nav-item nav-icon-border">
                 <button mat-icon-button (click)="logout()">
                     <mat-icon>exit_to_app</mat-icon>
                 </button>

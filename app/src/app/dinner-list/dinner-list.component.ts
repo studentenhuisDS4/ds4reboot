@@ -27,7 +27,7 @@ import {EasterEggService} from '../services/easter.service';
         ]),
         trigger('slideOpen', [
             state('false', style({
-                'margin-bottom': '-50px',
+                'margin-bottom': '-60px',
             })),
             state('true', style({
                 'max-width': '100%',

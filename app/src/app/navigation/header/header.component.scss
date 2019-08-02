@@ -22,3 +22,18 @@ mat-toolbar{
         border-radius: 0px;
     }
 }
+
+.nav-icon-border {
+    border:1px solid rgba(130,130,130,0.26)
+}
+
+@import '../../theme';
+.nav-item-active {
+    background-color: mat-color($ds4-app-warn) !important;
+    text-decoration-color: #3f51b5;
+    color: rgba(255, 255, 255, 1.0);
+}
+
+.nav-item {
+    color: rgba(255, 255, 255, 0.8);
+}

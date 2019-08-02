@@ -14,6 +14,7 @@ import {AdminComponent} from './admin/admin.component';
 import {ContactComponent} from './contact/contact.component';
 import {OrganizationComponent} from './organization/organization.component';
 import {ProfileComponent} from './profile/profile.component';
+import {ProfileEditComponent} from './profile/profile-edit/profile-edit.component';
 import {NewsComponent} from './news/news.component';
 import {HomeComponent} from './home/home.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -28,6 +29,8 @@ import {TokenInterceptor} from './services/interceptors/token.interceptor';
 import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
+import {UserCreateComponent} from './admin/user-create/user-create.component';
+import {UserEditComponent} from './admin/user-edit/user-edit.component';
 
 
 @NgModule({
@@ -36,9 +39,12 @@ import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
         DinnerListComponent,
         TurfListComponent,
         AdminComponent,
+        UserEditComponent,
+        UserCreateComponent,
         ContactComponent,
         OrganizationComponent,
         ProfileComponent,
+        ProfileEditComponent,
         NewsComponent,
         HomeComponent,
         LayoutComponent,

@@ -27,7 +27,7 @@ def get_total_balance():
 
 class Housemate(SoftDeletionModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    display_name = models.CharField(max_length=12)
+    display_name = models.CharField(max_length=30)
 
     # avatar = models.ImageField(null=True)
 

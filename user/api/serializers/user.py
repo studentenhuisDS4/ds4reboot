@@ -1,7 +1,7 @@
 import rest_marshmallow
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
-from marshmallow import fields
+from marshmallow import fields, validates_schema
 from marshmallow.validate import Length
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
@@ -25,22 +25,24 @@ class GroupSchema(Schema):
 
 
 class HousemateSchema(Schema):
-    user_id = fields.Int(required=True)
-    display_name = fields.Str(required=True, validate=[Length(min=2)])
-    room_number = fields.Int(required=True)
-
     diet = fields.Str(validate=[Length(max=DIET_LENGTH)])
+    display_name = fields.Str(validate=[Length(min=2)])
     cell_phone = fields.Str()
+    room_number = fields.Int()
 
+    user_id = fields.Int(dump_only=True)
     movein_date = fields.Date(dump_only=True)
-    balance = fields.Decimal(dump_only=True, max_digits=7, decimal_places=2)
+    balance = fields.Decimal(dump_only=True)
     sum_bier = fields.Int(dump_only=True)
-    sum_rwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
-    sum_wwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
+    sum_rwijn = fields.Decimal(dump_only=True)
+    sum_wwijn = fields.Decimal(dump_only=True)
     boetes_total = fields.Int(dump_only=True)
 
 
 class HousemateFullSchema(HousemateSchema):
+    room_number = fields.Int(required=True)
+    display_name = fields.Str(required=True, validate = [Length(min=2)])
+
     boetes_geturfd_rwijn = fields.Int(dump_only=True)
     boetes_geturfd_wwijn = fields.Int(dump_only=True)
     total_bier = fields.Int(dump_only=True)
@@ -63,7 +65,13 @@ class UserSchema(Schema):
     last_name = fields.Str(required=True, validate=[Length(min=2)], )
     housemate = fields.Nested(HousemateSchema, exclude=('user_id',), required=True)
 
+    password = fields.Str(load_only=True, validate=[Length(min=6)])
+    password_repeat = fields.Str(load_only=True, validate=[Length(min=6)])
+
     def update(self, instance, validated_data):
+        print(validated_data)
+        if 'password' in validated_data:
+            instance.set_password(validated_data.pop('password'))
         housemate_data = validated_data.pop('housemate')
         housemate = instance.housemate
         for key, value in housemate_data.items():
@@ -75,6 +83,14 @@ class UserSchema(Schema):
         instance.save()
         housemate.save()
         return instance
+
+    @validates_schema
+    def check_passwords_equal(self, data):
+        if 'password' in data and 'password_repeat':
+            if data['password'] != data['password_repeat']:
+                raise ValidationError({'password': 'Passwords not equal.'})
+
+    # we dont allow create, only admins can create profiles through UserFullSchema.
 
 
 # Full detail
@@ -88,8 +104,8 @@ class UserFullSchema(UserSchema):
 
     # only settable by admin
     username = fields.Str(required=True, validate=[Length(min=4)])
-    # TODO move somewhere so it can be adjusted and hashed by users as well
     password = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
+    password_repeat = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
     groups = fields.Function(
         lambda user: GroupSchema(user.groups.all(), many=True).data,
         dump_only=True)

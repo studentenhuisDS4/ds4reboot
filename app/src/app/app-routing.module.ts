@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {ProfileComponent} from './profile/profile.component';
 import {AdminComponent} from './admin/admin.component';
 import {TurfListComponent} from './turf-list/turf-list.component';
@@ -9,9 +9,8 @@ import {ContactComponent} from './contact/contact.component';
 import {NewsComponent} from './news/news.component';
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
-import {
-    AuthGuardService as AuthGuard
-} from './services/auth-guard.service';
+import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
+import {ProfileEditComponent} from './profile/profile-edit/profile-edit.component';
 // import {
 //     RoleGuardService as RoleGuard
 // } from './services/role-guard.service';
@@ -29,8 +28,14 @@ const routes: Routes = [
     {
         path: 'profile',
         component: ProfileComponent,
-        canActivate: [AuthGuard]
-    }, {
+        canActivate: [AuthGuard],
+    },
+    {
+        path: 'profile-edit',
+        component: ProfileEditComponent,
+        canActivate: [AuthGuard],
+    },
+    {
         path: 'admin',
         component: AdminComponent,
         canActivate: [AuthGuard]
