@@ -1,8 +1,8 @@
 <br *ngIf="miniView"/>
 <section fxLayout="column" fxFlexAlign="stretch">
     <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
-        <mat-card-header>
-            <mat-card-title *ngIf="!miniView">
+        <mat-card-header *ngIf="!miniView">
+            <mat-card-title>
                 <mat-card-title>
                     Turf-list
                 </mat-card-title>
@@ -11,33 +11,69 @@
                 </mat-card-subtitle>
             </mat-card-title>
         </mat-card-header>
+        <mat-card-header *ngIf="miniView">
+            <div mat-card-avatar>
+                <i class="material-icons vertical-align-middle padding-bottom-3 icon-large"
+                   [matBadge]="user?.housemate?.total_bier" matBadgeColor="primary">
+                    local_bar
+                </i>
+            </div>
+            <mat-card-title style="display: flex;">
+                Turf <em>{{isHouse ? " (on House!)" : ""}}</em>
+            </mat-card-title>
+            <mat-card-subtitle>
+                Beer: {{user ? user.housemate.sum_bier : ""}}<br/>
+                Red: {{user ? user.housemate.sum_rwijn : ""}} //
+                White: {{user ? user.housemate.sum_wwijn : ""}}<br/>
+            </mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
-            Beer: {{user ? user.housemate.sum_bier : ""}}
-            Red wine: {{user ? user.housemate.sum_rwijn : ""}}
-            White wine: {{user ? user.housemate.sum_wwijn : ""}}
+            <div fxFlex>
+                <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem()" style="margin-right:5px;"
+                        color="accent">+1
+                    beer
+                </button>
+                <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem('beer', -1)"
+                        style="margin-right:5px;" color="accent">-1
+                    beer
+                </button>
+            </div>
+            <div fxFlex>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('red-wine')" style="margin-right:5px;"
+                        color="warn">+1 red
+                </button>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('red-wine', -1)" style="margin-right:5px;"
+                        color="warn">-1 red
+                </button>
+            </div>
+            <div fxFlex>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('white-wine')" style="margin-right:5px;"
+                        color="primary">+1 white
+                </button>
+                <button mat-raised-button *ngIf="user" (click)="turfItem('white-wine',-1)" style="margin-right:5px;"
+                        color="primary">-1 white
+                </button>
+            </div>
         </mat-card-content>
         <mat-card-actions>
-            <button mat-raised-button *ngIf="user" (click)="turfItem()" style="margin-right:5px;" color="accent">+1
-                beer
-            </button>
-            <div fxFlex></div>
-            <button mat-raised-button *ngIf="user" (click)="turfItem('red-wine')" style="margin-right:5px;"
-                    color="warn">+1 red
-            </button>
-            <button mat-raised-button *ngIf="user" (click)="turfItem('white-wine')" style="margin-right:5px;"
-                    color="primary">+1 white
-            </button>
+            <mat-list dense *ngIf="!miniView">
+                <mat-list-item *ngFor="let user of turfUsers">
+                    {{ user.housemate.display_name }}
+                    <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem('beer', '1', user)"
+                            style="margin-right:5px;"
+                            color="accent">+1
+                        beer
+                    </button>
+                    <button mat-raised-button *ngIf="user" [disabled]="busy" (click)="turfItem('beer', '-1', user)"
+                            style="margin-right:5px;"
+                            color="accent">-1
+                        beer
+                    </button>
+                </mat-list-item>
+                <mat-list-item>
+                    HA you start at the the bottom you sjaarsch!
+                </mat-list-item>
+            </mat-list>
         </mat-card-actions>
     </mat-card>
 </section>
-
-
-<!--<br/><br/>-->
-<!--Future updates: <br/>-->
-<!--<ol>-->
-<!--    <li>turf-matrix</li>-->
-<!--    <li>crate-turf (incl. house)</li>-->
-<!--    <li>quick log</li>-->
-<!--    <li>boetepanel</li>-->
-<!--    <li>splitting wine across housemates.</li>-->
-<!--</ol>-->

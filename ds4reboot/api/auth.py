@@ -1,10 +1,16 @@
 from pprint import pprint
 
+from django.contrib import auth
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
-from rest_framework import serializers
+from rest_framework import serializers, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from rest_framework_jwt.settings import api_settings
+
+from ds4reboot.api.utils import unimplemented_action
+from user.api.serializers.user import UserSchema
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -51,3 +57,13 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
         else:
             msg = _('Account with this email/username does not exists')
             raise serializers.ValidationError(msg)
+
+
+class LoginHouse(APIView):
+    def post(self, request):
+        user = User.objects.get(username='huis')
+        payload = jwt_payload_handler(user)
+        return Response({
+            'token': jwt_encode_handler(payload),
+            'user': UserSchema(user).data
+        })

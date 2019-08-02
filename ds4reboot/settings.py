@@ -145,6 +145,7 @@ USE_TZ = True  # Use local time
 
 # Generated uploads
 HR_REPORTS_FOLDER = 'hr_reports/'
+AVATAR_FOLDER = 'avatars/'
 RECEIPTS_FOLDER = 'receipts/'
 TEMP_FOLDER = 'temp/'
 

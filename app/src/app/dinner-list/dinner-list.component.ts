@@ -7,6 +7,7 @@ import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material';
+import {EasterEggService} from '../services/easter.service';
 
 @Component({
     selector: 'app-dinner-list',
@@ -52,7 +53,11 @@ export class DinnerListComponent implements OnInit {
 
     @Input() miniView = false;
 
-    constructor(private dinnerListService: DinnerListService, private profileService: UserService, private snackBar: MatSnackBar) {
+    constructor(
+        private dinnerListService: DinnerListService,
+        private profileService: UserService,
+        private snackBar: MatSnackBar,
+        private easterEgg: EasterEggService) {
         this.loadDinnerWeek();
         this.profileService.getProfile().then(result => {
             this.user = result;

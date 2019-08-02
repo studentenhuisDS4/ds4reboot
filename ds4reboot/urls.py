@@ -9,12 +9,12 @@ from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token, Obtain
 
 from bierlijst.api.api_views import BoeteViewSet, TurfViewSet
 from ds4reboot import settings
-from ds4reboot.api.auth import CustomJWTSerializer
+from ds4reboot.api.auth import CustomJWTSerializer, LoginHouse
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
 from organisation.api.api_views import KeukenDienstViewSet, ReceiptViewSet
-from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet
+from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
@@ -24,12 +24,12 @@ router.register(r'transfer', TransferCostViewSet, basename='transfer')
 router.register(r'split-cost', SplitCostViewSet, basename='split-cost')
 router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
+router.register(r'house', HouseViewSet, basename='House')
 router.register(r'user', UserViewSet, basename='User')
 router.register(r'user-full', UserFullViewSet, basename='User full')
 router.register(r'user-action', UserActionViewSet, basename='User action')
 router.register(r'keukendienst', KeukenDienstViewSet, basename='Keukendienst')
 router.register(r'receipt', ReceiptViewSet, basename='Receipts')
-
 
 urlpatterns = \
     [
@@ -49,6 +49,7 @@ urlpatterns = \
         path(f'{settings.API_BASE_URL}auth-jwt/', ObtainJSONWebToken.as_view(serializer_class=CustomJWTSerializer)),
         path(f'{settings.API_BASE_URL}auth-jwt-refresh/', refresh_jwt_token),
         path(f'{settings.API_BASE_URL}auth-jwt-verify/', verify_jwt_token),
+        path(f'{settings.API_BASE_URL}auth-house/', LoginHouse.as_view()),
         path(f'{settings.API_BASE_URL}', include((router.urls, 'ds4_api'))),
     ]
 
