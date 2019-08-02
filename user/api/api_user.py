@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from ds4admin.utils import check_dinners_housemate
@@ -20,6 +21,12 @@ class UserViewSet(mixins.RetrieveModelMixin,
     queryset = get_active_users()
     serializer_class = UserSchema
     filter_fields = '__all__'
+
+
+class HouseViewSet(mixins.RetrieveModelMixin,
+                   GenericViewSet):
+    queryset = User.objects.filter(username__in=['huis'])
+    serializer_class = UserSchema
 
 
 class UserFullViewSet(viewsets.ModelViewSet):

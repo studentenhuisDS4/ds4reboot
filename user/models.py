@@ -29,6 +29,8 @@ class Housemate(SoftDeletionModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=12)
 
+    # avatar = models.ImageField(null=True)
+
     # logistics
     room_number = models.IntegerField(null=True)
     movein_date = models.DateField(default=timezone.now)

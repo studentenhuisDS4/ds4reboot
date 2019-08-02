@@ -15,14 +15,31 @@ export class UserService {
     constructor(private httpClient: HttpClient, private auth: AuthService) {
     }
 
+    checkHouse(user: number = this.auth.getTokenClaims().user_id) {
+        return user === 2;
+    }
+
+    getHouseProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
+        if (user === 2) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/house/${user.toString()}/`, {}).toPromise();
+        }
+        return Promise.resolve(null);
+    }
+
     // Jwt-claim based profile getter (guaranteed by guard)
     getProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {}).toPromise();
+        if (user !== 2) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {}).toPromise();
+        }
+        return Promise.resolve(null);
     }
 
     getFullProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${user.toString()}/`, {})
-            .toPromise();
+        if (user !== 2) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${user.toString()}/`, {})
+                .toPromise();
+        }
+        return Promise.resolve(null);
     }
 
     getActiveUsers(): Promise<IUser[]> {

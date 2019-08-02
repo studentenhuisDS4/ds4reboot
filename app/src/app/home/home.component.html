@@ -1,16 +1,18 @@
 <section fxLayout="column" fxFlexAlign="stretch">
-    <mat-card class="page-content-card" fxFlexAlign="center">
-        <mat-card-header>
-            <div mat-card-avatar class="example-header-image">
-                <i class="material-icons vertical-align-middle padding-bottom-3 icon-large">
-                    home
-                </i>
-            </div>
-            <mat-card-title>DS4 App
-            </mat-card-title>
-            <mat-card-subtitle>(or goto <a href="https://ds4.nl">ds4.nl</a>)</mat-card-subtitle>
-        </mat-card-header>
-    </mat-card>
+    <h1 *ngIf="isHouse">Logged in as house!</h1>
+
+    <!--    <mat-card class="page-content-card" fxFlexAlign="center">-->
+<!--        <mat-card-header>-->
+<!--            <div mat-card-avatar class="example-header-image">-->
+<!--                <i class="material-icons vertical-align-middle padding-bottom-3 icon-large">-->
+<!--                    home-->
+<!--                </i>-->
+<!--            </div>-->
+<!--            <mat-card-title>DS4 App-->
+<!--            </mat-card-title>-->
+<!--&lt;!&ndash;            <mat-card-subtitle>(or goto <a href="https://ds4.nl">ds4.nl</a>)</mat-card-subtitle>&ndash;&gt;-->
+<!--        </mat-card-header>-->
+<!--    </mat-card>-->
     <app-dinner-list miniView="true"></app-dinner-list>
     <app-turf-list miniView="true"></app-turf-list>
 </section>

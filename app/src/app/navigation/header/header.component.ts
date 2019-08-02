@@ -1,6 +1,7 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {Router} from '@angular/router';
+import {SnackBarService} from '../../services/snackBar.service';
 
 @Component({
     selector: 'app-header',
@@ -11,7 +12,11 @@ export class HeaderComponent implements OnInit {
 
     @Output() public sidenavToggle = new EventEmitter();
 
-    constructor(private authService: AuthService, private router: Router) {
+    constructor(
+        private authService: AuthService,
+        private router: Router,
+        private snackbarService:SnackBarService
+    ) {
     }
 
     ngOnInit() {
@@ -19,6 +24,14 @@ export class HeaderComponent implements OnInit {
 
     onToggleSidenav() {
         this.sidenavToggle.emit();
+    }
+
+    loginHouse() {
+        this.authService.loginHouse().then(
+            r => {
+                this.router.navigateByUrl('/home');
+            }
+        );
     }
 
     logout() {

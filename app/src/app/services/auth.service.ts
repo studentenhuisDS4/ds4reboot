@@ -67,6 +67,21 @@ export class AuthService {
         return this.httpClient.post(`${this.API_URL}/auth-jwt-verify/`, {token});
     }
 
+    public loginHouse() {
+        if (this.isAuthenticated()) {
+            return this.httpClient.post<any>(`${this.API_URL}/auth-house/`, {})
+                .pipe(
+                    tap(result => {
+                        localStorage.setItem('token', result.token.toString());
+                        window.location.href = window.location.href;
+                    })
+                )
+                .toPromise();
+        } else {
+            return null;
+        }
+    }
+
     public logout() {
         localStorage.removeItem('token');
     }

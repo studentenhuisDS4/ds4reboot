@@ -16,17 +16,25 @@ export class TurfListComponent implements OnInit {
     user: IUser = null;
     busy = false;
     turfUsers: IUser[] = [];
+    isHouse = false;
 
     @Input() miniView = false;
 
     constructor(private turfListService: TurfListService,
-                private profileService: UserService,
+                private userService: UserService,
                 private snackBarService: SnackBarService,
                 private easterEggService: EasterEggService) {
-        this.profileService.getProfile().then(result => {
-            this.user = result;
-        });
-        this.profileService.getActiveUsers().then(result => {
+        this.isHouse = this.userService.checkHouse();
+        if (this.isHouse) {
+            this.userService.getHouseProfile().then(result => {
+                this.user = result;
+            });
+        } else {
+            this.userService.getProfile().then(result => {
+                this.user = result;
+            });
+        }
+        this.userService.getActiveUsers().then(result => {
             this.turfUsers = result;
         });
     }
@@ -43,7 +51,6 @@ export class TurfListComponent implements OnInit {
                 return;
             }
         }
-        console.log(turfType);
         this.busy = true;
         this.turfListService.turfItem({
             turf_count: amount,
@@ -53,8 +60,16 @@ export class TurfListComponent implements OnInit {
         }).then(output => {
             if (output.status === IStatus.SUCCESS) {
                 this.user.housemate = output.result;
+                let prop;
+                if (turfType === TurfType.BEER) {
+                    prop = 'sum_bier';
+                } else if (turfType === TurfType.RWINE) {
+                    prop = 'sum_rwijn';
+                } else if (turfType === TurfType.WWINE) {
+                    prop = 'sum_wwijn';
+                }
                 this.snackBarService.openSnackBar(
-                    `Turved ${amount} ${turfType} on ${turfUser.housemate.display_name}. Total: ${turfUser.housemate.sum_bier}`,
+                    `Turved ${amount} ${turfType} on ${turfUser.housemate.display_name}. Total: ${turfUser.housemate[prop]}`,
                     this.easterEggService.easterEggo());
             }
             this.busy = false;

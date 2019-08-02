@@ -1,5 +1,3 @@
-<br *ngIf="miniView"/>
-
 <section fxLayout="column" fxFlexAlign="stretch">
     <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;" *ngIf="!miniView">
         <mat-card-header>
@@ -23,8 +21,8 @@
         <mat-card-header>
             <div mat-card-avatar>
                 <i class="material-icons vertical-align-middle padding-bottom-3 icon-large"
-                    [matBadge]="dinner.num_eating"
-                    matBadgeColor="primary">
+                   [matBadge]="dinner.num_eating"
+                   matBadgeColor="primary">
                     local_dining
                 </i>
             </div>
@@ -50,7 +48,9 @@
                 </i>
             </div>
             <mat-card-title style="display: flex;">
-                {{getWeekday(todayDinner.date)}} {{ todayDinner.eta_time ? "-" + todayDinner.eta_time : ""}}
+                <span *ngIf="miniView">Dinner</span>
+                &nbsp;{{ miniView ? "(" : ""}}{{getWeekday(todayDinner.date)}}{{miniView ? ")" : ""}}
+                {{ todayDinner.eta_time ? "-" + todayDinner.eta_time : ""}}
                 {{ todayDinner.open ? "" : "(closed)"}}
             </mat-card-title>
             <mat-card-subtitle>{{todayDinner.date | date : 'MMMM d'}}</mat-card-subtitle>
@@ -62,7 +62,7 @@
                 Joining: <i *ngFor="let ud of todayDinner.userdinners">{{ud.user.housemate.display_name}},</i>
             </span>
         </mat-card-content>
-        <mat-card-actions>
+        <mat-card-actions *ngIf="user">
             <button mat-raised-button color="primary"
                     (click)="signupDinner(todayDinner)" [disabled]="todayDinner.close_time">
                 <mat-icon>add</mat-icon>

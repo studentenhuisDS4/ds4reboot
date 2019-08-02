@@ -11,7 +11,12 @@
     </div>
 
     <div fxFlex fxLayout fxLayoutAlign="end">
-        <ul fxLayout fxLayoutGap="10px" class="navigation-items">
+        <ul fxLayout fxLayoutGap="0px" class="navigation-items">
+            <li>
+                <button mat-icon-button (click)="loginHouse()">
+                    <mat-icon>house</mat-icon>
+                </button>
+            </li>
             <li>
                 <button mat-icon-button routerLink="profile">
                     <mat-icon>perm_identity</mat-icon>
