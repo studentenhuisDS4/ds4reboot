@@ -35,10 +35,12 @@
         <mat-card-content>
             <span style="display:block">
                 Cook: <em>{{ dinner.cook ? dinner.cook.housemate.display_name : "None" }}</em>
+                <br/>
+                Joining: <i *ngFor="let ud of dinner.userdinners">{{ud.user.housemate.display_name}},</i>
             </span>
         </mat-card-content>
     </mat-card>
-    <mat-card class="page-content-card mat-elevation-z24" fxFlexAlign="center"
+    <mat-card class="page-content-card" fxFlexAlign="center"
               [@slideInOut]="todayCollapse" *ngIf="todayDinner">
         <mat-card-header>
             <div mat-card-avatar>

@@ -12,7 +12,9 @@ export class UserService {
 
     API_URL: string = environment.baseUrl;
 
-    constructor(private httpClient: HttpClient, private auth: AuthService) {
+    constructor(
+        private httpClient: HttpClient,
+        private auth: AuthService) {
     }
 
     checkHouse(user: number = this.auth.getTokenClaims().user_id) {
@@ -60,7 +62,31 @@ export class UserService {
         return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?email__iexact=${email}`);
     }
 
-    createOrUpdate(userForm: FormGroup) {
+    createUser(userForm: FormGroup) {
         return this.httpClient.post<IUser>(`${this.API_URL}/user-full/`, userForm.value).toPromise();
+    }
+
+    updateProfile(userForm: FormGroup) {
+        const user_id = this.auth.getTokenClaims().user_id;
+        if (user_id !== 2) {
+            const data = this.purgePassword(userForm);
+            return this.httpClient.patch<IUser>(`${this.API_URL}/user/${user_id}/`, data).toPromise();
+        } else {
+            return Promise.reject();
+        }
+    }
+
+    updateUserFull(userForm: FormGroup, user: number = this.auth.getTokenClaims().user_id) {
+        const data = this.purgePassword(userForm);
+        return this.httpClient.post<IUser>(`${this.API_URL}/user-full/${user}/`, data).toPromise();
+    }
+
+    private purgePassword(form: FormGroup) {
+        const data = {...form.value};
+        if (data.password === '') {
+            delete data.password;
+            delete data.password_repeat;
+        }
+        return data;
     }
 }
