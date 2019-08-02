@@ -1,0 +1,23 @@
+.user-details-container {
+    padding: 20px;
+    text-align: center;
+
+    .user-image {
+        width: 50%;
+        border-radius: 50%;
+    }
+
+    .user-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 30px;
+        display: block;
+    }
+
+    .user-bio {
+        font-size: 12px;
+        margin-top: 20px;
+        display: block;
+        color: rgba(0, 0, 0, 0.70);
+    }
+}

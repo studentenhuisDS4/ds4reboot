@@ -31,6 +31,7 @@ export interface IUser {
     housemate: IHousemate;
 
     is_superuser: boolean;
+    is_staff: boolean;      // Has no permissions by default, but is still admin.
     is_active: boolean;
 
     user_permissions: IPermission[];

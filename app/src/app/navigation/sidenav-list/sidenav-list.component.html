@@ -41,9 +41,8 @@
         <button mat-menu-item (click)="onSidenavClose()">Manage receipts</button>
     </mat-menu>
     <mat-menu #menuAdmin="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()">Manage housemates</button>
-        <button mat-menu-item (click)="onSidenavClose()">Create housemate</button>
-        <button mat-menu-item (click)="onSidenavClose()">Move-out housemate</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin']">Manage users</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/user-create']">Create user</button>
     </mat-menu>
 
     <mat-divider></mat-divider>

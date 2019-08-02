@@ -1,7 +1,7 @@
 <section fxLayout="column" fxFlexAlign="stretch">
     <mat-card>
         <div *ngIf="!(user?.is_superuser)">
-            You are not allowed to create a new user. Become admin, or drink a beer or two.
+            You are not allowed to manage users. Become admin, or drink a beer or two.
         </div>
         <div class="container" *ngIf="user?.is_superuser"
              fxLayout
@@ -56,7 +56,7 @@
             <div class="item item-3" fxFlex>
                 <h1>Housemate</h1>
                 <form [formGroup]="editUserForm" fxLayout="column" novalidate>
-                     <mat-form-field formGroupName="housemate">
+                    <mat-form-field formGroupName="housemate">
                         <input matInput placeholder="Room number" type="number" formControlName="room_number" required/>
                     </mat-form-field>
                     <mat-form-field formGroupName="housemate">

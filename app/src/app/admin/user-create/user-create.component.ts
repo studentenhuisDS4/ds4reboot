@@ -96,6 +96,7 @@ export class UserCreateComponent implements OnInit {
         if (this.createUserForm.valid) {
             this.userService.createUser(this.createUserForm).then(result => {
                 localStorage.removeItem(this.storeFormKey);
+                this.createUserForm.reset();
                 console.log(result);
             }, error => {
                 if (error) {

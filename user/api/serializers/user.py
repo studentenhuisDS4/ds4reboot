@@ -59,6 +59,8 @@ class HousemateFullSchema(HousemateSchema):
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(dump_only=True)
+    is_staff = fields.Bool(dump_only=False)
+    is_superuser = fields.Bool(dump_only=False)
 
     email = fields.Email(required=True)
     first_name = fields.Str(required=True, validate=[Length(min=2)])
@@ -86,9 +88,11 @@ class UserSchema(Schema):
 
     @validates_schema
     def check_passwords_equal(self, data):
-        if 'password' in data and 'password_repeat':
+        if 'password' in data and 'password_repeat' in data:
             if data['password'] != data['password_repeat']:
                 raise ValidationError({'password': 'Passwords not equal.'})
+            else:
+                return data.pop('password_repeat')
 
     # we dont allow create, only admins can create profiles through UserFullSchema.
 

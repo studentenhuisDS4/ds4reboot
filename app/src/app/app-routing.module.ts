@@ -10,7 +10,10 @@ import {NewsComponent} from './news/news.component';
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
 import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
+import {AdminGuardService as AdminGuard} from './services/admin-guard.service';
 import {ProfileEditComponent} from './profile/profile-edit/profile-edit.component';
+import {UserManageComponent} from './admin/user-manage/user-manage.component';
+import {UserCreateComponent} from './admin/user-create/user-create.component';
 // import {
 //     RoleGuardService as RoleGuard
 // } from './services/role-guard.service';
@@ -38,12 +41,22 @@ const routes: Routes = [
     {
         path: 'admin',
         component: AdminComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard, AdminGuard],
         //    TODO: implement RoleGuard
         //     data: {
         //       expectedRole: 'admin'
         //     }
     }, {
+        path: 'user-manage',
+        component: UserManageComponent,
+        canActivate: [AuthGuard, AdminGuard],
+    },
+    {
+        path: 'user-create',
+        component: UserCreateComponent,
+        canActivate: [AuthGuard, AdminGuard],
+    },
+    {
         path: 'turf',
         component: TurfListComponent,
         canActivate: [AuthGuard]

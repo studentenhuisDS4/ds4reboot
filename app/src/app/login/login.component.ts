@@ -35,6 +35,11 @@ export class LoginComponent implements OnInit {
     ]);
     matcher = new MyErrorStateMatcher();
 
+    constructor(private authService: AuthService,
+                private router: Router,
+                private snackBarService: SnackBarService) {
+    }
+
     @HostListener('document:keypress', ['$event'])
     handleKeyboardPress(event: any) {
         if (event.key === 'Enter') {
@@ -42,14 +47,10 @@ export class LoginComponent implements OnInit {
         }
     }
 
-    constructor(private authService: AuthService,
-                private router: Router,
-                private snackBarService: SnackBarService) {
-    }
-
     ngOnInit() {
         if (this.authService.isAuthenticated()) {
             this.state = 'logged in';
+            this.router.navigateByUrl('/home');
         }
     }
 
