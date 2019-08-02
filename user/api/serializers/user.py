@@ -41,7 +41,7 @@ class HousemateSchema(Schema):
 
 class HousemateFullSchema(HousemateSchema):
     room_number = fields.Int(required=True)
-    display_name = fields.Str(required=True, validate = [Length(min=2)])
+    display_name = fields.Str(required=True, validate=[Length(min=2)])
 
     boetes_geturfd_rwijn = fields.Int(dump_only=True)
     boetes_geturfd_wwijn = fields.Int(dump_only=True)
@@ -61,6 +61,12 @@ class UserSchema(Schema):
     username = fields.Str(dump_only=True)
     is_staff = fields.Bool(dump_only=False)
     is_superuser = fields.Bool(dump_only=False)
+    groups = fields.Function(
+        lambda user: GroupSchema(user.groups.all(), many=True).data,
+        dump_only=True)
+    user_permissions = fields.Function(
+        lambda user: PermissionSchema(user.user_permissions.all(), many=True).data,
+        dump_only=True)
 
     email = fields.Email(required=True)
     first_name = fields.Str(required=True, validate=[Length(min=2)])
@@ -110,12 +116,6 @@ class UserFullSchema(UserSchema):
     username = fields.Str(required=True, validate=[Length(min=4)])
     password = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
     password_repeat = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
-    groups = fields.Function(
-        lambda user: GroupSchema(user.groups.all(), many=True).data,
-        dump_only=True)
-    user_permissions = fields.Function(
-        lambda user: PermissionSchema(user.user_permissions.all(), many=True).data,
-        dump_only=True)
 
     def create(self, validated_data):
         try:

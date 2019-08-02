@@ -4,6 +4,7 @@ export interface IPermission {
 
 export interface IGroup {
     id: number;
+    name: string;
 }
 
 export interface IHousemate {

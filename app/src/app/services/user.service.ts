@@ -4,6 +4,7 @@ import {environment} from '../../environments/environment';
 import {IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +21,26 @@ export class UserService {
     checkHouse(user: number = this.auth.getTokenClaims().user_id) {
         return user === 2;
     }
+
+    isThesau(user: number = this.auth.getTokenClaims().user_id): Promise<boolean> {
+        if (user !== 2) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {})
+                .pipe(
+                    map(r => {
+                        let isThesau = false;
+                        r.groups.forEach(g => {
+                            if (g.name === 'thesau') {
+                                isThesau = true;
+                            }
+                        });
+                        return isThesau;
+                    })
+                )
+                .toPromise();
+        }
+        return Promise.resolve(null);
+    }
+
 
     getHouseProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
         if (user === 2) {

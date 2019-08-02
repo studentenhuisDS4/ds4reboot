@@ -7,11 +7,15 @@ import {environment} from '../../environments/environment';
 @Injectable({
     providedIn: 'root'
 })
-export class OrganizationService {
+export class ReceiptService {
 
     API_URL: string = environment.baseUrl;
 
     constructor(private  httpClient: HttpClient) {
+    }
+
+    getReceipts() {
+        return this.httpClient.get(`${this.API_URL}/receipt/`).toPromise();
     }
 
     uploadReceipt(upload: IAttachments<IReceipt>) {
@@ -22,7 +26,7 @@ export class OrganizationService {
         if (upload.json_object) {
             formData.append('json_data', JSON.stringify(upload.json_object));
         } else {
-            return Promise.reject(new Error('The receipt was empty.'));
+            return Promise.reject(new Error('The receipts was empty.'));
         }
         return this.httpClient.put(`${this.API_URL}/receipt/`, formData).toPromise();
     }

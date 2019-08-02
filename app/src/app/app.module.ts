@@ -15,7 +15,7 @@ import {UserCreateComponent} from './admin/user-create/user-create.component';
 import {UserEditComponent} from './admin/user-edit/user-edit.component';
 import {UserManageComponent} from './admin/user-manage/user-manage.component';
 import {ContactComponent} from './contact/contact.component';
-import {OrganizationComponent} from './organization/organization.component';
+import {OrganisationComponent} from './organisation/organisation.component';
 import {ProfileComponent} from './profile/profile.component';
 import {ProfileEditComponent} from './profile/profile-edit/profile-edit.component';
 import {NewsComponent} from './news/news.component';
@@ -33,6 +33,11 @@ import {TokenInterceptor} from './services/interceptors/token.interceptor';
 import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
+import {ThesauComponent} from './thesau/thesau.component';
+import {ThesauGuardService} from './services/thesau-guard.service';
+import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.component';
+import {ReceiptsComponent} from './organisation/receipts/receipts.component';
+import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
 
 
 @NgModule({
@@ -45,7 +50,11 @@ import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
         UserEditComponent,
         UserCreateComponent,
         ContactComponent,
-        OrganizationComponent,
+        OrganisationComponent,
+        ReceiptsComponent,
+        UploadReceiptComponent,
+        ThesauComponent,
+        ManageReceiptsComponent,
         ProfileComponent,
         ProfileEditComponent,
         NewsComponent,
@@ -76,7 +85,7 @@ import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
             useFactory: adapterFactory
         })
     ],
-    providers: [AuthGuard, AdminGuard, {
+    providers: [AuthGuard, AdminGuard, ThesauGuardService, {
         provide: HTTP_INTERCEPTORS,
         useClass: TokenInterceptor,
         multi: true
