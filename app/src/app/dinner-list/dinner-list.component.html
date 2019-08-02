@@ -36,7 +36,7 @@
             <span style="display:block">
                 Cook: <em>{{ dinner.cook ? dinner.cook.housemate.display_name : "None" }}</em>
                 <br/>
-                Joining: <i *ngFor="let ud of dinner.userdinners">{{ud.user.housemate.display_name}},</i>
+                Joining: <i *ngFor="let ud of dinner.userdinners">{{ud.user.housemate.display_name}}, </i>
             </span>
         </mat-card-content>
     </mat-card>

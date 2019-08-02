@@ -4,6 +4,7 @@ export interface IPermission {
 
 export interface IGroup {
     id: number;
+    name: string;
 }
 
 export interface IHousemate {
@@ -31,6 +32,7 @@ export interface IUser {
     housemate: IHousemate;
 
     is_superuser: boolean;
+    is_staff: boolean;      // Has no permissions by default, but is still admin.
     is_active: boolean;
 
     user_permissions: IPermission[];

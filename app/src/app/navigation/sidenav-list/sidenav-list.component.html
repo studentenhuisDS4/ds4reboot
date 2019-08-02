@@ -13,9 +13,9 @@
         <mat-icon>fastfood</mat-icon>
         <span class="nav-caption">Dinner List</span>
     </a>
-    <a mat-list-item routerLink="/organization" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a mat-list-item routerLink="/organisation" routerLinkActive="list-item-active" (click)="onSidenavClose()">
         <mat-icon>assignment_ind</mat-icon>
-        <span class="nav-caption">Organization</span>
+        <span class="nav-caption">Organisation</span>
     </a>
 
     <mat-divider></mat-divider>
@@ -33,17 +33,16 @@
         <a matline>Admin</a>
     </mat-list-item>
     <mat-menu #menuReceipt="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()">View receipts</button>
-        <button mat-menu-item (click)="onSidenavClose()">Upload receipt</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/organisation/receipts']">View receipts</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/organisation/receipts/upload-receipt']">Upload receipt</button>
     </mat-menu>
     <mat-menu #menuThesau="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()">Manage finances</button>
-        <button mat-menu-item (click)="onSidenavClose()">Manage receipts</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/thesau']">Manage finances</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/manage-receipts']">Manage receipts</button>
     </mat-menu>
     <mat-menu #menuAdmin="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()">Manage housemates</button>
-        <button mat-menu-item (click)="onSidenavClose()">Create housemate</button>
-        <button mat-menu-item (click)="onSidenavClose()">Move-out housemate</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin']">Manage users</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin/user-create']">Create user</button>
     </mat-menu>
 
     <mat-divider></mat-divider>
