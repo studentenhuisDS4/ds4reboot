@@ -4,7 +4,7 @@ import {environment} from '../../environments/environment';
 import {IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
-import {catchError, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {ITokenClaims} from '../models/auth.model';
 
 @Injectable({
@@ -74,21 +74,12 @@ export class UserService {
             .toPromise();
     }
 
-    // Jwt-claim based user-id getter (guaranteed by guard)
-    getUserId(): number {
-        return this.auth.getTokenClaims().user_id;
-    }
-
     checkUsername(username: string) {
         return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?username__iexact=${username}`);
     }
 
     checkEmail(email: string) {
         return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?email__iexact=${email}`);
-    }
-
-    $filterUsername(usernameTypeAhead: string) {
-        return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?housemate__display_name__contains=${usernameTypeAhead}`);
     }
 
     createUser(userForm: FormGroup) {

@@ -57,33 +57,46 @@
             </mat-card-title>
             <mat-card-subtitle>{{currentDinner.date | date : 'MMMM d'}}</mat-card-subtitle>
         </mat-card-header>
+
         <mat-card-content>
             <mat-form-field class="example-chip-list" style="width:100%;">
-                <mat-chip-list #userDinnnerList>
-                    <mat-chip *ngIf="currentDinner.cook" color="primary" selected>
+                <mat-chip-list #userDinnerList>
+                    <mat-chip (removed)="signOffDinner(currentDinner, filterCook()[0].user)"
+                              *ngIf="currentDinner.cook" color="primary" selected>
                         <mat-icon svgIcon="cooking_hat"></mat-icon>
                         {{ currentDinner.cook ? currentDinner.cook.housemate.display_name : "None" }}
-                        {{filterCook()[0]?.count > 0 ? " +" + (filterCook()[0].count).toString() : ""}}
+                        {{ filterCook()[0]?.count > 0 ? " +" + (filterCook()[0].count).toString() : "" }}
+                        <mat-icon *ngIf="currentDinner.num_eating>1" matChipRemove>cancel</mat-icon>
                     </mat-chip>
-                    <mat-chip *ngFor="let ud of filterDining()" [color]="ud.user.housemate.balance <=-25">
+                    <mat-chip (removed)="signOffDinner(currentDinner, ud.user)" *ngFor="let ud of filterDining()"
+                              [color]="ud.user.housemate.balance <=-25">
                         <mat-icon>local_dining</mat-icon>
                         {{ ud.user.housemate.display_name}}{{ud.count > 1 ? " +" + (ud.count - 1).toString() : ""}}
-                        <mat-icon *ngIf="true" matChipRemove>cancel</mat-icon>
+                        <mat-icon matChipRemove>cancel</mat-icon>
                     </mat-chip>
-                    <input #userDinnerInput
-                           [matAutocomplete]="autoComlete"
-                           [matChipInputAddOnBlur]="true"
-                           [matChipInputFor]="userDinnnerList"
-                           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                           placeholder="Add people">
+                    <input
+                        #userDinnerInput
+                        (keydown)="onUserDinnerKey($event)"
+                        [formControl]="displayNameCtrl"
+                        [matAutocomplete]="autoComplete"
+                        [matChipInputAddOnBlur]="true"
+                        [matChipInputFor]="userDinnerList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        placeholder="Add people">
                 </mat-chip-list>
-                <mat-autocomplete #autoComlete="matAutocomplete" (optionSelected)="selectedTypeAhead($event)">
-                    <mat-option *ngFor="let ud of typeAheadUserDinners | async" [value]="ud">
-                        {{ud.count}}
+
+                <!-- Trigger by piped _filter function-->
+                <mat-autocomplete
+                    #autoComplete="matAutocomplete"
+                    (optionSelected)="selectedTypeAhead($event)"
+                    [autoActiveFirstOption]="true">
+                    <mat-option *ngFor="let user of filteredActiveUsers | async" [value]="user">
+                        {{user.housemate.display_name}}
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
         </mat-card-content>
+
         <mat-card-actions *ngIf="user">
             <button (click)="signupDinner(currentDinner)" [disabled]="currentDinner.close_time"
                     color="primary" mat-raised-button>

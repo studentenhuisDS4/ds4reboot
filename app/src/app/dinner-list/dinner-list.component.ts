@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {dayNames, IDinner, IUserDinner, userEntry, weekDates} from '../models/dinner.models';
+import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
@@ -9,10 +9,10 @@ import {environment} from '../../environments/environment';
 import {MatAutocomplete, MatSnackBar} from '@angular/material';
 import {EasterEggService} from '../services/easter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {Observable} from 'rxjs';
 import {MatAutocompleteSelectedEvent} from '@angular/material/typings/esm5/autocomplete';
 import {FormControl} from '@angular/forms';
-import {tap} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 
 @Component({
@@ -49,7 +49,6 @@ import {tap} from 'rxjs/operators';
 export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
     currentDinner: IDinner;
-    typeAheadUserDinners: Observable<IUserDinner[]>;
 
     showWeek = false;
     weekCollapse = 'hide';
@@ -59,10 +58,12 @@ export class DinnerListComponent implements OnInit {
     user: IUser = null;
     @Input() miniView = false;
 
+    activeUsers: IUser[] = [];
+    filteredActiveUsers: Observable<IUser[]>;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-    diningCtrl = new FormControl();
+    displayNameCtrl = new FormControl();
     @ViewChild('userDinnerInput', {static: false}) userDinnerInput: ElementRef<HTMLInputElement>;
-    @ViewChild('autoComlete', {static: false}) matAutocomplete: MatAutocomplete;
+    @ViewChild('autoComplete', {static: false}) matAutocomplete: MatAutocomplete;
 
     constructor(
         private dinnerListService: DinnerListService,
@@ -73,42 +74,44 @@ export class DinnerListComponent implements OnInit {
         this.userService.getProfile().then(result => {
             this.user = result;
         });
+
+        this.userService.getActiveUsers().then(result => {
+            this.activeUsers = result;
+            this.filteredActiveUsers = this.displayNameCtrl.valueChanges.pipe(
+                filter(r => r !== ''),
+                map((displayName: string | null) => displayName ? this._filter(displayName) : this.activeUsers)
+            );
+        });
     }
 
     ngOnInit() {
-        this.typeAheadUserDinners = this.diningCtrl.valueChanges.pipe(
-            tap(r => {
-                console.log(r);
-            })
-        );
-        // map((fruit: string | null) => fruit ? this._filter(fruit) : this.allFruits.slice()));
-        // this.typeAheadUserDinners = this.userService.$filterUsername()
     }
 
-    signOffDinner(dinner: IDinner) {
-        this.dinnerListService.signOff(this.user.id, dinner.date).then(output => {
-                this.openSnackBar(`${this.user.housemate.display_name} cancelled for dinner.`, 'Ok');
+    signOffDinner(dinner: IDinner, user = this.user) {
+        this.dinnerListService.signOff(user.id, dinner.date).then(output => {
+                this.openSnackBar(`${user.housemate.display_name} cancelled for dinner.`, 'Ok');
                 this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
             },
             error => {
-                this.openSnackBar(`Failed sign-off action for ${this.user.housemate.display_name}!`, 'Shit');
+                this.openSnackBar(`Failed sign-off action for ${user.housemate.display_name}!`, 'Shit');
             });
     }
 
-    signupDinner(dinner: IDinner, userId = this.user.id) {
-        this.dinnerListService.signUp(userId, dinner.date).then(output => {
-                this.openSnackBar(`Signup +1 for ${this.user.housemate.display_name} successful!`, 'Ok');
+    signupDinner(dinner: IDinner, user = this.user) {
+        return this.dinnerListService.signUp(user.id, dinner.date).then(output => {
+                this.openSnackBar(`Signup +1 for ${user.housemate.display_name} successful!`, 'Ok');
                 this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
+                return output;
             },
             error => {
-                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+                this.openSnackBar(`Failed action for ${user.housemate.display_name}!`, 'Shit');
             });
     }
 
-    cookDinner(dinner: IDinner, signOff = false) {
-        this.dinnerListService.cook(this.user.id, dinner.date, signOff).then(output => {
+    cookDinner(dinner: IDinner, signOff = false, user = this.user) {
+        this.dinnerListService.cook(user.id, dinner.date, signOff).then(output => {
                 if (output.result && output.result.cook && output.result.cook.id === this.user.id) {
                     this.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
                 } else {
@@ -118,7 +121,7 @@ export class DinnerListComponent implements OnInit {
                 this.updateWeek();
             },
             error => {
-                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+                this.openSnackBar(`Failed action for ${user.housemate.display_name}!`, 'Shit');
             });
     }
 
@@ -218,9 +221,31 @@ export class DinnerListComponent implements OnInit {
         });
     }
 
+    onUserDinnerKey($event: KeyboardEvent) {
+        // Avoid duplicate event and check if something was entered.
+        if ($event.key === 'Enter' && this.userDinnerInput.nativeElement.value && !this.filteredActiveUsers[0]) {
+            const user: IUser = this.matAutocomplete.options.first.value;
+            this.signupDinner(this.currentDinner, user);
+        }
+    }
+
     private selectedTypeAhead(event: MatAutocompleteSelectedEvent) {
-        console.log('event', event.option);
-        return this.userService.$filterUsername(event.option.value);
+        const user: IUser = event.option.value;
+        this.signupDinner(this.currentDinner, user);
+        this.userDinnerInput.nativeElement.value = user.housemate.display_name;
+    }
+
+    private _filter(filterInput: string | IUser): IUser[] {
+        let filterValue = '';
+        if (typeof filterInput === 'string') {
+            filterValue = filterInput ? filterInput.toLowerCase() : '';
+        } else {
+            filterValue = filterInput.housemate.display_name.toLowerCase();
+        }
+        if (!filterValue) {
+            return this.activeUsers.slice();
+        }
+        return this.activeUsers.filter(user => user.housemate.display_name.toLowerCase().indexOf(filterValue) !== -1);
     }
 
     private filterDining() {
