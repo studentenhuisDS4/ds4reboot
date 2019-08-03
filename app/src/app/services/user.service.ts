@@ -87,6 +87,10 @@ export class UserService {
         return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?email__iexact=${email}`);
     }
 
+    $filterUsername(usernameTypeAhead: string) {
+        return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?housemate__display_name__contains=${usernameTypeAhead}`);
+    }
+
     createUser(userForm: FormGroup) {
         return this.httpClient.post<IUser>(`${this.API_URL}/user-full/`, userForm.value).toPromise();
     }

@@ -1,13 +1,19 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
+import {dayNames, IDinner, IUserDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
 import {environment} from '../../environments/environment';
-import {MatSnackBar} from '@angular/material';
+import {MatAutocomplete, MatSnackBar} from '@angular/material';
 import {EasterEggService} from '../services/easter.service';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {Observable} from 'rxjs';
+import {MatAutocompleteSelectedEvent} from '@angular/material/typings/esm5/autocomplete';
+import {FormControl} from '@angular/forms';
+import {tap} from 'rxjs/operators';
+
 
 @Component({
     selector: 'app-dinner-list',
@@ -42,7 +48,8 @@ import {EasterEggService} from '../services/easter.service';
 })
 export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
-    todayDinner: IDinner;
+    currentDinner: IDinner;
+    typeAheadUserDinners: Observable<IUserDinner[]>;
 
     showWeek = false;
     weekCollapse = 'hide';
@@ -50,27 +57,38 @@ export class DinnerListComponent implements OnInit {
     dayCollapse = 'none';
 
     user: IUser = null;
-
     @Input() miniView = false;
+
+    readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+    diningCtrl = new FormControl();
+    @ViewChild('userDinnerInput', {static: false}) userDinnerInput: ElementRef<HTMLInputElement>;
+    @ViewChild('autoComlete', {static: false}) matAutocomplete: MatAutocomplete;
 
     constructor(
         private dinnerListService: DinnerListService,
-        private profileService: UserService,
+        private userService: UserService,
         private snackBar: MatSnackBar,
         private easterEgg: EasterEggService) {
         this.loadDinnerWeek();
-        this.profileService.getProfile().then(result => {
+        this.userService.getProfile().then(result => {
             this.user = result;
         });
     }
 
     ngOnInit() {
+        this.typeAheadUserDinners = this.diningCtrl.valueChanges.pipe(
+            tap(r => {
+                console.log(r);
+            })
+        );
+        // map((fruit: string | null) => fruit ? this._filter(fruit) : this.allFruits.slice()));
+        // this.typeAheadUserDinners = this.userService.$filterUsername()
     }
 
     signOffDinner(dinner: IDinner) {
         this.dinnerListService.signOff(this.user.id, dinner.date).then(output => {
                 this.openSnackBar(`${this.user.housemate.display_name} cancelled for dinner.`, 'Ok');
-                this.todayDinner = this.updateDinner(output.result, dinner.date);
+                this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
             },
             error => {
@@ -78,10 +96,10 @@ export class DinnerListComponent implements OnInit {
             });
     }
 
-    signupDinner(dinner: IDinner) {
-        this.dinnerListService.signUp(this.user.id, dinner.date).then(output => {
+    signupDinner(dinner: IDinner, userId = this.user.id) {
+        this.dinnerListService.signUp(userId, dinner.date).then(output => {
                 this.openSnackBar(`Signup +1 for ${this.user.housemate.display_name} successful!`, 'Ok');
-                this.todayDinner = this.updateDinner(output.result, dinner.date);
+                this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
             },
             error => {
@@ -91,12 +109,12 @@ export class DinnerListComponent implements OnInit {
 
     cookDinner(dinner: IDinner, signOff = false) {
         this.dinnerListService.cook(this.user.id, dinner.date, signOff).then(output => {
-                if (output.result && output.result.cook && output.result.cook.id == this.user.id) {
+                if (output.result && output.result.cook && output.result.cook.id === this.user.id) {
                     this.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
                 } else {
                     this.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
                 }
-                this.todayDinner = this.updateDinner(output.result, dinner.date);
+                this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
             },
             error => {
@@ -117,7 +135,7 @@ export class DinnerListComponent implements OnInit {
                         this.openSnackBar(`Dinner opened.`, 'Ok');
                     }
                 }
-                this.todayDinner = this.updateDinner(d, d.date);
+                this.currentDinner = this.updateDinner(d, d.date);
                 this.updateWeek();
             },
             error => {
@@ -129,8 +147,8 @@ export class DinnerListComponent implements OnInit {
     toggleWeek(): void {
         this.showWeek = !this.showWeek;
         if (!this.showWeek) {
-            this.todayDinner = this.findToday();
-            if (!this.todayDinner) {
+            this.currentDinner = this.findToday();
+            if (!this.currentDinner) {
                 console.log('Error happened while finding today! Resorting to week overview.');
                 this.showWeek = true;
             }
@@ -164,11 +182,11 @@ export class DinnerListComponent implements OnInit {
 
     updateWeek() {
         this.weekDinners.forEach((dinner, index) => {
-            if (isSameDay(dinner.date, this.todayDinner.date)) {
-                this.weekDinners[index].num_eating = this.todayDinner.num_eating;
-                this.weekDinners[index].cook = this.todayDinner.cook;
-                this.weekDinners[index].userdinners = this.todayDinner.userdinners;
-                this.weekDinners[index].open = this.todayDinner.open;
+            if (isSameDay(dinner.date, this.currentDinner.date)) {
+                this.weekDinners[index].num_eating = this.currentDinner.num_eating;
+                this.weekDinners[index].cook = this.currentDinner.cook;
+                this.weekDinners[index].userdinners = this.currentDinner.userdinners;
+                this.weekDinners[index].open = this.currentDinner.open;
             }
         });
     }
@@ -185,7 +203,7 @@ export class DinnerListComponent implements OnInit {
                 }
             });
             this.weekDinners = result;
-            this.todayDinner = this.findToday();
+            this.currentDinner = this.findToday();
         });
     }
 
@@ -197,6 +215,23 @@ export class DinnerListComponent implements OnInit {
         this.snackBar.open(message, action, {
             duration: 2000,
             verticalPosition: 'bottom',
+        });
+    }
+
+    private selectedTypeAhead(event: MatAutocompleteSelectedEvent) {
+        console.log('event', event.option);
+        return this.userService.$filterUsername(event.option.value);
+    }
+
+    private filterDining() {
+        return this.currentDinner.userdinners.filter(ud => {
+            return !ud.is_cook;
+        });
+    }
+
+    private filterCook() {
+        return this.currentDinner.userdinners.filter(ud => {
+            return ud.is_cook;
         });
     }
 
