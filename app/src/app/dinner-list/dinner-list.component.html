@@ -1,4 +1,5 @@
 <section fxFlexAlign="stretch" fxLayout="column">
+
     <mat-card *ngIf="!miniView" class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
         <mat-card-header>
             <mat-card-title>
@@ -15,6 +16,7 @@
             <button (click)="toggleWeek()" mat-button>Show {{showWeek ? "TODAY" : "WEEK"}}</button>
         </mat-card-footer>
     </mat-card>
+
     <mat-card (click)="openDinner(dinner)" *ngFor="let dinner of weekDinners"
               [@slideInOut]="weekCollapse" [@slideOpen]="dayCollapse == dinner.date.toString()"
               class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center">
@@ -33,13 +35,12 @@
             <mat-card-subtitle>{{dinner.date | date : 'MMMM d'}}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <span style="display:block">
-                Cook: <em>{{ dinner.cook ? dinner.cook.housemate.display_name : "None" }}</em>
-                <br/>
-                Joining: <i *ngFor="let ud of dinner.userdinners">{{ud.user.housemate.display_name}}, </i>
-            </span>
+            <button mat-raised-button>
+                <i class="material-icons">detail</i>
+            </button>
         </mat-card-content>
     </mat-card>
+
     <mat-card *ngIf="currentDinner" [@slideInOut]="todayCollapse"
               class="page-content-card" fxFlexAlign="center">
         <mat-card-header>
@@ -59,20 +60,20 @@
         </mat-card-header>
 
         <mat-card-content>
-            <mat-form-field class="example-chip-list" style="width:100%;">
+            <mat-form-field appearance="outline" class="example-chip-list" style="width:100%;">
                 <mat-chip-list #userDinnerList>
                     <mat-chip (removed)="signOffDinner(currentDinner, filterCook()[0].user)"
                               *ngIf="currentDinner.cook" color="primary" selected>
                         <mat-icon svgIcon="cooking_hat"></mat-icon>
                         {{ currentDinner.cook ? currentDinner.cook.housemate.display_name : "None" }}
                         {{ filterCook()[0]?.count > 0 ? " +" + (filterCook()[0].count).toString() : "" }}
-                        <mat-icon *ngIf="currentDinner.num_eating>1" matChipRemove>cancel</mat-icon>
+                        <mat-icon *ngIf="filterCook()[0].count && currentDinner.open" matChipRemove>cancel</mat-icon>
                     </mat-chip>
                     <mat-chip (removed)="signOffDinner(currentDinner, ud.user)" *ngFor="let ud of filterDining()"
                               [color]="ud.user.housemate.balance <=-25">
                         <mat-icon>local_dining</mat-icon>
                         {{ ud.user.housemate.display_name}}{{ud.count > 1 ? " +" + (ud.count - 1).toString() : ""}}
-                        <mat-icon matChipRemove>cancel</mat-icon>
+                        <mat-icon *ngIf="currentDinner.open" matChipRemove>cancel</mat-icon>
                     </mat-chip>
                     <input
                         #userDinnerInput
