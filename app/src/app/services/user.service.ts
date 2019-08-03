@@ -5,6 +5,7 @@ import {IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
 import {catchError, map} from 'rxjs/operators';
+import {ITokenClaims} from '../models/auth.model';
 
 @Injectable({
     providedIn: 'root'
@@ -18,8 +19,11 @@ export class UserService {
         private auth: AuthService) {
     }
 
-    checkHouse(user: number = this.auth.getTokenClaims().user_id) {
-        return user === 2;
+    checkHouse(token: ITokenClaims = this.auth.getTokenClaims()) {
+        if (token) {
+            return token.user_id === 2;
+        }
+        return false;
     }
 
     isThesau(user: number = this.auth.getTokenClaims().user_id): Promise<boolean> {
