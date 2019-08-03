@@ -50,6 +50,7 @@ export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
     currentDinner: IDinner;
 
+    preConfirm = false;
     showWeek = false;
     weekCollapse = 'hide';
     todayCollapse = 'show';
@@ -99,6 +100,17 @@ export class DinnerListComponent implements OnInit {
     }
 
     signupDinner(dinner: IDinner, user = this.user) {
+        if (this.user && user.id !== this.user.id) {
+            if (this.preConfirm) {
+                this.preConfirm = false;
+                return;
+            }
+            if (!confirm('This is not you, are you sure?')) {
+                this.preConfirm = false;
+                return;
+            }
+            this.preConfirm = false;
+        }
         return this.dinnerListService.signUp(user.id, dinner.date).then(output => {
                 this.openSnackBar(`Signup +1 for ${user.housemate.display_name} successful!`, 'Ok');
                 this.currentDinner = this.updateDinner(output.result, dinner.date);
@@ -225,6 +237,10 @@ export class DinnerListComponent implements OnInit {
         // Avoid duplicate event and check if something was entered.
         if ($event.key === 'Enter' && this.userDinnerInput.nativeElement.value && !this.filteredActiveUsers[0]) {
             const user: IUser = this.matAutocomplete.options.first.value;
+
+            if (this.preConfirm === false && user.id !== this.user.id) {
+                this.preConfirm = true;
+            }
             this.signupDinner(this.currentDinner, user);
         }
     }
