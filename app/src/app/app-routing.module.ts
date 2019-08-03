@@ -53,7 +53,7 @@ const routes: Routes = [
         component: UserManageComponent,
         canActivate: [AuthGuard, AdminGuard],
     }, {
-        path: 'admin/user-create',
+        path: 'admin/user-manage/user-create',
         component: UserCreateComponent,
         canActivate: [AuthGuard, AdminGuard],
     },

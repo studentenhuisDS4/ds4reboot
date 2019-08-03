@@ -41,8 +41,9 @@
         <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/manage-receipts']">Manage receipts</button>
     </mat-menu>
     <mat-menu #menuAdmin="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin']">Manage users</button>
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin/user-create']">Create user</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin']">Admin</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin/user-manage']">User manage</button>
+        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin/user-manage/user-create']">Create user</button>
     </mat-menu>
 
     <mat-divider></mat-divider>

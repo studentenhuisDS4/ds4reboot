@@ -44,10 +44,10 @@
               [@slideInOut]="todayCollapse" *ngIf="todayDinner">
         <mat-card-header>
             <div mat-card-avatar>
-                <i class="material-icons vertical-align-middle padding-bottom-3 icon-large"
+                <mat-icon class="material-icons vertical-align-middle padding-bottom-3 icon-large"
                    [matBadge]="todayDinner.num_eating" matBadgeColor="primary">
                     local_dining
-                </i>
+                </mat-icon>
             </div>
             <mat-card-title style="display: flex;">
                 <span *ngIf="miniView">Dinner</span>
@@ -73,13 +73,13 @@
                     (click)="signOffDinner(todayDinner)"
                     [disabled]="todayDinner.close_time || !getUserEntry(todayDinner, user)?.count">
                 <mat-icon>not_interested</mat-icon>
-                {{getUserEntry(todayDinner, user)?.count}}
+                {{getUserEntry(todayDinner, user)?.count || 0}}
             </button>
             <button mat-raised-button (click)="cookDinner(todayDinner)"
                     [color]="todayDinner.cook == null ? 'accent' : 'warn'"
                     [disabled]="todayDinner.cook && todayDinner.cook.id !== user.id || !todayDinner.open">
-                <mat-icon *ngIf="!todayDinner.cook">shopping_cart</mat-icon>
-                <mat-icon *ngIf="todayDinner.cook">remove_shopping_cart</mat-icon>
+                <mat-icon *ngIf="!todayDinner.cook" svgIcon="cooking_hat"></mat-icon>
+                <mat-icon *ngIf="todayDinner.cook" svgIcon="remove_cooking_hat"></mat-icon>
             </button>
             <button mat-raised-button (click)="closeDinner(todayDinner)"
                     [color]="todayDinner.open ? 'accent' : 'warn'"
