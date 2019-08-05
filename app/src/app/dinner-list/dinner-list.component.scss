@@ -20,7 +20,27 @@
     //transform: scale(1);
 }
 
+// Single dinner signup field
 mat-form-field {
     width:100%;
-    margin-bottom: -1.34375em !important;
+    margin-bottom: -1.34375em*2 !important;
+}
+
+
+.dinner-headers-align .mat-expansion-panel-header-title,
+.dinner-headers-align .mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.dinner-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+mat-form-field {
+    margin-right: 12px;
+}
+
+.allow-overflow {
+    overflow: visible;
 }

@@ -5,7 +5,6 @@ import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
-import {environment} from '../../environments/environment';
 import {MatAutocomplete} from '@angular/material';
 import {EasterEggService} from '../services/easter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
@@ -20,32 +19,6 @@ import {SnackBarService} from '../services/snackBar.service';
     selector: 'app-dinner-list',
     templateUrl: './dinner-list.component.html',
     styleUrls: ['./dinner-list.component.scss'],
-    animations: [
-        trigger('slideInOut', [
-            state('show', style({
-                opacity: '1.0',
-            })),
-            state('hide', style({
-                opacity: '0',
-                display: 'none',
-            })),
-            transition('show => hide', animate('100ms ease-in-out')),
-            transition('hide => show', animate('150ms ease-in-out')),
-        ]),
-        trigger('slideOpen', [
-            state('false', style({
-                'margin-bottom': '-60px',
-            })),
-            state('true', style({
-                'max-width': '100%',
-                position: 'absolute',
-                top: '200px',
-                'z-index': 2,
-                'margin-bottom': '10px',
-            })),
-            transition('* => *', animate('200ms ease-in-out')),
-        ])
-    ]
 })
 export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
@@ -88,6 +61,26 @@ export class DinnerListComponent implements OnInit {
     }
 
     ngOnInit() {
+    }
+
+    loadDinnerWeek(day = new Date()) {
+        this.weekDinners = [];
+        // Push nonexistent days on the pile as well.
+        this.dinnerListService.getDinnerWeek().then(result => {
+            weekDates(new Date()).forEach(day => {
+                const findDay = result.find(r => isSameDay(r.date, day));
+                if (!findDay) {
+                    result.push(this.createEmptyDinner(day));
+                    result.sort((a, b) => compareAsc(a.date, b.date));
+                }
+            });
+            this.weekDinners = result;
+            this.currentDinner = this.findToday(day);
+        });
+    }
+
+    setCurrentDay(day = new Date()) {
+        this.currentDinner = this.findToday(day);
     }
 
     signOffDinner(dinner: IDinner, user = this.user) {
@@ -160,30 +153,6 @@ export class DinnerListComponent implements OnInit {
             });
     }
 
-    // Animation on week
-    toggleWeek(): void {
-        this.showWeek = !this.showWeek;
-        if (!this.showWeek) {
-            this.currentDinner = this.findToday();
-            if (!this.currentDinner) {
-                console.log('Error happened while finding today! Resorting to week overview.');
-                this.showWeek = true;
-            }
-        }
-        // Trigger animation
-        this.weekCollapse = this.weekCollapse === 'show' ? 'hide' : 'show';
-        this.todayCollapse = this.weekCollapse === 'hide' ? 'show' : 'hide';
-    }
-
-    // Animation on day
-    openDinner(dinner: IDinner): void {
-        if (environment.debug) {
-            console.log('Dinner day pressed.', dinner);
-        }
-        this.dayCollapse = this.dayCollapse === dinner.date.toString() ? 'none' : dinner.date.toString();
-    }
-
-
     updateWeek() {
         this.weekDinners.forEach((dinner, index) => {
             if (isSameDay(dinner.date, this.currentDinner.date)) {
@@ -192,22 +161,6 @@ export class DinnerListComponent implements OnInit {
                 this.weekDinners[index].userdinners = this.currentDinner.userdinners;
                 this.weekDinners[index].open = this.currentDinner.open;
             }
-        });
-    }
-
-    loadDinnerWeek() {
-        this.weekDinners = [];
-        // Push nonexistent days on the pile as well.
-        this.dinnerListService.getDinnerWeek().then(result => {
-            weekDates(new Date()).forEach(day => {
-                const findDay = result.find(r => isSameDay(r.date, day));
-                if (!findDay) {
-                    result.push(this.createEmptyDinner(day));
-                    result.sort((a, b) => compareAsc(a.date, b.date));
-                }
-            });
-            this.weekDinners = result;
-            this.currentDinner = this.findToday();
         });
     }
 
