@@ -1,18 +1,17 @@
 import traceback
 from datetime import timedelta
-from decimal import Decimal
 
 from django.db.models import Sum, Case, When, Value, F, Q
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.viewsets import GenericViewSet
 
 from ds4reboot.api.utils import log_validation_errors, log_exception, illegal_action, success_action, Map
 from eetlijst.api.serializers.dinner import DinnerSchema, UserDinnerSchema
 from eetlijst.models import Dinner, UserDinner
-from user.models import Housemate
 
 DINNER_CLOSED_MESSAGE = "This dinner has been closed. It needs to be opened again to adjust it"
 
@@ -20,6 +19,8 @@ DINNER_CLOSED_MESSAGE = "This dinner has been closed. It needs to be opened agai
 class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
     queryset = Dinner.objects.order_by('-date')
     serializer_class = DinnerSchema
+    pagination_class = LimitOffsetPagination
+    filter_fields = '__all__'
 
     @action(detail=True, methods=['post'])
     def close(self, request, pk=None):
@@ -122,6 +123,7 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 class UserDinnerViewSet(ListModelMixin, GenericViewSet):
     queryset = UserDinner.objects.order_by('-dinner_date')
     serializer_class = UserDinnerSchema
+    pagination_class = LimitOffsetPagination
 
     default_status = status.HTTP_200_OK
     return_status = default_status
@@ -238,6 +240,7 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
 class DinnerWeekViewSet(ListModelMixin, RetrieveModelMixin, GenericViewSet):
     serializer_class = DinnerSchema
     queryset = Dinner.objects.order_by('-date')
+    pagination_class = None
 
     def get_queryset(self):
         """

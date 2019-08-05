@@ -1,5 +1,9 @@
+<mat-toolbar>
+    Dinner
+    <div fxFlex></div>
+    {{user ? user.housemate.display_name : ""}}
+</mat-toolbar>
 <section fxFlexAlign="stretch" fxLayout="column">
-
     <mat-card *ngIf="!miniView" class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
         <mat-card-header>
             <mat-card-title>
