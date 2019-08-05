@@ -1,4 +1,3 @@
-from django.contrib.contenttypes.models import ContentType
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
