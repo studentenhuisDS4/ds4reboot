@@ -4,7 +4,8 @@ import {environment} from '../../environments/environment';
 import {IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
-import {catchError, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
+import {ITokenClaims} from '../models/auth.model';
 
 @Injectable({
     providedIn: 'root'
@@ -18,8 +19,11 @@ export class UserService {
         private auth: AuthService) {
     }
 
-    checkHouse(user: number = this.auth.getTokenClaims().user_id) {
-        return user === 2;
+    checkHouse(token: ITokenClaims = this.auth.getTokenClaims()) {
+        if (token) {
+            return token.user_id === 2;
+        }
+        return false;
     }
 
     isThesau(user: number = this.auth.getTokenClaims().user_id): Promise<boolean> {
@@ -68,11 +72,6 @@ export class UserService {
     getActiveUsers(): Promise<IUser[]> {
         return this.httpClient.get<IUser[]>(`${this.API_URL}/user/`, {})
             .toPromise();
-    }
-
-    // Jwt-claim based user-id getter (guaranteed by guard)
-    getUserId(): number {
-        return this.auth.getTokenClaims().user_id;
     }
 
     checkUsername(username: string) {

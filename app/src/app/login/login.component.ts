@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
                     this.router.navigate(['home']);
                     this.awaitingLogin = false;
                 }, (error => {
-                    this.snackBarService.openSnackBar('asd', 'asd');
+                    this.snackBarService.openSnackBar('Login error', 'Hmm');
                     if (environment.debug) {
                         console.log('Login panel error', error);
                     }

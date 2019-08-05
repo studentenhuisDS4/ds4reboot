@@ -1,17 +1,7 @@
 <br *ngIf="miniView"/>
 <section fxLayout="column" fxFlexAlign="stretch">
     <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
-        <mat-card-header *ngIf="!miniView">
-            <mat-card-title>
-                <mat-card-title>
-                    Turf-list
-                </mat-card-title>
-                <mat-card-subtitle>
-                    Balance: {{user ? "&euro;" + user.housemate.balance : "?"}}
-                </mat-card-subtitle>
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-header *ngIf="miniView">
+        <mat-card-header>
             <div mat-card-avatar>
                 <i class="material-icons vertical-align-middle padding-bottom-3 icon-large"
                    [matBadge]="user?.housemate?.total_bier" matBadgeColor="primary">
@@ -19,12 +9,12 @@
                 </i>
             </div>
             <mat-card-title style="display: flex;">
-                Turf <em>{{isHouse ? " (on House!)" : ""}}</em>
+                Turf <strong>{{isHouse ? "&nbsp;(on House)" : ""}}</strong>
             </mat-card-title>
             <mat-card-subtitle>
                 Beer: {{user ? user.housemate.sum_bier : ""}}<br/>
-                Red: {{user ? user.housemate.sum_rwijn : ""}} //
-                White: {{user ? user.housemate.sum_wwijn : ""}}<br/>
+                Red wine: {{user ? user.housemate.sum_rwijn : ""}}<br/>
+                White wine: {{user ? user.housemate.sum_wwijn : ""}}<br/>
             </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>

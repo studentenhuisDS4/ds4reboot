@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {CanActivate, Router} from '@angular/router';
-import {UserService} from './user.service';
-import {SnackBarService} from './snackBar.service';
+import {UserService} from '../user.service';
+import {SnackBarService} from '../snackBar.service';
 
 @Injectable()
 export class ThesauGuardService implements CanActivate {

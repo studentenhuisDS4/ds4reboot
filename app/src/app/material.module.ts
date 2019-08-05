@@ -1,9 +1,11 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {
+    MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
     MatCardModule,
+    MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -11,10 +13,10 @@ import {
     MatMenuModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatTableModule,
     MatTabsModule,
-    MatToolbarModule,
-    MatSnackBarModule,
+    MatToolbarModule
 } from '@angular/material';
 
 @NgModule({
@@ -37,6 +39,8 @@ import {
         MatProgressSpinnerModule,
         MatBadgeModule,
         MatSnackBarModule,
+        MatChipsModule,
+        MatAutocompleteModule,
     ]
 })
 export class MaterialModule {

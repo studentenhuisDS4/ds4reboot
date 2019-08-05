@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from ds4admin.utils import check_dinners_housemate

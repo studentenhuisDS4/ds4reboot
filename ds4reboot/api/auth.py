@@ -26,7 +26,6 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
         password = attrs.get("password")
         user_obj = User.objects.filter(email__iexact=attrs.get("username-or-email")).first() or User.objects.filter(
             username__iexact=attrs.get("username-or-email")).first()
-        print(password)
         if user_obj is not None:
             credentials = {
                 'username': user_obj.username,

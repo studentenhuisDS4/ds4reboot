@@ -7,9 +7,20 @@
 }
 
 .selectable {
-    margin-bottom: -50px;
+    margin-bottom: -20px;
 }
 
 .fill-remaining-space {
     flex: 1 1 auto;
+}
+
+.small-icon {
+    width: 16px;
+    height: 16px;
+    //transform: scale(1);
+}
+
+mat-form-field {
+    width:100%;
+    margin-bottom: -1.34375em !important;
 }

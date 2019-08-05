@@ -9,9 +9,9 @@ import {ContactComponent} from './contact/contact.component';
 import {NewsComponent} from './news/news.component';
 import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
-import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
-import {AdminGuardService as AdminGuard} from './services/admin-guard.service';
-import {ThesauGuardService} from './services/thesau-guard.service';
+import {AuthGuardService as AuthGuard} from './services/guards/auth-guard.service';
+import {AdminGuardService as AdminGuard} from './services/guards/admin-guard.service';
+import {ThesauGuardService} from './services/guards/thesau-guard.service';
 import {ProfileEditComponent} from './profile/profile-edit/profile-edit.component';
 import {UserManageComponent} from './admin/user-manage/user-manage.component';
 import {UserCreateComponent} from './admin/user-create/user-create.component';
@@ -53,7 +53,7 @@ const routes: Routes = [
         component: UserManageComponent,
         canActivate: [AuthGuard, AdminGuard],
     }, {
-        path: 'admin/user-create',
+        path: 'admin/user-manage/user-create',
         component: UserCreateComponent,
         canActivate: [AuthGuard, AdminGuard],
     },

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9770793852434c6a0df1db5f9e2c75a2f6419552248252b6b14557f5db9af782"
+            "sha256": "fb5d7563eb591ca71add74e01760cc3f7e7d4823a9f3a9e39cb204681cde6eaf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -75,11 +75,11 @@
         },
         "django-rest-marshmallow": {
             "hashes": [
-                "sha256:15b3fea9cb5cb93bb50c5eb9e71e74c17192b09d5a821e6be6ee257c584dc1fc",
-                "sha256:8646aeff382ad91270ca5508f17cf7e9c39e689b50e699a23837f3f9e3cfd9ce"
+                "sha256:0856a70366293fa6f33fcf1bf94d3bbb7850268ff14006cc828c04d8dd4a661c",
+                "sha256:4d0a90a517ce265eae680f96b2288da665db58e12538a1614dba64d7259f0b1e"
             ],
             "index": "pypi",
-            "version": "==4.0.0"
+            "version": "==4.0.1"
         },
         "django-sekizai": {
             "hashes": [
@@ -207,10 +207,10 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:303879e36b721603cc54604edcac9d20401bdbe31e1e4fdee5b9f98d5d31dfda",
-                "sha256:d747dd3d23d77ef44c6a3526e274af6efeb0a6f1afd5a69ba4d5be4098c8e141"
+                "sha256:26c0b32e437e54a18161324a2fca3c4b9846b74a8dccddd843113109e1116b32",
+                "sha256:c894d57500a4cd2d5c71114aaab77dbab5eabd9022308ce5ac9bb93a60a6f0c7"
             ],
-            "version": "==2019.1"
+            "version": "==2019.2"
         },
         "six": {
             "hashes": [
@@ -285,10 +285,10 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:303879e36b721603cc54604edcac9d20401bdbe31e1e4fdee5b9f98d5d31dfda",
-                "sha256:d747dd3d23d77ef44c6a3526e274af6efeb0a6f1afd5a69ba4d5be4098c8e141"
+                "sha256:26c0b32e437e54a18161324a2fca3c4b9846b74a8dccddd843113109e1116b32",
+                "sha256:c894d57500a4cd2d5c71114aaab77dbab5eabd9022308ce5ac9bb93a60a6f0c7"
             ],
-            "version": "==2019.1"
+            "version": "==2019.2"
         },
         "sqlparse": {
             "hashes": [

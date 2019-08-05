@@ -27,14 +27,14 @@ import {HeaderComponent} from './navigation/header/header.component';
 import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.component';
 import {LoginComponent} from './login/login.component';
 import {AutoFocusDirective} from './directives/auto-focus.directive';
-import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
-import {AdminGuardService as AdminGuard} from './services/admin-guard.service';
+import {AuthGuardService} from './services/guards/auth-guard.service';
+import {AdminGuardService} from './services/guards/admin-guard.service';
 import {TokenInterceptor} from './services/interceptors/token.interceptor';
 import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 import {ThesauComponent} from './thesau/thesau.component';
-import {ThesauGuardService} from './services/thesau-guard.service';
+import {ThesauGuardService} from './services/guards/thesau-guard.service';
 import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.component';
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
@@ -85,7 +85,7 @@ import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upl
             useFactory: adapterFactory
         })
     ],
-    providers: [AuthGuard, AdminGuard, ThesauGuardService, {
+    providers: [AuthGuardService, AdminGuardService, ThesauGuardService, {
         provide: HTTP_INTERCEPTORS,
         useClass: TokenInterceptor,
         multi: true
