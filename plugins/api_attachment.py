@@ -1,6 +1,5 @@
 import traceback
 from json import JSONDecodeError
-from pprint import pprint
 
 from PIL import Image
 from django.contrib.contenttypes.models import ContentType
@@ -8,7 +7,6 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.utils import json
 
-from base.templatetags.resource_tags import full_media_url
 from ds4reboot.api.utils import illegal_action, log_validation_errors, log_exception, success_action
 from plugins.models import RestAttachment
 from plugins.serializers.attachment import AttachmentsSchema
