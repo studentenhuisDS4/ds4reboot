@@ -16,11 +16,11 @@ jobs:
       - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
       - run: cp "./.circleci/secret_settings.py" "./ds4reboot/secret_settings.py"
-      # Download and cache dependencies
-#      - restore_cache:
-#          keys:
-#            - v1-dependencies-{{ checksum "Pipfile" }}
-#            # fallback to using the latest cache if no exact match is found
+       Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "Pipfile" }}
+            # don't fallback to using the latest cache if no exact match is found
 #            - v1-dependencies-
       - run:
           name: install dependencies

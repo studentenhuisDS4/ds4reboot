@@ -10,6 +10,8 @@ from user.urls import urlpatterns
 class ResourceTemplateTagTest(TestCase):
 
     def setUp(self):
+        print("[Testing USER]:")
+
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.user = User.objects.create_user(
@@ -17,8 +19,8 @@ class ResourceTemplateTagTest(TestCase):
         self.secure_user = User.objects.create_user(
             username='secure', email='gmail', password='top_secreter', is_staff=True)
 
-    def tearDown(self):
-        print("Tested user/staff basics.")
+    # def tearDown(self):
+    #     print("Tested user/staff basics.")
 
     def test_user(self):
 
@@ -31,17 +33,7 @@ class ResourceTemplateTagTest(TestCase):
     skip_nonstatic = ['logout', 'login huis']
 
     def test_static_responses(self):
-        print("Testing Thesau:")
         for url in urlpatterns:
-            print("- '" + str(url.name) + "'")
             if url.name not in self.skip_nonstatic and url.name is not None:
                 response = self.client.get(reverse(url.name), follow=True)
-                print(str(response))
                 self.assertEqual(response.status_code, 200)
-            else:
-                print("-- url POST skipped --")
-
-    # TODO: logout and login huis
-    # def test_login:
-    # def test_logout:
-    # def test_login_huis:

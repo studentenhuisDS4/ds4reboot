@@ -22,14 +22,9 @@ class DinnerTest(TestCase):
     dinner_cost_url = reverse('cost')
     remove_housemate_url = reverse('remove housemate')
 
-    # TODO test 'goto date'
-    # def test_goto_date:
-    # def test_enroll:
-    # def test_close:
-    # def test_cost:
-
     def setUp(self):
-        print(">> SETUP: Refreshing user huis, adding two custom users")
+        print("[Testing EETLIJST]:")
+
         User.objects.create_superuser('huis', 'studentenhuisds4@gmail.com', 'Studentenhuis')
         Housemate.objects.create(user=User.objects.get(username='huis'), display_name='Huis')
 
@@ -45,7 +40,6 @@ class DinnerTest(TestCase):
         self.assertIsNotNone(self.dinner_cost_url)
 
     def tearDown(self):
-        print(">> TEARDOWN: Delete users and huis")
         User.objects.filter(username='pietje').delete()
         User.objects.filter(username='pietje2').delete()
         User.objects.filter(username='huis').delete()
@@ -53,18 +47,13 @@ class DinnerTest(TestCase):
         UserDinner.objects.all().delete()
 
     def test_static_responses(self):
-        print("Testing Eetlijst:")
         for url in urlpatterns:
-            print("- " + str(url.name))
             if url.name not in self.skip_nonstatic and url.name is not None:
                 response = self.client.get(reverse(url.name), follow=True)
-                print(str(response))
                 self.assertEqual(response.status_code, 200, msg=str(response))
-            else:
-                print("-- url POST skipped --")
 
     def test_closing_dinner(self):
-        print("Testing dinner with 2 housemates subbed on dinner")
+        print("- Testing dinner with 2 housemates subbed on dinner")
         week_ago = datetime.now() - timedelta(days=7)
         assert_total_balance()
         dinner = Dinner.objects.create(date=week_ago)
@@ -113,13 +102,12 @@ class BalanceColorTagTest(TestCase):
 
     # Create housemate user
     def setUp(self):
-        print("-! Refreshing user huis")
+        print("[Dummy test]")
         User.objects.filter(username='huis').delete()
         User.objects.create_superuser('huis', 'studentenhuisds4@gmail.com', 'Studentenhuis')
         Housemate.objects.create(user=User.objects.get(username='huis'), display_name='Huis')
 
     def tearDown(self):
-        print("-! Delete user huis")
         User.objects.filter(username='huis').delete()
 
     def test_entry_shows_up(self):
@@ -132,12 +120,7 @@ class BalanceColorTagTest(TestCase):
     skip_nonstatic = ['goto date', 'enroll', 'close', 'cost', 'ho', 'transfer']
 
     def test_static_responses(self):
-        print("Testing Eetlijst:")
         for url in urlpatterns:
-            print("- " + str(url.name))
             if url.name not in self.skip_nonstatic and url.name is not None:
                 response = self.client.get(reverse(url.name), follow=True)
-                print(str(response))
                 self.assertEqual(response.status_code, 200)
-            else:
-                print("-- url POST skipped --")
