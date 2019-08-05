@@ -22,11 +22,11 @@
                 </i>
             </div>
             <mat-card-title>
-                {{getWeekday(currentDinner.date)}}
+                {{ getWeekday(currentDinner.date) }}
                 {{ currentDinner.eta_time ? "-" + currentDinner.eta_time : ""}}
                 {{ currentDinner.open ? "" : "(closed)"}}
             </mat-card-title>
-            <mat-card-subtitle>{{currentDinner.date | date : 'MMMM d'}}</mat-card-subtitle>
+            <mat-card-subtitle>{{ currentDinner.date | date : 'MMMM d' }}</mat-card-subtitle>
         </mat-card-header>
 
         <mat-card-content>
