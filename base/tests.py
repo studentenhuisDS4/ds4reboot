@@ -25,7 +25,6 @@ class ResourceTemplateTagTest(TestCase):
             '{% audio_url %}'
         )
         rendr = templ.render(context)
-        print("Tested audio_url tag:", rendr)
         self.assertIn("http://", rendr)
         self.assertIn("/static/audio/", rendr)
 
@@ -38,7 +37,6 @@ class ResourceTemplateTagTest(TestCase):
             '{% get_params_url %}'
         )
         rendr = template_to_render.render(context)
-        print("Tested get_params tag:", rendr)
         test_str = "param1=value"
         test_str2 = "param2=value2"
         self.assertIn(test_str, rendr)
@@ -55,7 +53,6 @@ class ResourceTemplateTagTest(TestCase):
             '{% full_static_url %}'
         )
         templ = template_to_render.render(context)
-        print("Tested full_static tag:", templ)
         self.assertIn('/static/', templ)
         self.assertIn('http://', templ)
 
@@ -69,7 +66,6 @@ class ResourceTemplateTagTest(TestCase):
             '{% full_media_url %}'
         )
         templ = template_to_render.render(context)
-        print("Tested full_media tag:", templ)
         self.assertIn('/media/', templ)
         self.assertIn('http://', templ)
 
@@ -82,14 +78,8 @@ class ResourceTemplateTagTest(TestCase):
             '{% full_static_url %}'
         )
         templ = template_to_render.render(context)
-        print("Tested [secure] full_static tag:", templ)
         self.assertIn('/static/', templ)
         self.assertIn('https://', templ)
-
-    # TODO create tests to test access to media/static
-    # def test_media_folder:
-
-    # def test_static_folder:
 
     def test_responses(self):
         for url in urlpatterns:
