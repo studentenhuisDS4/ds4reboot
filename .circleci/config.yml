@@ -19,18 +19,18 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v2-dependencies-{{ checksum "Pipfile" }}
+            - v2.01-dependencies-{{ checksum "Pipfile" }}
             # fallback to using the latest cache if no exact match is found
-            - v2-dependencies-
+            - v2.01-dependencies-
       - run:
           name: install dependencies
           command: |
             pip install --upgrade pip
-            pipenv install --system --dev
+            pipenv install --dev
       - save_cache:
           paths:
             - "~/.local/share/virtualenvs/venv"
-          key: v2-dependencies-{{ checksum "Pipfile" }}
+          key: v2.01-dependencies-{{ checksum "Pipfile" }}
       - run:
           command: |
             python manage.py migrate
