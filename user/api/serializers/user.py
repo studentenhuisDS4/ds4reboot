@@ -1,4 +1,4 @@
-import rest_marshmallow
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from marshmallow import fields, validates_schema
@@ -6,11 +6,8 @@ from marshmallow.validate import Length
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
-from ds4reboot.api.validators import TextValidator, UniqueModelValidator
+from ds4reboot.api.validators import UniqueModelValidator
 from user.models import DIET_LENGTH, Housemate
-
-# stupid local fix for bug
-rest_marshmallow._schema_kwargs = ('only', 'exclude', 'dump_only', 'load_only', 'context', 'partial')
 
 
 class PermissionSchema(Schema):
@@ -77,13 +74,17 @@ class UserSchema(Schema):
     password_repeat = fields.Str(load_only=True, validate=[Length(min=6)])
 
     def update(self, instance, validated_data):
-        print(validated_data)
         if 'password' in validated_data:
             instance.set_password(validated_data.pop('password'))
-        housemate_data = validated_data.pop('housemate')
+
         housemate = instance.housemate
-        for key, value in housemate_data.items():
-            setattr(housemate, key, value)
+        if housemate in validated_data:
+            housemate_data = validated_data.pop('housemate')
+            for key, value in housemate_data.items():
+                setattr(housemate, key, value)
+            for key, value in validated_data.items():
+                setattr(instance, key, value)
+
         for key, value in validated_data.items():
             setattr(instance, key, value)
 
