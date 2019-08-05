@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 
 from django.contrib.auth.models import User
@@ -117,6 +118,12 @@ class ThesauTest(TestCase):
         assert_total_balance()
 
         print(colors.yellow("Submitting HR"))
+        dir='./media/temp/'
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        dir = './media/hr_reports/'
+        if not os.path.exists(dir):
+            os.makedirs(dir)
         response = self.client.post(self.hr_url, follow=True, HTTP_REFERER='/admin/')
         assert_total_balance()
 
