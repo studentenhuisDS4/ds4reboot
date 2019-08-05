@@ -26,7 +26,7 @@ jobs:
           name: install dependencies
           command: |
             pip install --upgrade pip
-            pipenv install --skip-lock --system --dev
+            pipenv install --system --dev
       - save_cache:
           paths:
             - ./
