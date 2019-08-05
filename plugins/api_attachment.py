@@ -1,13 +1,12 @@
 import traceback
 from json import JSONDecodeError
-from pprint import pprint
 
 from PIL import Image
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.utils import json
 
-from base.templatetags.resource_tags import full_media_url
 from ds4reboot.api.utils import illegal_action, log_validation_errors, log_exception, success_action
 from plugins.models import RestAttachment
 from plugins.serializers.attachment import AttachmentsSchema
@@ -25,6 +24,8 @@ class AttachmentsUploadMixin():
     def __init_subclass__(cls, **kwargs):
         if not getattr(cls, 'content_type', None):
             raise ValueError("content_type needs to be specified in ViewSet/APIView class to define attachments")
+        if not 'model' in cls.content_type or not 'app_label' in cls.content_type:
+            raise ValueError("content_type needs to be a Dict with model and app_label key/value pairs.")
 
     def put(self, request):
         batch = []
@@ -53,7 +54,8 @@ class AttachmentsUploadMixin():
                 except Exception as e:
                     return illegal_action("Unsupported attachment type" + str(e))
                 attachment = RestAttachment(creator_id=request.user.id,
-                                            content_type=self.content_type, object_id=object.id)
+                                            content_type=ContentType.objects.get(**self.content_type),
+                                            object_id=object.id)
                 try:
                     attachment.attachment_file.save(name=file.name, content=file)
                 except Exception as e:

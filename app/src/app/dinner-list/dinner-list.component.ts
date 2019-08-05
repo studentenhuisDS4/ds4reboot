@@ -6,13 +6,14 @@ import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
 import {environment} from '../../environments/environment';
-import {MatAutocomplete, MatSnackBar} from '@angular/material';
+import {MatAutocomplete} from '@angular/material';
 import {EasterEggService} from '../services/easter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocompleteSelectedEvent} from '@angular/material/typings/esm5/autocomplete';
 import {FormControl} from '@angular/forms';
 import {filter, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import {SnackBarService} from '../services/snackBar.service';
 
 
 @Component({
@@ -69,8 +70,9 @@ export class DinnerListComponent implements OnInit {
     constructor(
         private dinnerListService: DinnerListService,
         private userService: UserService,
-        private snackBar: MatSnackBar,
-        private easterEgg: EasterEggService) {
+        private snackBar: SnackBarService,
+        private easterEgg: EasterEggService
+    ) {
         this.loadDinnerWeek();
         this.userService.getProfile().then(result => {
             this.user = result;
@@ -90,12 +92,12 @@ export class DinnerListComponent implements OnInit {
 
     signOffDinner(dinner: IDinner, user = this.user) {
         this.dinnerListService.signOff(user.id, dinner.date).then(output => {
-                this.openSnackBar(`${user.housemate.display_name} cancelled for dinner.`, 'Ok');
+                this.snackBar.openSnackBar(`${user.housemate.display_name} cancelled for dinner.`, 'Ok');
                 this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
             },
             error => {
-                this.openSnackBar(`Failed sign-off action for ${user.housemate.display_name}!`, 'Shit');
+                this.snackBar.openSnackBar(`Failed sign-off action for ${user.housemate.display_name}!`, 'Shit');
             });
     }
 
@@ -112,28 +114,28 @@ export class DinnerListComponent implements OnInit {
             this.preConfirm = false;
         }
         return this.dinnerListService.signUp(user.id, dinner.date).then(output => {
-                this.openSnackBar(`Signup +1 for ${user.housemate.display_name} successful!`, 'Ok');
+                this.snackBar.openSnackBar(`Signup +1 for ${user.housemate.display_name} successful!`, 'Ok');
                 this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
                 return output;
             },
             error => {
-                this.openSnackBar(`Failed action for ${user.housemate.display_name}!`, 'Shit');
+                this.snackBar.openSnackBar(`Failed action for ${user.housemate.display_name}!`, 'Shit');
             });
     }
 
     cookDinner(dinner: IDinner, signOff = false, user = this.user) {
         this.dinnerListService.cook(user.id, dinner.date, signOff).then(output => {
                 if (output.result && output.result.cook && output.result.cook.id === this.user.id) {
-                    this.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
+                    this.snackBar.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
                 } else {
-                    this.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
+                    this.snackBar.openSnackBar(`Cooking free to be claimed again.`, 'Ok');
                 }
                 this.currentDinner = this.updateDinner(output.result, dinner.date);
                 this.updateWeek();
             },
             error => {
-                this.openSnackBar(`Failed action for ${user.housemate.display_name}!`, 'Shit');
+                this.snackBar.openSnackBar(`Failed action for ${user.housemate.display_name}!`, 'Shit');
             });
     }
 
@@ -142,19 +144,19 @@ export class DinnerListComponent implements OnInit {
         this.dinnerListService.close(dinner).then(output => {
                 const d: IDinner = output.result;    // (TODO API) Hack for now...
                 if (d && !d.open) {
-                    this.openSnackBar(`Dinner closed.`, 'Ok');
+                    this.snackBar.openSnackBar(`Dinner closed.`, 'Ok');
                 } else {
                     if (cost && !d.cost) {
-                        this.openSnackBar(`Dinner opened (cost refunded).`, 'Ok');
+                        this.snackBar.openSnackBar(`Dinner opened (cost refunded).`, 'Ok');
                     } else {
-                        this.openSnackBar(`Dinner opened.`, 'Ok');
+                        this.snackBar.openSnackBar(`Dinner opened.`, 'Ok');
                     }
                 }
                 this.currentDinner = this.updateDinner(d, d.date);
                 this.updateWeek();
             },
             error => {
-                this.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+                this.snackBar.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
             });
     }
 
@@ -181,19 +183,6 @@ export class DinnerListComponent implements OnInit {
         this.dayCollapse = this.dayCollapse === dinner.date.toString() ? 'none' : dinner.date.toString();
     }
 
-
-    findToday() {
-        const today = new Date();
-        let foundDinner = null;
-        if (this.weekDinners != null) {
-            this.weekDinners.forEach(dinner => {
-                if (isSameDay(dinner.date, today)) {
-                    foundDinner = dinner;
-                }
-            });
-        }
-        return foundDinner;
-    }
 
     updateWeek() {
         this.weekDinners.forEach((dinner, index) => {
@@ -222,15 +211,20 @@ export class DinnerListComponent implements OnInit {
         });
     }
 
-    getWeekday(date: Date) {
-        return dayNames[(new Date(date)).getDay()];
+    findToday(day = new Date()) {
+        let foundDinner = null;
+        if (this.weekDinners != null) {
+            this.weekDinners.forEach(dinner => {
+                if (isSameDay(dinner.date, day)) {
+                    foundDinner = dinner;
+                }
+            });
+        }
+        return foundDinner;
     }
 
-    openSnackBar(message: string, action: string) {
-        this.snackBar.open(message, action, {
-            duration: 2000,
-            verticalPosition: 'bottom',
-        });
+    getWeekday(date: Date) {
+        return dayNames[(new Date(date)).getDay()];
     }
 
     onUserDinnerKey($event: KeyboardEvent) {

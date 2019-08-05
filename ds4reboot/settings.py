@@ -107,6 +107,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': [
         'url_filter.integrations.drf.DjangoFilterBackend',
     ],
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 15,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
@@ -176,3 +178,5 @@ SITE_ID = 1
 # Attachments
 DELETE_ATTACHMENTS_FROM_DISK = False
 FILE_UPLOAD_MAX_SIZE = 3024000  # ~3MB
+
+SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]

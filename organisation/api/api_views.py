@@ -1,4 +1,3 @@
-from django.contrib.contenttypes.models import ContentType
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
@@ -19,8 +18,7 @@ class ReceiptViewSet(ListModelMixin, AttachmentsUploadMixin, GenericViewSet):
     queryset = Receipt.objects.all()
     serializer_class = ReceiptSchema
 
-    # try:
-    #     content_type = ContentType.objects.get(app_label="organisation", model="receipt")
-    # except:
-        # pass compilation in case of missing migration
-    content_type = ContentType.objects.get(app_label="contenttypes", model="contenttype")
+    content_type = {
+        'app_label': 'organisation',
+        'model': 'receipt'
+    }

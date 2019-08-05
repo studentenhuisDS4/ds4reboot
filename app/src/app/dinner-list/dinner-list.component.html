@@ -1,43 +1,50 @@
 <section fxFlexAlign="stretch" fxLayout="column">
-
-    <mat-card *ngIf="!miniView" class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
-        <mat-card-header>
-            <mat-card-title>
-                <mat-card-title>
-                    {{user ? "Dinners for " + user.housemate.display_name : ""}}
-                </mat-card-title>
-                <mat-card-subtitle>
-                    Balance: {{user ? "&euro;" + user.housemate.balance : "?"}}
-                </mat-card-subtitle>
-            </mat-card-title>
-        </mat-card-header>
-        <mat-card-footer>
-            <div fxFlex></div>
-            <button (click)="toggleWeek()" mat-button>Show {{showWeek ? "TODAY" : "WEEK"}}</button>
-        </mat-card-footer>
-    </mat-card>
-
-    <mat-card (click)="openDinner(dinner)" *ngFor="let dinner of weekDinners"
-              [@slideInOut]="weekCollapse" [@slideOpen]="dayCollapse == dinner.date.toString()"
-              class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center">
+    <mat-toolbar *ngIf="!miniView" style="margin-bottom:10px;">
+        Dinner ({{user ? user.housemate.display_name : ""}}, &nbsp;
+        <small>{{user ? "&euro;" + user.housemate.balance : "?"}}</small>)
+        <div fxFlex></div>
+        <mat-slide-toggle (change)="toggleWeek()">
+            {{showWeek ? "WEEK" : "TODAY"}}
+        </mat-slide-toggle>
+    </mat-toolbar>
+<!--    <mat-card (click)="openDinner(dinner)" *ngFor="let dinner of weekDinners"-->
+<!--              [@slideInOut]="weekCollapse" [@slideOpen]="dayCollapse == dinner.date.toString()"-->
+<!--              class="page-content-card selectable mat-elevation-z24" fxFlexAlign="center">-->
+<!--        <mat-card-header>-->
+<!--            <div mat-card-avatar>-->
+<!--                <i [matBadge]="dinner.num_eating"-->
+<!--                   class="material-icons vertical-align-middle padding-bottom-3 icon-large"-->
+<!--                   matBadgeColor="primary">-->
+<!--                    local_dining-->
+<!--                </i>-->
+<!--            </div>-->
+<!--            <mat-card-title>-->
+<!--                {{ getWeekday(dinner.date)}} {{ dinner.eta_time ? "-" + dinner.eta_time : "" }}-->
+<!--            </mat-card-title>-->
+<!--            <mat-card-subtitle>{{dinner.date | date : 'MMMM d'}}</mat-card-subtitle>-->
+<!--        </mat-card-header>-->
+<!--    </mat-card>-->
+    <mat-card [@slideInOut]="weekCollapse" class="page-content-card" fxFlexAlign="center">
         <mat-card-header>
             <div mat-card-avatar>
-                <i [matBadge]="dinner.num_eating"
+                <i [matBadge]="currentDinner?.num_eating"
                    class="material-icons vertical-align-middle padding-bottom-3 icon-large"
                    matBadgeColor="primary">
                     local_dining
                 </i>
             </div>
-            <mat-card-title style="display: flex;">
-                {{ getWeekday(dinner.date)}} {{ dinner.eta_time ? "-" + dinner.eta_time : "" }}
-                <span class="fill-remaining-space"></span>
+            <mat-card-title>
+                {{ getWeekday(dinner?.date)}} {{ dinner?.eta_time ? "-" + dinner?.eta_time : "" }}
             </mat-card-title>
-            <mat-card-subtitle>{{dinner.date | date : 'MMMM d'}}</mat-card-subtitle>
+            <mat-card-subtitle>{{dinner?.date | date : 'MMMM d'}}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <button mat-raised-button>
-                <i class="material-icons">detail</i>
-            </button>
+            <mat-list>
+                <mat-list-item *ngFor="let dinner of weekDinners" (click)="findToday(dinner.date)">
+                    {{dinner.date}}
+                    <mat-divider [inset]="true"></mat-divider>
+                </mat-list-item>
+            </mat-list>
         </mat-card-content>
     </mat-card>
 
@@ -50,9 +57,8 @@
                     local_dining
                 </i>
             </div>
-            <mat-card-title style="display: flex;">
-                <span *ngIf="miniView">Dinner</span>
-                &nbsp;{{ miniView ? "(" : ""}}{{getWeekday(currentDinner.date)}}{{miniView ? ")" : ""}}
+            <mat-card-title>
+                {{getWeekday(currentDinner.date)}}
                 {{ currentDinner.eta_time ? "-" + currentDinner.eta_time : ""}}
                 {{ currentDinner.open ? "" : "(closed)"}}
             </mat-card-title>
@@ -83,7 +89,7 @@
                         [matChipInputAddOnBlur]="true"
                         [matChipInputFor]="userDinnerList"
                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                        placeholder="Add people">
+                        placeholder="Add by typing">
                 </mat-chip-list>
 
                 <!-- Trigger by piped _filter function-->

@@ -38,6 +38,7 @@ import {ThesauGuardService} from './services/guards/thesau-guard.service';
 import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.component';
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
+import {MatButtonToggleModule} from '@angular/material';
 
 
 @NgModule({
@@ -83,7 +84,8 @@ import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upl
         CalendarModule.forRoot({
             provide: DateAdapter,
             useFactory: adapterFactory
-        })
+        }),
+        MatButtonToggleModule
     ],
     providers: [AuthGuardService, AdminGuardService, ThesauGuardService, {
         provide: HTTP_INTERCEPTORS,
