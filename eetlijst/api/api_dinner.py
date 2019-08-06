@@ -77,10 +77,7 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                         dinner.unshare_cost()
                     dinner.share_cost(result.data['cost'])
                     dinner.save()
-
-                return success_action(data={
-                    'dinner': DinnerSchema(dinner).data,
-                }, status=status.HTTP_202_ACCEPTED)
+                return success_action(data=DinnerSchema(dinner).data, status=status.HTTP_202_ACCEPTED)
             else:
                 if dinner.cook:
                     # TODO easter egg

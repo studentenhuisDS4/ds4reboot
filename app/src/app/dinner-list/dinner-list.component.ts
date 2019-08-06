@@ -1,6 +1,5 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {DinnerListService} from '../services/dinner-list.service';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
@@ -9,7 +8,7 @@ import {MatAutocomplete} from '@angular/material';
 import {EasterEggService} from '../services/easter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocompleteSelectedEvent} from '@angular/material/typings/esm5/autocomplete';
-import {FormControl} from '@angular/forms';
+import {FormControl, Validators} from '@angular/forms';
 import {filter, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {SnackBarService} from '../services/snackBar.service';
@@ -23,13 +22,6 @@ import {SnackBarService} from '../services/snackBar.service';
 export class DinnerListComponent implements OnInit {
     weekDinners: IDinner[] = [];
     currentDinner: IDinner;
-
-    preConfirm = false;
-    showWeek = false;
-    weekCollapse = 'hide';
-    todayCollapse = 'show';
-    dayCollapse = 'none';
-
     user: IUser = null;
     @Input() miniView = false;
 
@@ -39,6 +31,9 @@ export class DinnerListComponent implements OnInit {
     displayNameCtrl = new FormControl();
     @ViewChild('userDinnerInput', {static: false}) userDinnerInput: ElementRef<HTMLInputElement>;
     @ViewChild('autoComplete', {static: false}) matAutocomplete: MatAutocomplete;
+    preConfirm = false;
+
+    dinnerCostCtrl = new FormControl();
 
     constructor(
         private dinnerListService: DinnerListService,
@@ -58,24 +53,28 @@ export class DinnerListComponent implements OnInit {
                 map((displayName: string | null) => displayName ? this._filter(displayName) : this.activeUsers)
             );
         });
+
+        this.dinnerCostCtrl = new FormControl(0, {
+            validators: [Validators.required, Validators.min(0.01), Validators.max(100)]
+        });
     }
 
     ngOnInit() {
     }
 
-    loadDinnerWeek(day = new Date()) {
+    loadDinnerWeek(date = new Date()) {
         this.weekDinners = [];
         // Push nonexistent days on the pile as well.
         this.dinnerListService.getDinnerWeek().then(result => {
-            weekDates(new Date()).forEach(day => {
-                const findDay = result.find(r => isSameDay(r.date, day));
+            weekDates(new Date()).forEach(wdate => {
+                const findDay = result.find(r => isSameDay(r.date, wdate));
                 if (!findDay) {
-                    result.push(this.createEmptyDinner(day));
+                    result.push(this.createEmptyDinner(wdate));
                     result.sort((a, b) => compareAsc(a.date, b.date));
                 }
             });
             this.weekDinners = result;
-            this.currentDinner = this.findToday(day);
+            this.currentDinner = this.findToday(date);
         });
     }
 
@@ -135,7 +134,7 @@ export class DinnerListComponent implements OnInit {
     closeDinner(dinner: IDinner) {
         const cost = dinner.cost;
         this.dinnerListService.close(dinner).then(output => {
-                const d: IDinner = output.result;    // (TODO API) Hack for now...
+                const d: IDinner = output.result;
                 if (d && !d.open) {
                     this.snackBar.openSnackBar(`Dinner closed.`, 'Ok');
                 } else {
@@ -150,6 +149,25 @@ export class DinnerListComponent implements OnInit {
             },
             error => {
                 this.snackBar.openSnackBar(`Failed action for ${this.user.housemate.display_name}!`, 'Shit');
+            });
+    }
+
+    costDinner(dinner: IDinner = this.currentDinner) {
+        if (!this.dinnerCostCtrl.valid) {
+            this.dinnerCostCtrl.markAsTouched();
+            return;
+        }
+        const cost = this.dinnerCostCtrl.value;
+        this.dinnerListService.cost(dinner, cost).then(output => {
+                const d: IDinner = output.result;
+                if (d && d.cost) {
+                    this.snackBar.openSnackBar(`Dinner cost set ${d.cost}.`, 'Ok');
+                }
+                this.currentDinner = this.updateDinner(d, d.date);
+                this.updateWeek();
+            },
+            error => {
+                this.snackBar.openSnackBar(`Failed cost action for ${this.user.housemate.display_name}!`, 'Shit');
             });
     }
 
@@ -192,6 +210,15 @@ export class DinnerListComponent implements OnInit {
         }
     }
 
+    onDinnerCostMouseWheel($event: WheelEvent) {
+        const cost = this.dinnerCostCtrl.value;
+        if ($event.deltaY > 0 && cost >= 1) {
+            this.dinnerCostCtrl.setValue(cost - 1);
+        } else if ($event.deltaY < 0 && cost <= 99) {
+            this.dinnerCostCtrl.setValue(cost + 1);
+        }
+    }
+
     private selectedTypeAhead(event: MatAutocompleteSelectedEvent) {
         const user: IUser = event.option.value;
         this.signupDinner(this.currentDinner, user);
@@ -209,18 +236,6 @@ export class DinnerListComponent implements OnInit {
             return this.activeUsers.slice();
         }
         return this.activeUsers.filter(user => user.housemate.display_name.toLowerCase().indexOf(filterValue) !== -1);
-    }
-
-    private filterDining() {
-        return this.currentDinner.userdinners.filter(ud => {
-            return !ud.is_cook;
-        });
-    }
-
-    private filterCook() {
-        return this.currentDinner.userdinners.filter(ud => {
-            return ud.is_cook;
-        });
     }
 
     private updateDinner(dinner: IDinner, day: Date) {

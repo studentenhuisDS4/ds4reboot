@@ -41,11 +41,14 @@ export class AuthService {
         return localStorage.getItem('token');
     }
 
-    public getTokenClaims(): ITokenClaims {
+    public getTokenClaims(): ITokenClaims | any {
         const token = localStorage.getItem('token');
         if (token != null) {
             return this.jwtHelper.decodeToken(token);
         }
+        return {
+            user_id: null
+        };
     }
 
     public sendAuth(usernameOrEmail: string, password: string) {

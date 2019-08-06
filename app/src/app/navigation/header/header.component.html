@@ -1,29 +1,30 @@
 <mat-toolbar color="primary">
     <div>
-        <button mat-icon-button (click)="onToggleSidenav()">
+        <button (click)="onToggleSidenav()" mat-icon-button>
             <mat-icon>menu</mat-icon>
         </button>
     </div>
     <div>
         <a routerLink="/home">
-            <img style="display: flex;justify-content: center;" src="/assets/logo.svg"
-                 alt="triangle with all three sides equal" height="60px"/></a>
+            <img alt="triangle with all three sides equal" height="60px"
+                 src="/assets/logo.svg" style="display: flex;justify-content: center;"/></a>
     </div>
 
     <div fxFlex fxLayout fxLayoutAlign="end">
-        <ul fxLayout fxLayoutGap="0px" class="navigation-items">
+        <ul class="navigation-items" fxLayout fxLayoutGap="0px">
             <li class="nav-item">
-                <button mat-icon-button [routerLink]="['/profile']" routerLinkActive="nav-item-active">
+                <small *ngIf="user">{{ user?.housemate?.display_name }}&nbsp;</small>
+                <button [routerLink]="['/profile']" mat-icon-button routerLinkActive="nav-item-active">
                     <mat-icon>perm_identity</mat-icon>
                 </button>
             </li>
             <li class="nav-item">
-                <button mat-icon-button (click)="loginHouse()" [disabled]="isHouse">
+                <button (click)="loginHouse()" [disabled]="isHouse" mat-icon-button>
                     <mat-icon>house</mat-icon>
                 </button>
             </li>
             <li class="nav-item">
-                <button mat-icon-button (click)="logout()">
+                <button (click)="logout()" mat-icon-button>
                     <mat-icon>exit_to_app</mat-icon>
                 </button>
             </li>
