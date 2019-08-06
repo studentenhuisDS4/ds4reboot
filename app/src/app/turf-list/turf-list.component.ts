@@ -16,7 +16,10 @@ export class TurfListComponent implements OnInit {
     user: IUser = null;
     busy = false;
     turfUsers: IUser[] = [];
+    turfMultiplier: string;
     isHouse = false;
+    otherTurfVal = 1;
+    showOther = false;
 
     @Input() miniView = false;
 
@@ -40,6 +43,7 @@ export class TurfListComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.turfMultiplier = '1';
     }
 
     turfItem(turfType: TurfType = TurfType.BEER, amount = 1, turfUser = null) {
@@ -73,6 +77,9 @@ export class TurfListComponent implements OnInit {
                     this.easterEggService.easterEggo());
             }
             this.busy = false;
+            this.turfMultiplier = '1';
+            this.otherTurfVal = 1;
+            this.showOther = false;
         });
     }
 
