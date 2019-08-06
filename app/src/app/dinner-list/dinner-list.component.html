@@ -16,7 +16,7 @@
     <mat-card *ngIf="currentDinner" class="page-content-card" fxFlexAlign="center">
         <mat-card-header>
             <div mat-card-avatar>
-                <i [matBadge]="currentDinner.num_eating"
+                <i [matBadge]="currentDinner?.num_eating?.toString()"
                    class="material-icons vertical-align-middle padding-bottom-3 icon-large" matBadgeColor="primary">
                     local_dining
                 </i>
@@ -31,10 +31,11 @@
 
         <mat-card-content>
             <mat-form-field appearance="outline">
-                <mat-chip-list #userDinnerList>
+                <mat-chip-list #userDinnerList class="hover-type-cursor">
                     <mat-chip (removed)="signOffDinner(currentDinner, ud.user)"
                               *ngFor="let ud of currentDinner.userdinners"
-                              [color]="ud.user.housemate.balance <=-25" [matBadge]="ud.is_cook ? ud.count +1 : ud.count"
+                              [matBadgeColor]="ud.user.housemate.balance <=-25 ? 'warn' : ''"
+                              [matBadge]="ud.is_cook ? ud.count +1 : ud.count"
                               class="allow-overflow">
                         <mat-icon *ngIf="!ud.is_cook">local_dining</mat-icon>
                         <mat-icon *ngIf="ud.is_cook" svgIcon="cooking_hat"></mat-icon>
@@ -46,7 +47,7 @@
                     <br/>
 
                     <!-- Spacer -->
-                    <div *ngIf="!currentDinner?.userdinners.length" style="margin-bottom:63px; flex-wrap: wrap"></div>
+                    <div *ngIf="!currentDinner?.userdinners?.length" style="margin-bottom:63px; flex-wrap: wrap"></div>
                     <input
                         #userDinnerInput
                         (keydown)="onUserDinnerKey($event)"
@@ -71,35 +72,56 @@
         </mat-card-content>
 
         <mat-card-actions *ngIf="user">
-            <button (click)="signupDinner(currentDinner)" [disabled]="currentDinner.close_time"
-                    color="primary" mat-raised-button>
-                <mat-icon>add</mat-icon>
-            </button>
-            <button (click)="signOffDinner(currentDinner)"
-                    [disabled]="currentDinner.close_time || !getUserEntry(currentDinner, user)?.count"
-                    color="primary"
-                    mat-raised-button>
-                <mat-icon>not_interested</mat-icon>
-            </button>
-            <button (click)="cookDinner(currentDinner)" [color]="currentDinner.cook == null ? 'accent' : 'warn'"
-                    [disabled]="!currentDinner && currentDinner.cook && currentDinner.cook.id !== user.id || !currentDinner.open"
-                    mat-raised-button>
-                <mat-icon *ngIf="!currentDinner.cook" svgIcon="cooking_hat"></mat-icon>
-                <mat-icon *ngIf="currentDinner.cook" svgIcon="remove_cooking_hat"></mat-icon>
-            </button>
-            <button (click)="closeDinner(currentDinner)"
-                    *ngIf="user && currentDinner && currentDinner.num_eating > 1 && currentDinner?.cook ? (currentDinner?.cook.id == user.id) : false"
-                    [color]="currentDinner.open ? 'accent' : 'warn'"
-                    mat-raised-button>
-                <mat-icon *ngIf="currentDinner.open">lock</mat-icon>
-                <mat-icon *ngIf="!currentDinner.open">lock_open</mat-icon>
-            </button>
-            <div fxFlex></div>
+            <div fxLayout="row">
+                <button (click)="signupDinner(currentDinner)" [disabled]="currentDinner.close_time"
+                        color="primary" mat-raised-button>
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button (click)="signOffDinner(currentDinner)"
+                        [disabled]="currentDinner.close_time || !getUserEntry(currentDinner, user)?.count"
+                        color="primary"
+                        mat-raised-button>
+                    <mat-icon>not_interested</mat-icon>
+                </button>
+                <button (click)="cookDinner(currentDinner)" [color]="currentDinner?.cook == null ? 'accent' : 'warn'"
+                        [disabled]="!currentDinner && currentDinner.cook && currentDinner.cook?.id !== user.id || !currentDinner.open"
+                        mat-raised-button>
+                    <mat-icon *ngIf="!currentDinner.cook" svgIcon="cooking_hat"></mat-icon>
+                    <mat-icon *ngIf="currentDinner.cook" svgIcon="remove_cooking_hat"></mat-icon>
+                </button>
+                <button (click)="closeDinner(currentDinner)"
+                        *ngIf="user && currentDinner && currentDinner.num_eating > 1 && currentDinner?.cook ? (currentDinner?.cook.id == user.id) : false"
+                        [color]="currentDinner.open ? 'accent' : 'warn'"
+                        mat-raised-button>
+                    <mat-icon *ngIf="currentDinner.open">lock</mat-icon>
+                    <mat-icon *ngIf="!currentDinner.open">lock_open</mat-icon>
+                </button>
+            </div>
 
-            <!--            <button mat-raised-button (click)="costDinner(todayDinner)" color="primary"-->
-            <!--                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time && todayDinner.cost == null) : false ">-->
-            <!--                <mat-icon>attach_money</mat-icon>-->
-            <!--            </button>-->
+            <div
+                *ngIf="user && currentDinner.cook ? (currentDinner.cook.id == user.id && currentDinner.close_time && currentDinner.cost == null) : false "
+                fxLayout="row"
+                style="margin-top:10px; margin-bottom: 10px;">
+                <mat-form-field (mousewheel)="onDinnerCostMouseWheel($event)" class="hover-type-cursor">
+                    <input (keydown.enter)="costDinner(currentDinner)" [formControl]="dinnerCostCtrl"
+                           matInput max="100" min="0"
+                           placeholder="Provide cost"
+                           required type="number"
+                           value="0.00">
+                </mat-form-field>
+                <button (click)="costDinner(currentDinner)"
+                        color="primary" mat-raised-button
+                        style="margin-top:5px;">
+                    <mat-icon>attach_money</mat-icon>
+                </button>
+
+            </div>
+            <div *ngIf="user && currentDinner?.cost" fxLayout="row" style="margin-top:5px;">
+                Cost: &euro; {{ currentDinner.cost | number:'.2'}}
+            </div>
+        </mat-card-actions>
+        <mat-card-actions *ngIf="!user">
+            <!-- Filler -->
         </mat-card-actions>
     </mat-card>
 
@@ -143,7 +165,7 @@
                 <mat-icon>not_interested</mat-icon>
             </button>
             <button (click)="cookDinner(dinner)" [color]="dinner?.cook == null ? 'accent' : 'warn'"
-                    [disabled]="dinner?.cook && dinner?.cook.id !== user.id || !dinner?.open"
+                    [disabled]="user && dinner?.cook && dinner?.cook.id !== user.id || !dinner?.open"
                     mat-raised-button>
                 <mat-icon *ngIf="!dinner?.cook" svgIcon="cooking_hat"></mat-icon>
                 <mat-icon *ngIf="dinner?.cook" svgIcon="remove_cooking_hat"></mat-icon>

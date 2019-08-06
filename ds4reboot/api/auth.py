@@ -26,6 +26,7 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
         password = attrs.get("password")
         user_obj = User.objects.filter(email__iexact=attrs.get("username-or-email")).first() or User.objects.filter(
             username__iexact=attrs.get("username-or-email")).first()
+        print("Login attempt by", user_obj.username)
         if user_obj is not None:
             credentials = {
                 'username': user_obj.username,
@@ -39,7 +40,7 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
                         raise serializers.ValidationError(msg)
 
                     payload = jwt_payload_handler(user)
-
+                    print("Login success by", user_obj.username)
                     return {
                         'token': jwt_encode_handler(payload),
                         'user': user

@@ -54,8 +54,10 @@ export class DinnerListService {
         return this.httpClient.post<IResult<IDinner>>(this.URL_CLOSE.replace('{ID}', dinner.id.toString()), {}).toPromise();
     }
 
-    cost(dinner: IDinner) {
-        return this.httpClient.post<IResult<IDinner>>(this.URL_COST.replace('{ID}', dinner.id.toString()), {}).toPromise();
+    cost(dinner: IDinner, dinnerCost: number) {
+        return this.httpClient.post<IResult<IDinner>>(this.URL_COST.replace('{ID}', dinner.id.toString()), {
+            cost: dinnerCost
+        }).toPromise();
     }
 
     eta_time(dinner: IDinner, etaTime: Time) {

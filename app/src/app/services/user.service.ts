@@ -55,7 +55,7 @@ export class UserService {
 
     // Jwt-claim based profile getter (guaranteed by guard)
     getProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        if (user !== 2) {
+        if (user !== 2 && user) {
             return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {}).toPromise();
         }
         return Promise.resolve(null);

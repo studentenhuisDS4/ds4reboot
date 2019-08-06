@@ -3,6 +3,7 @@ import {AuthService} from '../../services/auth.service';
 import {Router} from '@angular/router';
 import {SnackBarService} from '../../services/snackBar.service';
 import {UserService} from '../../services/user.service';
+import {IUser} from '../../models/user.model';
 
 @Component({
     selector: 'app-header',
@@ -10,6 +11,7 @@ import {UserService} from '../../services/user.service';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+    user: IUser;
     isHouse = false;
     @Output() public sidenavToggle = new EventEmitter();
 
@@ -23,6 +25,10 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit() {
         this.isHouse = this.userService.checkHouse();
+        this.userService.getProfile().then(r => {
+                this.user = r;
+            }
+        );
     }
 
     onToggleSidenav() {
@@ -36,11 +42,16 @@ export class HeaderComponent implements OnInit {
                     this.router.navigateByUrl('/home');
                 }
             );
+            this.userService.getHouseProfile().then(r => {
+                    this.user = r;
+                }
+            );
         }
     }
 
     logout() {
         this.authService.logout();
+        delete this.user;
         return this.router.navigateByUrl('login');
     }
 

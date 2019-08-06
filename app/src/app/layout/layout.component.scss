@@ -1,12 +1,18 @@
 .layout-wrapper {
     height: 100%;
-    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#1e5799+0,001330+100 */
-    background: #1e5799; /* Old browsers */
-    background: -moz-radial-gradient(center, ellipse cover, #1e5799 0%, #001330 100%); /* FF3.6-15 */
-    background: -webkit-radial-gradient(center, ellipse cover, #1e5799 0%, #001330 100%); /* Chrome10-25,Safari5.1-6 */
-    background: radial-gradient(ellipse at center, #1e5799 0%, #001330 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1e5799', endColorstr='#001330', GradientType=1); /* IE6-9 fallback on horizontal gradient */
+    ///* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#1e5799+0,001330+100 */
+    //background: #1e5799; /* Old browsers */
+    //background: -moz-radial-gradient(center, ellipse cover, #1e5799 0%, #001330 100%); /* FF3.6-15 */
+    //background: -webkit-radial-gradient(center, ellipse cover, #1e5799 0%, #001330 100%); /* Chrome10-25,Safari5.1-6 */
+    //background: radial-gradient(ellipse at center, #1e5799 0%, #001330 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    //filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1e5799', endColorstr='#001330', GradientType=1); /* IE6-9 fallback on horizontal gradient */
 
+
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+1,000000+100&0.1+2,0.2+100 */
+    background: -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.1) 1%, rgba(0,0,0,0.1) 2%, rgba(0,0,0,0.2) 100%); /* FF3.6-15 */
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0.1) 1%,rgba(0,0,0,0.1) 2%,rgba(0,0,0,0.2) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: radial-gradient(ellipse at center,  rgba(0,0,0,0.1) 1%,rgba(0,0,0,0.1) 2%,rgba(0,0,0,0.2) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1a000000', endColorstr='#33000000',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 
 }
 

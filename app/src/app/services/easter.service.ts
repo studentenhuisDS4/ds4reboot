@@ -27,6 +27,8 @@ export class EasterEggService {
         'DS4!',
         'DSvier!',
         'Nais',
+        'Henk de potvis',
+        'Biem',
         'Ja, ik wil!',
         'SO AWESOME!',
         'Ja, ich brauch das',
