@@ -67,6 +67,11 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
             if result.errors:
                 return log_validation_errors(result.errors)
 
+            uds = dinner.userdinner_set.all()
+            for ud in uds:
+                if not ud.user.is_active:
+                    return log_validation_errors({'is_active': f'{ud.user.housemate.display_name} is not active anymore. '
+                                                               f'Remove him to fix this error.'})
             # actual action
             if dinner.cook:
                 if dinner.open:
