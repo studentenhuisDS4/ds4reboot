@@ -47,7 +47,7 @@ export class UserService {
 
 
     getHouseProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        if (user === 2) {
+        if (user === 2 && user) {
             return this.httpClient.get<IUser>(`${this.API_URL}/house/${user.toString()}/`, {}).toPromise();
         }
         return Promise.resolve(null);
@@ -62,7 +62,7 @@ export class UserService {
     }
 
     getFullProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        if (user !== 2) {
+        if (user !== 2 && user) {
             return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${user.toString()}/`, {})
                 .toPromise();
         }

@@ -24,11 +24,11 @@
         <mat-icon>unfold_more</mat-icon>
         <a matline>Receipts</a>
     </mat-list-item>
-    <mat-list-item [matMenuTriggerFor]="menuThesau">
+    <mat-list-item [matMenuTriggerFor]="menuThesau" *ngIf="isThesau">
         <mat-icon>unfold_more</mat-icon>
         <a matline>Thesau</a>
     </mat-list-item>
-    <mat-list-item [matMenuTriggerFor]="menuAdmin">
+    <mat-list-item [matMenuTriggerFor]="menuAdmin" *ngIf="isAdmin">
         <mat-icon>unfold_more</mat-icon>
         <a matline>Admin</a>
     </mat-list-item>

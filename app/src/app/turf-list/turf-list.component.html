@@ -9,7 +9,7 @@
                 </i>
             </div>
             <mat-card-title style="display: flex;">
-                Turf <strong>{{isHouse ? "&nbsp;(on House)" : ""}}</strong>
+                Turf your drinks
             </mat-card-title>
             <mat-card-subtitle>
                 Beer: {{user ? user.housemate.sum_bier : ""}}<br/>
@@ -21,10 +21,10 @@
             <div fxFlex="row">
                 <mat-button-toggle-group #turfMultiplierGroup="matButtonToggleGroup" [(value)]="turfMultiplier"
                                          appearance="standard">
-                    <mat-button-toggle [disableRipple]="true" selected value="1">+1</mat-button-toggle>
-                    <mat-button-toggle [disableRipple]="true" value="-1">-1</mat-button-toggle>
-                    <mat-button-toggle [disableRipple]="true" value="24">24</mat-button-toggle>
-                    <mat-button-toggle [disableRipple]="true" value="-24">-24</mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" selected value="1">+1</mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="-1">-1</mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="24">24</mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="-24">-24</mat-button-toggle>
                     <mat-button-toggle (click)="showOther=true" [disableRipple]="true" [value]="otherTurfVal">other
                     </mat-button-toggle>
                 </mat-button-toggle-group>

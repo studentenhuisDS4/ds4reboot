@@ -2,6 +2,10 @@ export interface IPermission {
     id: number;
 }
 
+export enum GROUP {
+    THESAU = 1
+}
+
 export interface IGroup {
     id: number;
     name: string;

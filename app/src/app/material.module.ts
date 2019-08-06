@@ -12,6 +12,7 @@ import {
     MatInputModule,
     MatListModule,
     MatMenuModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSidenavModule,
     MatSlideToggleModule,
@@ -28,6 +29,7 @@ import {
     ],
     exports: [
         MatTableModule,
+        MatPaginatorModule,
         MatCardModule,
         MatInputModule,
         MatFormFieldModule,
