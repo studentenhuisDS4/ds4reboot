@@ -70,7 +70,6 @@ export class UserCreateComponent implements OnInit {
         const savedForm = localStorage.getItem(this.storeFormKey);
         if (savedForm) {
             this.createUserForm.setValue(JSON.parse(savedForm));
-            this.createUserForm.markAllAsTouched();
             this.lastFirstName = this.V('first_name');
             this.lastLastName = this.V('last_name');
         }

@@ -16,7 +16,7 @@
     <mat-card *ngIf="currentDinner" class="page-content-card" fxFlexAlign="center">
         <mat-card-header>
             <div mat-card-avatar>
-                <i [matBadge]="currentDinner.num_eating"
+                <i [matBadge]="currentDinner?.num_eating?.toString()"
                    class="material-icons vertical-align-middle padding-bottom-3 icon-large" matBadgeColor="primary">
                     local_dining
                 </i>
@@ -31,10 +31,11 @@
 
         <mat-card-content>
             <mat-form-field appearance="outline">
-                <mat-chip-list #userDinnerList>
+                <mat-chip-list #userDinnerList class="hover-type-cursor">
                     <mat-chip (removed)="signOffDinner(currentDinner, ud.user)"
                               *ngFor="let ud of currentDinner.userdinners"
-                              [color]="ud.user.housemate.balance <=-25" [matBadge]="ud.is_cook ? ud.count +1 : ud.count"
+                              [matBadgeColor]="ud.user.housemate.balance <=-25 ? 'warn' : ''"
+                              [matBadge]="ud.is_cook ? ud.count +1 : ud.count"
                               class="allow-overflow">
                         <mat-icon *ngIf="!ud.is_cook">local_dining</mat-icon>
                         <mat-icon *ngIf="ud.is_cook" svgIcon="cooking_hat"></mat-icon>
@@ -100,6 +101,9 @@
             <!--                    *ngIf="user && todayDinner.cook ? (todayDinner.cook.id == user.id && todayDinner.close_time && todayDinner.cost == null) : false ">-->
             <!--                <mat-icon>attach_money</mat-icon>-->
             <!--            </button>-->
+        </mat-card-actions>
+        <mat-card-actions *ngIf="!user">
+            <!-- Filler -->
         </mat-card-actions>
     </mat-card>
 
