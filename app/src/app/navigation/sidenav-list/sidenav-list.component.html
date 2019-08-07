@@ -1,5 +1,20 @@
 <mat-divider></mat-divider>
-<mat-nav-list dense>
+<mat-nav-list dense *ngIf="!loggedIn">
+    <h2 matSubheader> General </h2>
+    <a mat-list-item routerLink="/signup" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+        <mat-icon>person_add</mat-icon>
+        <span class="nav-caption">Sign-up</span>
+    </a>
+    <a mat-list-item routerLink="/login" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+        <mat-icon>account_circle</mat-icon>
+        <span class="nav-caption">Login</span>
+    </a>
+    <a mat-list-item routerLink="/contact" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+        <mat-icon>time_to_leave</mat-icon>
+        <span class="nav-caption">Contact & route</span>
+    </a>
+</mat-nav-list>
+<mat-nav-list dense *ngIf="loggedIn">
     <h2 matSubheader> General </h2>
     <a mat-list-item routerLink="/home" routerLinkActive="list-item-active" (click)="onSidenavClose()">
         <mat-icon>home</mat-icon>
@@ -24,11 +39,11 @@
         <mat-icon>unfold_more</mat-icon>
         <a matline>Receipts</a>
     </mat-list-item>
-    <mat-list-item [matMenuTriggerFor]="menuThesau">
+    <mat-list-item [matMenuTriggerFor]="menuThesau" *ngIf="isThesau">
         <mat-icon>unfold_more</mat-icon>
         <a matline>Thesau</a>
     </mat-list-item>
-    <mat-list-item [matMenuTriggerFor]="menuAdmin">
+    <mat-list-item [matMenuTriggerFor]="menuAdmin" *ngIf="isAdmin">
         <mat-icon>unfold_more</mat-icon>
         <a matline>Admin</a>
     </mat-list-item>

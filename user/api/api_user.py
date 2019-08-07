@@ -29,7 +29,7 @@ class HouseViewSet(mixins.RetrieveModelMixin,
 
 
 class UserFullViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.exclude(username__in=['admin', 'huis'])
+    queryset = User.objects.exclude(username__in=['admin', 'huis']).order_by('housemate__movein_date')
     serializer_class = UserFullSchema
 
     permission_classes = [IsSuperUser, ]
@@ -37,7 +37,7 @@ class UserFullViewSet(viewsets.ModelViewSet):
 
 
 class UserActionViewSet(viewsets.GenericViewSet):
-    queryset = User.objects.exclude(username__in=['admin', 'huis'])
+    queryset = User.objects.exclude(username__in=['admin', 'huis']).order_by('housemate__movein_date')
     serializer_class = EmptySchema
 
     permission_classes = [IsSuperUser, ]
@@ -117,9 +117,7 @@ class UserActionViewSet(viewsets.GenericViewSet):
         hm.save()
         user.refresh_from_db()
 
-        return success_action({
-            'user': UserFullSchema(user).data,
-        })
+        return success_action(UserFullSchema(user).data,)
 
     @action(detail=True, methods=['POST'])
     def toggle_admin(self, request, pk=None):
@@ -140,6 +138,4 @@ class UserActionViewSet(viewsets.GenericViewSet):
         hm.save()
         user.refresh_from_db()
 
-        return success_action({
-            'user': UserFullSchema(user).data,
-        })
+        return success_action(UserFullSchema(user).data,)

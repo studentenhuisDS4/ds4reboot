@@ -1,4 +1,4 @@
-import {map, switchMap, tap} from 'rxjs/operators';
+import {filter, map, switchMap, tap} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {UserService} from '../user.service';
 import {timer} from 'rxjs';
@@ -16,10 +16,10 @@ export const usernameValidator =
     };
 
 export const emailValidator =
-    (userService: UserService, time: number = 500) => {
+    (userService: UserService, userId: number, time: number = 500) => {
         return (input: FormControl) => {
             return timer(time).pipe(
-                switchMap(() => userService.checkEmail(input.value)),
+                switchMap(() => userService.checkEmail(input.value, userId)),
                 map(res => {
                     return res.length ? {emailExists: true} : null;
                 })

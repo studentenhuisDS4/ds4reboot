@@ -39,6 +39,7 @@ import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
 import {MatButtonToggleModule} from '@angular/material';
+import {SignupComponent} from './login/signup/signup.component';
 
 
 @NgModule({
@@ -64,6 +65,7 @@ import {MatButtonToggleModule} from '@angular/material';
         HeaderComponent,
         SidenavListComponent,
         LoginComponent,
+        SignupComponent,
         AutoFocusDirective,
         BottomNavComponent
     ],

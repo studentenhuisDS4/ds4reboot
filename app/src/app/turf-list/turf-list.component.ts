@@ -16,7 +16,10 @@ export class TurfListComponent implements OnInit {
     user: IUser = null;
     busy = false;
     turfUsers: IUser[] = [];
+    turfMultiplier: string;
     isHouse = false;
+    otherTurfVal = 1;
+    showOther = false;
 
     @Input() miniView = false;
 
@@ -40,11 +43,18 @@ export class TurfListComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.turfMultiplier = '1';
     }
 
     turfItem(turfType: TurfType = TurfType.BEER, amount = 1, turfUser = null) {
         if (turfUser == null) {
             turfUser = this.user;
+        }
+        if (turfType === TurfType.BEER && !Number.isInteger(amount)) {
+            this.snackBarService.openSnackBar(
+                `Cant turf a beer partly.`,
+                this.easterEggService.easterEggo());
+            return;
         }
         if (this.user.id !== turfUser.id) {
             if (!confirm('Different housemate/kutSjaarsch. Confirm please.')) {
@@ -73,6 +83,9 @@ export class TurfListComponent implements OnInit {
                     this.easterEggService.easterEggo());
             }
             this.busy = false;
+            this.turfMultiplier = '1';
+            this.otherTurfVal = 1;
+            this.showOther = false;
         });
     }
 

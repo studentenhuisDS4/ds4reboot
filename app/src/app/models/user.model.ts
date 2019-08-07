@@ -2,9 +2,13 @@ export interface IPermission {
     id: number;
 }
 
+export enum GROUP {
+    THESAU = 1
+}
+
 export interface IGroup {
     id: number;
-    name: string;
+    name?: string;
 }
 
 export interface IHousemate {
@@ -13,6 +17,10 @@ export interface IHousemate {
     diet: string;
     room_number: number;
     movein_date: Date;
+    sublet_date: Date;
+    moveout_set: boolean;
+    moveout_date: Date;
+
 
     balance: string; // TODO: fix into number later?
     boetes_total: number;
@@ -30,6 +38,7 @@ export interface IUser {
     first_name: string;
     username: string;
     housemate: IHousemate;
+    email: string;
 
     is_superuser: boolean;
     is_staff: boolean;      // Has no permissions by default, but is still admin.
