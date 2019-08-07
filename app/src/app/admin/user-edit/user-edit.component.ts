@@ -15,9 +15,9 @@ import {Subscription} from 'rxjs';
 export class UserEditComponent implements OnInit, OnDestroy {
     editedUserId: number;
     editedUser: IUser;
+    isAdmin: boolean;
     private routeSub: Subscription;
     private editUserForm: FormGroup;
-    private isAdmin: boolean;
 
     constructor(
         private userService: UserService,

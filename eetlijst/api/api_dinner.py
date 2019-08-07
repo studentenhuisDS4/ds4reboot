@@ -220,8 +220,13 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
         # if SQL count > 0
         if ud_annotated['sum_count']:
             cook_ud = user_dinners.filter(is_cook=True).first()
-
-            dinner = Dinner.objects.get(date=input_ud.dinner_date)
+            try:
+                dinner = Dinner.objects.get(date=input_ud.dinner_date)
+            except Dinner.MultipleObjectsReturned as e:
+                dinners = Dinner.objects.filter(date=input_ud.dinner_date)
+                for dinner in dinners[1:]:
+                    dinner.delete()
+                dinner = Dinner.objects.get(date=input_ud.dinner_date)
             dinner.num_eating = ud_annotated['sum_count']
             if cook_ud:
                 dinner.cook = cook_ud.user

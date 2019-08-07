@@ -50,6 +50,9 @@ export class UserManageComponent implements OnInit {
     }
 
     deleteUser(deleteUser: IUser) {
+        if (deleteUser.id === this.user.id) {
+            return;
+        }
         if (confirm(`This will delete ${deleteUser.housemate.display_name}, ` +
             `reset their balance and add a transfer to eetlijst+HR. Every detail will be summarized in an email. Are you sure?`)) {
             this.adminService.deleteUser(deleteUser).then(output => {
@@ -62,6 +65,12 @@ export class UserManageComponent implements OnInit {
                 const index = oldData.findIndex(u => u.id === deleteUser.id);
                 oldData.splice(index, 1);
                 this.dataSource.data = oldData;
+            }, failure => {
+                if (failure && failure.error && failure.error.message) {
+                    this.snackBarService.openSnackBar(failure.error.message, 'Shit', 0);
+                } else {
+                    this.snackBarService.openSnackBar('Something went wrong: ' + failure.message, 'Shit', 0);
+                }
             });
         }
     }
