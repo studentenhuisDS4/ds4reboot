@@ -11,7 +11,7 @@ import {Router} from '@angular/router';
     styleUrls: ['./profile-edit.component.scss']
 })
 export class ProfileEditComponent implements OnInit {
-    profile: IUser;
+    user: IUser;
     isHouse = false;
     private editProfileForm: FormGroup;
 
@@ -38,7 +38,7 @@ export class ProfileEditComponent implements OnInit {
                     this.router.navigateByUrl('/home');
                 }
             } else {
-                this.profile = result;
+                this.user = result;
                 this.editProfileForm.patchValue(result);
             }
         });

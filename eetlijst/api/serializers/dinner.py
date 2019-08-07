@@ -33,9 +33,21 @@ class UserDinnerSchema(Schema):
 
     def create(self, valid_data, *args, **kwargs):
         map_data = Map(valid_data)
-        dinner, _ = Dinner.objects.get_or_create(date=map_data.dinner_date)
+        try:
+            dinner, _ = Dinner.objects.get_or_create(date=map_data.dinner_date)
+        except Dinner.MultipleObjectsReturned as e:
+            dinners = Dinner.objects.filter(date=map_data.dinner_date)
+            for dinner in dinners[1:]:
+                dinner.delete()
+            dinner = Dinner.objects.get(date=map_data.dinner_date)
         valid_data.update({'dinner_id': dinner.id})
-        user_dinner, created = UserDinner.objects.get_or_create(**valid_data)
+        try:
+            user_dinner, created = UserDinner.objects.get_or_create(**valid_data)
+        except UserDinner.MultipleObjectsReturned as e:
+            uds = UserDinner.objects.filter(user_id=valid_data['user_id'], dinner_date=valid_data['dinner_date'])
+            for ud in uds[1:]:
+                ud.delete()
+            user_dinner, created = UserDinner.objects.get_or_create(**valid_data)
         return user_dinner, created
 
     # Our update is not done here, and somehow currently not working anyway (bug?)

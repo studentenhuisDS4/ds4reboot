@@ -200,7 +200,7 @@ export class DinnerListComponent implements OnInit {
 
     onUserDinnerKey($event: KeyboardEvent) {
         // Avoid duplicate event and check if something was entered.
-        if ($event.key === 'Enter' && this.userDinnerInput.nativeElement.value && !this.filteredActiveUsers[0]) {
+        if (this.userDinnerInput.nativeElement.value && !this.filteredActiveUsers[0]) {
             const user: IUser = this.matAutocomplete.options.first.value;
 
             if (this.preConfirm === false && user.id !== this.user.id) {

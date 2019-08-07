@@ -1,7 +1,7 @@
 <section fxFlexAlign="stretch" fxLayout="column">
     <mat-toolbar *ngIf="!miniView" style="margin-bottom:10px;">
-        Dinner ({{user ? user.housemate.display_name : ""}}, &nbsp;
-        <small>{{user ? "&euro;" + user.housemate.balance : "?"}}</small>)
+        Dinner -{{user ? (user.housemate?.display_name) : " Huis"}} &nbsp;
+        <small *ngIf="user">{{user ? ", &euro;" + user.housemate.balance : ""}}</small>
         <div fxFlex></div>
     </mat-toolbar>
 
@@ -50,7 +50,7 @@
                     <div *ngIf="!currentDinner?.userdinners?.length" style="margin-bottom:63px; flex-wrap: wrap"></div>
                     <input
                         #userDinnerInput
-                        (keydown)="onUserDinnerKey($event)"
+                        (keydown.enter)="onUserDinnerKey($event)"
                         [formControl]="displayNameCtrl"
                         [matAutocomplete]="autoComplete"
                         [matChipInputAddOnBlur]="true"
@@ -154,18 +154,18 @@
                 <mat-icon>search</mat-icon>
             </button>
             &nbsp;
-            <button (click)="signupDinner(dinner)" [disabled]="dinner?.close_time"
+            <button (click)="signupDinner(dinner)" [disabled]="!user || dinner?.close_time"
                     color="primary" mat-raised-button>
                 <mat-icon>add</mat-icon>
             </button>
             <button (click)="signOffDinner(dinner)"
-                    [disabled]="dinner?.close_time || !getUserEntry(dinner, user)?.count"
+                    [disabled]="!user ||dinner?.close_time || !getUserEntry(dinner, user)?.count"
                     color="primary"
                     mat-raised-button>
                 <mat-icon>not_interested</mat-icon>
             </button>
             <button (click)="cookDinner(dinner)" [color]="dinner?.cook == null ? 'accent' : 'warn'"
-                    [disabled]="user && dinner?.cook && dinner?.cook.id !== user.id || !dinner?.open"
+                    [disabled]="!user || user && dinner?.cook && dinner?.cook.id !== user.id || !dinner?.open"
                     mat-raised-button>
                 <mat-icon *ngIf="!dinner?.cook" svgIcon="cooking_hat"></mat-icon>
                 <mat-icon *ngIf="dinner?.cook" svgIcon="remove_cooking_hat"></mat-icon>
@@ -173,6 +173,7 @@
             <button (click)="closeDinner(dinner)"
                     *ngIf="user && dinner && dinner.num_eating > 1 && dinner.cook ? (dinner.cook.id == user.id) : false"
                     [color]="dinner?.open ? 'accent' : 'warn'"
+                    [disabled]="!user"
                     mat-raised-button>
                 <mat-icon *ngIf="dinner?.open">lock</mat-icon>
                 <mat-icon *ngIf="!dinner?.open">lock_open</mat-icon>

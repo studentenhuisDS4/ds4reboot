@@ -1,39 +1,35 @@
-<section fxLayout="column" fxFlexAlign="stretch">
+<section fxFlexAlign="stretch" fxLayout="column">
     <mat-card>
         <mat-card-header>
             <mat-card-title>
                 Edit profile
             </mat-card-title>
             <mat-card-subtitle>
-                {{ isHouse ? "The house profile should not be edited." : "Editing " + profile?.housemate.display_name}}
+                {{ isHouse ? "The house profile should not be edited." : "Editing " + user?.housemate.display_name}}
             </mat-card-subtitle>
             <div fxFlex></div>
-            <button mat-raised-button color="primary" [routerLink]="['/profile']">
+            <button [routerLink]="['/profile']" color="primary" mat-raised-button>
                 <mat-icon>arrow_back</mat-icon>
+            </button>
+            <button *ngIf="user?.is_staff||user?.is_superuser" [routerLink]="['/admin/user-manage/user-edit/', user.id]"
+                    color="primary"
+                    mat-raised-button>
+                <mat-icon>security</mat-icon>
             </button>
         </mat-card-header>
         <mat-card-content>
-            <div class="container" *ngIf="profile"
+            <div *ngIf="user" class="container"
                  fxLayout
                  fxLayout.xs="column"
                  fxLayoutAlign="center"
                  fxLayoutGap="10px"
                  fxLayoutGap.xs="0">
                 <div fxFlex="5%"></div>
-                <!--            <div fxFlex="20%">-->
-                <!--                <h1>Summary</h1>-->
-                <!--                <div class="user-details-container">-->
-                <!--                    <img class="user-image" src="https://randomuser.me/api/portraits/lego/3.jpg"/>-->
-                <!--                    <span class="user-title">Jankooo Jankers {{editProfileForm.get('housemate.display_name')?.value}}</span>-->
-                <!--                    <p class="user-bio" *ngIf="editProfileForm.get('email')?.value">{{editProfileForm.get('email')?.value}}</p>-->
-                <!--                    <p class="user-bio" *ngIf="editProfileForm.get('username')?.value">{{editProfileForm.get('username')?.value}}</p>-->
-                <!--                </div>-->
-                <!--            </div>-->
                 <div class="item item-2" fxFlex>
                     <h1>Profile</h1>
                     <form [formGroup]="editProfileForm" fxLayout="column">
                         <mat-form-field>
-                            <input matInput placeholder="First name" type="text" formControlName="first_name" required/>
+                            <input formControlName="first_name" matInput placeholder="First name" required type="text"/>
                             <mat-error *ngIf="E('first_name')?.required">First name is required.</mat-error>
                             <mat-error *ngIf="E('first_name')?.minlength">First name needs to be >=2 characters.
                             </mat-error>
@@ -41,7 +37,7 @@
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput placeholder="Last name" type="text" formControlName="last_name" required/>
+                            <input formControlName="last_name" matInput placeholder="Last name" required type="text"/>
                             <mat-error *ngIf="E('last_name')?.required">Last name is required.</mat-error>
                             <mat-error *ngIf="E('last_name')?.minlength">Last name needs to be >=2 characters.
                             </mat-error>
@@ -49,14 +45,15 @@
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput placeholder="Password (optional)" type="password" formControlName="password"/>
+                            <input formControlName="password" matInput placeholder="Password (optional)"
+                                   type="password"/>
                             <mat-error *ngIf="E('password')?.minlength">Password needs to be >=6 characters.</mat-error>
                             <mat-error *ngIf="E('password')?.maxlength">Password needs to be <=150 characters.
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput placeholder="Password repeat" type="password"
-                                   formControlName="password_repeat"/>
+                            <input formControlName="password_repeat" matInput placeholder="Password repeat"
+                                   type="password"/>
                             <mat-error *ngIf="E('password_repeat')?.minlength">Password needs to be >=6 characters.
                             </mat-error>
                             <mat-error *ngIf="E('password_repeat')?.maxlength">Password needs to be <=150 characters.
@@ -70,7 +67,7 @@
                     <h1>Housemate</h1>
                     <form [formGroup]="editProfileForm" fxLayout="column" novalidate>
                         <mat-form-field formGroupName="housemate">
-                            <input matInput placeholder="Nickname" type="text" formControlName="display_name" required/>
+                            <input formControlName="display_name" matInput placeholder="Nickname" required type="text"/>
                             <mat-error *ngIf="H_E('display_name')?.required">Nickname is required.</mat-error>
                             <mat-error *ngIf="H_E('display_name')?.minlength">Nickname needs to be >=2 characters.
                             </mat-error>
@@ -78,8 +75,8 @@
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field formGroupName="housemate">
-                            <input matInput placeholder="Room number" type="number" formControlName="room_number"
-                                   required/>
+                            <input formControlName="room_number" matInput placeholder="Room number" required
+                                   type="number"/>
                             <mat-error *ngIf="H_E('room_number')?.required">Room number is required.</mat-error>
                             <mat-error *ngIf="H_E('room_number')?.min">Room number must be >=1.
                             </mat-error>
@@ -87,10 +84,10 @@
                             </mat-error>
                         </mat-form-field>
                         <mat-form-field formGroupName="housemate">
-                            <input matInput placeholder="Diet" type="text" formControlName="diet"/>
+                            <input formControlName="diet" matInput placeholder="Diet" type="text"/>
                         </mat-form-field>
-                        <button mat-raised-button color="primary" type="button"
-                                [disabled]="!editProfileForm.valid" (click)="editUser()">Edit profile
+                        <button (click)="editUser()" [disabled]="!editProfileForm.valid" color="primary"
+                                mat-raised-button type="button">Edit profile
                         </button>
                     </form>
                 </div>
