@@ -200,14 +200,15 @@ export class DinnerListComponent implements OnInit {
 
     onUserDinnerKey($event: KeyboardEvent) {
         // Avoid duplicate event and check if something was entered.
-        if (this.userDinnerInput.nativeElement.value && !this.filteredActiveUsers[0]) {
-            const user: IUser = this.matAutocomplete.options.first.value;
-
-            if (this.preConfirm === false && user.id !== this.user.id) {
-                this.preConfirm = true;
-            }
-            this.signupDinner(this.currentDinner, user);
-        }
+        return;
+        // if (this.userDinnerInput.nativeElement.value && !this.filteredActiveUsers[0]) {
+        //     const user: IUser = this.matAutocomplete.options.first.value;
+        //
+        //     if (this.preConfirm === false && user.id !== this.user.id) {
+        //         this.preConfirm = true;
+        //     }
+        //     this.signupDinner(this.currentDinner, user);
+        // }
     }
 
     onDinnerCostMouseWheel($event: WheelEvent) {
