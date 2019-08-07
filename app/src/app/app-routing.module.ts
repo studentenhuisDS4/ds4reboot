@@ -19,19 +19,18 @@ import {ThesauComponent} from './thesau/thesau.component';
 import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
-// import {
-//     RoleGuardService as RoleGuard
-// } from './services/role-guard.service';
-// {
-//     path: '',
-//         component:
-// }
+import {UserEditComponent} from './admin/user-edit/user-edit.component';
+import {SignupComponent} from './login/signup/signup.component';
 
 const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
     {
         path: 'login',
         component: LoginComponent
+    },
+    {
+        path: 'signup',
+        component: SignupComponent
     },
 
     {
@@ -55,6 +54,10 @@ const routes: Routes = [
     }, {
         path: 'admin/user-manage/user-create',
         component: UserCreateComponent,
+        canActivate: [AuthGuard, AdminGuard],
+    }, {
+        path: 'admin/user-manage/user-edit/:id',
+        component: UserEditComponent,
         canActivate: [AuthGuard, AdminGuard],
     },
 

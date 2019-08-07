@@ -78,7 +78,7 @@ class UserSchema(Schema):
             instance.set_password(validated_data.pop('password'))
 
         housemate = instance.housemate
-        if housemate in validated_data:
+        if 'housemate' in validated_data:
             housemate_data = validated_data.pop('housemate')
             for key, value in housemate_data.items():
                 setattr(housemate, key, value)

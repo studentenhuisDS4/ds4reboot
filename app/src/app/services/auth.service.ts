@@ -44,7 +44,9 @@ export class AuthService {
     public getTokenClaims(): ITokenClaims | any {
         const token = localStorage.getItem('token');
         if (token != null) {
-            return this.jwtHelper.decodeToken(token);
+            const tokenClaims: ITokenClaims = this.jwtHelper.decodeToken(token);
+            tokenClaims.user_id = +tokenClaims.user_id;
+            return tokenClaims;
         }
         return {
             user_id: null

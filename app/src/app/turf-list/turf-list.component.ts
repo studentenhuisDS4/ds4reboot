@@ -50,6 +50,12 @@ export class TurfListComponent implements OnInit {
         if (turfUser == null) {
             turfUser = this.user;
         }
+        if (turfType === TurfType.BEER && !Number.isInteger(amount)) {
+            this.snackBarService.openSnackBar(
+                `Cant turf a beer partly.`,
+                this.easterEggService.easterEggo());
+            return;
+        }
         if (this.user.id !== turfUser.id) {
             if (!confirm('Different housemate/kutSjaarsch. Confirm please.')) {
                 return;

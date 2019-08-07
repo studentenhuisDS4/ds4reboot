@@ -34,6 +34,7 @@ export interface IUser {
     first_name: string;
     username: string;
     housemate: IHousemate;
+    email: string;
 
     is_superuser: boolean;
     is_staff: boolean;      // Has no permissions by default, but is still admin.

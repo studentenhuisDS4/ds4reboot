@@ -29,7 +29,7 @@ class HouseViewSet(mixins.RetrieveModelMixin,
 
 
 class UserFullViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.exclude(username__in=['admin', 'huis'])
+    queryset = User.objects.exclude(username__in=['admin', 'huis']).order_by('housemate__movein_date')
     serializer_class = UserFullSchema
 
     permission_classes = [IsSuperUser, ]
@@ -37,7 +37,7 @@ class UserFullViewSet(viewsets.ModelViewSet):
 
 
 class UserActionViewSet(viewsets.GenericViewSet):
-    queryset = User.objects.exclude(username__in=['admin', 'huis'])
+    queryset = User.objects.exclude(username__in=['admin', 'huis']).order_by('housemate__movein_date')
     serializer_class = EmptySchema
 
     permission_classes = [IsSuperUser, ]

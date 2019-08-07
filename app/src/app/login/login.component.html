@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+<div fxLayout="row" fxLayoutAlign="center center">
 
     <mat-progress-spinner style="margin:0 auto;" *ngIf="awaitingLogin"
                           color="warn" mode="indeterminate"></mat-progress-spinner>
@@ -14,10 +14,10 @@
                     <input matInput placeholder="Email" name="email" [formControl]="emailFormControl"
                            [errorStateMatcher]="matcher">
                     <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-                        Please enter a valid email address
+                        Please enter a valid identity
                     </mat-error>
                     <mat-error *ngIf="emailFormControl.hasError('required')">
-                        Email is <strong>required</strong>
+                        Identity is <strong>required</strong>
                     </mat-error>
                 </mat-form-field>
                 <mat-form-field appearance="outline">

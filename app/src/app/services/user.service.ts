@@ -4,14 +4,15 @@ import {environment} from '../../environments/environment';
 import {IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {ITokenClaims} from '../models/auth.model';
+import {of} from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-
+    user: IUser;
     API_URL: string = environment.baseUrl;
 
     constructor(
@@ -26,9 +27,9 @@ export class UserService {
         return false;
     }
 
-    isThesau(user: number = this.auth.getTokenClaims().user_id): Promise<boolean> {
-        if (user !== 2) {
-            return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {})
+    isThesau(userId: number = this.auth.getTokenClaims().user_id): Promise<boolean> {
+        if (userId !== 2) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/user/${userId.toString()}/`, {})
                 .pipe(
                     map(r => {
                         let isThesau = false;
@@ -46,24 +47,32 @@ export class UserService {
     }
 
 
-    getHouseProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        if (user === 2 && user) {
-            return this.httpClient.get<IUser>(`${this.API_URL}/house/${user.toString()}/`, {}).toPromise();
+    getHouseProfile(userId: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
+        if (userId === 2 && userId) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/house/${userId.toString()}/`, {}).toPromise();
         }
         return Promise.resolve(null);
     }
 
     // Jwt-claim based profile getter (guaranteed by guard)
-    getProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        if (user !== 2 && user) {
-            return this.httpClient.get<IUser>(`${this.API_URL}/user/${user.toString()}/`, {}).toPromise();
+    getProfile(userId: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
+        if (this.user && userId === this.user.id) {
+            return Promise.resolve(this.user);
+        }
+        if (userId !== 2 && userId) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/user/${userId.toString()}/`, {})
+                .pipe(
+                    tap(result => {
+                        this.user = result;
+                    })
+                ).toPromise();
         }
         return Promise.resolve(null);
     }
 
-    getFullProfile(user: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
-        if (user !== 2 && user) {
-            return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${user.toString()}/`, {})
+    getFullProfile(userId: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
+        if (userId !== 2 && userId) {
+            return this.httpClient.get<IUser>(`${this.API_URL}/user-full/${userId.toString()}/`, {})
                 .toPromise();
         }
         return Promise.resolve(null);
@@ -78,8 +87,19 @@ export class UserService {
         return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?username__iexact=${username}`);
     }
 
-    checkEmail(email: string) {
-        return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?email__iexact=${email}`);
+    checkEmail(email: string, userId: number = this.auth.getTokenClaims().user_id) {
+        if (email !== '') {
+            return this.httpClient.get<IUser[]>(`${this.API_URL}/user/?email__iexact=${email}`).pipe(
+                map(result => {
+                    if (userId != null) {
+                        return result.filter(user => user.id === userId);
+                    }
+                    return result;
+                })
+            );
+        } else {
+            return of([]);
+        }
     }
 
     createUser(userForm: FormGroup) {
@@ -89,24 +109,36 @@ export class UserService {
     updateProfile(userForm: FormGroup) {
         const user_id = this.auth.getTokenClaims().user_id;
         if (user_id !== 2) {
-            const data = this.purgePassword(userForm);
+            const data = this.purgeForm(userForm);
             return this.httpClient.patch<IUser>(`${this.API_URL}/user/${user_id}/`, data).toPromise();
         } else {
             return Promise.reject();
         }
     }
 
-    updateUserFull(userForm: FormGroup, user: number = this.auth.getTokenClaims().user_id) {
-        const data = this.purgePassword(userForm);
-        return this.httpClient.post<IUser>(`${this.API_URL}/user-full/${user}/`, data).toPromise();
+    updateUserFull(userForm: FormGroup, userId: number) {
+        if (userId && userId !== 2) {
+            const data = this.purgeForm(userForm);
+            return this.httpClient.patch<IUser>(`${this.API_URL}/user-full/${userId}/`, data).toPromise();
+        }
     }
 
-    private purgePassword(form: FormGroup) {
+    private purgeForm(form: FormGroup) {
         const data = {...form.value};
         if (data.password === '') {
             delete data.password;
             delete data.password_repeat;
         }
+        this.clean(data);
         return data;
     }
+
+    private clean(obj) {
+        for (const propName in obj) {
+            if (obj[propName] === null || obj[propName] === undefined) {
+                delete obj[propName];
+            }
+        }
+    }
+
 }

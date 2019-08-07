@@ -2,6 +2,8 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {GROUP, IGroup, IUser} from '../../models/user.model';
 import {UserService} from '../../services/user.service';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {AdminService} from '../../services/admin.service';
+import {SnackBarService} from '../../services/snackBar.service';
 
 @Component({
     selector: 'app-user-manage',
@@ -16,7 +18,11 @@ export class UserManageComponent implements OnInit {
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-    constructor(private userService: UserService) {
+    constructor(
+        private userService: UserService,
+        private adminService: AdminService,
+        private snackBarService: SnackBarService
+    ) {
 
     }
 
@@ -24,7 +30,7 @@ export class UserManageComponent implements OnInit {
         this.userService.getProfile().then(result => {
             this.user = result;
         });
-        this.userService.getActiveUsers().then(result => {
+        this.adminService.getAdminUsers().then(result => {
             this.dataSource = new MatTableDataSource(result);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -40,6 +46,18 @@ export class UserManageComponent implements OnInit {
 
         if (this.dataSource.paginator) {
             this.dataSource.paginator.firstPage();
+        }
+    }
+
+    deleteUser(user: IUser) {
+        if (confirm(`This will delete ${user.housemate.display_name}, ` +
+            `reset their balance and add a transfer to eetlijst+HR. Every detail will be summarized in an email. Are you sure?`)) {
+            this.adminService.deleteUser(user).then(output => {
+                this.snackBarService.openSnackBar(
+                    `${output.result.user.housemate.display_name} moved out, an email will be sent with the details.`,
+                    'Confirm',
+                    5000);
+            });
         }
     }
 

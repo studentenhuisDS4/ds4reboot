@@ -4,58 +4,80 @@
             You are not allowed to manage users. Become admin, or drink a beer or two.
         </div>
         <mat-form-field>
-            <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Filter">
+            <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Filter (name, email, etc.)">
         </mat-form-field>
-
-        <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort style="width:100%">
-            <ng-container matColumnDef="display_name">
-                <th *matHeaderCellDef mat-header-cell> (Nick)name</th>
-                <td *matCellDef="let element" mat-cell>
-                    {{ element.housemate.display_name }}
-                    <small>{{ element.housemate.display_name !== element.first_name ? element.first_name : "" }}</small>
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="surname">
-                <th *matHeaderCellDef mat-header-cell> Surname</th>
-                <td *matCellDef="let element" mat-cell> {{element.last_name}} </td>
-            </ng-container>
-            <ng-container matColumnDef="is_superuser">
-                <th *matHeaderCellDef mat-header-cell> Admin</th>
-                <td *matCellDef="let element" mat-cell> {{element.is_superuser ? "Yes" : ""}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="has_thesau">
-                <th *matHeaderCellDef mat-header-cell> Thesau</th>
-                <td *matCellDef="let element" mat-cell> {{ findThesauGroup(element.groups) ? "Yes" : "" }} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="balance">
-                <th *matHeaderCellDef mat-header-cell> Balance</th>
-                <td *matCellDef="let element" mat-cell> &euro; {{element.housemate.balance}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-                <th *matHeaderCellDef mat-header-cell> Actions</th>
-                <td *matCellDef="let element" mat-cell>
-                    <button color="primary" mat-icon-button matTooltip="Click to Edit">
-                        <mat-icon aria-label="Edit">edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Click to Edit" *ngIf="element.is_active">
-                        <mat-icon aria-label="Edit">pause_circle_filled</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Click to Edit" *ngIf="!element.is_active">
-                        <mat-icon aria-label="Edit">play_circle_filled</mat-icon>
-                    </button>
-                    <button color="warn" mat-icon-button matTooltip="Click to Delete">
-                        <mat-icon aria-label="Delete">delete</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
-
-            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-            <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-        </table>
-
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
     </mat-card>
+    <br/>
+    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort style="width:100%">
+        <ng-container matColumnDef="display_name" sticky>
+            <th *matHeaderCellDef mat-header-cell> Name</th>
+            <td *matCellDef="let element" mat-cell>
+                {{ element.housemate.display_name }}
+                <small
+                    fxHide.lt-sm>{{ element.housemate.display_name !== element.first_name ? element.first_name : "" }}</small>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="surname">
+            <th *matHeaderCellDef fxHide.lt-md mat-header-cell> Surname</th>
+            <td *matCellDef="let element" fxHide.lt-md mat-cell> {{element.last_name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="is_superuser">
+            <th *matHeaderCellDef mat-header-cell>
+                <strong fxHide.lt-md>Admin</strong>
+                <strong fxHide.gt-sm>A&nbsp;</strong>
+            </th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-icon *ngIf="element.is_superuser || element.is_staff">security</mat-icon>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="has_thesau">
+            <th *matHeaderCellDef mat-header-cell>
+                <strong fxHide.lt-md>Thesau</strong>
+                <strong fxHide.gt-sm>T</strong>
+            </th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-icon *ngIf="findThesauGroup(element.groups)">euro</mat-icon>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="balance">
+            <th *matHeaderCellDef mat-header-cell> Balance</th>
+            <td *matCellDef="let element" mat-cell> &euro; {{element.housemate.balance}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions" stickyEnd>
+            <th *matHeaderCellDef mat-header-cell> Actions</th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-menu #appMenu="matMenu">
+                    <button [routerLink]="['/admin/user-manage/user-edit/', element.id]" mat-menu-item
+                            matTooltip="Click to Edit">
+                        <mat-icon aria-label="Deactivate">edit</mat-icon>
+                        Edit
+                    </button>
+                    <button *ngIf="element.is_active" mat-menu-item matTooltip="Click to Deactivate">
+                        <mat-icon aria-label="Deactivate">pause_circle_filled</mat-icon>
+                        Deactivate
+                    </button>
+                    <button *ngIf="!element.is_active" mat-menu-item matTooltip="Click to Activate">
+                        <mat-icon aria-label="Activate">play_circle_filled</mat-icon>
+                        Activate
+                        {{ element.housemate.balance }}
+                    </button>
+                    <button (click)="deleteUser(element)" color="warn" mat-menu-item matTooltip="Click to Delete">
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                        Delete
+                    </button>
+                </mat-menu>
+                <button [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Click to Edit">
+                    <mat-icon aria-label="Edit">more_vert</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </section>
