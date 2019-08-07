@@ -55,7 +55,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
         this.editUserForm = new FormGroup({
             email: new FormControl(null,
                 {
-                    validators: [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')],
+                    validators: [Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,4}$')],
                     asyncValidators: [emailValidator(this.userService, this.editedUserId)]
                 }),
             password: new FormControl(null,

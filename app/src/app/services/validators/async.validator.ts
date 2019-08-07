@@ -20,9 +20,6 @@ export const emailValidator =
         return (input: FormControl) => {
             return timer(time).pipe(
                 switchMap(() => userService.checkEmail(input.value, userId)),
-                tap(r => {
-                    console.log(r);
-                }),
                 map(res => {
                     return res.length ? {emailExists: true} : null;
                 })

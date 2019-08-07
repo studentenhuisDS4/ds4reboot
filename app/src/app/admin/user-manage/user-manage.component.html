@@ -3,7 +3,7 @@
         <div *ngIf="!(user?.is_superuser)">
             You are not allowed to manage users. Become admin, or drink a beer or two.
         </div>
-        <mat-form-field>
+        <mat-form-field fxFlex="100%">
             <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Filter (name, email, etc.)">
         </mat-form-field>
     </mat-card>
@@ -12,9 +12,13 @@
         <ng-container matColumnDef="display_name" sticky>
             <th *matHeaderCellDef mat-header-cell> Name</th>
             <td *matCellDef="let element" mat-cell>
-                {{ element.housemate.display_name }}
-                <small
-                    fxHide.lt-sm>{{ element.housemate.display_name !== element.first_name ? element.first_name : "" }}</small>
+                <small>
+                    <mat-icon *ngIf="element?.housemate?.sublet_date">remove_circle_outline</mat-icon>
+                </small>{{ element?.housemate?.display_name }}
+
+                <small fxHide.lt-sm>
+                    {{ element?.housemate.display_name !== element.first_name ? element.first_name : "" }}
+                </small>
             </td>
         </ng-container>
         <ng-container matColumnDef="surname">
@@ -55,19 +59,35 @@
                         <mat-icon aria-label="Deactivate">edit</mat-icon>
                         Edit
                     </button>
-                    <button *ngIf="element.is_active" mat-menu-item matTooltip="Click to Deactivate">
+                    <button [disabled]="!element.is_active" (click)="toggleAdmin(element)" mat-menu-item
+                            matTooltip="Click to toggle admin">
+                        <mat-icon aria-label="Deactivate">security</mat-icon>
+                        Toggle admin
+                    </button>
+                    <button [disabled]="!element.is_active" (click)="toggleThesau(element)" mat-menu-item
+                            matTooltip="Click to Edit">
+                        <mat-icon aria-label="Deactivate">euro</mat-icon>
+                        Toggle thesau group
+                    </button>
+                    <button (click)="toggleActivationUser(element, false)" *ngIf="element.is_active" mat-menu-item
+                            matTooltip="Click to Deactivate">
                         <mat-icon aria-label="Deactivate">pause_circle_filled</mat-icon>
                         Deactivate
                     </button>
-                    <button *ngIf="!element.is_active" mat-menu-item matTooltip="Click to Activate">
+                    <button (click)="toggleActivationUser(element, true)" *ngIf="!element.is_active" mat-menu-item
+                            matTooltip="Click to Activate">
                         <mat-icon aria-label="Activate">play_circle_filled</mat-icon>
                         Activate
-                        {{ element.housemate.balance }}
                     </button>
-                    <button (click)="deleteUser(element)" color="warn" mat-menu-item matTooltip="Click to Delete">
+                    <button [disabled]="!element.is_active" (click)="deleteUser(element)" color="warn" mat-menu-item matTooltip="Click to Delete">
                         <mat-icon aria-label="Delete">delete</mat-icon>
                         Delete
                     </button>
+<!--                    <button [routerLink]="['/admin/user-manage/user-edit/', element.id]" mat-menu-item-->
+<!--                            matTooltip="Click to Edit">-->
+<!--                        <mat-icon aria-label="Deactivate">more_vert</mat-icon>-->
+<!--                        more-->
+<!--                    </button>-->
                 </mat-menu>
                 <button [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Click to Edit">
                     <mat-icon aria-label="Edit">more_vert</mat-icon>

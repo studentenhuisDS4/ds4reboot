@@ -117,9 +117,7 @@ class UserActionViewSet(viewsets.GenericViewSet):
         hm.save()
         user.refresh_from_db()
 
-        return success_action({
-            'user': UserFullSchema(user).data,
-        })
+        return success_action(UserFullSchema(user).data,)
 
     @action(detail=True, methods=['POST'])
     def toggle_admin(self, request, pk=None):
@@ -140,6 +138,4 @@ class UserActionViewSet(viewsets.GenericViewSet):
         hm.save()
         user.refresh_from_db()
 
-        return success_action({
-            'user': UserFullSchema(user).data,
-        })
+        return success_action(UserFullSchema(user).data,)

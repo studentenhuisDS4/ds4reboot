@@ -49,16 +49,63 @@ export class UserManageComponent implements OnInit {
         }
     }
 
-    deleteUser(user: IUser) {
-        if (confirm(`This will delete ${user.housemate.display_name}, ` +
+    deleteUser(deleteUser: IUser) {
+        if (confirm(`This will delete ${deleteUser.housemate.display_name}, ` +
             `reset their balance and add a transfer to eetlijst+HR. Every detail will be summarized in an email. Are you sure?`)) {
-            this.adminService.deleteUser(user).then(output => {
+            this.adminService.deleteUser(deleteUser).then(output => {
                 this.snackBarService.openSnackBar(
                     `${output.result.user.housemate.display_name} moved out, an email will be sent with the details.`,
                     'Confirm',
                     5000);
+
+                const oldData = this.dataSource.data;
+                const index = oldData.findIndex(u => u.id === deleteUser.id);
+                oldData.splice(index, 1);
+                this.dataSource.data = oldData;
             });
         }
+    }
+
+    toggleActivationUser(toggleUser: IUser, active = false) {
+        if (confirm(`This will ${active ? 'activate' : 'deactivate'} ${toggleUser.housemate.display_name}, ` +
+            ` And allow them to use their account. Confirm?`)) {
+            this.adminService.toggleUserActivation(toggleUser).then(output => {
+                const newUser = output.result;
+
+                this.updateDataSourceWithUser(newUser);
+
+                this.snackBarService.openSnackBar(
+                    `${newUser.housemate.display_name} ` +
+                    `${newUser.is_active ? 'activated' : 'deactivated'} succesfully.`, 'Confirm', 3000);
+            }, failure => {
+                if (failure && failure.error && failure.error.message) {
+                    this.snackBarService.openSnackBar(failure.error.message, 'Shit', 0);
+                } else {
+                    this.snackBarService.openSnackBar('Something went wrong: ' + failure.message, 'Shit', 0);
+                }
+            });
+        }
+    }
+
+    toggleAdmin(adminUser: IUser) {
+        this.adminService.toggleAdmin(adminUser).then(output => {
+            this.snackBarService.openSnackBar(`${output.result.housemate.display_name} toggled admin.`, 'Confirm', 5000);
+            this.updateDataSourceWithUser(output.result);
+        });
+    }
+
+    toggleThesau(thesauUser: IUser) {
+        this.adminService.toggleThesau(thesauUser).then(output => {
+            this.snackBarService.openSnackBar(`${output.result.housemate.display_name} toggled thesau.`, 'Confirm', 5000);
+            this.updateDataSourceWithUser(output.result);
+        });
+    }
+
+    private updateDataSourceWithUser(newUser: IUser) {
+        const oldData = this.dataSource.data;
+        const index = oldData.findIndex(u => u.id === newUser.id);
+        oldData[index] = newUser;
+        this.dataSource.data = [...oldData];
     }
 
 }

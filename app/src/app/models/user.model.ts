@@ -8,7 +8,7 @@ export enum GROUP {
 
 export interface IGroup {
     id: number;
-    name: string;
+    name?: string;
 }
 
 export interface IHousemate {
@@ -17,6 +17,10 @@ export interface IHousemate {
     diet: string;
     room_number: number;
     movein_date: Date;
+    sublet_date: Date;
+    moveout_set: boolean;
+    moveout_date: Date;
+
 
     balance: string; // TODO: fix into number later?
     boetes_total: number;

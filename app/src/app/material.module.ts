@@ -19,7 +19,8 @@ import {
     MatSnackBarModule,
     MatTableModule,
     MatTabsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatTooltipModule
 } from '@angular/material';
 
 @NgModule({
@@ -32,6 +33,7 @@ import {
         MatPaginatorModule,
         MatCardModule,
         MatInputModule,
+        MatTooltipModule,
         MatFormFieldModule,
         MatButtonModule,
         MatSlideToggleModule,
