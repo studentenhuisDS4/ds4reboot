@@ -14,7 +14,6 @@ export class UserManageComponent implements OnInit {
     user: IUser;
     displayedColumns: string[] = ['display_name', 'surname', 'is_superuser', 'has_thesau', 'balance', 'actions'];
     dataSource: MatTableDataSource<IUser>;
-
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
