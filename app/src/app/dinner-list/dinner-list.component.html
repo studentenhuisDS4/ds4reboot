@@ -1,7 +1,7 @@
 <section fxFlexAlign="stretch" fxLayout="column">
     <mat-toolbar *ngIf="!miniView" style="margin-bottom:10px;">
-        Dinner -{{user ? (user.housemate?.display_name) : " Huis"}} &nbsp;
-        <small *ngIf="user">{{user ? ", &euro;" + user.housemate.balance : ""}}</small>
+        Dinner -&nbsp;{{user ? (user.housemate?.display_name) : " Huis"}} &nbsp;
+        <small *ngIf="user">{{user ? "- &euro;" + user.housemate.balance : ""}}</small>
         <div fxFlex></div>
     </mat-toolbar>
 

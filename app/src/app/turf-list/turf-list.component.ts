@@ -16,7 +16,7 @@ export class TurfListComponent implements OnInit {
     user: IUser = null;
     busy = false;
     turfUsers: IUser[] = [];
-    turfMultiplier: string;
+    turfMultiplier = '1';
     isHouse = false;
     otherTurfVal = 1;
     showOther = false;
@@ -50,7 +50,13 @@ export class TurfListComponent implements OnInit {
         if (turfUser == null) {
             turfUser = this.user;
         }
-        if (turfType === TurfType.BEER && !Number.isInteger(amount)) {
+        let numericAmount: number;
+        if (typeof amount === 'string') {
+            numericAmount = parseInt(amount, 10);
+        } else if (typeof amount === 'number' ) {
+            numericAmount = amount;
+        }
+        if (turfType === TurfType.BEER && !Number.isInteger(numericAmount)) {
             this.snackBarService.openSnackBar(
                 `Cant turf a beer partly.`,
                 this.easterEggService.easterEggo());

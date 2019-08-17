@@ -22,7 +22,6 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class LoginComponent implements OnInit {
     state = '';
     stateSecondary = '';
-    DEBUG = environment.debug;
     awaitingLogin = false;
 
     emailFormControl = new FormControl('', [
