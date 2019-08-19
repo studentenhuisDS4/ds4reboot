@@ -1,0 +1,87 @@
+<section fxLayout="column">
+    <mat-card [fxFlexAlign]="'stretch'" class="page-content-card" style="margin-bottom:20px;">
+        <mat-card-header>
+            <div mat-card-avatar>
+                <i [matBadge]="user?.housemate?.total_bier"
+                   class="material-icons vertical-align-middle padding-bottom-3 icon-large" matBadgeColor="primary">
+                    local_bar
+                </i>
+            </div>
+            <mat-card-title style="display: flex;">
+                Turf your drinks
+            </mat-card-title>
+            <mat-card-subtitle>
+                Beer: {{user ? user.housemate.sum_bier : ""}}<br/>
+                Red wine: {{user ? user.housemate.sum_rwijn : ""}}<br/>
+                White wine: {{user ? user.housemate.sum_wwijn : ""}}<br/>
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content fxLayout="column">
+            <div fxFlex="row">
+                <mat-button-toggle-group #turfMultiplierGroup="matButtonToggleGroup" [(value)]="turfMultiplier"
+                                         appearance="standard">
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="1">+1</mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="-1">-1
+                    </mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="24">24
+                    </mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=false" [disableRipple]="true" value="-24">-24
+                    </mat-button-toggle>
+                    <mat-button-toggle (click)="showOther=true" [disableRipple]="true" [value]="otherTurfVal">other
+                    </mat-button-toggle>
+                </mat-button-toggle-group>
+                <mat-form-field *ngIf="showOther" class="hover-type-cursor">
+                    <input [(ngModel)]="otherTurfVal" matInput max="24" min="1" placeholder="Other amount" required
+                           type="number">
+                </mat-form-field>
+            </div>
+            <mat-list fxLayout="column">
+                <mat-list-item fxLayout="row">
+                    {{ user?.housemate?.display_name }}
+                    <div fxFlex="row"></div>
+                    <button (click)="turfItem('beer', turfMultiplierGroup.value)" *ngIf="user" [disabled]="busy"
+                            color="accent" mat-raised-button
+                            style="margin-right:5px;">
+                        Beer
+                    </button>
+                    <button (click)="turfItem('red-wine', turfMultiplierGroup.value)" *ngIf="user" color="warn"
+                            mat-raised-button
+                            style="margin-right:5px;">Red
+                    </button>
+                    <button (click)="turfItem('white-wine', turfMultiplierGroup.value)" *ngIf="user" color="primary"
+                            mat-raised-button
+                            style="margin-right:5px;">White
+                    </button>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+        <mat-card-actions>
+            <mat-list [fxHide.lt-md]="miniView" dense>
+                <mat-list-item *ngFor="let user of turfUsers">
+                    {{ user?.housemate.display_name }}
+                    <div fxFlex="row"></div>
+                    <button (click)="turfItem('beer', turfMultiplierGroup.value, user)" *ngIf="user" [disabled]="busy"
+                            color="accent"
+                            mat-raised-button
+                            style="margin-right:5px;">Beer
+                    </button>
+                    <button (click)="turfItem('red-wine', turfMultiplierGroup.value, user)" *ngIf="user"
+                            [disabled]="busy"
+                            color="warn"
+                            mat-raised-button
+                            style="margin-right:5px;">Red
+                    </button>
+                    <button (click)="turfItem('white-wine', turfMultiplierGroup.value, user)" *ngIf="user"
+                            [disabled]="busy"
+                            color="primary"
+                            mat-raised-button
+                            style="margin-right:5px;">White
+                    </button>
+                </mat-list-item>
+                <mat-list-item *ngIf="turfUsers?.length >0">
+                    Hello sjaarsch.
+                </mat-list-item>
+            </mat-list>
+        </mat-card-actions>
+    </mat-card>
+</section>
