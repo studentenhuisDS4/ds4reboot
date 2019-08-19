@@ -62,7 +62,7 @@ export class AuthService {
                     // Bad auth credentials?
                     if (environment.debug) {
                         // TODO log this somewhere
-                        console.log('[Auth service] Error', e.toString());
+                        console.log('[Auth service] Error', e);
                     }
                 })
         );

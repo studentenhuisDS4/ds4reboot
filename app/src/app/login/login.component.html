@@ -1,47 +1,39 @@
-<div fxLayout="row" fxLayoutAlign="center center">
+<div fxLayout="row" fxLayoutAlign="center center" style="margin-top:10px;">
 
     <mat-progress-spinner style="margin:0 auto;" *ngIf="awaitingLogin"
                           color="warn" mode="indeterminate"></mat-progress-spinner>
 
-    <mat-card class="login-card" *ngIf="!awaitingLogin">
+    <mat-card *ngIf="!awaitingLogin" class="login-card">
         <mat-card-header>
             <mat-card-title>Login Required</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            <form class="login-form" fxLayout="column">
+            <form (keyup.enter)="signIn()" [formGroup]="loginForm" class="login-form" fxLayout="column">
                 <mat-form-field appearance="outline">
                     <mat-label>Username/Email</mat-label>
-                    <input matInput placeholder="Email" name="email" [formControl]="emailFormControl"
-                           [errorStateMatcher]="matcher">
-                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-                        Please enter a valid identity
+                    <input formControlName="username-or-email" matInput name="email" placeholder="Email">
+                    <mat-error *ngIf="E('username-or-email')?.minlength">
+                        Email/username not long enough (>2)
                     </mat-error>
-                    <mat-error *ngIf="emailFormControl.hasError('required')">
+                    <mat-error *ngIf="E('username-or-email')?.required">
                         Identity is <strong>required</strong>
                     </mat-error>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Password</mat-label>
-                    <input matInput placeholder="Password" name="password" type="password"
-                           [formControl]="passwordFormControl">
-                    <mat-error
-                        *ngIf="passwordFormControl.hasError('minlength') && !passwordFormControl.hasError('required')">
+                    <input formControlName="password" matInput name="password" placeholder="Password" type="password">
+                    <mat-error *ngIf="E('password')?.minlength">
                         Please enter a password longer than 4 characters
                     </mat-error>
-                    <mat-error *ngIf="passwordFormControl.hasError('required')">
+                    <mat-error *ngIf="E('password')?.required">
                         Password is <strong>required</strong>
                     </mat-error>
                 </mat-form-field>
-                <mat-error *ngIf="state">
-                    <strong>{{state}}</strong>
-                    <br/>
-                    <em>{{stateSecondary}}</em>
-                </mat-error>
+                <mat-error *ngIf="signInMessage">{{signInMessage}}</mat-error>
             </form>
         </mat-card-content>
         <mat-card-actions align="end">
-            <button mat-raised-button (click)="verifyLogin()" color="primary">LOGIN</button>
+            <button (click)="signIn()" [disabled]="!loginForm?.valid" color="primary" mat-raised-button>LOGIN</button>
         </mat-card-actions>
     </mat-card>
-
 </div>
