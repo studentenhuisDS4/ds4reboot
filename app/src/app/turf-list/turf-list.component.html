@@ -1,6 +1,6 @@
 <br *ngIf="miniView"/>
 <section fxFlexAlign="stretch" fxLayout="column">
-    <mat-card class="page-content-card" fxFlexAlign="center" style="margin-bottom:20px;">
+    <mat-card class="page-content-card" [fxFlexAlign]="miniView ? 'stretch' : 'center'" style="margin-bottom:20px;">
         <mat-card-header>
             <div mat-card-avatar>
                 <i [matBadge]="user?.housemate?.total_bier"

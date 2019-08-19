@@ -1,19 +1,11 @@
 <section fxFlexAlign="stretch" fxLayout="column">
-    <mat-toolbar *ngIf="!miniView" style="margin-bottom:10px;">
+    <mat-toolbar *ngIf="!miniView" fxFlexAlign="center" ngStyle.gt-sm="width: 50%" style="margin-bottom:10px;">
         Dinner -&nbsp;{{user ? (user.housemate?.display_name) : " Huis"}} &nbsp;
         <small *ngIf="user">{{user ? "- &euro;" + user.housemate.balance : ""}}</small>
         <div fxFlex></div>
     </mat-toolbar>
-
-    <mat-card *ngIf="!currentDinner" class="page-content-card" fxFlexAlign="center">
-        <mat-card-header>
-            <mat-card-title>
-                Loading today's dinner
-            </mat-card-title>
-        </mat-card-header>
-    </mat-card>
-
-    <mat-card *ngIf="currentDinner" class="page-content-card" fxFlexAlign="center">
+    <mat-card [fxFlexAlign]="miniView ? 'stretch' : 'center'" class="page-content-card" fxFlexAlign="center"
+              ngStyle.gt-sm="width: 50%">
         <mat-card-header>
             <div mat-card-avatar>
                 <i [matBadge]="currentDinner?.num_eating?.toString()"
@@ -21,19 +13,22 @@
                     local_dining
                 </i>
             </div>
-            <mat-card-title>
-                {{ getWeekday(currentDinner.date) }}
-                {{ currentDinner.eta_time ? "-" + currentDinner.eta_time : ""}}
-                {{ currentDinner.open ? "" : "(closed)"}}
+            <mat-card-title *ngIf="!currentDinner">
+                Loading today's dinner
             </mat-card-title>
-            <mat-card-subtitle>{{ currentDinner.date | date : 'MMMM d' }}</mat-card-subtitle>
+            <mat-card-title *ngIf="currentDinner">
+                {{ getWeekday(currentDinner?.date) }}
+                {{ currentDinner?.eta_time ? "-" + currentDinner?.eta_time : ""}}
+                {{ currentDinner?.open ? "" : "(closed)"}}
+            </mat-card-title>
+            <mat-card-subtitle>{{ currentDinner?.date | date : 'MMMM d' }}</mat-card-subtitle>
         </mat-card-header>
 
-        <mat-card-content>
+        <mat-card-content *ngIf="currentDinner" fxLayout="column">
             <mat-form-field appearance="outline">
                 <mat-chip-list #userDinnerList class="hover-type-cursor">
                     <mat-chip (removed)="signOffDinner(currentDinner, ud.user)"
-                              *ngFor="let ud of currentDinner.userdinners"
+                              *ngFor="let ud of currentDinner?.userdinners"
                               [matBadgeColor]="ud.user.housemate.balance <=-25 ? 'warn' : ''"
                               [matBadge]="ud.is_cook ? ud.count +1 : ud.count"
                               class="allow-overflow">
@@ -71,14 +66,14 @@
             </mat-form-field>
         </mat-card-content>
 
-        <mat-card-actions *ngIf="user">
+        <mat-card-actions *ngIf="user && currentDinner">
             <div fxLayout="row">
-                <button (click)="signupDinner(currentDinner)" [disabled]="currentDinner.close_time"
+                <button (click)="signupDinner(currentDinner)" [disabled]="currentDinner?.close_time"
                         color="primary" mat-raised-button>
                     <mat-icon>add</mat-icon>
                 </button>
                 <button (click)="signOffDinner(currentDinner)"
-                        [disabled]="currentDinner.close_time || !getUserEntry(currentDinner, user)?.count"
+                        [disabled]="currentDinner?.close_time || !getUserEntry(currentDinner, user)?.count"
                         color="primary"
                         mat-raised-button>
                     <mat-icon>not_interested</mat-icon>
@@ -127,7 +122,7 @@
 
     <br/>
 
-    <mat-accordion *ngIf="!miniView" class="dinner-headers-align">
+    <mat-accordion *ngIf="!miniView" class="dinner-headers-align" fxFlexAlign="center" ngStyle.gt-sm="width: 50%">
         <mat-expansion-panel *ngFor="let dinner of weekDinners">
             <mat-expansion-panel-header>
                 <mat-panel-title>

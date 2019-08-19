@@ -74,7 +74,7 @@ export class AuthService {
 
     public loginHouse() {
         if (this.isAuthenticated()) {
-            return this.httpClient.post<any>(`${this.API_URL}/auth-house/`, {})
+            return this.httpClient.post<any>(`${this.API_URL}/auth-house/`, null)
                 .pipe(
                     tap(result => {
                         localStorage.setItem('token', result.token.toString());
