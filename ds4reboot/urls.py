@@ -5,11 +5,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token, ObtainJSONWebToken
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenVerifyView)
 
 from bierlijst.api.api_views import BoeteViewSet, TurfViewSet
 from ds4reboot import settings
-from ds4reboot.api.auth import CustomJWTSerializer, LoginHouse
+from ds4reboot.api.auth import LoginHouse, TokenPairView
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
@@ -46,9 +48,9 @@ urlpatterns = \
         path('wiki/notifications/', include('django_nyt.urls')),
         path('wiki/', include('wiki.urls')),
 
-        path(f'{settings.API_BASE_URL}auth-jwt/', ObtainJSONWebToken.as_view(serializer_class=CustomJWTSerializer)),
-        path(f'{settings.API_BASE_URL}auth-jwt-refresh/', refresh_jwt_token),
-        path(f'{settings.API_BASE_URL}auth-jwt-verify/', verify_jwt_token),
+        path(f'{settings.API_BASE_URL}auth-jwt/', TokenPairView.as_view(), name='token'),
+        path(f'{settings.API_BASE_URL}auth-jwt-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+        path(f'{settings.API_BASE_URL}auth-jwt-verify/', TokenVerifyView.as_view(), name='token_verify'),
         path(f'{settings.API_BASE_URL}auth-house/', LoginHouse.as_view()),
         path(f'{settings.API_BASE_URL}', include((router.urls, 'ds4_api'))),
     ]
