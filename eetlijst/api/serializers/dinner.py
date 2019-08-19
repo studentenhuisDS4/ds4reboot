@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema, fields
 
 from ds4reboot.api.utils import Map
-from ds4reboot.api.validators import UniqueModelValidator, ModelAttributeValidator
+from ds4reboot.api.validators import ModelAttributeValidator
 from eetlijst.models import UserDinner, Dinner
 from user.api.serializers.user import UserSchema
 
@@ -25,7 +25,7 @@ class UserDinnerSchema(Schema):
     count = fields.Int(dump_only=True, validate=Range(min=0))
 
     @validates_schema
-    def validate_count(self, data):
+    def validate_count(self, data, **kwargs):
         data = Map(data)
         errors = {}
         if errors:

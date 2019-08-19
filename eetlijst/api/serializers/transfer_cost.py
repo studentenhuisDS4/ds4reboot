@@ -50,7 +50,7 @@ class TransferCostSchema(BaseTransferSchema):
 
     # validate from_user, to_user not equal and in active users
     @pre_load
-    def validate_users(self, data):
+    def validate_users(self, data, **kwargs):
         if "user_id" in self.context:
             user_id = self.context["user_id"]
             if data["from_user_id"] == user_id or data["to_user_id"] == user_id:
@@ -85,7 +85,7 @@ class SplitTransferSchema(BaseTransferSchema):
             data["affected_users"] = [user.id for user in get_active_users()]
 
     @pre_load
-    def validate_users(self, data):
+    def validate_users(self, data, **kwargs):
         if "user_id" in self.context:
             data["user_id"] = self.context["user_id"]
         else:

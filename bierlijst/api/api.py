@@ -34,7 +34,7 @@ class TurfSchema(Schema):
     turf_note = fields.Str(validate=Length(max=50))
 
     @validates_schema
-    def validate_count(self, data):
+    def validate_count(self, data, **kwargs):
         data = Map(data)
         errors = {}
         if data.turf_count == 0:

@@ -94,7 +94,7 @@ class UserSchema(Schema):
         return instance
 
     @validates_schema
-    def check_passwords_equal(self, data):
+    def check_passwords_equal(self, data, **kwargs):
         if 'password' in data and 'password_repeat' in data:
             if data['password'] != data['password_repeat']:
                 raise ValidationError({'password': 'Passwords not equal.'})
