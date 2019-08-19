@@ -80,13 +80,14 @@ class SplitTransferSchema(BaseTransferSchema):
     note = fields.Str(max_length=20)
 
     @pre_load
-    def provide_affected_users(self, data):
+    def provide_affected_users(self, data, **kwargs):
         if not "affected_users" in data:
             data["affected_users"] = [user.id for user in get_active_users()]
+        return data
 
     @pre_load
     def validate_users(self, data, **kwargs):
-        if "user_id" in self.context:
+        if data and "user_id" in self.context:
             data["user_id"] = self.context["user_id"]
         else:
             raise ValueError("The user_id value was not specified in the Schema context.")

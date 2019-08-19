@@ -84,7 +84,7 @@
                     </button>
                     <button (click)="toggleActivationUser(element, true)"
                             *ngIf="!element.is_active"
-                            [disabled]="!element.is_active || element.id === user.id" mat-menu-item
+                            [disabled]="element.is_active || element.id === user.id" mat-menu-item
                             matTooltip="Click to Activate">
                         <mat-icon aria-label="Activate">play_circle_filled</mat-icon>
                         Activate

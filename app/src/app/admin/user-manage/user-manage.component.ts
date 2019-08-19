@@ -79,7 +79,7 @@ export class UserManageComponent implements OnInit {
         if (confirm(`This will ${active ? 'activate' : 'deactivate'} ${toggleUser.housemate.display_name}, ` +
             ` And allow them to use their account. Confirm?`)) {
             this.adminService.toggleUserActivation(toggleUser).then(output => {
-                const newUser = output.result;
+                const newUser = output.result.user;
 
                 this.updateDataSourceWithUser(newUser);
 
