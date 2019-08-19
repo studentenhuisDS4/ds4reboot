@@ -117,8 +117,8 @@ export class DinnerListComponent implements OnInit {
     }
 
     cookDinner(dinner: IDinner, signOff = false, user = this.user) {
-        this.dinnerListService.cook(user.id, dinner.date, signOff).then(output => {
-                if (output.result && output.result.cook && output.result.cook.id === this.user.id) {
+        this.dinnerListService.cook(user ? user.id : dinner.cook.id, dinner.date, signOff).then(output => {
+                if (user && output.result && output.result.cook && output.result.cook.id === this.user.id) {
                     this.snackBar.openSnackBar(`Cooking by ${this.user.housemate.display_name} set.`, 'Ok');
                 } else {
                     this.snackBar.openSnackBar(`Cooking free to be claimed again.`, 'Ok');

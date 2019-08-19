@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User, Group
-from django.contrib.auth.models import User, Group
 from django.utils import timezone
-from marshmallow import fields, validates_schema
+from marshmallow import fields, validates_schema, pre_load
 from marshmallow.validate import Length
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
 
+from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import UniqueModelValidator
 from user.models import DIET_LENGTH, Housemate
 
@@ -34,6 +34,12 @@ class HousemateSchema(Schema):
     sum_rwijn = fields.Decimal(dump_only=True)
     sum_wwijn = fields.Decimal(dump_only=True)
     boetes_total = fields.Int(dump_only=True)
+
+    @pre_load
+    def null_to_blank(self, data, **kwargs):
+        if Map(data).diet is None:
+            data['diet'] = ''
+        return data
 
 
 class HousemateFullSchema(HousemateSchema):
@@ -94,7 +100,7 @@ class UserSchema(Schema):
         return instance
 
     @validates_schema
-    def check_passwords_equal(self, data):
+    def check_passwords_equal(self, data, **kwargs):
         if 'password' in data and 'password_repeat' in data:
             if data['password'] != data['password_repeat']:
                 raise ValidationError({'password': 'Passwords not equal.'})

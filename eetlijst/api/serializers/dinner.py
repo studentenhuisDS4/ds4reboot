@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
-from marshmallow import validates_schema
+from marshmallow import validates_schema, pre_load
 from marshmallow.validate import Range, NoneOf
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema, fields
 
 from ds4reboot.api.utils import Map
-from ds4reboot.api.validators import UniqueModelValidator, ModelAttributeValidator
+from ds4reboot.api.validators import ModelAttributeValidator
 from eetlijst.models import UserDinner, Dinner
 from user.api.serializers.user import UserSchema
 
@@ -24,8 +24,14 @@ class UserDinnerSchema(Schema):
     user = fields.Nested(UserSchema, dump_only=True)
     count = fields.Int(dump_only=True, validate=Range(min=0))
 
+    @pre_load
+    def fix_date(self, data, **kwargs):
+        if 'dinner_date' in data and 'T' in data['dinner_date']:
+            data['dinner_date'] = data['dinner_date'].split("T")[0]
+        return data
+
     @validates_schema
-    def validate_count(self, data):
+    def validate_count(self, data, **kwargs):
         data = Map(data)
         errors = {}
         if errors:

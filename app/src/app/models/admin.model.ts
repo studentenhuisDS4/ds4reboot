@@ -5,3 +5,9 @@ export interface IMoveout {
     user: IUser;
     transfer: ISplitTransfer;
 }
+
+export interface IActivation {
+    user: IUser;
+    activation: boolean;
+}
+

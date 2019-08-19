@@ -64,14 +64,15 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
 
         try:
             result = DinnerSchema().load(data=request.data, partial=("eta_time",))  # validation only, never save
-            if result.errors:
-                return log_validation_errors(result.errors)
+            if 'errors' in result:
+                return log_validation_errors(Map(result).errors)
 
             uds = dinner.userdinner_set.all()
             for ud in uds:
                 if not ud.user.is_active:
-                    return log_validation_errors({'is_active': f'{ud.user.housemate.display_name} is not active anymore. '
-                                                               f'Remove him to fix this error.'})
+                    return log_validation_errors(
+                        {'is_active': f'{ud.user.housemate.display_name} is not active anymore. '
+                                      f'Remove him to fix this error.'})
             # actual action
             if dinner.cook:
                 if dinner.open:
@@ -80,7 +81,7 @@ class DinnerViewSet(ListModelMixin, GenericViewSet, RetrieveModelMixin):
                 else:
                     if dinner.cost:
                         dinner.unshare_cost()
-                    dinner.share_cost(result.data['cost'])
+                    dinner.share_cost(result['cost'])
                     dinner.save()
                 return success_action(data=DinnerSchema(dinner).data, status=status.HTTP_202_ACCEPTED)
             else:
@@ -181,6 +182,7 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
         self.return_status = self.default_status
 
         try:
+            signoff = request.data.pop('sign_off')
             serializer = UserDinnerSchema(data=request.data)
             if not serializer.is_valid():
                 return log_validation_errors(serializer.errors)
@@ -188,7 +190,7 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
 
             # actual action
             if user_dinner.dinner.open:
-                if request.data.get('sign_off'):
+                if signoff:
                     user_dinner.is_cook = False
                 else:
                     cook_dinner = UserDinner.objects.filter(dinner_date=user_dinner.dinner_date, is_cook=True).first()

@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.utils import json
 
-from ds4reboot.api.utils import illegal_action, log_validation_errors, log_exception, success_action
+from ds4reboot.api.utils import illegal_action, log_validation_errors, log_exception, success_action, Map
 from plugins.models import RestAttachment
 from plugins.serializers.attachment import AttachmentsSchema
 
@@ -30,7 +30,7 @@ class AttachmentsUploadMixin():
     def put(self, request):
         batch = []
         marsh = AttachmentsSchema().load(data=request.data)
-        if not marsh.errors:
+        if not 'errors' in marsh:
             # Flatten data important to the creation of subclass
             try:
                 json_data = json.loads(request.data['json_data'])
@@ -61,7 +61,7 @@ class AttachmentsUploadMixin():
                 except Exception as e:
                     return log_exception(e, traceback.format_exc())
         else:
-            return log_validation_errors(marsh.errors)
+            return log_validation_errors(Map(marsh).errors)
 
         if getattr(self, 'RESPONSE_ROOT_NAME', None):
             output = {

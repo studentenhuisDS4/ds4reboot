@@ -66,6 +66,7 @@ export class ProfileEditComponent implements OnInit {
         this.editProfileForm.markAllAsTouched();
         if (this.editProfileForm.valid) {
             this.userService.updateProfile(this.editProfileForm).then(result => {
+                this.userService.user = result;
                 this.snackBarService.openSnackBar('Profile edit successful.', 'Ok.');
                 this.router.navigateByUrl('/profile');
             }, error => {

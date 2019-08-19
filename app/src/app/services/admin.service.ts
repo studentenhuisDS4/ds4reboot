@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {GROUP, IUser} from '../models/user.model';
 import {environment} from '../../environments/environment';
-import {IMoveout} from '../models/admin.model';
+import {IActivation, IMoveout} from '../models/admin.model';
 import {IResult} from '../models/api.model';
 
 @Injectable({
@@ -28,7 +28,7 @@ export class AdminService {
 
     toggleUserActivation(user: IUser) {
         if (user && user.id) {
-            return this.httpClient.post<IResult<IUser>>(`${this.API_URL}/user-action/${user.id}/toggle_activation/`, {})
+            return this.httpClient.post<IResult<IActivation>>(`${this.API_URL}/user-action/${user.id}/toggle_activation/`, {})
                 .toPromise();
         }
     }

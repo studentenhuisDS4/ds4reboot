@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a34bef2b1f7e91ca401d1f21d945c2a41b63285494d3d0de83bb901bc3724616"
+            "sha256": "a0ce52d0b44dd61066c2f8a367f6ab039186a569ea0cb5df4a9917740891208e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,11 +46,11 @@
         },
         "django-cors-headers": {
             "hashes": [
-                "sha256:5b80bf0f8d7fc6e2bcb4f40781d5ff3661961bbf1982e52daec77241dea3b890",
-                "sha256:ebf3e2cf25aa6993b959a8e6a87828ebb3c8fe5bc3ec4a2d6e65f3b8d9b4212c"
+                "sha256:e4b12209b3a0bc577883fe0ac0aa3adac9e82742389f8ddb6c6b41c66b1e9c4f",
+                "sha256:e69b1c909f2eddc7ef2a24f071583bc22b73b871731ea3370ac52b3318c43b3c"
             ],
             "index": "pypi",
-            "version": "==3.0.2"
+            "version": "==3.1.0"
         },
         "django-js-asset": {
             "hashes": [
@@ -89,11 +89,11 @@
         },
         "django-url-filter": {
             "hashes": [
-                "sha256:339ee463a259b11cee9ce7fbb63617ca64dfe841b6f15761c2ad5b4cb3f0568a",
-                "sha256:6e217c823e9349a81ee185ccea014aba6b2cf0253f84bd263d942487372ab580"
+                "sha256:7aa00ee33d669de92f282df7da2c755593168e0bd881476092f3107134e3859c",
+                "sha256:ba0bb6c7cff3010183a97deb9c6279d9fd02c57ab7f7949dd0c96cd49a4d8c04"
             ],
             "index": "pypi",
-            "version": "==0.3.12"
+            "version": "==0.3.13"
         },
         "djangorestframework": {
             "hashes": [
@@ -154,11 +154,11 @@
         },
         "marshmallow": {
             "hashes": [
-                "sha256:9cedfc5b6f568d57e8a2cf3d293fbd81b05e5ef557854008d03e25660a39ccfd",
-                "sha256:a4d99922116a76e5abd8f997ec0519086e24814b7e1e1344bebe2a312ba50235"
+                "sha256:e5e9fd0c2e919b4ece915eb30808206349a49a45df72e99ed20e27a9053d574b",
+                "sha256:fa2d8a4b61d09b0e161a14acc5ad8ab7aaaf1477f3dd52819ddd6c6c8275733a"
             ],
             "index": "pypi",
-            "version": "==2.19.5"
+            "version": "==3.0.0"
         },
         "openpyxl": {
             "hashes": [

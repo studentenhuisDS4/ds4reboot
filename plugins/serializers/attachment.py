@@ -14,5 +14,6 @@ class AttachmentsSchema(Schema):
     modified = fields.Time(dump_only=True)
 
     @post_dump
-    def add_upload_url(self, data):
+    def add_upload_url(self, data, **kwargs):
         data['upload_url'] = full_media_url(self.context) + data['attachment_file']
+        return data

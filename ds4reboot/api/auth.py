@@ -26,7 +26,7 @@ class TokenObtainSerializer(serializers.Serializer):
         self.fields[self.identity_field] = serializers.CharField()
         self.fields['password'] = PasswordField()
 
-    def validate(self, attrs):
+    def validate(self, attrs, **kwargs):
         authenticate_kwargs = {
             self.identity_rename: attrs[self.identity_field],
             'password': attrs['password'],
@@ -59,7 +59,7 @@ class TokenClaimSerializer(TokenObtainSerializer):
         token['email'] = str(user.email)
         return token
 
-    def validate(self, attrs):
+    def validate(self, attrs, **kwargs):
         data = super(TokenClaimSerializer, self).validate(attrs)
         refresh = self.get_token(self.user)
         data['refresh'] = str(refresh)
