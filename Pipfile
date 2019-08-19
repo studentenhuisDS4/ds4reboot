@@ -12,6 +12,7 @@ gunicorn = "==19.9.0"
 openpyxl = "==2.3.5"
 virtualenv = "==16.0.0"
 wiki = "==0.5.dev20181021091629"
+
 django = "==2.1.11"
 djangorestframework = "~=3.10.2"
 djangorestframework_simplejwt = "~=4.3.0"
