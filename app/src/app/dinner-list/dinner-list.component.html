@@ -79,7 +79,7 @@
                     <mat-icon>not_interested</mat-icon>
                 </button>
                 <button (click)="cookDinner(currentDinner)" [color]="currentDinner?.cook == null ? 'accent' : 'warn'"
-                        [disabled]="!currentDinner && currentDinner.cook && currentDinner.cook?.id !== user.id || !currentDinner.open"
+                        [disabled]="!currentDinner && !currentDinner.open"
                         mat-raised-button>
                     <mat-icon *ngIf="!currentDinner.cook" svgIcon="cooking_hat"></mat-icon>
                     <mat-icon *ngIf="currentDinner.cook" svgIcon="remove_cooking_hat"></mat-icon>
@@ -160,7 +160,7 @@
                 <mat-icon>not_interested</mat-icon>
             </button>
             <button (click)="cookDinner(dinner)" [color]="dinner?.cook == null ? 'accent' : 'warn'"
-                    [disabled]="!user || user && dinner?.cook && dinner?.cook.id !== user.id || !dinner?.open"
+                    [disabled]="!dinner?.open || !dinner?.cook"
                     mat-raised-button>
                 <mat-icon *ngIf="!dinner?.cook" svgIcon="cooking_hat"></mat-icon>
                 <mat-icon *ngIf="dinner?.cook" svgIcon="remove_cooking_hat"></mat-icon>
