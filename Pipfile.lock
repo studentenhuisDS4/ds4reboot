@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "797d88566c01d72cf57d0470b9d939ef79e4a7118d71956b415a1ce8edabbda2"
+            "sha256": "a34bef2b1f7e91ca401d1f21d945c2a41b63285494d3d0de83bb901bc3724616"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -32,11 +32,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:1a41831eace203fd1939edf899e07d7abd12ce9bafc3d9a5a63a24a8d1d12bd5",
-                "sha256:305b6c4fce9e03bb746e35780c2c4d52f29ea1669f15633cfd41bc8821c74c76"
+                "sha256:068d51054083d06ceb32ce02b7203f1854256047a0d58682677dd4f81bceabd7",
+                "sha256:55409a056b27e6d1246f19ede41c6c610e4cab549c005b62cbeefabc6433356b"
             ],
             "index": "pypi",
-            "version": "==2.1.11"
+            "version": "==2.1.4"
         },
         "django-classy-tags": {
             "hashes": [
@@ -97,19 +97,19 @@
         },
         "djangorestframework": {
             "hashes": [
-                "sha256:1ca4a5599a5ec31f3d6238a687fcc1dd4c41b1d90edab9ad398fcbf87872b7ba",
-                "sha256:c3c5edfdbc5dd33f9121bb84305bfd603d2c791f20cff9782772f44a7684a4e4"
+                "sha256:42979bd5441bb4d8fd69d0f385024a114c3cae7df0f110600b718751250f6929",
+                "sha256:aedb48010ebfab9651aaab1df5fd3b4848eb4182afc909852a2110c24f89a359"
             ],
             "index": "pypi",
-            "version": "==3.10.1"
+            "version": "==3.10.2"
         },
-        "djangorestframework-jwt": {
+        "djangorestframework-simplejwt": {
             "hashes": [
-                "sha256:5efe33032f3a4518a300dc51a51c92145ad95fb6f4b272e5aa24701db67936a7",
-                "sha256:ab15dfbbe535eede8e2e53adaf52ef0cf018ee27dbfad10cbc4cbec2ab63d38c"
+                "sha256:4cb1a51bf9b098b983e1326a1cfc65fb0b3c5a2aa0fa43effdbf05dd6da5e8cb",
+                "sha256:d025211806622c53020aa4f66029f1f7305e38de6439116b4a842661fc02cf36"
             ],
             "index": "pypi",
-            "version": "==1.11.0"
+            "version": "==4.3.0"
         },
         "enum-compat": {
             "hashes": [
@@ -253,11 +253,11 @@
     "develop": {
         "django": {
             "hashes": [
-                "sha256:1a41831eace203fd1939edf899e07d7abd12ce9bafc3d9a5a63a24a8d1d12bd5",
-                "sha256:305b6c4fce9e03bb746e35780c2c4d52f29ea1669f15633cfd41bc8821c74c76"
+                "sha256:068d51054083d06ceb32ce02b7203f1854256047a0d58682677dd4f81bceabd7",
+                "sha256:55409a056b27e6d1246f19ede41c6c610e4cab549c005b62cbeefabc6433356b"
             ],
             "index": "pypi",
-            "version": "==2.1.11"
+            "version": "==2.1.4"
         },
         "django-rainbowtests": {
             "hashes": [

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 import datetime
 import os
+
 from ds4reboot.secret_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -88,6 +89,8 @@ TEMPLATES = [
 # Production
 WSGI_APPLICATION = 'ds4reboot.wsgi.application'
 
+AUTHENTICATION_BACKENDS = ['ds4reboot.auth.EmailorUsernameModelBackend']
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -110,18 +113,15 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 15,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     # 'EXCEPTION_HANDLER': 'ds4reboot.apps.common.drf.exception_handler',
 }
 
-JWT_AUTH = {
-    'JWT_AUTH_HEADER_PREFIX': 'BEARER',
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
-    'JWT_ALLOW_REFRESH': True
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=7),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=3),
 }
 
 API_BASE_URL = 'api/v1/'
