@@ -2,6 +2,9 @@ export interface IPermission {
     id: number;
 }
 
+export const HOUSE_ID = 2;
+export const ADMIN_ID = 1;
+
 export enum GROUP {
     THESAU = 1
 }

@@ -40,6 +40,9 @@ import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
 import {MatButtonToggleModule} from '@angular/material';
 import {SignupComponent} from './login/signup/signup.component';
+import { TurfLogComponent } from './turf-list/turf-log/turf-log.component';
+import { BoeteComponent } from './turf-list/boete/boete.component';
+import { TurfComponent } from './turf-list/turf-component/turf.component';
 
 
 @NgModule({
@@ -67,7 +70,10 @@ import {SignupComponent} from './login/signup/signup.component';
         LoginComponent,
         SignupComponent,
         AutoFocusDirective,
-        BottomNavComponent
+        BottomNavComponent,
+        TurfLogComponent,
+        BoeteComponent,
+        TurfComponent
     ],
     imports: [
         BrowserModule,
