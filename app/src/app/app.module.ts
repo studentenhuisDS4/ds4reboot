@@ -73,7 +73,7 @@ import {TurfComponent} from './turf-list/turf-component/turf.component';
         BottomNavComponent,
         TurfLogComponent,
         BoeteComponent,
-        TurfComponent
+        TurfComponent,
     ],
     imports: [
         BrowserModule,
