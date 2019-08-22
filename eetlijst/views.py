@@ -197,11 +197,6 @@ def add_ho(request):
             messages.error(request, 'Must add description.')
             return redirect(request.META.get('HTTP_REFERER'))
 
-        # update housemate object for current user
-        h = Housemate.objects.get(user_id=user_id)
-        h.balance += amount
-        h.save()
-
         # update housemate objects for other users
         huis = Housemate.objects.get(display_name='Huis')
 
@@ -211,34 +206,44 @@ def add_ho(request):
         active_housemates = Housemate.objects.filter(user__id__in=active_users) \
             .exclude(display_name='Huis') \
             .exclude(display_name='Admin')
+        inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
+            .exclude(display_name__in=['Huis', 'Admin'])
+
+        active_balance_before = 0
+        for active_h in active_housemates:
+            active_balance_before += active_h.balance
+        inactive_balance = 0
+        for inactive_h in inactive_housemates:
+            inactive_balance += inactive_h.balance
+        total_balance_before = active_balance_before + inactive_balance + huis.balance
 
         # take care of remainder
         remainder = huis.balance
         split_cost = round((amount - remainder) / len(active_housemates), 2)
         huis.balance = len(active_housemates) * split_cost - amount + remainder
-
         huis.save()
 
+        # update housemate object for current active users
+        h = Housemate.objects.get(user_id=user_id)
         for o in active_housemates:
+            if o.id == h.id:
+                o.balance += amount
             o.balance -= split_cost
             o.save()
-
-        inactive_housemates = Housemate.objects.filter(user__id__in=inactive_users) \
-            .exclude(display_name='Huis') \
-            .exclude(display_name='Admin')
 
         active_balance = 0
         for active_h in active_housemates:
             active_balance += active_h.balance
 
-        inactive_balance = 0
-        for inactive_h in inactive_housemates:
-            inactive_balance += inactive_h.balance
-
         overall_balance = active_balance + inactive_balance + huis.balance
 
         # add entry to ho table
-        ho = SplitTransfer(user=h.user, amount=amount, note=note, total_balance=overall_balance)
+        ho = SplitTransfer(
+            user=h.user,
+            amount=amount,
+            note=note,
+            total_balance_before=total_balance_before,
+            total_balance_after=overall_balance)
         ho.save()
 
     else:
