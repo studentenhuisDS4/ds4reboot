@@ -7,6 +7,13 @@ export interface IResult<T> {
     status: IStatus;
 }
 
+export interface IPagination<T> {
+    count: number;
+    next: URL;
+    previous: URL;
+    results: T;
+}
+
 export enum IStatus {
     SUCCESS = 'success',
     FAILURE = 'failure',

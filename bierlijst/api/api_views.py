@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.viewsets import GenericViewSet
 
 from bierlijst.api.api import BoeteSerializer, TurfSerializer, TurfSchema, BEER, WWINE, RWINE
@@ -18,6 +19,7 @@ class TurfViewSet(ListModelMixin,
                   GenericViewSet):
     queryset = Turf.objects.order_by('-turf_time')
     serializer_class = TurfSerializer
+    pagination_class = LimitOffsetPagination
     filter_fields = '__all__'
 
     @action(detail=False, methods=['post'])

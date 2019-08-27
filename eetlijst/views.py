@@ -289,8 +289,11 @@ def bal_transfer(request):
         to_user.save()
 
         # add entry to transfer table
-        t = Transfer(user=request.user, from_user=from_user.user.housemate.display_name,
-                     to_user=to_user.user.housemate.display_name, amount=amount)
+        t = Transfer(
+            user=request.user,
+            from_user=from_user.user,
+            to_user=to_user.user,
+            amount=amount)
         t.save()
 
     else:

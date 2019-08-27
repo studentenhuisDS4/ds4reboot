@@ -27,9 +27,9 @@
                     <td>{{ i.time }}</td>
                 {% endif %}
                 {% if filters.sum_choice|add:"0" %}
-                    <td>{{ i.user__first_name }}</td>
+                    <td>{{ i.user.housemate.display_name }}</td>
                 {% else %}
-                    <td>{{ i.user.first_name }}</td>
+                    <td>{{ i.user.housemate.display_name }}</td>
                 {% endif %}
                 <td>{{ i.amount }}</td>
                 <td>{{ i.note }}</td>
