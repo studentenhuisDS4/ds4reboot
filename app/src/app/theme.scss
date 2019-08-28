@@ -12,8 +12,8 @@ $ds4-app-theme: mat-light-theme($ds4-app-primary, $ds4-app-accent, $ds4-app-warn
 
 $ds4-app-background: #08264D;
 
-$ds4-card-max-width: 320px;
-$ds4-card-min-width: 268px;
+$ds4-card-max-width: 340px;
+$ds4-card-min-width: 280px; //268px;
 
 .page-content-card {
     max-width: $ds4-card-max-width;
