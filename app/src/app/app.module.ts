@@ -38,7 +38,6 @@ import {ThesauGuardService} from './services/guards/thesau-guard.service';
 import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.component';
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
-import {MatButtonToggleModule} from '@angular/material';
 import {SignupComponent} from './login/signup/signup.component';
 import {TurfLogComponent} from './turf-list/turf-log/turf-log.component';
 import {BoeteComponent} from './turf-list/boete/boete.component';
@@ -93,7 +92,6 @@ import {TurfComponent} from './turf-list/turf-component/turf.component';
             provide: DateAdapter,
             useFactory: adapterFactory
         }),
-        MatButtonToggleModule
     ],
     providers: [AuthGuardService, AdminGuardService, ThesauGuardService, {
         provide: HTTP_INTERCEPTORS,

@@ -1,4 +1,4 @@
-import {Filter} from './filter.model';
+import {BaseFilter, mapping} from './filter.model';
 
 export interface ITurfItem {
     turf_count: number;
@@ -23,39 +23,11 @@ export interface ITurfLogEntry {
     turf_time: Date;
 }
 
-function f() {
-    console.log('f(): evaluated');
-    return function(target, propertyKey: string, descriptor: PropertyDescriptor) {
-        console.log('f(): called');
-    };
-}
-
-function g() {
-    console.log('g(): evaluated');
-    return function(target, propertyKey: string, descriptor: PropertyDescriptor) {
-        console.log('g(): called');
-    };
-}
-
-export class TurfLogFilter implements Filter {
-    @f()
-    @g()
-    count?: number = null;
-    userTo?: string = null;
-    userNy?: string = null;
+export class TurfLogFilter extends BaseFilter {
+    @mapping({name: 'turf_count'}) count?: number = null;
+    @mapping({name: 'turf_user'}) userTo?: string = null;
+    @mapping({name: 'turf_by'}) userBy?: string = null;
     date?: Date;
-
-    serialize(): string {
-        let query = '';
-        Object.keys(this).forEach(key => {
-            if (this[key]) {
-                query += this[key] + '&';
-            }
-        });
-        return `?${query}`;
-
-    }
-
 }
 
 export interface ITurfLogAggregation {

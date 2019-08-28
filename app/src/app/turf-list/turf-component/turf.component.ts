@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {HOUSE_ID, IUser} from '../../models/user.model';
-import {TurfListService} from '../../services/turf-list.service';
+import {TurfService} from '../../services/turf.service';
 import {UserService} from '../../services/user.service';
 import {SnackBarService} from '../../services/snackBar.service';
 import {EasterEggService} from '../../services/easter.service';
@@ -24,7 +24,7 @@ export class TurfComponent implements OnInit {
     @Input() miniView = false;
 
     constructor(
-        private turfListService: TurfListService,
+        private turfListService: TurfService,
         private userService: UserService,
         private snackBarService: SnackBarService,
         private easterEggService: EasterEggService
