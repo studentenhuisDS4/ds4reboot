@@ -26,7 +26,7 @@ def test_mail(request):
         send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['dale@ds4.nl'])
         return HttpResponse('Sent')
     else:
-        return HttpResponse('Denied')
+        return HttpResponse('Denied (not admin)')
 
 
 # view for ds4 admin page

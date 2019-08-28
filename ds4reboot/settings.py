@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import datetime
 import os
 
+from django.utils.timezone import now
+
 from ds4reboot.secret_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -161,9 +163,9 @@ if DEBUG:
 else:
     MEDIA_ROOT = '/var/www/media/'
 
-if not os.path.exists(MEDIA_ROOT + TEMP_FOLDER):
-    os.mkdir(MEDIA_ROOT + TEMP_FOLDER)
-if not os.path.exists(MEDIA_ROOT + HR_REPORTS_FOLDER):
+if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + TEMP_FOLDER):
+    os.mkdir(MEDIA_ROOT + '/' + TEMP_FOLDER)
+if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + HR_REPORTS_FOLDER):
     os.mkdir(MEDIA_ROOT + HR_REPORTS_FOLDER)
 
 STATICFILES_DIRS = [
@@ -180,3 +182,49 @@ DELETE_ATTACHMENTS_FROM_DISK = False
 FILE_UPLOAD_MAX_SIZE = 3024000  # ~3MB
 
 SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
+
+LOG_FOLDER = 'log'
+if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + LOG_FOLDER):
+    os.mkdir(MEDIA_ROOT + '/' if DEBUG else '' + LOG_FOLDER)
+ADMINS = [('David', 'davidzwa@gmail.com')]
+MANAGERS = ADMINS
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'midnight',
+            'filename': MEDIA_ROOT + '/' + LOG_FOLDER + '/debug.log',
+            'formatter': 'verbose'
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console', 'mail_admins'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': True,
+        },
+    },
+}
+
+if DEBUG and os.environ.get('RUN_MAIN', None) != 'true':
+    LOGGING = {}
