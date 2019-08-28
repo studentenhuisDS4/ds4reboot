@@ -17,6 +17,8 @@ from django.utils.timezone import now
 from ds4reboot.secret_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from ds4reboot.utils import slashify
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 INSTALLED_APPS = [
@@ -165,10 +167,10 @@ else:
 
 if DEBUG and not os.path.exists(MEDIA_ROOT):
     os.mkdir(MEDIA_ROOT + '/')
-if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + TEMP_FOLDER):
-    os.mkdir(MEDIA_ROOT + '/' if DEBUG else '' + TEMP_FOLDER)
-if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + HR_REPORTS_FOLDER):
-    os.mkdir(MEDIA_ROOT + '/' if DEBUG else '' + HR_REPORTS_FOLDER)
+if not os.path.exists(slashify(MEDIA_ROOT) + TEMP_FOLDER):
+    os.mkdir(slashify(MEDIA_ROOT) + TEMP_FOLDER)
+if not os.path.exists(slashify(MEDIA_ROOT) + HR_REPORTS_FOLDER):
+    os.mkdir(slashify(MEDIA_ROOT) + HR_REPORTS_FOLDER)
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
@@ -186,10 +188,12 @@ FILE_UPLOAD_MAX_SIZE = 3024000  # ~3MB
 SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
 
 LOG_FOLDER = 'log'
-if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + LOG_FOLDER):
-    os.mkdir(MEDIA_ROOT + '/' if DEBUG else '' + LOG_FOLDER)
+if not os.path.exists(slashify(MEDIA_ROOT) + LOG_FOLDER):
+    print('Created log folder')
+    os.mkdir(slashify(MEDIA_ROOT) + LOG_FOLDER)
 ADMINS = [('David', 'davidzwa@gmail.com')]
 MANAGERS = ADMINS
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -215,7 +219,7 @@ LOGGING = {
         'file': {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'when': 'midnight',
-            'filename': MEDIA_ROOT + '/' + LOG_FOLDER + '/debug.log',
+            'filename': slashify(MEDIA_ROOT) + LOG_FOLDER + '/debug.log',
             'formatter': 'verbose'
         },
         'console': {
@@ -234,7 +238,7 @@ LOGGING = {
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': True,
         },
-    },
+    }
 }
 
 if DEBUG and os.environ.get('RUN_MAIN', None) != 'true':
