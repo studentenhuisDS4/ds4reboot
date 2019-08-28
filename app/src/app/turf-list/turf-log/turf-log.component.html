@@ -1,5 +1,5 @@
 <section fxLayout="column">
-    <mat-card [fxFlexAlign]="'stretch'" class="page-content-card" style="margin-bottom:20px;">
+    <mat-card class="page-content-card-dual" style="margin-bottom:20px;">
         <mat-card-header>
             <div mat-card-avatar>
                 <i class="material-icons vertical-align-middle padding-bottom-3 icon-large">
@@ -13,9 +13,16 @@
                 Log subtitle here
             </mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content fxLayout="column" style="width:100%">
+        <mat-card-content fxLayout="column">
             <mat-list fxLayout="column">
-                <input matInput placeholder="Filter" />
+                <mat-form-field appearance="legacy">
+                    <mat-label>Type name/search</mat-label>
+                    <input matInput placeholder="F.e. Janko">
+                    <mat-icon matSuffix>filter</mat-icon>
+                </mat-form-field>
+                <mat-paginator
+                    [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" [length]="logCount" showFirstLastButtons="true">
+                </mat-paginator>
                 <table [dataSource]="dataSource" mat-table matSort>
                     <ng-container matColumnDef="turf_to">
                         <th *matHeaderCellDef mat-header-cell> Turf to</th>
@@ -67,10 +74,6 @@
                     <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
                     <tr *matRowDef="let row; columns: displayedColumns;" mat-row style="z-index:0"></tr>
                 </table>
-
-                <mat-paginator
-                    [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" [length]="logCount" showFirstLastButtons="true">
-                </mat-paginator>
             </mat-list>
         </mat-card-content>
         <mat-card-actions>
