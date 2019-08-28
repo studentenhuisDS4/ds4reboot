@@ -1,8 +1,8 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.utils import timezone
 from django.db import models
+from django.utils import timezone
 
 # model for housemates (linked to auth user)
 from base.models import SoftDeletionModel
@@ -15,10 +15,15 @@ def get_active_users():
         'housemate__movein_date')
 
 
+def get_movedin_users():
+    return User.objects.exclude(housemate__moveout_set=True).exclude(username__in=['huis', 'admin']).order_by(
+        'housemate__movein_date')
+
+
 # TODO untested
 def get_total_balance():
     total_balance = 0
-    for u in get_active_users():
+    for u in get_movedin_users():
         total_balance += u.housemate.balance
 
     total_balance += Housemate.objects.get(display_name='Huis').balance
