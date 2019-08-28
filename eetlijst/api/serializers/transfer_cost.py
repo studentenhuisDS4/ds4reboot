@@ -33,6 +33,10 @@ class TransferCostSchema(BaseTransferSchema):
     user_id = fields.Int(load_only=True)
     from_user = fields.Nested(UserSchema, dump_only=True)
     to_user = fields.Nested(UserSchema, dump_only=True)
+    note = fields.String()
+    delta_remainder = fields.Int(dump_only=True)
+    total_balance_before = fields.Decimal(dump_only=True)
+    total_balance_after = fields.Decimal(dump_only=True)
 
     def create(self, data):
         transfer = Transfer(**data)

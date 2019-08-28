@@ -163,10 +163,12 @@ if DEBUG:
 else:
     MEDIA_ROOT = '/var/www/media/'
 
+if DEBUG and not os.path.exists(MEDIA_ROOT):
+    os.mkdir(MEDIA_ROOT + '/')
 if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + TEMP_FOLDER):
-    os.mkdir(MEDIA_ROOT + '/' + TEMP_FOLDER)
+    os.mkdir(MEDIA_ROOT + '/' if DEBUG else '' + TEMP_FOLDER)
 if not os.path.exists(MEDIA_ROOT + '/' if DEBUG else '' + HR_REPORTS_FOLDER):
-    os.mkdir(MEDIA_ROOT + HR_REPORTS_FOLDER)
+    os.mkdir(MEDIA_ROOT + '/' if DEBUG else '' + HR_REPORTS_FOLDER)
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
@@ -191,6 +193,14 @@ MANAGERS = ADMINS
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
     'formatters': {
         'verbose': {
             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
@@ -215,6 +225,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false']
         }
     },
     'loggers': {

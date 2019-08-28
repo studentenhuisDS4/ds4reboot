@@ -317,7 +317,7 @@ def activate_housemate(request):
 
                 # TODO: Consider setting inactivation date instead of move-out date
                 h.moveout_set = None
-                h.moveout_date = timezone.now()
+                h.sublet_date = None
                 h.save()
 
                 u = h.user
@@ -347,7 +347,6 @@ def deactivate_housemate(request):
 
             try:
                 deactivate_date = request.POST.get('deactivate_date')
-                print(deactivate_date)
             except TypeError:
                 deactivate_date = None
 
@@ -358,10 +357,7 @@ def deactivate_housemate(request):
             else:
                 # update housemate object
                 h = Housemate.objects.get(user_id=deactivate_id)
-                h.moveout_set = False
-
-                # TODO: Consider setting inactivation date instead of move-out date
-                h.moveout_date = timezone.now()
+                h.sublet_date = timezone.now()
                 h.save()
 
                 u = h.user
