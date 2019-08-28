@@ -30,12 +30,12 @@
                     <mat-chip (removed)="signOffDinner(currentDinner, ud.user)"
                               *ngFor="let ud of currentDinner?.userdinners"
                               [matBadgeColor]="ud.user.housemate.balance <=-25 ? 'warn' : ''"
-                              [matBadge]="ud.is_cook ? ud.count +1 : ud.count"
+                              [matBadge]="ud.count > 0 ? ud.count : ''"
                               class="allow-overflow">
                         <mat-icon *ngIf="!ud.is_cook">local_dining</mat-icon>
                         <mat-icon *ngIf="ud.is_cook" svgIcon="cooking_hat"></mat-icon>
                         {{ ud.user.housemate.display_name}}
-                        <mat-icon *ngIf="currentDinner.open && ((ud.is_cook?ud.count-1:ud.count) > 0)" matChipRemove>
+                        <mat-icon *ngIf="currentDinner.open && ud.count > 0" matChipRemove>
                             cancel
                         </mat-icon>
                     </mat-chip>
@@ -79,14 +79,14 @@
                     <mat-icon>not_interested</mat-icon>
                 </button>
                 <button (click)="cookDinner(currentDinner)" [color]="currentDinner?.cook == null ? 'accent' : 'warn'"
-                        [disabled]="!currentDinner && !currentDinner.open"
+                        [disabled]="!currentDinner?.open"
                         mat-raised-button>
                     <mat-icon *ngIf="!currentDinner.cook" svgIcon="cooking_hat"></mat-icon>
                     <mat-icon *ngIf="currentDinner.cook" svgIcon="remove_cooking_hat"></mat-icon>
                 </button>
                 <button (click)="closeDinner(currentDinner)"
                         *ngIf="user && currentDinner && currentDinner.num_eating > 1 && currentDinner?.cook ? (currentDinner?.cook.id == user.id) : false"
-                        [color]="currentDinner.open ? 'accent' : 'warn'"
+                        [color]="currentDinner.open ? 'primary' : 'warn'"
                         mat-raised-button>
                     <mat-icon *ngIf="currentDinner.open">lock</mat-icon>
                     <mat-icon *ngIf="!currentDinner.open">lock_open</mat-icon>
@@ -137,7 +137,7 @@
             <mat-divider style="margin-bottom: 10px;"></mat-divider>
 
             <mat-chip *ngFor="let ud of dinner?.userdinners"
-                      [matBadge]="ud.is_cook ? ud.count + 1 : ud.count" class="allow-overflow">
+                      [matBadge]="ud.count > 0 ? ud.count : ''" class="allow-overflow">
                 <mat-icon *ngIf="ud.is_cook" svgIcon="cooking_hat"></mat-icon>
                 {{ ud.user.housemate.display_name }}
             </mat-chip>
@@ -167,7 +167,7 @@
             </button>
             <button (click)="closeDinner(dinner)"
                     *ngIf="user && dinner && dinner.num_eating > 1 && dinner.cook ? (dinner.cook.id == user.id) : false"
-                    [color]="dinner?.open ? 'accent' : 'warn'"
+                    [color]="dinner?.open ? 'primary' : 'warn'"
                     [disabled]="!user"
                     mat-raised-button>
                 <mat-icon *ngIf="dinner?.open">lock</mat-icon>

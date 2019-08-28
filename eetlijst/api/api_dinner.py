@@ -180,9 +180,11 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
     @action(detail=False, methods=['post'])
     def cook(self, request):
         self.return_status = self.default_status
+        signoff = None
+        if 'sign_off' in request.data:
+            signoff = request.data.pop('sign_off')
 
         try:
-            signoff = request.data.pop('sign_off')
             serializer = UserDinnerSchema(data=request.data)
             if not serializer.is_valid():
                 return log_validation_errors(serializer.errors)
@@ -194,12 +196,13 @@ class UserDinnerViewSet(ListModelMixin, GenericViewSet):
                     user_dinner.is_cook = False
                 else:
                     cook_dinner = UserDinner.objects.filter(dinner_date=user_dinner.dinner_date, is_cook=True).first()
-                    if cook_dinner is None or cook_dinner.user.id == user_dinner.user.id:
-                        user_dinner.is_cook = not user_dinner.is_cook
-                        user_dinner.save()
+                    if cook_dinner is not None and cook_dinner.id != user_dinner.id:
+                        user_dinner.is_cook = True
+                        cook_dinner.is_cook = False
+                        cook_dinner.save()
                     else:
-                        return illegal_action(
-                            "{cook} is already signed up as cook.".format(cook=cook_dinner.user.housemate.display_name))
+                        user_dinner.is_cook = not user_dinner.is_cook
+                user_dinner.save()
                 dinner = self.__update_dinner(user_dinner)
                 return success_action(DinnerSchema(dinner).data, self.return_status)
             else:
