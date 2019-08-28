@@ -13,7 +13,7 @@
         </mat-form-field>
     </mat-card>
     <br/>
-    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort style="width:100%">
+    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort>
         <ng-container matColumnDef="display_name" sticky>
             <th *matHeaderCellDef mat-header-cell> Name</th>
             <td *matCellDef="let element" mat-cell>

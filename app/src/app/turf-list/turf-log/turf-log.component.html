@@ -13,12 +13,64 @@
                 Log subtitle here
             </mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content fxLayout="column">
+        <mat-card-content fxLayout="column" style="width:100%">
             <mat-list fxLayout="column">
                 <input matInput placeholder="Filter" />
-                <table>
-                    <tr><td>Table here</td></tr>
+                <table [dataSource]="dataSource" mat-table matSort>
+                    <ng-container matColumnDef="turf_to">
+                        <th *matHeaderCellDef mat-header-cell> Turf to</th>
+                        <td *matCellDef="let element" mat-cell>
+                            {{ element?.turf_to }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="turf_by">
+                        <th *matHeaderCellDef mat-header-cell> By</th>
+                        <td *matCellDef="let element" mat-cell>
+                            {{ element?.turf_by }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="turf_count">
+                        <th *matHeaderCellDef mat-header-cell> Count</th>
+                        <td *matCellDef="let element" mat-cell>
+                            {{ element?.turf_count }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="turf_time">
+                        <th *matHeaderCellDef mat-header-cell> Time</th>
+                        <td *matCellDef="let element" mat-cell>
+                            {{ element?.turf_time | date : 'MMM d, y h:mm a'}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="turf_type">
+                        <th *matHeaderCellDef mat-header-cell> Type</th>
+                        <td *matCellDef="let element" mat-cell>
+                            {{ element?.turf_type }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions" stickyEnd>
+                        <th *matHeaderCellDef mat-header-cell> Actions</th>
+                        <td *matCellDef="let element" mat-cell>
+                            <mat-menu #appMenu="matMenu">
+                                <button [routerLink]="['/admin/user-manage/user-edit/', element.id]" mat-menu-item
+                                        matTooltip="Click to Edit">
+                                    <mat-icon aria-label="Deactivate">edit</mat-icon>
+                                    Edit
+                                </button>
+                            </mat-menu>
+                            <button [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Click to Edit">
+                                <mat-icon aria-label="Edit">more_vert</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                    <tr *matRowDef="let row; columns: displayedColumns;" mat-row style="z-index:0"></tr>
                 </table>
+
+                <mat-paginator
+                    [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="10" [length]="logCount" showFirstLastButtons="true">
+                </mat-paginator>
             </mat-list>
         </mat-card-content>
         <mat-card-actions>
