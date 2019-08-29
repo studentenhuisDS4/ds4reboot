@@ -1,16 +1,32 @@
-<p>
-    upload receipt stub. I am working hard on finishing it.
-</p>
-<h1>Receipt upload</h1>
-<em>This is under construction and WILL NOT WORK. Try if you absolutely feel like it xD</em>
-<br/>
-<br/>
-
 <form #imageForm=ngForm (ngSubmit)="submitImage(files)">
     <label for="file-input">Receipt attachment (photo/pdf)</label>
-    <input class="form-control" id="file-input" #files type="file" (change)="handleFileInput($event.target.files)"
-           multiple/>
-    <button mat-raised-button color="accent" type="submit" [disabled]="!files || !imageForm.valid">
+    <input #files (change)="handleFileInput($event.target.files)" class="form-control" id="file-input" multiple
+           type="file"/>
+    <button [disabled]="!files || !imageForm.valid" color="accent" mat-raised-button type="submit">
         <i class="material-icons">save</i> Upload
     </button>
 </form>
+
+<section fxFlexAlign="stretch" fxLayout="column">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Receipt upload (photo/PDF)</mat-card-title>
+        </mat-card-header>
+
+        <form [formGroup]="uploadReceiptForm" fxLayout="column">
+            <mat-form-field>
+                <input formControlName="email" matInput placeholder="Email" type="email"/>
+                <mat-error *ngIf="E('email')?.required">Email is required.</mat-error>
+                <mat-error *ngIf="E('email')?.email || E('email')?.pattern">
+                    Email incorrect.
+                </mat-error>
+                <mat-error *ngIf="E('email')?.emailExists">This email exists already.</mat-error>
+            </mat-form-field>
+        </form>
+
+        <button mat-raised-button routerLink="/organisation/receipts">
+            <mat-icon>arrow_back</mat-icon>
+            back to receipts
+        </button>
+    </mat-card>
+</section>
