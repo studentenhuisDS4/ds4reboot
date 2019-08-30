@@ -21,6 +21,7 @@ export class ReceiptService {
     uploadReceipt(upload: IAttachments<IReceipt>) {
         const formData: FormData = new FormData();
         Array.from(upload.attachments).forEach((a, b) => {
+            console.log(a, b);
             formData.append('attachment', a, a.name);
         });
         if (upload.json_object) {

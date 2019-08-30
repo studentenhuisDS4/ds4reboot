@@ -3,7 +3,7 @@ import {IAttachments} from '../../../models/attachments.model';
 import {IReceipt} from '../../../models/receipt.model';
 import {ReceiptService} from '../../../services/receipt.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {emailValidator} from '../../../services/validators/async.validator';
+import {FileValidator} from 'ngx-material-file-input';
 
 @Component({
     selector: 'app-upload-receipt',
@@ -11,39 +11,56 @@ import {emailValidator} from '../../../services/validators/async.validator';
     styleUrls: ['./upload-receipt.component.scss']
 })
 export class UploadReceiptComponent implements OnInit {
-    receiptAttachments: File[];
-    receipt: IReceipt;
+    readonly maxAttachmentSize = 50 * 2 ** 20;
 
     uploadReceiptForm = new FormGroup({
-        email: new FormControl(null,
+        receipt_title: new FormControl(null,
             {
-                validators: [Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,4}$')],
+                validators: [Validators.maxLength(100), Validators.required],
             }),
+        receipt_description: new FormControl(null,
+            {
+                validators: [Validators.maxLength(300)],
+            }),
+        receipt_cost: new FormControl(null,
+            {
+                validators: [Validators.required],
+            },
+        ),
+        attachment: new FormControl(null,
+            {
+                validators: [Validators.required, FileValidator.maxContentSize(this.maxAttachmentSize)]
+            })
     });
 
     constructor(private receiptService: ReceiptService) {
+        this.uploadReceiptForm.valueChanges.subscribe((result) => {
+
+        });
     }
 
+    submitReceipt() {
+        if (this.uploadReceiptForm.valid) {
+            const receipt = this.uploadReceiptForm.value;
+            delete receipt.attachment;
+            const attachments = this.V('attachment')._files;
 
-
-    submitImage(files) {
-        const upload: IAttachments<IReceipt> = {
-            attachments: this.receiptAttachments,
-            json_object: this.receipt,
-        };
-        this.receiptService.uploadReceipt(upload).then(
-            data => {
-                files = [];
-            },
-            error => {
-                console.log(error);
-                alert(error);
-            }
-        );
-    }
-
-    handleFileInput(files) {
-        this.receiptAttachments = files;
+            const upload: IAttachments<IReceipt> = {
+                attachments,
+                json_object: receipt,
+            };
+            this.receiptService.uploadReceipt(upload).then(
+                data => {
+                    this.C('attachment').reset();
+                },
+                error => {
+                    console.log(error);
+                    alert(error);
+                }
+            );
+        } else {
+            this.uploadReceiptForm.markAllAsTouched();
+        }
     }
 
     ngOnInit() {

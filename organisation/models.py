@@ -29,6 +29,8 @@ class Receipt(models.Model):
     upload_time = models.DateTimeField(default=timezone.now)
 
     receipt_cost = models.DecimalField(max_digits=5, decimal_places=2, null=False)
+    receipt_title = models.CharField(max_length=100, blank=False, default="Unknown title")
+    receipt_description = models.CharField(max_length=500, blank=True)
 
     accepted = models.BooleanField(default=False)
     accepted_user = models.BooleanField(null=True)

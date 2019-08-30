@@ -29,6 +29,7 @@ class AttachmentsUploadMixin():
 
     def put(self, request):
         batch = []
+        print(request.data)
         marsh = AttachmentsSchema().load(data=request.data)
         if not 'errors' in marsh:
             # Flatten data important to the creation of subclass

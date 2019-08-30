@@ -1,32 +1,58 @@
-<form #imageForm=ngForm (ngSubmit)="submitImage(files)">
-    <label for="file-input">Receipt attachment (photo/pdf)</label>
-    <input #files (change)="handleFileInput($event.target.files)" class="form-control" id="file-input" multiple
-           type="file"/>
-    <button [disabled]="!files || !imageForm.valid" color="accent" mat-raised-button type="submit">
-        <i class="material-icons">save</i> Upload
-    </button>
-</form>
-
 <section fxFlexAlign="stretch" fxLayout="column">
-    <mat-card>
+    <mat-card style="max-width:500px;">
         <mat-card-header>
             <mat-card-title>Receipt upload (photo/PDF)</mat-card-title>
         </mat-card-header>
 
-        <form [formGroup]="uploadReceiptForm" fxLayout="column">
+        <form (ngSubmit)="submitReceipt()" [formGroup]="uploadReceiptForm" fxLayout="column">
             <mat-form-field>
-                <input formControlName="email" matInput placeholder="Email" type="email"/>
-                <mat-error *ngIf="E('email')?.required">Email is required.</mat-error>
-                <mat-error *ngIf="E('email')?.email || E('email')?.pattern">
-                    Email incorrect.
+                <input appAutoFocus formControlName="receipt_title" matInput placeholder="Receipt title*"
+                       type="text"/>
+                <mat-error *ngIf="E('receipt_title')?.required">A title is required.</mat-error>
+                <mat-error *ngIf="E('receipt_title')?.matLength">title should not exceed 300 characters.
                 </mat-error>
-                <mat-error *ngIf="E('email')?.emailExists">This email exists already.</mat-error>
+                <mat-hint *ngIf="!E('receipt_title')?.matLength" align="end">{{100 - V('receipt_title')?.length}}
+                    characters left
+                </mat-hint>
             </mat-form-field>
+            <mat-form-field>
+                <textarea [rows]="3" formControlName="receipt_description" matInput
+                          placeholder="Receipt description"
+                          type="email">
+                </textarea>
+                <mat-error *ngIf="E('receipt_description')?.matLength">Description should not exceed 300 characters.
+                </mat-error>
+                <mat-hint *ngIf="!E('receipt_description')?.matLength" align="end">{{300 - V('receipt_title')?.length}}
+                    characters left
+                </mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+                <input formControlName="receipt_cost" matInput placeholder="Receipt cost*" type="number"/>
+                <mat-icon matPrefix>euro</mat-icon>
+                <mat-error *ngIf="E('receipt_cost')?.required">A cost is required.</mat-error>
+                <mat-hint *ngIf="V('receipt_cost') < 0" align="end">
+                    The receipt represents a negative cost.
+                </mat-hint>
+            </mat-form-field>
+            <mat-form-field>
+                <ngx-mat-file-input formControlName="attachment" multiple="true" placeholder="Receipt attachment(s)"
+                                    accept="image/*,.pdf,.csv,.xlsx,.xls">
+                </ngx-mat-file-input>
+                <mat-error *ngIf="E('attachment')?.required">At least 1 attachment is required.</mat-error>
+                <mat-icon matPrefix>folder</mat-icon>
+            </mat-form-field>
+
+            <mat-divider></mat-divider>
+            
+            <mat-checkbox formControlName="share_cost_custom">Share cost specifically (customize)</mat-checkbox>
         </form>
 
         <button mat-raised-button routerLink="/organisation/receipts">
             <mat-icon>arrow_back</mat-icon>
             back to receipts
+        </button>
+        <button [disabled]="uploadReceiptForm.invalid" color="accent" mat-raised-button type="submit" (click)="submitReceipt()">
+            <i class="material-icons">save</i> Upload
         </button>
     </mat-card>
 </section>
