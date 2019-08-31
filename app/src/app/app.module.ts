@@ -45,6 +45,7 @@ import {TurfComponent} from './turf-list/turf-component/turf.component';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {GlobalErrorHandler} from './services/interceptors/error-handler.interceptor';
 import {MatCheckboxModule} from '@angular/material';
+import {DisableControlDirective} from './directives/disableControl.directive';
 
 @NgModule({
     declarations: [
@@ -71,6 +72,7 @@ import {MatCheckboxModule} from '@angular/material';
         LoginComponent,
         SignupComponent,
         AutoFocusDirective,
+        DisableControlDirective,
         BottomNavComponent,
         TurfLogComponent,
         BoeteComponent,

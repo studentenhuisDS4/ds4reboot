@@ -2,6 +2,7 @@ import traceback
 from json import JSONDecodeError
 
 from PIL import Image
+from django.conf.global_settings import DEBUG
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser
@@ -28,8 +29,8 @@ class AttachmentsUploadMixin():
             raise ValueError("content_type needs to be a Dict with model and app_label key/value pairs.")
 
     def put(self, request):
-        batch = []
-        print(request.data)
+        if DEBUG:
+            print(request.data)
         marsh = AttachmentsSchema().load(data=request.data)
         if not 'errors' in marsh:
             # Flatten data important to the creation of subclass
