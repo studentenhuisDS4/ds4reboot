@@ -21,6 +21,8 @@ import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upl
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UserEditComponent} from './admin/user-edit/user-edit.component';
 import {SignupComponent} from './login/signup/signup.component';
+import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
+import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
 
 const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -80,9 +82,17 @@ const routes: Routes = [
         component: ReceiptsComponent,
         canActivate: [AuthGuard]
     }, {
+        path: 'organisation/receipt/:id',
+        component: ReceiptComponent,
+        canActivate: [AuthGuard]
+    },{
         path: 'organisation/receipts/upload-receipt',
         component: UploadReceiptComponent,
         canActivate: [AuthGuard]
+    }, {
+        path: 'organisation/receipts/edit-receipt/:id',
+        component: EditReceiptComponent,
+        canActivate: [AuthGuard],
     },
 
     {

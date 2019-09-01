@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -42,11 +42,16 @@ import {SignupComponent} from './login/signup/signup.component';
 import {TurfLogComponent} from './turf-list/turf-log/turf-log.component';
 import {BoeteComponent} from './turf-list/boete/boete.component';
 import {TurfComponent} from './turf-list/turf-component/turf.component';
-
+import {MaterialFileInputModule} from 'ngx-material-file-input';
+import {GlobalErrorHandler} from './services/interceptors/error-handler.interceptor';
+import {MatCheckboxModule} from '@angular/material';
+import {DisableControlDirective} from './directives/disableControl.directive';
+import {SpinnerComponent} from './directives/spinner/spinner.component';
+import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
+import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
 
 @NgModule({
     declarations: [
-        AppComponent,
         DinnerListComponent,
         TurfListComponent,
         AdminComponent,
@@ -63,21 +68,29 @@ import {TurfComponent} from './turf-list/turf-component/turf.component';
         ProfileEditComponent,
         NewsComponent,
         HomeComponent,
-        LayoutComponent,
-        HeaderComponent,
-        SidenavListComponent,
         LoginComponent,
         SignupComponent,
-        AutoFocusDirective,
-        BottomNavComponent,
         TurfLogComponent,
         BoeteComponent,
         TurfComponent,
+
+        AppComponent,
+        LayoutComponent,
+        HeaderComponent,
+        BottomNavComponent,
+        SidenavListComponent,
+
+        AutoFocusDirective,
+        DisableControlDirective,
+        SpinnerComponent,
+        ReceiptComponent,
+        EditReceiptComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
+        MaterialFileInputModule,
         // REST HTTP consumer
         HttpClientModule,
         // Design & styling
@@ -92,13 +105,23 @@ import {TurfComponent} from './turf-list/turf-component/turf.component';
             provide: DateAdapter,
             useFactory: adapterFactory
         }),
+        MatCheckboxModule,
     ],
-    providers: [AuthGuardService, AdminGuardService, ThesauGuardService, {
-        provide: HTTP_INTERCEPTORS,
-        useClass: TokenInterceptor,
-        multi: true
-    }],
-    bootstrap: [AppComponent]
+    providers: [
+        AuthGuardService,
+        AdminGuardService,
+        ThesauGuardService, {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        },
+        {
+            provide: ErrorHandler,
+            useClass: GlobalErrorHandler
+        }
+    ],
+    bootstrap: [AppComponent],
+    exports: [SpinnerComponent]
 })
 export class AppModule {
 }

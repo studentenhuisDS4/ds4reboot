@@ -12,7 +12,7 @@ from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST
 
 from eetlijst.models import SplitTransfer, Transfer, UserDinner, Dinner
-from user.models import Housemate
+from user.models import Housemate, get_total_balance
 
 
 # generate eetlijst view for current or defined date
@@ -127,13 +127,6 @@ def index(request, year=None, month=None, day=None):
         for entry in date_entries[date]:
             user_date_entries[(entry.user_id, date_list[date][1])] = entry
 
-    # calculate total balance
-    total_balance = 0
-    for u in user_list:
-        total_balance += u.balance
-
-    total_balance += Housemate.objects.get(display_name='Huis').balance
-
     # get most recent HO items and transfers
     ho_list = SplitTransfer.objects.all().order_by('-id')[:5]
     tr_list = Transfer.objects.all().order_by('-id')[:5]
@@ -153,7 +146,7 @@ def index(request, year=None, month=None, day=None):
         'user_open': user_open,
         'open_days': open_days,
         'date_nav': date_nav,
-        'total_balance': total_balance,
+        'total_balance': get_total_balance(),
         'ho_list': ho_list,
         'tr_list': tr_list,
     }

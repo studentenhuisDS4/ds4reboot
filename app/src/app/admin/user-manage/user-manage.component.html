@@ -46,7 +46,7 @@
                 <strong fxHide.gt-sm>T</strong>
             </th>
             <td *matCellDef="let element" mat-cell>
-                <mat-icon *ngIf="findThesauGroup(element.groups)">euro</mat-icon>
+                <mat-icon *ngIf="userService.findThesauGroup(element.groups)">euro</mat-icon>
             </td>
         </ng-container>
 

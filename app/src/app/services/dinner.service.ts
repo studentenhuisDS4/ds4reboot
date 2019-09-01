@@ -8,7 +8,7 @@ import {IResult} from '../models/api.model';
 @Injectable({
     providedIn: 'root'
 })
-export class DinnerListService {
+export class DinnerService {
     API_URL = environment.baseUrl;
     URL_WEEK = `${this.API_URL}/dinnerweek/`;
     URL_SIGNUP = `${this.API_URL}/userdinner/signup/`;

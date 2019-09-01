@@ -1,13 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {IAttachments} from '../../../models/attachments.model';
-import {IReceipt, IReceiptCost, SHARE} from '../../../models/receipt.model';
+import {IReceipt, IReceiptCost} from '../../../models/receipt.model';
 import {ReceiptService} from '../../../services/receipt.service';
-import {FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {FileValidator} from 'ngx-material-file-input';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../services/user.service';
 import {IUser} from '../../../models/user.model';
 import {ThesauService} from '../../../services/thesau.service';
 import {SnackBarService} from '../../../services/snackBar.service';
+
+export enum SHARE {
+    ALL = 'share_all',
+    CUSTOM = 'specific',
+    HOUSE = 'house'
+}
 
 interface IReceiptCostUser extends IReceiptCost {
     user?: IUser;
@@ -15,10 +20,10 @@ interface IReceiptCostUser extends IReceiptCost {
 
 @Component({
     selector: 'app-upload-receipt',
-    templateUrl: './upload-receipt.component.html',
-    styleUrls: ['./upload-receipt.component.scss']
+    templateUrl: './edit-receipt.component.html',
+    styleUrls: ['./edit-receipt.component.scss']
 })
-export class UploadReceiptComponent implements OnInit {
+export class EditReceiptComponent implements OnInit {
     readonly maxAttachmentSize = 50 * 2 ** 20;
 
     SHARE = SHARE;
@@ -30,7 +35,7 @@ export class UploadReceiptComponent implements OnInit {
     billableUsers: IUser[];
     billedUsers: IReceiptCostUser[] = [];
 
-    uploadReceiptForm = new FormGroup({
+    editReceiptForm = new FormGroup({
         show_old_housemates: new FormControl(false),
         receipt_title: new FormControl('',
             {
@@ -50,10 +55,7 @@ export class UploadReceiptComponent implements OnInit {
             validators: [Validators.required]
         }),
         share_cost_method: new FormControl({value: 'share_all', disabled: true}),
-        attachment: new FormControl(null,
-            {
-                validators: [Validators.required, FileValidator.maxContentSize(this.maxAttachmentSize)]
-            })
+        attachment: new FormControl({disabled: true})
     });
 
     constructor(
@@ -64,61 +66,14 @@ export class UploadReceiptComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.uploadReceiptForm.disable();
+        this.editReceiptForm.disable();
 
         const showOldHousemates = this.C('show_old_housemates');
         this.userService.getProfile().then(response => {
             this.user = response;
             this.isThesau = !!this.userService.findThesauGroup(this.user.groups);
-            this.uploadReceiptForm.enable();
-            this.C('share_cost_method').disable();
-            this.thesauService.getBillableUsers().then(output => {
-                this.billableUsers = output.result;
-            });
-            this.thesauService.getAllUsers(showOldHousemates.value).then(output => {
-                this.allUsers = output;
-                this.uploadReceiptForm.enable();
-                this.loadingUsers = false;
-
-                if (this.isThesau) {
-                    showOldHousemates.valueChanges.subscribe(change => {
-                        this.updateUserDropdown(change);
-                    });
-                    this.C('charged_user').valueChanges.subscribe(result => {
-                        this.addBillableUser(result);
-                    });
-                    this.C('share_cost_method').valueChanges.subscribe(result => {
-                        if (result === SHARE.ALL || result === SHARE.HOUSE) {
-                            this.C('charged_user').disable();
-                        } else {
-                            this.C('charged_user').enable();
-                        }
-                        console.log(this.getFormValidationErrors());
-                    });
-                } else {
-                    this.C('show_old_housemates').disable();
-                    this.C('share_cost_method').disable();
-                    this.C('reimbursed_user').disable();
-                    this.C('charged_user').disable();
-                }
-            }, error => {
-                if ('error' in error) {
-                    this.snackBar.openSnackBar('Error: ' + error.error, 'Ok');
-                } else {
-                    this.snackBar.openSnackBar('An unknown error happened. ' + error, 'Ok');
-                }
-            });
-        });
-    }
-
-    getFormValidationErrors() {
-        Object.keys(this.uploadReceiptForm.controls).forEach(key => {
-            const controlErrors: ValidationErrors = this.uploadReceiptForm.get(key).errors;
-            if (controlErrors != null) {
-                Object.keys(controlErrors).forEach(keyError => {
-                    console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value: ', controlErrors[keyError]);
-                });
-            }
+            this.editReceiptForm.disable();
+            this.loadingUsers = false;
         });
     }
 
@@ -192,7 +147,7 @@ export class UploadReceiptComponent implements OnInit {
     }
 
     processForm() {
-        const formData = this.uploadReceiptForm.value;
+        const formData = this.editReceiptForm.value;
         const costMethod = formData.share_cost_method as SHARE;
         const reimbursedUser = formData.reimbursed_user;
         const removeKeys = ['reimbursed_user', 'share_cost_method', 'show_old_housemates', 'attachment', 'charged_user'];
@@ -240,7 +195,7 @@ export class UploadReceiptComponent implements OnInit {
 
     submitReceipt() {
         this.C('charged_user').disable();
-        if (this.uploadReceiptForm.valid) {
+        if (this.editReceiptForm.valid) {
             const receipt = this.processForm();
             const attachments = this.V('attachment')._files;
             const upload: IAttachments<IReceipt> = {
@@ -249,7 +204,7 @@ export class UploadReceiptComponent implements OnInit {
             };
             this.receiptService.uploadReceipt(upload).then(
                 data => {
-                    this.uploadReceiptForm.reset();
+                    this.editReceiptForm.reset();
                     this.snackBar.openSnackBar('Receipt uploaded successfully!', 'Nice');
                 },
                 error => {
@@ -264,21 +219,21 @@ export class UploadReceiptComponent implements OnInit {
                 }
             );
         } else {
-            this.uploadReceiptForm.markAllAsTouched();
+            this.editReceiptForm.markAllAsTouched();
         }
         this.C('charged_user').enable();
     }
 
     public V(control: string) {
-        return this.uploadReceiptForm.get(control).value;
+        return this.editReceiptForm.get(control).value;
     }
 
     public E(control: string) {
-        return this.uploadReceiptForm.controls[control].errors;
+        return this.editReceiptForm.controls[control].errors;
     }
 
     public C(control: string) {
-        return this.uploadReceiptForm.controls[control];
+        return this.editReceiptForm.controls[control];
     }
 
 }

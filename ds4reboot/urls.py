@@ -15,7 +15,7 @@ from ds4reboot.api.auth import LoginHouse, TokenPairView
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
-from organisation.api.api_views import KeukenDienstViewSet, ReceiptViewSet
+from organisation.api.api_receipts import KeukenDienstViewSet, ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
 
 router = DefaultRouter()

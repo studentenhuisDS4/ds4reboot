@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Manager
 from django.utils import timezone
 
 from base.models import SoftDeletionModel
+from plugins.models import RestAttachment
 
 
 class KeukenDienst(models.Model):
@@ -16,23 +16,21 @@ class KeukenDienst(models.Model):
     is_leader = models.BooleanField(default=False)
 
 
-class ReceiptManager(Manager):
-    def get_attachments(self):
-        object_type = ContentType.objects.get_for_model(self)
-        return self.filter(content_type__pk=object_type.id, object_id=self.pk)
-
-
 class Receipt(models.Model):
-    objects = ReceiptManager()
-
     upload_user = models.ForeignKey(User, on_delete=models.CASCADE)
     upload_time = models.DateTimeField(default=timezone.now)
 
     receipt_cost = models.DecimalField(max_digits=5, decimal_places=2, null=False)
+    receipt_title = models.CharField(max_length=100, blank=False, default="Unknown title")
+    receipt_description = models.CharField(max_length=500, blank=True)
 
-    accepted = models.BooleanField(default=False)
-    accepted_user = models.BooleanField(null=True)
-    accepted_time = models.BooleanField(null=True)
+    accepted = models.NullBooleanField(default=False)
+    accepted_user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name="accepted_user")
+    accepted_time = models.DateTimeField(null=True)
+
+    def get_attachments(self):
+        object_type = ContentType.objects.get_for_model(self)
+        return RestAttachment.objects.filter(content_type__pk=object_type.id, object_id=self.pk)
 
 
 class ReceiptCost(models.Model):

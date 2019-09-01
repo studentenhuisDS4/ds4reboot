@@ -1,7 +1,9 @@
+import os
 import traceback
 from json import JSONDecodeError
 
 from PIL import Image
+from django.conf.global_settings import DEBUG
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser
@@ -28,7 +30,8 @@ class AttachmentsUploadMixin():
             raise ValueError("content_type needs to be a Dict with model and app_label key/value pairs.")
 
     def put(self, request):
-        batch = []
+        if DEBUG:
+            print(request.data)
         marsh = AttachmentsSchema().load(data=request.data)
         if not 'errors' in marsh:
             # Flatten data important to the creation of subclass
@@ -52,7 +55,9 @@ class AttachmentsUploadMixin():
                     img = Image.open(file)
                     img.verify()
                 except Exception as e:
-                    return illegal_action("Unsupported attachment type" + str(e))
+                    _, ext = os.path.splitext(file._name)
+                    if not ext in ['.csv', '.tiff', '.jpg', '.jpeg', '.png', '.bmp', '.xls', '.xlsx', '.pdf', '.svg']:
+                        return illegal_action("Unsupported attachment type" + str(e))
                 attachment = RestAttachment(creator_id=request.user.id,
                                             content_type=ContentType.objects.get(**self.content_type),
                                             object_id=object.id)

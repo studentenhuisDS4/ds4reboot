@@ -91,7 +91,7 @@ export class TurfComponent implements OnInit {
                     prop = 'sum_wwijn';
                 }
                 this.snackBarService.openSnackBar(
-                    `Turved ${amount} ${turfType} on ${turfUser.housemate.display_name}. Total: ${turfUser.housemate[prop]}`,
+                    `Turved ${amount} ${turfType} on ${turfUser.housemate.display_name}. Total: ${output.result[prop]}`,
                     this.easterEggService.easterEggo());
             }
             this.busy = false;

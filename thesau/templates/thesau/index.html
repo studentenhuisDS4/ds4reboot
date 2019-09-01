@@ -29,7 +29,7 @@
                         {% for r in report_list %}
                         <tr>
                             <td>{{ r.report_name }}</td>
-                            <td>{{ r.report_user.housemate }}</td>
+                            <td>{{ r.report_user.housemate.display_name }}</td>
                             <td>{{ r.report_date }}</td>
                             {%  if r.report_file %}
                             <td class="uk-text-center"><a href="{{ r.report_file.url }}"><i class="uk-icon-file"></i> (xlsx)</a></td>

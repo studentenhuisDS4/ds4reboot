@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {IUser} from '../models/user.model';
+import {GROUP, IGroup, IUser} from '../models/user.model';
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
 import {map, tap} from 'rxjs/operators';
@@ -46,6 +46,9 @@ export class UserService {
         return Promise.resolve(null);
     }
 
+    findThesauGroup(groups: IGroup[]) {
+        return groups.find(group => group.id === GROUP.THESAU);
+    }
 
     getHouseProfile(userId: number = this.auth.getTokenClaims().user_id): Promise<IUser> {
         if (userId === 2 && userId) {

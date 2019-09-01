@@ -39,9 +39,12 @@ export const dayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export function weekDates(current) {
     const week = [];
 
-    // Starting Monday not Sunday
-    current.setDate((current.getDate() - current.getDay() + 1));
-    for (let i = 0; i < 7; i++) {
+    if (current.getDay() === 0) {
+        current.setDate((current.getDate() - 6));
+    } else {
+        current.setDate((current.getDate() - current.getDay() + 1));
+    }
+    for (let i = 1; i < 8; i++) {
         week.push(
             new Date(current)
         );

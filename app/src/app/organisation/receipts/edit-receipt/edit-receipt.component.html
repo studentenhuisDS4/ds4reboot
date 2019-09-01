@@ -1,12 +1,14 @@
 <section fxFlexAlign="stretch" fxLayout="column" fxLayoutAlign="center center">
 
-    <mat-card style="max-width:700px;">
+    <mat-card style="max-width:500px;">
         <mat-card-header>
-            <mat-card-title>Upload Receipt</mat-card-title>
+            <mat-card-title>Edit Receipt</mat-card-title>
             <mat-card-subtitle>receipt for {{user ? user.housemate.display_name : '?' }}</mat-card-subtitle>
         </mat-card-header>
 
-        <form (ngSubmit)="submitReceipt()" [formGroup]="uploadReceiptForm" fxLayout="column">
+        <mat-error>Editing is currently not possible. Ask a thesau to delete your receipt and re-upload it.</mat-error>
+
+        <form (ngSubmit)="submitReceipt()" [formGroup]="editReceiptForm" fxLayout="column">
             <mat-form-field>
                 <input appAutoFocus autocomplete="off" formControlName="receipt_title" matInput
                        placeholder="Receipt title/reason" required>
@@ -128,12 +130,12 @@
                 Complete the form to see the resulting costs here.
             </small>
         </div>
-        <button mat-raised-button routerLink="/organisation/receipts" style="margin-top:20px;">
+        <button mat-raised-button routerLink="/organisation/receipts">
             <mat-icon>arrow_back</mat-icon>
             back to receipts
         </button>
         <button (click)="submitReceipt()" color="accent" mat-raised-button
-                [disabled]="uploadReceiptForm.invalid" type="submit">
+                [disabled]="editReceiptForm.invalid" type="submit">
             <i class="material-icons">save</i> Upload
         </button>
     </mat-card>
