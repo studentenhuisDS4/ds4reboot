@@ -1,12 +1,10 @@
 import traceback
 
-from django.contrib.auth.models import User
 from marshmallow import fields, post_load
 from marshmallow.validate import Length
 from rest_marshmallow import Schema
 
 from ds4reboot.api.utils import log_exception
-from ds4reboot.api.validators import ModelAttributeValidator
 from organisation.models import Receipt, ReceiptCost
 from plugins.models import RestAttachment
 from plugins.serializers.attachment import AttachmentsSchema
@@ -18,12 +16,12 @@ class ReceiptCostSchema(Schema):
     receipt_id = fields.Int(dump_only=True)
 
     cost_user = fields.Decimal(required=True, max_digits=5, decimal_places=2)
-    affected_user_id = fields.Int(required=True, load_only=True,
-                                  validate=[ModelAttributeValidator(type=User, filter='id')])
+    affected_user_id = fields.Int(required=True, load_only=True)
     affected_user = fields.Nested(UserSchema, dump_only=True)
 
 
 class ReceiptSchema(Schema):
+    id = fields.Int(dump_only=True)
     upload_time = fields.DateTime(dump_only=True)
     upload_user = fields.Nested(UserSchema, dump_only=True)
 

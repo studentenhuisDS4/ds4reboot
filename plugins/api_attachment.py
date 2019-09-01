@@ -1,3 +1,4 @@
+import os
 import traceback
 from json import JSONDecodeError
 
@@ -54,7 +55,9 @@ class AttachmentsUploadMixin():
                     img = Image.open(file)
                     img.verify()
                 except Exception as e:
-                    return illegal_action("Unsupported attachment type" + str(e))
+                    _, ext = os.path.splitext(file._name)
+                    if not ext in ['.csv', '.tiff', '.jpg', '.jpeg', '.png', '.bmp', '.xls', '.xlsx', '.pdf', '.svg']:
+                        return illegal_action("Unsupported attachment type" + str(e))
                 attachment = RestAttachment(creator_id=request.user.id,
                                             content_type=ContentType.objects.get(**self.content_type),
                                             object_id=object.id)

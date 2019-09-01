@@ -1,7 +1,42 @@
-<p>This will contain</p>
-<ul>
-    <li>Keukendienst stuff</li>
-    <li>Receipt overview</li>
-    <li>Google calendar integration</li>
-    <li>Wiki link/integration</li>
-</ul>
+
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            Organisation - future
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <p>This will contain</p>
+        <ul>
+            <li>Keukendienst stuff</li>
+            <li>Receipt overview (done)</li>
+            <li>Google calendar integration</li>
+            <li>Wiki link/integration</li>
+        </ul>
+    </mat-card-content>
+    <mat-card-actions>
+    </mat-card-actions>
+</mat-card>
+
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            Organisation - receipts
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-flat-button routerLink="/organisation/receipts/">
+            <mat-icon>view_list</mat-icon>
+            show receipts
+        </button>
+        <button mat-flat-button routerLink="/organisation/receipts/upload-receipt">
+            <mat-icon>publish</mat-icon>
+            upload receipt
+        </button>
+    </mat-card-actions>
+</mat-card>

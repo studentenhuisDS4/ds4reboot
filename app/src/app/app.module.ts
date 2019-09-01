@@ -46,6 +46,9 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {GlobalErrorHandler} from './services/interceptors/error-handler.interceptor';
 import {MatCheckboxModule} from '@angular/material';
 import {DisableControlDirective} from './directives/disableControl.directive';
+import {SpinnerComponent} from './directives/spinner/spinner.component';
+import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
+import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
 
 @NgModule({
     declarations: [
@@ -79,6 +82,9 @@ import {DisableControlDirective} from './directives/disableControl.directive';
 
         AutoFocusDirective,
         DisableControlDirective,
+        SpinnerComponent,
+        ReceiptComponent,
+        EditReceiptComponent
     ],
     imports: [
         BrowserModule,
@@ -112,8 +118,10 @@ import {DisableControlDirective} from './directives/disableControl.directive';
         {
             provide: ErrorHandler,
             useClass: GlobalErrorHandler
-        },],
-    bootstrap: [AppComponent]
+        }
+    ],
+    bootstrap: [AppComponent],
+    exports: [SpinnerComponent]
 })
 export class AppModule {
 }

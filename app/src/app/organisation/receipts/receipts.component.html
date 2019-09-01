@@ -1,14 +1,111 @@
 <section fxFlexAlign="stretch" fxLayout="column">
-    <mat-card style="max-width:500px;">
+    <mat-card>
         <mat-card-header>
-            <mat-card-title>Receipt upload (photo/PDF)</mat-card-title>
+            <mat-card-title>
+                View your receipts
+            </mat-card-title>
         </mat-card-header>
-
-        <p>table here in future</p>
-
-        <button mat-raised-button routerLink="/organisation/receipts/upload-receipt">
-            upload receipt
-            <mat-icon>arrow_forward</mat-icon>
-        </button>
+        <mat-form-field fxFlex="100%">
+            <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Filter (name, email, etc.)">
+        </mat-form-field>
+        <mat-card-actions>
+            <button mat-flat-button routerLink="/organisation/">
+                <mat-icon>arrow_back</mat-icon>
+                back to organisation
+            </button>
+            <button mat-flat-button routerLink="/organisation/receipts/upload-receipt/">
+                <mat-icon>publish</mat-icon>
+                new receipt
+            </button>
+        </mat-card-actions>
     </mat-card>
+    <br/>
+    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort>
+        <ng-container matColumnDef="receipt_cost" sticky>
+            <th *matHeaderCellDef mat-header-cell> Cost</th>
+            <td *matCellDef="let element" mat-cell>
+                &euro; {{ element?.receipt_cost }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="receipt_title">
+            <th *matHeaderCellDef fxHide.lt-md mat-header-cell> Title</th>
+            <td *matCellDef="let element" fxHide.lt-md mat-cell> {{element?.receipt_title}} </td>
+        </ng-container>
+        <ng-container matColumnDef="receipt_description">
+            <th *matHeaderCellDef mat-header-cell>Description</th>
+            <td *matCellDef="let element" mat-cell>{{element.description}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="upload_user">
+            <th *matHeaderCellDef mat-header-cell>Uploaded by</th>
+            <td *matCellDef="let element" mat-cell>
+                {{element?.upload_user.housemate.display_name}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="upload_time">
+            <th *matHeaderCellDef mat-header-cell> Time</th>
+            <td *matCellDef="let element" mat-cell> {{element.upload_time | date : 'M/d/yy, h:mm a'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accepted">
+            <th *matHeaderCellDef mat-header-cell> Accepted</th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-icon *ngIf="element?.accepted">check</mat-icon>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accepted_user">
+            <th *matHeaderCellDef mat-header-cell> Accepted by</th>
+            <td *matCellDef="let element" mat-cell>
+                {{element?.accepted_user?.housemate.display_name }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="accepted_time">
+            <th *matHeaderCellDef mat-header-cell> Time</th>
+            <td *matCellDef="let element" mat-cell> {{element.accepted_time | date : 'M/d/yy, h:mm a'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions" stickyEnd>
+            <th *matHeaderCellDef mat-header-cell> Actions</th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-menu #appMenu="matMenu">
+                    <button [routerLink]="['/organisation/receipt/', element.id]" mat-menu-item
+                            matTooltip="Click to View">
+                        <mat-icon aria-label="edit receipt">view_compact</mat-icon>
+                        View
+                    </button>
+                    <button [routerLink]="['/organisation/receipts/edit-receipt/', element.id]" mat-menu-item
+                            matTooltip="Click to Edit">
+                        <mat-icon aria-label="edit receipt">edit</mat-icon>
+                        Edit
+                    </button>
+                    <button (click)="acceptReceipt(element)" *ngIf="isThesau"
+                            [disabled]="element.accepted" color="warn" mat-menu-item matTooltip="Click to Delete">
+                        <mat-icon aria-label="Delete">check</mat-icon>
+                        Accept
+                    </button>
+                    <button (click)="unacceptReceipt(element)" *ngIf="isThesau"
+                            [disabled]="!element.accepted" color="warn" mat-menu-item matTooltip="Click to Delete">
+                        <mat-icon aria-label="Delete">close</mat-icon>
+                        Unaccept
+                    </button>
+                    <button (click)="deleteReceipt(element)" [disabled]="element.approved"
+                            color="warn" mat-menu-item matTooltip="Click to Delete">
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                        Delete
+                    </button>
+                </mat-menu>
+                <button [matMenuTriggerFor]="appMenu" mat-icon-button matTooltip="Click to Edit">
+                    <mat-icon aria-label="Edit">more_vert</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </section>

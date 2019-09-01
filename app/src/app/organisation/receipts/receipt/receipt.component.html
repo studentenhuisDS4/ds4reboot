@@ -1,0 +1,50 @@
+<section fxFlexAlign="stretch" fxLayout="column" fxLayoutAlign="center center">
+
+    <mat-card style="max-width:500px;">
+        <mat-card-header>
+            <mat-card-title>Upload Receipt</mat-card-title>
+            <mat-card-subtitle>receipt for {{user ? user.housemate.display_name : '?' }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-error>Editing is currently not possible.</mat-error>
+
+        <form [formGroup]="receiptForm" fxLayout="column">
+            <mat-form-field>
+                <input appAutoFocus autocomplete="off" formControlName="receipt_title" matInput
+                       placeholder="Receipt title/reason" required>
+            </mat-form-field>
+
+            <mat-form-field>
+                <textarea formControlName="receipt_description" matInput placeholder="Receipt description">
+                </textarea>
+            </mat-form-field>
+
+            <mat-form-field floatLabel="never">
+                <ngx-mat-file-input accept="image/*,.pdf,.csv,.xlsx,.xls" formControlName="attachment" multiple="true"
+                                    placeholder="Receipt attachment(s)" required>
+                </ngx-mat-file-input>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input formControlName="receipt_cost" matInput placeholder="Receipt cost" required type="number">
+                <mat-icon matSuffix>euro</mat-icon>
+            </mat-form-field>
+
+            <div class="form-subform" fxLayout="column" *ngIf="isThesau">
+                <app-spinner *ngIf="loading" [backdrop]="false" [inCard]="true"></app-spinner>
+
+                <strong class="margin-pre">Cost distribution (thesau section)</strong>
+
+                <mat-list dense fxLayout="column" style="padding-top:0; margin-top:-4px;">
+                    <mat-list-item *ngFor="let receipt_cost of V('receipt_cost_split'); let i =index" style="margin: -2px;">
+                        {{receipt_cost.user.housemate.display_name}}
+                    </mat-list-item>
+                </mat-list>
+            </div>
+        </form>
+        <button mat-raised-button routerLink="/organisation/receipts">
+            <mat-icon>arrow_back</mat-icon>
+            back to receipts
+        </button>
+    </mat-card>
+</section>

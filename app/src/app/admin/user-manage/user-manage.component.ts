@@ -36,10 +36,6 @@ export class UserManageComponent implements OnInit {
         });
     }
 
-    findThesauGroup(groups: IGroup[]) {
-        return groups.find(group => group.id === GROUP.THESAU);
-    }
-
     applyFilter(filterValue: string) {
         this.dataSource.filter = filterValue.trim().toLowerCase();
 

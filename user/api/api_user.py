@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.datetime_safe import datetime
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
@@ -8,6 +9,7 @@ from ds4admin.utils import check_dinners_housemate
 from ds4reboot.api.utils import illegal_action, IsSuperUser, EmptySchema, log_exception, \
     success_action
 from eetlijst.api.serializers.transfer_cost import SplitTransferSchema
+from thesau.models import Report
 from user.api.actions import moveout_user
 from user.api.serializers.user import UserSchema, UserFullSchema, GroupSchema
 from user.models import get_active_users
@@ -34,6 +36,21 @@ class UserFullViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsSuperUser, ]
     filter_fields = '__all__'
+
+    @action(detail=False, methods=['GET'])
+    def hr_active(self, request):
+
+        if len(Report.objects.all()) > 0:
+            latest_hr = Report.objects.latest('id')
+        else:
+            latest_hr = datetime.now()
+
+        user_incl_pending_moveout = []
+        for user in self.queryset:
+            if not user.housemate.moveout_set or user.housemate.moveout_date >= latest_hr.report_date:
+                user_incl_pending_moveout.append(user)
+
+        return success_action(UserFullSchema(user_incl_pending_moveout, many=True).data, )
 
 
 class UserActionViewSet(viewsets.GenericViewSet):
@@ -117,7 +134,7 @@ class UserActionViewSet(viewsets.GenericViewSet):
         hm.save()
         user.refresh_from_db()
 
-        return success_action(UserFullSchema(user).data,)
+        return success_action(UserFullSchema(user).data, )
 
     @action(detail=True, methods=['POST'])
     def toggle_admin(self, request, pk=None):
@@ -138,4 +155,4 @@ class UserActionViewSet(viewsets.GenericViewSet):
         hm.save()
         user.refresh_from_db()
 
-        return success_action(UserFullSchema(user).data,)
+        return success_action(UserFullSchema(user).data, )
