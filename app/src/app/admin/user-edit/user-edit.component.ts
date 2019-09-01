@@ -46,6 +46,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
             this.userService.getFullProfile(this.editedUserId).then(result => {
                 this.editedUser = result;
                 this.editUserForm.patchValue(result);
+                this.editUserForm.markAllAsTouched();
             });
             this.userService.getProfile().then(result => {
                 this.isAdmin = result.is_staff;
@@ -55,7 +56,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
         this.editUserForm = new FormGroup({
             email: new FormControl(null,
                 {
-                    validators: [Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,4}$')],
+                    validators: [Validators.required, Validators.pattern('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,4}$')],
                     asyncValidators: [emailValidator(this.userService, this.editedUserId)]
                 }),
             password: new FormControl(null,
@@ -83,9 +84,16 @@ export class UserEditComponent implements OnInit, OnDestroy {
                 this.snackBarService.openSnackBar('User edit succesful.', 'Ok.');
             }, error => {
                 if (error) {
-                    console.error(error);
+                    if ('error' in error) {
+                        if (Object.keys(error.error).length === 1) {
+                            this.snackBarService.openSnackBar(
+                                'Error from server: ' + error.error[Object.keys(error.error)[0]], 'Ok.');
+                        } else {
+                            this.snackBarService.openSnackBar(
+                                'Multiple errors from server. Please correct them.', 'Ok.');
+                        }
+                    }
                 }
-                this.snackBarService.openSnackBar('Error occurred.', 'Ok.');
             });
         } else {
             this.snackBarService.openSnackBar('Correct the highlighted fields.', 'Ok.');

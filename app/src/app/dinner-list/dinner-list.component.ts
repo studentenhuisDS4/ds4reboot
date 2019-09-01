@@ -1,5 +1,5 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {DinnerListService} from '../services/dinner-list.service';
+import {DinnerService} from '../services/dinner.service';
 import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
@@ -36,7 +36,7 @@ export class DinnerListComponent implements OnInit {
     dinnerCostCtrl = new FormControl();
 
     constructor(
-        private dinnerListService: DinnerListService,
+        private dinnerListService: DinnerService,
         private userService: UserService,
         private snackBar: SnackBarService,
         private easterEgg: EasterEggService

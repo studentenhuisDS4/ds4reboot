@@ -27,7 +27,7 @@ export class UploadReceiptComponent implements OnInit {
                 validators: [Validators.required],
             },
         ),
-        share_cost_method: new FormControl({value: 1}),
+        share_cost_method: new FormControl({value: 1, disabled: true}),
         attachment: new FormControl(null,
             {
                 validators: [Validators.required, FileValidator.maxContentSize(this.maxAttachmentSize)]
@@ -35,9 +35,6 @@ export class UploadReceiptComponent implements OnInit {
     });
 
     constructor(private receiptService: ReceiptService) {
-        this.uploadReceiptForm.valueChanges.subscribe((result) => {
-
-        });
     }
 
     submitReceipt() {

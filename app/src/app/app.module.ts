@@ -49,7 +49,6 @@ import {DisableControlDirective} from './directives/disableControl.directive';
 
 @NgModule({
     declarations: [
-        AppComponent,
         DinnerListComponent,
         TurfListComponent,
         AdminComponent,
@@ -66,17 +65,20 @@ import {DisableControlDirective} from './directives/disableControl.directive';
         ProfileEditComponent,
         NewsComponent,
         HomeComponent,
-        LayoutComponent,
-        HeaderComponent,
-        SidenavListComponent,
         LoginComponent,
         SignupComponent,
-        AutoFocusDirective,
-        DisableControlDirective,
-        BottomNavComponent,
         TurfLogComponent,
         BoeteComponent,
         TurfComponent,
+
+        AppComponent,
+        LayoutComponent,
+        HeaderComponent,
+        BottomNavComponent,
+        SidenavListComponent,
+
+        AutoFocusDirective,
+        DisableControlDirective,
     ],
     imports: [
         BrowserModule,

@@ -1,13 +1,12 @@
-<section fxFlexAlign="stretch" fxLayout="column">
-    <mat-card style="max-width:500px;">
+<section fxFlexAlign="stretch" fxLayout="column" fxLayoutAlign="center center">
+    <mat-card style="max-width:400px;">
         <mat-card-header>
             <mat-card-title>Receipt upload (photo/PDF)</mat-card-title>
         </mat-card-header>
 
         <form (ngSubmit)="submitReceipt()" [formGroup]="uploadReceiptForm" fxLayout="column">
             <mat-form-field>
-                <input appAutoFocus formControlName="receipt_title" matInput placeholder="Receipt title*"
-                       type="text"/>
+                <input appAutoFocus formControlName="receipt_title" matInput placeholder="Receipt title" autocomplete="off" required>
                 <mat-error *ngIf="E('receipt_title')?.required">A title is required.</mat-error>
                 <mat-error *ngIf="E('receipt_title')?.matLength">title should not exceed 300 characters.
                 </mat-error>
@@ -16,9 +15,7 @@
                 </mat-hint>
             </mat-form-field>
             <mat-form-field>
-                <textarea [rows]="3" formControlName="receipt_description" matInput
-                          placeholder="Receipt description"
-                          type="email">
+                <textarea formControlName="receipt_description" matInput placeholder="Receipt description">
                 </textarea>
                 <mat-error *ngIf="E('receipt_description')?.matLength">Description should not exceed 300 characters.
                 </mat-error>
@@ -26,31 +23,33 @@
                     characters left
                 </mat-hint>
             </mat-form-field>
-            <mat-form-field class="form-element-margin-pre">
+            <mat-form-field floatLabel="never">
                 <ngx-mat-file-input accept="image/*,.pdf,.csv,.xlsx,.xls" formControlName="attachment" multiple="true"
-                                    placeholder="Receipt attachment(s)">
+                                    placeholder="Receipt attachment(s)" required>
                 </ngx-mat-file-input>
                 <mat-error *ngIf="E('attachment')?.required">At least 1 attachment is required.</mat-error>
-                <mat-icon matPrefix>folder</mat-icon>
-                <mat-hint align="end">At least 1 attachment required to prove your cost.</mat-hint>
+                <mat-icon matSuffix>folder</mat-icon>
+                <mat-hint *ngIf="E('attachment')" align="end">At least 1 attachment required to prove your cost.</mat-hint>
             </mat-form-field>
 
-            <mat-divider [inset]="true"></mat-divider>
-
-            <mat-form-field class="margin-post">
-                <input formControlName="receipt_cost" matInput placeholder="Receipt cost*" type="number"/>
-                <mat-icon matPrefix>euro</mat-icon>
+            <mat-form-field>
+                <input formControlName="receipt_cost" matInput placeholder="Receipt cost" type="number" required>
+                <mat-icon matSuffix>euro</mat-icon>
                 <mat-error *ngIf="E('receipt_cost')?.required">A cost is required.</mat-error>
                 <mat-hint *ngIf="V('receipt_cost') < 0" align="end">
                     The receipt represents a negative cost.
                 </mat-hint>
             </mat-form-field>
 
-            <mat-radio-group formControlName='share_cost_method' class="margin-pre" aria-label="Select an cost sharing option">
-                <mat-radio-button checked value="1">Share across all</mat-radio-button>
-                <mat-radio-button value="2">Specific</mat-radio-button>
-                <mat-radio-button value="3">House (savings only)</mat-radio-button>
-            </mat-radio-group>
+            <div fxLayout="column" fxLayoutGap="10px">
+                <mat-radio-group aria-label="Select an cost sharing option" class="margin-pre"
+                                 formControlName='share_cost_method'>
+                    <mat-radio-button checked value="1">Share across all</mat-radio-button>
+                    <mat-radio-button value="2">Specific</mat-radio-button>
+                    <mat-radio-button value="3">House</mat-radio-button>
+                </mat-radio-group>
+                <small>This option is determined by the Thesau, based on your description.</small>
+            </div>
 
         </form>
 
