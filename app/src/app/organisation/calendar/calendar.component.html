@@ -1,0 +1,10 @@
+<mat-list>
+    <mat-list-item *ngFor="let event of calendarEvents">
+        {{event.creator.email}} &#9;
+        {{event.summary}} &#9;
+        {{event.start.dateTime | date }}
+        {{event.end.dateTime | date }}
+        {{event.status }}
+        {{event.kind }}
+    </mat-list-item>
+</mat-list>

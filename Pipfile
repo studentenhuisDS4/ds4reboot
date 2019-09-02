@@ -12,7 +12,6 @@ gunicorn = "==19.9.0"
 openpyxl = "==2.3.5"
 virtualenv = "==16.0.0"
 wiki = "==0.5.dev20181021091629"
-
 django = "==2.1.11"
 djangorestframework = "~=3.10.2"
 djangorestframework_simplejwt = "~=4.3.0"
@@ -20,6 +19,9 @@ django-cors-headers = "~=3.1.0"
 django-rest-marshmallow = "~=4.0.1"
 marshmallow = "==3.0.0"
 django-url-filter = "==0.3.13"
+google-api-python-client = "*"
+google-auth-httplib2 = "*"
+google-auth-oauthlib = "*"
 
 [requires]
 python_version = "3.7"

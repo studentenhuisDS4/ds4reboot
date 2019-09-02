@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         // Show loader while waiting for authService?
         if (this.authService.isAuthenticated()) {
-            this.router.navigate(['/my-events']);
+            this.router.navigate(['/home']);
         }
 
         this.loginForm = new FormGroup({
