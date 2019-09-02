@@ -1,25 +1,3 @@
-
-
-<mat-card>
-    <mat-card-header>
-        <mat-card-title>
-            Organisation - future
-        </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <p>This will contain</p>
-        <ul>
-            <li>Keukendienst stuff</li>
-            <li>Receipt overview (done)</li>
-            <li>Google calendar integration</li>
-            <li>Wiki link/integration</li>
-        </ul>
-    </mat-card-content>
-    <mat-card-actions>
-    </mat-card-actions>
-</mat-card>
-
-
 <mat-card>
     <mat-card-header>
         <mat-card-title>
@@ -41,14 +19,14 @@
     </mat-card-actions>
 </mat-card>
 
-<mat-card>
+<mat-card style="margin-top:10px;">
     <mat-card-header>
         <mat-card-title>
             Organisation - calendar
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <app-calendar></app-calendar>
+        <app-calendar [miniView]="true"></app-calendar>
     </mat-card-content>
     <mat-card-actions>
         <button mat-flat-button routerLink="/organisation/calendar/">

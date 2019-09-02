@@ -19,7 +19,7 @@ def test_mail(request):
     if DEBUG:
         return HttpResponse('Didnt send: DEBUG==True')
 
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.is_staff:
         hm = Housemate.objects.get(display_name__exact='Dale')
         last_hr_date = datetime.now()
         est_hr_perc = 50

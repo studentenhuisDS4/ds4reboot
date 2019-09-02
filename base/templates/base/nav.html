@@ -30,8 +30,8 @@
                     <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-lf">
                         <ul class="uk-nav uk-nav-navbar">
                             {% if request.user.username != 'huis' %}
-                                <li class=" uk-hidden-small"><a href="/user/huis">Veranderen naar 'Huis'</a></li>
-                                <li class="uk-nav-divider  uk-hidden-small"></li>
+                                <li><a href="/user/huis">Veranderen naar 'Huis'</a></li>
+                                <li class="uk-nav-divider"></li>
                             {% endif %}
                             <li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>
                             {#                        <li><a href="/password_change/"><i class="uk-icon-lock"></i> Wijzig wachtwoord</a></li>#}

@@ -214,7 +214,7 @@ def login_huis(request):
     if user:
         if user.is_active:
             login(request, user)
-            return redirect(request.META.get('HTTP_REFERER'))
+            return redirect('/bierlijst')
 
         else:
             messages.error(request, 'Huis account is disabled.')

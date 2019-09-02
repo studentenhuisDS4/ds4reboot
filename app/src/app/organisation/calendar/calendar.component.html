@@ -1,10 +1,22 @@
-<mat-list>
-    <mat-list-item *ngFor="let event of calendarEvents">
-        {{event.creator.email}} &#9;
-        {{event.summary}} &#9;
-        {{event.start.dateTime | date }}
-        {{event.end.dateTime | date }}
-        {{event.status }}
-        {{event.kind }}
-    </mat-list-item>
-</mat-list>
+<mat-card style="margin-top:10px;">
+    <mat-card-header>
+        <mat-card-title>
+            Calendar events
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-list>
+            <mat-list-item *ngFor="let event of calendarEvents" fxLayout="column">
+                <p style="width: 30%">{{event.creator.email}} - {{event.summary}} </p>
+                <small>Starts: {{event.start.dateTime | date : 'M/d/yy, h:mm a' }} &nbsp;</small>
+                <small>Ends: {{event.end.dateTime | date : 'M/d/yy, h:mm a' }}</small> <br/>
+            </mat-list-item>
+        </mat-list>
+    </mat-card-content>
+    <mat-card-actions *ngIf="!miniView">
+        <button mat-flat-button routerLink="/organisation/">
+            <mat-icon>arrow_back</mat-icon>
+            back to organisation
+        </button>
+    </mat-card-actions>
+</mat-card>
