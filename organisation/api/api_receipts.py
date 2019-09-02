@@ -10,11 +10,6 @@ from organisation.models import KeukenDienst, Receipt
 from plugins.api_attachment import AttachmentsUploadMixin
 
 
-class KeukenDienstViewSet(ModelViewSet):
-    queryset = KeukenDienst.objects.filter(done=False)
-    serializer_class = KeukenDienstSchema
-
-
 class ReceiptViewSet(ListModelMixin, AttachmentsUploadMixin, GenericViewSet):
     RESPONSE_ROOT_NAME = 'receipt'  # upload mixin will pick this up
 

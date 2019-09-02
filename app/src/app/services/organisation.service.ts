@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {UserService} from './user.service';
-import {IReceipt} from '../models/receipt.model';
+import {ICalendarEvent} from '../models/calendar.model';
+import {IResult} from '../models/api.model';
+import {map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -16,6 +17,12 @@ export class OrganisationService {
     ) {
     }
 
+    getEvents(): Promise<ICalendarEvent[]> {
+        return this.httpClient.get<IResult<ICalendarEvent[]>>(`${this.API_URL}/calendar/`)
+            .pipe(
+                map(response => response.result)
+            ).toPromise();
+    }
 
 
 }

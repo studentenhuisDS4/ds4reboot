@@ -15,7 +15,9 @@ from ds4reboot.api.auth import LoginHouse, TokenPairView
 from ds4reboot.secret_settings import DEBUG
 from eetlijst.api.api_dinner import DinnerViewSet, DinnerWeekViewSet, UserDinnerViewSet
 from eetlijst.api.api_transfer_cost import TransferCostViewSet, SplitCostViewSet
-from organisation.api.api_receipts import KeukenDienstViewSet, ReceiptViewSet
+from organisation.api.api_calendar import CalendarViewSet
+from organisation.api.api_keukendienst import KeukenDienstViewSet
+from organisation.api.api_receipts import ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
 
 router = DefaultRouter()
@@ -31,6 +33,7 @@ router.register(r'user', UserViewSet, basename='User')
 router.register(r'user-full', UserFullViewSet, basename='User full')
 router.register(r'user-action', UserActionViewSet, basename='User action')
 router.register(r'keukendienst', KeukenDienstViewSet, basename='Keukendienst')
+router.register(r'calendar', CalendarViewSet, basename='Calendar')
 router.register(r'receipt', ReceiptViewSet, basename='Receipts')
 
 urlpatterns = \
