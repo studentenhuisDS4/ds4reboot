@@ -24,7 +24,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LayoutComponent} from './layout/layout.component';
 import {HeaderComponent} from './navigation/header/header.component';
-import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.component';
+import {SidenavComponent} from './navigation/sidenav-list/sidenav.component';
 import {LoginComponent} from './login/login.component';
 import {AutoFocusDirective} from './directives/auto-focus.directive';
 import {AuthGuardService} from './services/guards/auth-guard.service';
@@ -34,7 +34,7 @@ import {BottomNavComponent} from './navigation/bottom-nav/bottom-nav.component';
 import {CalendarModule, DateAdapter} from 'angular-calendar';
 import {adapterFactory} from 'angular-calendar/date-adapters/date-fns';
 import {ThesauComponent} from './thesau/thesau.component';
-import {ThesauGuardService} from './services/guards/thesau-guard.service';
+import {ThesauGuard} from './services/guards/thesau-guard.service';
 import {ManageReceiptsComponent} from './thesau/manage-receipts/manage-receipts.component';
 import {ReceiptsComponent} from './organisation/receipts/receipts.component';
 import {UploadReceiptComponent} from './organisation/receipts/upload-receipt/upload-receipt.component';
@@ -49,6 +49,7 @@ import {DisableControlDirective} from './directives/disableControl.directive';
 import {SpinnerComponent} from './directives/spinner/spinner.component';
 import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
 import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
+import { CalendarComponent } from './organisation/calendar/calendar.component';
 
 @NgModule({
     declarations: [
@@ -78,13 +79,14 @@ import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-re
         LayoutComponent,
         HeaderComponent,
         BottomNavComponent,
-        SidenavListComponent,
+        SidenavComponent,
 
         AutoFocusDirective,
         DisableControlDirective,
         SpinnerComponent,
         ReceiptComponent,
-        EditReceiptComponent
+        EditReceiptComponent,
+        CalendarComponent
     ],
     imports: [
         BrowserModule,
@@ -110,7 +112,7 @@ import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-re
     providers: [
         AuthGuardService,
         AdminGuardService,
-        ThesauGuardService, {
+        ThesauGuard, {
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
             multi: true

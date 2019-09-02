@@ -11,7 +11,7 @@ import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
 import {AuthGuardService as AuthGuard} from './services/guards/auth-guard.service';
 import {AdminGuardService as AdminGuard} from './services/guards/admin-guard.service';
-import {ThesauGuardService} from './services/guards/thesau-guard.service';
+import {ThesauGuard} from './services/guards/thesau-guard.service';
 import {ProfileEditComponent} from './profile/profile-edit/profile-edit.component';
 import {UserManageComponent} from './admin/user-manage/user-manage.component';
 import {UserCreateComponent} from './admin/user-create/user-create.component';
@@ -23,6 +23,7 @@ import {UserEditComponent} from './admin/user-edit/user-edit.component';
 import {SignupComponent} from './login/signup/signup.component';
 import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
 import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
+import {CalendarComponent} from './organisation/calendar/calendar.component';
 
 const routes: Routes = [
     {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -93,16 +94,20 @@ const routes: Routes = [
         path: 'organisation/receipts/edit-receipt/:id',
         component: EditReceiptComponent,
         canActivate: [AuthGuard],
+    }, {
+        path: 'organisation/calendar',
+        component: CalendarComponent,
+        canActivate: [AuthGuard],
     },
 
     {
         path: 'thesau',
         component: ThesauComponent,
-        canActivate: [AuthGuard, ThesauGuardService]
+        canActivate: [AuthGuard, ThesauGuard]
     }, {
         path: 'manage-receipts',
         component: ManageReceiptsComponent,
-        canActivate: [AuthGuard, ThesauGuardService]
+        canActivate: [AuthGuard, ThesauGuard]
     },
 
     {

@@ -4,7 +4,7 @@ import {UserService} from '../user.service';
 import {SnackBarService} from '../snackBar.service';
 
 @Injectable()
-export class ThesauGuardService implements CanActivate {
+export class ThesauGuard implements CanActivate {
     constructor(
         public userService: UserService,
         public router: Router,

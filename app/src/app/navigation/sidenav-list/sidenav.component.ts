@@ -5,10 +5,10 @@ import {MatSidenav} from '@angular/material';
 
 @Component({
     selector: 'app-sidenav-list',
-    templateUrl: './sidenav-list.component.html',
-    styleUrls: ['./sidenav-list.component.scss']
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.scss']
 })
-export class SidenavListComponent implements OnInit {
+export class SidenavComponent implements OnInit {
     @Output() sidenavClose = new EventEmitter();
     isAdmin = false;
     isThesau = false;
