@@ -1,10 +1,10 @@
 body {
     /* Uncomment in case of LF and replace with your juicy stuff*/
     /*background: url('../img/lf-bg.jpg'), url('../img/background_blue.svg'), url('../img/background.svg');*/
-    background: url('../img/background_blue.svg'), url('../img/background.svg');
-    background-position: no-repeat top left fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    /*background: url('../img/background_blue.svg'), url('../img/background.svg');*/
+    /*background-position: no-repeat top left fixed;*/
+    /*-webkit-background-size: cover;*/
+    /*-moz-background-size: cover;*/
+    /*-o-background-size: cover;*/
+    /*background-size: cover;*/
 }
