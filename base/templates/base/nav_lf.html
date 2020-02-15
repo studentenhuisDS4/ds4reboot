@@ -1,0 +1,100 @@
+{# lf-nav in case of LF #}
+<nav class="uk-navbar uk-margin-top lf-nav" style="margin-bottom:1.5em">
+
+    <a class="uk-navbar-brand uk-visible-large uk-active-brand" href="/"><img src="/static/img/logo-icon.png"/></a>
+
+    <ul class="uk-navbar-nav uk-hidden-small uk-block-primary">
+        {# uk-active-lf in case of LF #}
+        <li {% if request.get_full_path == '/' %}class="uk-active-lf"{% endif %}><a href="/"><i
+                class="uk-icon-home"></i> Home</a></li>
+        {% if user.is_authenticated %}
+            <li {% if '/bierlijst/' in request.get_full_path %}class="uk-active-lf"{% endif %}>
+                <a href="/bierlijst/">
+                    Bierlijst
+                </a>
+            </li>
+            <li {% if '/eetlijst/' in request.get_full_path %}class="uk-active-lf"{% endif %}>
+                <a href="/eetlijst/">
+                    Eetlijst
+                </a>
+            </li>
+            <li {% if '/ds4admin/summary' in request.get_full_path %}class="uk-active-lf"{% endif %}><a
+                    href="/ds4admin/summary">
+                Huisinfo</a>
+            </li>
+            <li {% if '/wiki/' in request.get_full_path %}{% endif %}>
+                <a href="/wiki/">
+                    Wiki
+                </a>
+            </li>
+        {% endif %}
+        <li {% if '/contact/' in request.get_full_path %}class="uk-active-lf"{% endif %}>
+            <a href="/contact/">
+                Contact & Route
+            </a>
+        </li>
+    </ul>
+
+    <div class="uk-navbar-flip">
+        <ul class="uk-navbar-nav">
+
+            {% if user.is_authenticated %}
+                <li class="uk-parent" data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
+                    <a href=""><strong>{{ request.user.username }}</strong> <i class="uk-icon-angle-down"></i></a>
+                    <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-lf">
+                        <ul class="uk-nav uk-nav-navbar">
+                            {% if request.user.username != 'huis' %}
+                                <li><a href="/user/huis">Veranderen naar 'Huis'</a></li>
+                                <li class="uk-nav-divider"></li>
+                            {% endif %}
+                            <li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>
+                            {#                        <li><a href="/password_change/"><i class="uk-icon-lock"></i> Wijzig wachtwoord</a></li>#}
+                            {% if request.user|is_admin %}
+                                <li><a href="/ds4admin"><i class="uk-icon-diamond"></i> Admin</a></li>{% endif %}
+                            {% if request.user|is_thesau %}
+                                <li><a href="/thesau"><i class="uk-icon-university"></i> Thesau</a></li>{% endif %}
+                            <li><a href="/user/logout"><i class="uk-icon-sign-out"></i> Uitloggen</a></li>
+                        </ul>
+                    </div>
+                </li>
+            {% else %}
+                <li class="uk-parent" data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
+                    <a href="/user/login/">Inloggen <i class="uk-icon-angle-down"></i></a>
+                    <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-lf">
+                        <form class="uk-form uk-margin-remove uk-display-inline-block" method="post"
+                              action="/user/login/">
+                            {% csrf_token %}
+                            <div class="uk-form-row"><input type="text" name="username" placeholder="Username"
+                                                            class="uk-width-1-1"></div>
+                            <div class="uk-form-row"><input type="password" name="password" placeholder="Password"
+                                                            class="uk-width-1-1"></div>
+                            <div class="uk-form-row">
+                                <button type="submit" class="uk-button uk-button-primary uk-width-1-1">Log in</button>
+                            </div>
+                            <div class="uk-form-row uk-text-center"><a href="/password_reset/">Wachtwoord vergeten?</a>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
+    <div class="uk-navbar-brand uk-padding-remove uk-visible-small">
+        <ul class="uk-breadcrumb uk-margin-remove" style="float:left; line-height: 40px;">
+            <li><a href="/">DS4</a></li>
+            {% if breadcrumbs %}
+                {% for b in breadcrumbs %}
+                    {% if  forloop.counter0 == 0 and not forloop.revcounter0 == 0 %}
+                        <li><a href="/{{ b }}/">{{ b }}</a></li>
+                    {% else %}
+                        {% if not b == '' %}
+                            <li class="uk-active"><span>{{ b }}</span></li>{% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+
+</nav>

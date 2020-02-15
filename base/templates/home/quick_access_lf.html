@@ -1,0 +1,74 @@
+<div class="uk-panel uk-panel-box">
+    <div class="turf-form">
+        <form class="uk-form uk-margin-remove">
+            {% csrf_token %}
+            <input class="count-{{ request.user.id }}" type="hidden" name="count" value="1">
+            <div class="uk-form-row">
+                <button data-user="{{ request.user.id }}" data-type="bier" class="btn-turf uk-button uk-button-large uk-width-1-1 uk-button-primary uk-hidden-small"><i class="uk-icon-plus-circle"></i> Turf bier</button>
+                <div class="uk-button-group uk-width-1-1 uk-visible-small">
+                    <button data-user="{{ request.user.id }}" data-type="bier" class="btn-turf uk-button uk-button-large uk-width-3-5 uk-button-primary"><i class="uk-icon-plus-circle"></i> Turf bier</button>
+                    <a class="uk-button uk-button-large uk-width-2-5 uk-button-primary" href="bierlijst/"><i class="uk-icon-link"></i> Bierlijst</a>
+                </div>
+            </div>
+        </form>
+
+        <div class="uk-form-row uk-margin-top user-{{ request.user.id }}">
+            <div class="uk-button-group uk-width-1-1 sum-bier">
+                <button class="uk-button uk-width-1-2" disabled>Bier: <span>{{ user_info.sum_bier }}</span>{% if request.user.id in medals %} <i class="uk-icon-circle medal-quick{% if request.user.id == medals.0 %} gold-icon{% endif %}{% if request.user.id == medals.1 %} silver-icon{% endif %}{% if request.user.id == medals.2 %} bronze-icon{% endif %}"></i>{% endif %}</button>
+                <button class="uk-button uk-width-1-2" disabled>Wijn: {{ user_info.sum_wijn }}</button>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <div class="uk-form uk-margin-remove">
+        {% csrf_token %}
+        <div class="uk-form-row">
+            {% if not eetlijst_info.3 %}
+            <button class="uk-button uk-button-large uk-width-1-1 uk-hidden-small" disabled>Lijst gesloten!</button>
+            {% elif eetlijst_info.2 == 0 %}
+            <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
+                     class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-success uk-hidden-small">
+                <i class="signup-icon uk-icon-plus-circle"></i>
+                <span class="home-quick-signup"> Mee eten</span>
+            </button>
+            {% else %}
+            <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-1-1 uk-button-danger uk-hidden-small">
+                <i class="signup-icon uk-icon-minus-circle"></i>
+                <span class="home-quick-signup"> Uitschrijven</span>
+            </button>
+            {% endif %}
+            <div class="uk-button-group uk-width-1-1 uk-visible-small">
+                {% if not eetlijst_info.3 %}
+                <button class="signup-icon uk-button uk-button-large uk-width-3-5" disabled>Lijst gesloten!</button>
+                <a class="signup-icon uk-button uk-button-large uk-width-2-5" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                {% elif eetlijst_info.2 == 0 %}
+                <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="signup"
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-success">
+                    <i class="signup-icon uk-icon-plus-circle"></i>
+                    <span class="home-quick-signup"> Mee eten</span>
+                </button>
+                <a class="but_colored uk-button uk-button-large uk-width-2-5 uk-button-success" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                {% else %}
+                <button data-user="{{ request.user.id }}" data-date="{{ focus_date }}" data-type="sponge"
+                    class="but_colored btn-signup-home uk-button uk-button-large uk-width-3-5 uk-button-danger">
+                    <i class="signup-icon uk-icon-minus-circle"></i>
+                    <span class="home-quick-signup"> Uitschrijven</span>
+                </button>
+                <a class="but_colored uk-button uk-button-large uk-width-2-5 uk-button-danger" href="eetlijst/"><i class="uk-icon-link"></i> Eetlijst</a>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="uk-form-row uk-margin-top">
+        {% csrf_token %}
+        <div class="uk-button-group  uk-width-1-1">
+            <button class="uk-button uk-width-1-2" disabled><img src="/static/img/chefs_hat.png" alt="Cook:" style="margin-top: -2px;" /> {{ eetlijst_info.0 }}</button>
+            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-users"></i> <span class="eating-number">{{ eetlijst_info.1 }}</span></button>
+            <button class="uk-button uk-width-1-4" disabled><i class="uk-icon-eur"></i> <span class="{% if user_info.balance >= 0 %}uk-text-success{% else %}uk-text-danger{% endif %}">{% if user_info.balance >= 0 %}+{% endif %}{{ user_info.balance }}</span></button>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,16 @@
+@font-face {
+    font-family: lfFont;
+    src: url(../fonts/BAHNSCHRIFT.TTF);
+}
+
 body {
     background-color: #404040;
     color: #818181;
+    border-color: #5a5a5a;
+}
+
+* {
+    font-family: 'lfFont', sans-serif;
 }
 
 .lf-nav {
@@ -8,25 +18,24 @@ body {
     border-width: 3px;
 }
 
-.uk-active-brand {
-    background: #44a8e6;
-    border: 1px solid #00a8e6;
-    border-radius: 15px;
-}
-
 .uk-active-lf {
     background: #333333;
 }
 
+.uk-block-primary {
+    background-color: #818181 !important;
+}
+
 .uk-navbar-nav li a {
     color: white;
-    text-shadow: 0 1px #44a8e6;
+    text-shadow: 0 1px #787878;
+    font-family: lfFont, sans-serif;
 }
 
 .uk-navbar-nav li a:hover {
     background: #444444;
     color: white;
-    text-shadow: 0 1px #44a8e6;
+    /*text-shadow: 0 1px #44a8e6;*/
 }
 
 .uk-navbar-toggle {
@@ -40,42 +49,33 @@ body {
 
 .uk-dropdown-lf {
     background-color: #44a8e6;
-
 }
 
-/*@media (max-width: 772px) {*/
-/*    .panel-rotated-inv {*/
-/*        margin-top: 0;*/
-/*        background-color: rgba(255, 255, 255, 0.9);*/
-/*        margin-left: 1em;*/
-/*        margin-right: 1em;*/
-/*    }*/
-/*}*/
+/* Home panels */
+.uk-panel {
+    /*color: #9f9f9f;*/
+    color: #d1d1d1;
+    /*https://html-css-js.com/css/generator/text-shadow/*/
+    text-shadow: 0px 0px 10px rgba(100, 100, 100, 0.7);
+    background-color: #7d7d7d;
+    border-color: #5a5a5a;
+    border-radius: 0;
+    /*https://html-css-js.com/css/generator/box-shadow/*/
+    -webkit-box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.33);
+    box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.33);
+}
 
-/*@media only screen and (min-width: 772px) {*/
-/*    .panel-rotated {*/
-/*        !* perspective function in transform property *!*/
-/*        transform: perspective(1000px) rotateY(-30deg);*/
-/*    }*/
+.uk-panel-title {
+    color: #d1d1d1 !important;
+}
 
-/*    .panel-rotated-inv {*/
-/*        !* perspective function in transform property *!*/
-/*        transform: perspective(1000px) rotateY(30deg);*/
-/*        margin-top: 6em;*/
-/*        margin-bottom: 2em;*/
-/*        position: relative;*/
-/*    }*/
-/*}*/
+.uk-button-group .uk-button {
+    background-color: #8f8f8f;
+    color: #d1d1d1;
+    text-shadow: 0px 0px 10px rgba(100, 100, 100, 0.15);
+}
 
 
-/*.flip-clock-label {*/
-/*    font-size: 30px;*/
-/*    color: #00a8e6 !important;*/
-/*    text-shadow: 0 1px #44a8e6 !important;*/
-/*}*/
-
-/*@-moz-document url-prefix() {*/
-/*  h1, p{*/
-/*    color:pink;*/
-/*  }*/
-/*}*/
+hr {
+    border-color: rgba(0, 0, 0, 0);
+}

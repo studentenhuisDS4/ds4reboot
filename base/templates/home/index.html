@@ -21,7 +21,7 @@
             {% if user.is_authenticated and request.user.username != 'huis' %}
                 <div class="uk-grid">
                     <div class="uk-width-1-3">
-                        {% include 'home/quick_access.html' %}
+                        {% include 'home/quick_access_lf.html' %}
                     </div>
 
                     {% include 'home/notifications.html' %}
