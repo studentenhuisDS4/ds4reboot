@@ -17,7 +17,7 @@ djangorestframework = "==3.11.0"
 djangorestframework_simplejwt = "==4.4.0"
 django-cors-headers = "==3.2.1"
 django-rest-marshmallow = "~=4.0.1"
-marshmallow = "==3.4.0"
+marshmallow = "==3.0.0"
 django-url-filter = "==0.3.15"
 google-api-python-client = "*"
 

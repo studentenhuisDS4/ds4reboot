@@ -13,7 +13,7 @@ export class GlobalErrorHandler implements ErrorHandler {
 
     handleError(error) {
         console.log('Caught error!', error);
-        this.snackBar.openSnackBar('Error! ' + error, 'Ouch');
+        this.snackBar.openSnackBar('Error! ' + error.substring(0, 20), 'Ouch');
         if (environment.debug) {
             throw error;
         }
