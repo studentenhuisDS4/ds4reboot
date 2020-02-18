@@ -4,7 +4,9 @@
 }
 
 body {
-    background-color: #404040;
+    /*background-color: #404040;*/
+    background: rgb(48, 48, 48);
+    background: radial-gradient(circle at top, rgba(48, 48, 48, 1) 0%, rgba(37, 37, 37, 1) 100%);
     color: #818181;
     border-color: #5a5a5a;
 }
@@ -61,18 +63,43 @@ body {
     border-color: #5a5a5a;
     border-radius: 0;
     /*https://html-css-js.com/css/generator/box-shadow/*/
-    -webkit-box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.33);
-    box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.33);
+    -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.56);
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.56);
 }
 
 .uk-panel-title {
     color: #d1d1d1 !important;
 }
 
+.uk-button {
+    font-size: 16pt;
+    font-stretch: extra-condensed !important;
+    border-radius: 3px;
+    color: #3c3c3c;
+}
+
+.uk-button:hover {
+    background-color:#5a5a5a;
+}
+.uk-button:focus {
+    background-color: #ae060d;
+}
+.uk-button-group {
+    font-size: 12pt;
+}
+
+.uk-button-small {
+    font-size: 10pt;
+}
+
 .uk-button-group .uk-button {
     background-color: #8f8f8f;
     color: #d1d1d1;
     text-shadow: 0px 0px 10px rgba(100, 100, 100, 0.15);
+}
+
+.uk-button-primary, .uk-button-success, .uk-button-danger {
+    background-color: #DE0611;
 }
 
 

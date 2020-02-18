@@ -5,8 +5,8 @@
 
     <ul class="uk-navbar-nav uk-hidden-small uk-block-primary">
         {# uk-active-lf in case of LF #}
-        <li {% if request.get_full_path == '/' %}class="uk-active-lf"{% endif %}><a href="/"><i
-                class="uk-icon-home"></i> Home</a></li>
+        <li {% if request.get_full_path == '/' %}class="uk-active-lf"{% endif %}><a href="/">
+            Home</a></li>
         {% if user.is_authenticated %}
             <li {% if '/bierlijst/' in request.get_full_path %}class="uk-active-lf"{% endif %}>
                 <a href="/bierlijst/">
