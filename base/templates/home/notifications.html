@@ -18,8 +18,10 @@
         <div class="uk-panel-badge uk-badge uk-badge-warning">Upcoming</div>
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
-            <li>Febr 15th - <strong>Christmas dinner</strong></li>
-            <li>June 13th - <strong>Lentefeest</strong></li>
+            {% for r in google_cal_events.result %}
+                <li>{{ r.start.dateTime }} - <strong>{{ r.summary }}</strong>
+                </li>
+            {% endfor %}
         </ul>
     </div>
 
@@ -50,8 +52,10 @@
         <div class="uk-panel-badge uk-badge uk-badge-warning">Upcoming</div>
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
-            <li>Febr 15th - <strong>Christmas dinner</strong></li>
-            <li>June 13th - <strong>Lentefeest</strong></li>
+            {% for r in google_cal_events.result %}
+                <li>{{ r.start.dateTime }} - <strong>{{ r.summary }}</strong>
+                </li>
+            {% endfor %}
         </ul>
     </div>
 </div>

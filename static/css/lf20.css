@@ -79,11 +79,13 @@ body {
 }
 
 .uk-button:hover {
-    background-color:#5a5a5a;
+    background-color: #5a5a5a;
 }
+
 .uk-button:focus {
     background-color: #ae060d;
 }
+
 .uk-button-group {
     font-size: 12pt;
 }
@@ -101,7 +103,6 @@ body {
 .uk-button-primary, .uk-button-success, .uk-button-danger {
     background-color: #DE0611;
 }
-
 
 hr {
     border-color: rgba(0, 0, 0, 0);

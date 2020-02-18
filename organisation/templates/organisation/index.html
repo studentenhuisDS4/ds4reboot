@@ -1,10 +1,7 @@
 {% extends 'base/base.html' %}
-
-
+{% load humanize %}
 
 {% block body_block %}
-
-
     <table>
         {% for r in keukendiensts %}
             <tr>
@@ -14,5 +11,16 @@
             </tr>
         {% endfor %}
     </table>
+
+    <table>
+        {% for r in google_cal_events.result %}
+            <tr>
+                <td>{{ r.summary }}</td>
+                <td>{{ r.description }}</td>
+                <td>{{ r.start.dateTime }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
 
 {% endblock %}
