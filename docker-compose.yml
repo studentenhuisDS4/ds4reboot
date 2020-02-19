@@ -1,0 +1,53 @@
+
+version: '2'
+services:
+    web:
+        build: .
+        container_name: django
+        command: python3 manage.py runserver 0.0.0.0:8000
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/app
+        environment:
+            SECRET_KEY:     SECRETA_OF_MY_APP
+            SECRET_DB:      ds4db
+            SECRET_DB_USER: dzwart
+            SECRET_DB_PASS: dzwart
+            SQL_HOST:       db
+            SQL_PORT:       5432
+        restart: unless-stopped
+        depends_on:
+            - db
+    db:
+        image: postgres:11.2-alpine
+        container_name: db
+        restart: always
+        ports:
+            - "5432:5432"
+        volumes:
+            - /var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: ds4db
+            POSTGRES_USER: dzwart
+            POSTGRES_PASSWORD: dzwart
+        restart: unless-stopped
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.org
+            PGADMIN_DEFAULT_PASSWORD: admin
+        volumes:
+            - pgadmin:/root/.pgadmin
+        ports:
+            - "5050:80"
+        restart: unless-stopped
+
+networks:
+    postgres:
+        driver: bridge
+
+volumes:
+    postgres:
+    pgadmin:

@@ -1,0 +1,1 @@
+docker exec -it django bash /app/init-db.sh
