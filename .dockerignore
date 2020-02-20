@@ -1,0 +1,10 @@
+docs/**/*
+docs
+venv
+venv/**/*
+.git
+.git/**/*
+.circleci
+.circleci/**/*
+.idea
+.idea/**/*
