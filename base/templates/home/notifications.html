@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load parse_iso from date_parse %}
 <script>
     var clipboard = new ClipboardJS('[data-clipboard-text]', function (trigger) {
         return trigger;
@@ -19,7 +20,7 @@
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
             {% for r in google_cal_events.result %}
-                <li>{{ r.start.dateTime }} - <strong>{{ r.summary }}</strong>
+                <li>{{ r.start.dateTime |parse_iso}} - <strong>{{ r.summary }}</strong>
                 </li>
             {% endfor %}
         </ul>
@@ -53,7 +54,7 @@
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
             {% for r in google_cal_events.result %}
-                <li>{{ r.start.dateTime }} - <strong>{{ r.summary }}</strong>
+                <li>{{ r.start.dateTime |parse_iso}} - <strong>{{ r.summary }}</strong>
                 </li>
             {% endfor %}
         </ul>
