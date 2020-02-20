@@ -18,10 +18,12 @@ class Command(BaseCommand):
         from django.core.management import call_command
         call_command('migrate')
 
-        default_user = User.objects.get(username='default')
+        default_user = User.objects.filter(username='default').first()
         if not default_user:
             print('Creating \'default\' superuser ')
-            call_command('createsuperuser', '--noinput', '--username','default', '--password','default', '--username','admin@ds4.nl')
+            # call_command('createsuperuser', '--noinput', 'default', 'admin@ds4.nl', 'default')
+            default_user = User.objects.create_superuser('default',
+                           'admin1@example.com', 'default')
         else:
             print('Already exists: \'default\' superuser ')
         if default_user and not hasattr(User.objects.get(username='default'), 'housemate'):
