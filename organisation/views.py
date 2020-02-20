@@ -7,9 +7,6 @@ from organisation.models import KeukenDienst
 from user.models import Housemate
 
 
-# from user.models import Housemate
-
-
 def index(request):
     active_users = User.objects.filter(is_active=True).exclude(username='admin')
     active_housemates = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')

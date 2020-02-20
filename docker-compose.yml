@@ -16,6 +16,7 @@ services:
             SECRET_DB_PASS: dzwart
             SQL_HOST:       db
             SQL_PORT:       5432
+            TZ:             Europe/Amsterdam
         restart: unless-stopped
         depends_on:
             - db
@@ -43,10 +44,6 @@ services:
         ports:
             - "5050:80"
         restart: unless-stopped
-
-networks:
-    postgres:
-        driver: bridge
 
 volumes:
     postgres:

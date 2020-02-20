@@ -7,4 +7,4 @@ static/hr_reports/
 media/
 venv/
 
-ds4reboot/api/cal_credentials.json
+**/cal_credentials.json

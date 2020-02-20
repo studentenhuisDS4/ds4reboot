@@ -1,5 +1,6 @@
 FROM python:3.7.3
 ENV PYTHONUNBUFFERED 1
+
 WORKDIR /app
 
 # Libraries & db driver
