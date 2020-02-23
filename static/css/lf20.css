@@ -83,7 +83,7 @@ body {
 }
 
 .uk-button {
-    font-size: 16pt;
+
     font-stretch: extra-condensed !important;
     border-radius: 3px;
     color: #3c3c3c;
@@ -97,12 +97,22 @@ body {
     background-color: #ae060d;
 }
 
-.uk-button-group {
-    font-size: 12pt;
+@media (min-width: 500px) {
+    .uk-button {
+        font-size: 16pt;
+    }
+    .uk-button-group {
+        font-size: 12pt;
+    }
+
+    .uk-button-small {
+        font-size: 10pt;
+    }
 }
 
-.uk-button-small {
-    font-size: 10pt;
+.uk-text-success {
+    color: black !important;
+    text-shadow: 1px 1px green;
 }
 
 .uk-button-group .uk-button {

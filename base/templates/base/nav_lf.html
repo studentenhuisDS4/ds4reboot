@@ -100,7 +100,28 @@
 {#    </div>#}
 {#</nav>#}
 
-<div class="nav-strip">
+{# lf-nav in case of LF#}
+<nav class="uk-navbar uk-margin-top lf-nav" style="margin-bottom:1.5em">
+    <a class="uk-navbar-brand uk-visible-large uk-active-brand" href="/"><img src="/static/img/logo-icon.png"/></a>
+    <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
+    <div class="uk-navbar-brand uk-padding-remove uk-visible-small">
+        <ul class="uk-breadcrumb uk-margin-remove" style="float:left; line-height: 40px;">
+            <li><a href="/">DS4</a></li>
+            {% if breadcrumbs %}
+                {% for b in breadcrumbs %}
+                    {% if  forloop.counter0 == 0 and not forloop.revcounter0 == 0 %}
+                        <li><a href="/{{ b }}/">{{ b }}</a></li>
+                    {% else %}
+                        {% if not b == '' %}
+                            <li class="uk-active"><span>{{ b }}</span></li>{% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div class="nav-strip uk-visible-large">
     <div class="repeated-strip">
         <a href="/bierlijst/" class="strip-nav-text">
             Bierlijst
