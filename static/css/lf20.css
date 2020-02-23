@@ -1,14 +1,15 @@
 @font-face {
     font-family: lfFont;
     src: url(../fonts/BAHNSCHRIFT.TTF);
+    color: #000000;
 }
 
 body {
     /*background-color: #404040;*/
     background: rgb(48, 48, 48);
     background: radial-gradient(circle at top, rgba(48, 48, 48, 1) 0%, rgba(37, 37, 37, 1) 100%);
-    color: #818181;
-    border-color: #5a5a5a;
+    color: #000000;
+    /*border-color: #5a5a5a;*/
 }
 
 * {
@@ -67,6 +68,16 @@ body {
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.56);
 }
 
+.uk-table, .uk-tab {
+    /*background-color: #7d7d7d;*/
+    color: #000000;
+}
+
+.uk-panel-teaser {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
 .uk-panel-title {
     color: #d1d1d1 !important;
 }
@@ -97,7 +108,7 @@ body {
 .uk-button-group .uk-button {
     background-color: #8f8f8f;
     color: #d1d1d1;
-    text-shadow: 0px 0px 10px rgba(100, 100, 100, 0.15);
+    text-shadow: 0 0 10px rgba(100, 100, 100, 0.15);
 }
 
 .uk-button-primary, .uk-button-success, .uk-button-danger {
@@ -106,4 +117,93 @@ body {
 
 hr {
     border-color: rgba(0, 0, 0, 0);
+}
+
+.nav-strip {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin: 50px 0 50px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.repeated-strip {
+    background: url("/static/img/lf/film_strip.svg") right repeat-x;
+    background-size: 110px 60px;
+    /*https://codepen.io/sosuke/pen/Pjoqqp*/
+    /*https://css-tricks.com/change-color-of-svg-on-hover/*/
+    filter: invert(57%) sepia(0%) saturate(1054%) hue-rotate(203deg) brightness(93%) contrast(95%);
+    height: 60px;
+    width: 43%;
+    margin: 15px 10% 15px -2%;
+}
+
+.repeated-strip-left-oriented {
+    background: url("/static/img/lf/film_strip.svg") left repeat-x;
+    background-size: 110px 60px;
+    margin: 15px -2% 15px 10%;
+}
+
+@keyframes cyclecolor {
+    from, to {
+        filter: drop-shadow(0.5rem 0.5rem 0.5rem firebrick)
+    }
+    25%, 75% {
+        filter: drop-shadow(-0.5rem 0.5rem 2rem firebrick);
+    }
+    50% {
+        filter: drop-shadow(0 0 7rem firebrick);
+    }
+}
+
+.center-logo {
+    opacity: 0.85;
+    width: 14%;
+    margin-left: -8%;
+    margin-right: -8%;
+    background: url("/static/img/lf/DS4_logo.png") no-repeat center;
+    background-size: 120px;
+    padding-top: 10px;
+    overflow: visible;
+    transition: opacity 1s ease-in-out;
+}
+
+.center-logo:hover {
+    animation: cyclecolor 5s ease-in-out infinite;
+    opacity: 1.0;
+}
+
+.strip-nav-text {
+    margin: 5px 5px 5px 5px;
+    padding: 15px 5px 15px 5px;
+    width: 90px;
+    text-align: center;
+    font-size: 15pt;
+    transition: filter 0.25s ease-in-out;
+}
+
+a, a:hover {
+    color: #d1d1d1 !important;
+    text-decoration: none;
+}
+
+a:active {
+    color: #e1e1e1 !important;
+}
+
+.strip-nav-text:hover {
+    background-color: rgba(3, 3, 3, 0.08);
+    filter: drop-shadow(0 0.2rem 1.5rem crimson);
+}
+
+.repeated-strip > .strip-nav-text {
+    float: right;
+}
+
+.repeated-strip-left-oriented > .strip-nav-text {
+    float: left;
 }
