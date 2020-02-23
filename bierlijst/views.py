@@ -403,10 +403,15 @@ def list_medals(request):
                 if u.sum_bier > 0:
                     medals += [u.user_id]
                 else:
-                    medals += [0]
-
-            return JsonResponse(
-                {'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}})
+                    medals += [0] 
+            
+            try:
+                return JsonResponse(
+                    {'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}})
+            except Exception as e:
+                print('Error with medals (line 409): ', e)
+                return JsonResponse(
+                    {'status': 'failure'})
 
         else:
             return JsonResponse({'result': 'Error: User not authenticated. Please log in again.', 'status': 'failure'})

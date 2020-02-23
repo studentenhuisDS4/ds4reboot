@@ -44,9 +44,11 @@ class CalendarViewSet(GenericViewSet):
             return log_exception('Calendar API wasnt setup correctly.')
         service = build('calendar', 'v3', credentials=self.creds)
         now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        events_result = service.events().list(calendarId='ds4calendar@gmail.com', timeMin=now,
-                                              maxResults=10, singleEvents=True,
-                                              orderBy='startTime').execute()
+        events_result = service \
+            .events() \
+            .list(calendarId='ds4calendar@gmail.com',  
+                timeMin=now, maxResults=10, singleEvents=True, orderBy='startTime') \
+            .execute()
         events = events_result.get('items', [])
 
         if not events:

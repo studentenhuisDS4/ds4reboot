@@ -6,7 +6,6 @@ def is_admin(user):
 
     if user.is_superuser:
         return True
-
     else:
         return False
 
@@ -16,6 +15,5 @@ def is_thesau(user):
 
     if user.groups.filter(name='thesau').exists():
         return True
-
     else:
         return False

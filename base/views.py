@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from eetlijst.models import Dinner, UserDinner
+from organisation.views import get_cal_events
 from user.models import Housemate
 
 
@@ -48,6 +49,11 @@ def home_page(request):
             eetlijst_info = ['Geen', 0, 0, True]
 
         today = timezone.now()
+        events = []
+        try:
+            events = get_cal_events(request)
+        except Exception as e:
+            print('!!! Cal Events failed, skipped. Exception: ', e)
 
         # build context object
         context = {
@@ -56,6 +62,7 @@ def home_page(request):
             'eetlijst_info': eetlijst_info,
             'focus_date': str(today.year) + '-' + str(today.month) + '-' + str(today.day),
             'medals': medals,
+            'google_cal_events': events
         }
 
         return render(request, 'home/index.html', context)
