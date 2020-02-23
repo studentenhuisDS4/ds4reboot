@@ -20,12 +20,16 @@
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
             {% for r in google_cal_events.result %}
-                <li>{{ r.start.dateTime |parse_iso}} - <strong>{{ r.summary }}</strong>
+                <li>{{ r.start.dateTime |parse_iso }} - <strong>{{ r.summary }}</strong>
                 </li>
             {% endfor %}
         </ul>
     </div>
 
+</div>
+
+<div class="uk-width-1-3 uk-visible-large">
+    {% include 'home/quick_access_lf.html' %}
 </div>
 
 <div class="uk-width-1-3 uk-visible-large">
@@ -45,6 +49,7 @@
 </div>
 
 
+{# Small devices #}
 <div class="uk-width-1-1 uk-hidden-large">
     <div class="uk-panel uk-panel-box uk-panel-box-primary">
         <div class="uk-panel-teaser" style="max-height:200px">
@@ -54,7 +59,7 @@
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
             {% for r in google_cal_events.result %}
-                <li>{{ r.start.dateTime |parse_iso}} - <strong>{{ r.summary }}</strong>
+                <li>{{ r.start.dateTime |parse_iso }} - <strong>{{ r.summary }}</strong>
                 </li>
             {% endfor %}
         </ul>
