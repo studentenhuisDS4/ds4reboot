@@ -83,6 +83,27 @@ class Housemate(SoftDeletionModel):
         return self.display_name
 
 
+class HousemateGroup(models.Model):
+    name = models.CharField(max_length=500)
+    description = models.CharField(max_length=1000)
+    date_started = models.DateField(null=True, blank=True)
+    date_ended = models.DateField(null=True, blank=True)
+
+    # Custom many-to-many of groups
+    groups = models.ManyToManyField(Housemate, through='HousemateGroupLink')
+
+    def __str__(self):
+        return self.name
+
+
+class HousemateGroupLink(models.Model):
+    housemate = models.ForeignKey(Housemate, on_delete=models.CASCADE)
+    group = models.ForeignKey(HousemateGroup, on_delete=models.CASCADE)
+    date_joined = models.DateField(auto_now=True)
+    date_left = models.DateField(null=True, blank=True)
+    role_description = models.CharField(max_length=64)
+
+
 def share_cost(housemates, cost, hm_payback):
     if len(housemates) < 2:
         raise ValueError("Not enough people to split")

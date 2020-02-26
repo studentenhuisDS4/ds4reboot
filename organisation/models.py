@@ -7,6 +7,7 @@ from base.models import SoftDeletionModel
 from plugins.models import RestAttachment
 
 
+### This hasnt been implemented in the app or website, nor has it been tested
 class KeukenDienst(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     deadline = models.DateField(null=True)
@@ -16,6 +17,7 @@ class KeukenDienst(models.Model):
     is_leader = models.BooleanField(default=False)
 
 
+### This has been slightly tested to work with the app (not the site)
 class Receipt(models.Model):
     upload_user = models.ForeignKey(User, on_delete=models.CASCADE)
     upload_time = models.DateTimeField(default=timezone.now)
@@ -33,6 +35,7 @@ class Receipt(models.Model):
         return RestAttachment.objects.filter(content_type__pk=object_type.id, object_id=self.pk)
 
 
+### This has been slightly tested to work with the app (not the site)
 class ReceiptCost(models.Model):
     receipt = models.ForeignKey(Receipt, on_delete=models.CASCADE, null=False)
     affected_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
