@@ -1,5 +1,10 @@
 {% load static from staticfiles %}
 {% load parse_iso from date_parse %}
+{% block add_to_header %}
+<link rel="stylesheet" href="{% static '/css/lf/slideshow.css' %}"/>
+<script src="{% static '/js/lf/slideshow.js' %}"></script>
+{% endblock %}
+
 <script>
     var clipboard = new ClipboardJS('[data-clipboard-text]', function (trigger) {
         return trigger;
@@ -10,6 +15,40 @@
         e.clearSelection();
     });
 </script>
+
+<div class="uk-width-1-3 uk-visible-large">
+    <div class="uk-panel uk-panel-box uk-panel-box-primary" style="background-color: rgba(0,0,0,0);">
+        <div class="uk-panel-teaser slideshow-container" data-slides="3">
+            <div class="mySlides fade">
+                <div class="numbertext">1 / 3</div>
+                <img src="{% static '/img/lf/1.jpg'%}" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <div class="numbertext">2 / 3</div>
+                <img src="{% static '/img/lf/2.jpg'%}" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <div class="numbertext">3 / 3</div>
+                <img src="{% static '/img/resource/2.JPG' %}" alt="Wiki added">
+
+                <!-- <a href="\wiki">
+                    <h3 class="uk-panel-title" style="text-align: center; margin-top:10px">
+                        <i class="uk-icon-newspaper-o"></i> Wiki - DS4 Knowledge Base
+                    </h3>
+                </a> -->
+        
+                <a href="\wiki" class="uk-button uk-button-success uk-button-small uk-width-1-1">Wiki
+                </a>
+            </div>
+        </div>
+        <br>
+        <div style="text-align:center">
+            <span class="dot"></span> 
+            <span class="dot"></span> 
+            <span class="dot"></span>
+        </div>
+    </div>
+</div>
 
 <div class="uk-width-1-3 uk-visible-large">
     <div class="uk-panel uk-panel-box uk-panel-box-primary">
@@ -31,23 +70,6 @@
 <div class="uk-width-1-3 uk-visible-large">
     {% include 'home/quick_access_lf.html' %}
 </div>
-
-<div class="uk-width-1-3 uk-visible-large">
-
-    <div class="uk-panel uk-panel-box uk-panel-box-primary">
-        <div class="uk-panel-teaser" style="max-height:200px">
-            <img src="{% static '/img/resource/2.JPG' %}" alt="Wiki added">
-        </div>
-        <div class="uk-panel-badge uk-badge uk-badge-success">Hot</div>
-        <a href="\wiki"><h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> Wiki - DS4 Knowledge Base</h3>
-        </a>
-        We always need more content...<br/>
-
-        <a href="\wiki" class="uk-button uk-button-success uk-button-small uk-width-1-1">Wiki
-        </a>
-    </div>
-</div>
-
 
 {# Small devices #}
 <div class="uk-width-1-1 uk-hidden-large">

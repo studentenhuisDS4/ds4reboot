@@ -1,7 +1,12 @@
 @font-face {
     font-family: lfFont;
-    src: url(../fonts/BAHNSCHRIFT.TTF);
+    src: url(../../fonts/BAHNSCHRIFT.TTF);
     color: #000000;
+}
+
+html {
+    color: #000000 !important;
+    height: 100%;
 }
 
 body {
@@ -60,9 +65,10 @@ body {
     color: #d1d1d1;
     /*https://html-css-js.com/css/generator/text-shadow/*/
     text-shadow: 0px 0px 10px rgba(100, 100, 100, 0.7);
-    background-color: #7d7d7d;
+    background-color: rgba(0,0,0,0);
     border-color: #5a5a5a;
     border-radius: 0;
+    border-width: 0;
     /*https://html-css-js.com/css/generator/box-shadow/*/
     -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.56);
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.56);
@@ -148,7 +154,7 @@ hr {
     /*https://css-tricks.com/change-color-of-svg-on-hover/*/
     filter: invert(57%) sepia(0%) saturate(1054%) hue-rotate(203deg) brightness(93%) contrast(95%);
     height: 60px;
-    width: 43%;
+    width: 42.5%;
     margin: 15px 10% 15px -2%;
 }
 
