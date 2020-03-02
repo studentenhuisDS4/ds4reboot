@@ -8,6 +8,10 @@ html {
 body {
 }
 
+.slideshow-container{
+    max-height: 500px;
+}
+
 input[type='number'] {
     -moz-appearance:textfield;
 }
