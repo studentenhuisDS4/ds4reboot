@@ -154,7 +154,7 @@ hr {
     /*https://css-tricks.com/change-color-of-svg-on-hover/*/
     filter: invert(57%) sepia(0%) saturate(1054%) hue-rotate(203deg) brightness(93%) contrast(95%);
     height: 60px;
-    width: 42.5%;
+    width: 42%;
     margin: 15px 10% 15px -2%;
 }
 
@@ -196,7 +196,7 @@ hr {
 .strip-nav-text {
     margin: 5px 5px 5px 5px;
     padding: 15px 5px 15px 5px;
-    width: 90px;
+    width: 100px;
     text-align: center;
     font-size: 15pt;
     transition: filter 0.25s ease-in-out;
