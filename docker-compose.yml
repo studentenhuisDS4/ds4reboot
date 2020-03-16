@@ -11,6 +11,7 @@ services:
             - .:/app
         environment:
             SECRET_KEY:     SECRETA_OF_MY_APP
+            ENVIRONMENT:    development
             SECRET_DB:      ds4db
             SECRET_DB_USER: dzwart
             SECRET_DB_PASS: dzwart
