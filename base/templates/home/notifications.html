@@ -17,36 +17,11 @@
 </script>
 
 <div class="uk-width-1-3 uk-visible-large">
-    <div class="uk-panel uk-panel-box uk-panel-box-primary" style="background-color: rgba(0,0,0,0);">
-        <div class="uk-panel-teaser slideshow-container" data-slides="3">
-            <div class="mySlides fade">
-                <!-- <div class="numbertext">1 / 3</div> -->
-                <img src="{% static '/img/lf/1.jpg'%}" style="width:100%">
-            </div>
-            <div class="mySlides fade">
-                <!-- <div class="numbertext">2 / 3</div> -->
-                <img src="{% static '/img/lf/2.jpg'%}" style="width:100%">
-            </div>
-            <div class="mySlides fade">
-                <!-- <div class="numbertext">3 / 3</div> -->
-                <div style="height:500px;background-color: black; text-align: center; padding-top: 250px;"> Coming soon </div>
-            </div>            
-        </div>
-        <br>
-        <div style="text-align:center">
-            <span class="dot"></span> 
-            <span class="dot"></span> 
-            <span class="dot"></span>
-        </div>
-    </div>
-</div>
-
-<div class="uk-width-1-3 uk-visible-large">
     <div class="uk-panel uk-panel-box uk-panel-box-primary">
-        <div class="uk-panel-teaser" style="max-height:200px">
+        <!-- <div class="uk-panel-teaser" style="max-height:200px">
             <img src="{% static '/img/resource/3.JPG' %}" alt="Sven HV">
-        </div>
-        <div class="uk-panel-badge uk-badge uk-badge-warning">Upcoming</div>
+        </div> -->
+        <div class="uk-panel-badge uk-badge uk-badge-danger">Hot</div>
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
         <ul>
             {% for r in google_cal_events.result %}
@@ -55,7 +30,32 @@
             {% endfor %}
         </ul>
     </div>
+</div>
 
+<div class="uk-width-1-3 uk-visible-large">
+    <div class="uk-panel uk-panel-box uk-panel-box-primary" style="background-color: rgba(0,0,0,0);">
+        <div class="uk-panel-teaser slideshow-container" data-slides="4">
+            <div class="mySlides fade">
+                <img src="{% static '/img/lf/1.jpg'%}" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <img src="{% static '/img/lf/2.jpg'%}" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <img src="{% static '/img/lf/4.jpg'%}" style="width:100%">
+            </div>
+            <div class="mySlides fade">
+                <div style="height:500px;background-color: black; text-align: center; padding-top: 250px;"> More to come... </div>
+            </div>            
+        </div>
+        <br>
+        <div style="text-align:center">
+            <span class="dot"></span> 
+            <span class="dot"></span> 
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
 </div>
 
 <div class="uk-width-1-3 uk-visible-large">
