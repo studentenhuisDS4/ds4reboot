@@ -4,8 +4,7 @@ from django.utils import timezone
 
 from eetlijst.models import Dinner, UserDinner
 from organisation.views import get_cal_events
-from user.models import Housemate
-
+from user.models import Housemate, SnakeHighScore
 
 # display home page
 def home_page(request):
@@ -55,6 +54,12 @@ def home_page(request):
         except Exception as e:
             print('!!! Cal Events failed, skipped. Exception: ', e)
 
+        snake_highscores = None
+        try:
+            snake_highscores = SnakeHighScore.objects.all()
+        except:
+            print('Some exception with fetching highscores for snake. Exception: ', e)
+
         # build context object
         context = {
             'breadcrumbs': request.get_full_path()[1:-1].split('/'),
@@ -62,7 +67,8 @@ def home_page(request):
             'eetlijst_info': eetlijst_info,
             'focus_date': str(today.year) + '-' + str(today.month) + '-' + str(today.day),
             'medals': medals,
-            'google_cal_events': events
+            'google_cal_events': events,
+            'snake_highscores': snake_highscores
         }
 
         return render(request, 'home/index.html', context)

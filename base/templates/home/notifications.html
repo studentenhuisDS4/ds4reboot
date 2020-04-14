@@ -30,6 +30,19 @@
             {% endfor %}
         </ul>
     </div>
+    <div class="uk-panel uk-panel-box uk-panel-box-primary">
+        <!-- <div class="uk-panel-teaser" style="max-height:200px">
+            <img src="{% static '/img/resource/3.JPG' %}" alt="Sven HV">
+        </div> -->
+        <div class="uk-panel-badge uk-badge uk-badge-danger">Hot</div>
+        <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> Snake Game</h3>
+        <ul>
+            {% for highscore in snake_highscores %}
+                <li>{{ highscore.nickname }} - <strong>{{ highscore.score }}</strong> - {{highscore.time}}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 <div class="uk-width-1-3 uk-visible-large">
