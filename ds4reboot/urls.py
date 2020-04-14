@@ -19,6 +19,7 @@ from organisation.api.api_calendar import CalendarViewSet
 from organisation.api.api_keukendienst import KeukenDienstViewSet
 from organisation.api.api_receipts import ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
+from user.api.api_snake_highscore import SnakeHighScoreViewSet, SnakeHighScoreAdminViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
@@ -29,6 +30,8 @@ router.register(r'split-cost', SplitCostViewSet, basename='split-cost')
 router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
 router.register(r'house', HouseViewSet, basename='House')
+router.register(r'snake-highscore', SnakeHighScoreViewSet, basename='Snake highscore')
+router.register(r'snake-admin', SnakeHighScoreAdminViewSet, basename='Snake administration')
 router.register(r'user', UserViewSet, basename='User')
 router.register(r'user-full', UserFullViewSet, basename='User full')
 router.register(r'user-action', UserActionViewSet, basename='User action')
