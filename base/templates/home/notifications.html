@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load humanize %} 
 {% load parse_iso from date_parse %}
 {% block add_to_header %}
 <link rel="stylesheet" href="{% static '/css/lf/slideshow.css' %}"/>
@@ -36,9 +37,10 @@
         </div> -->
         <div class="uk-panel-badge uk-badge uk-badge-danger">Hot</div>
         <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> Snake Game</h3>
+        <p>We received {{snake_highscores|length}} highscore(s) since April 2020!</p>
         <ul>
-            {% for highscore in snake_highscores %}
-                <li>{{ highscore.nickname }} - <strong>{{ highscore.score }}</strong> - {{highscore.time}}
+            {% for highscore in snake_highscores|slice:":10" %}
+                <li>{{ forloop.counter }} - {{ highscore.nickname }} - Score: <strong>{{ highscore.score }}</strong> - {{highscore.time | naturaltime}}
                 </li>
             {% endfor %}
         </ul>

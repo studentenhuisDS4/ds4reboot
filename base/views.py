@@ -56,7 +56,7 @@ def home_page(request):
 
         snake_highscores = None
         try:
-            snake_highscores = SnakeHighScore.objects.all()
+            snake_highscores = SnakeHighScore.objects.all().order_by('-score')
         except:
             print('Some exception with fetching highscores for snake. Exception: ', e)
 
