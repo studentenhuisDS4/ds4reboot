@@ -13,8 +13,7 @@ from user.models import SnakeHighScore, SNAKE_NICK_LENGTH
 
 class SnakeHighScoreSchema(Schema):
     id = fields.Int(dump_only=True)
-    user_id = fields.Int(required=True, validate=[ModelAttributeValidator(type=User, filter='id',
-                                                                          attribute='is_active')])
+    user_id = fields.Int(required=True, validate=[UniqueModelValidator(type=User)])
     nickname = fields.Str(required=True, validate=[Length(min=2, max=SNAKE_NICK_LENGTH)])
     score = fields.Int(required=True)
     time = fields.DateTime(dump_only=True)
@@ -33,3 +32,14 @@ class SnakeHighScoreSchema(Schema):
             return new_highscore
         except Exception as e:
             raise ValidationError({'exception': str(e)})
+
+class SnakeHighScoreClearSchema(Schema):
+    remove_all = fields.Bool(required=True)
+    remove_user = fields.Int(required=False)
+
+    @pre_load
+    def validate_user(self, data, **kwargs):
+        if 'remove_all' in data and data["remove_all"] == "false":
+            if not "remove_user" in data:
+                raise ValidationError({'exception': "The remove_user value was not specified in the Schema data, but 'remove_all' was False."})
+        return data
