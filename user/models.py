@@ -3,9 +3,11 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 # model for housemates (linked to auth user)
 from base.models import SoftDeletionModel
+from logging import DEBUG
 
 DIET_LENGTH = 300
 SNAKE_NICK_LENGTH = 100
@@ -19,14 +21,17 @@ def get_movedin_users():
     return User.objects.exclude(housemate__moveout_set=True).exclude(username__in=['huis', 'admin']).order_by(
         'housemate__movein_date')
 
-
-# TODO untested
 def get_total_balance():
     total_balance = 0
     for u in get_movedin_users():
         total_balance += u.housemate.balance
 
-    total_balance += Housemate.objects.get(display_name='Huis').balance
+    # Allow skipping house, but print in debug environment
+    try:
+        total_balance += Housemate.objects.get(display_name='Huis').balance
+    except ObjectDoesNotExist as e:
+        if DEBUG:
+            print("Couldn't find house as account. Skipping in total_balance")
     return total_balance
 
 
