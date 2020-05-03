@@ -31,19 +31,14 @@
 <script src="{% static 'js/components/datepicker.min.js' %}"></script>
 <script src="{% static 'js/components/tooltip.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
-
 {% block add_to_header %}{% endblock %}
-
 </head>
 
 <body class="uk-height-1-1">
-
 <div class="uk-container uk-container-center uk-margin-bottom">
 
     {% include 'base/nav_lf.html' %}
-{#    {% include 'base/nav.html' %}#}
-
-{#    <em><h4>New app: <a href="https://app.ds4.nl">app.ds4.nl</a>.</h4></em>#}
+    <!-- {% include 'base/nav.html' %} -->
 
     {% if messages %}
         {% for m in messages %}
@@ -70,14 +65,10 @@
             {% endif %}
         {% endfor %}
     {% endif %}
-
     {% block body_block %}Failed to load page content.{% endblock %}
 
 </div>
-
 {% include 'base/nav_side.html' %}
 
 </body>
-
-
 </html>

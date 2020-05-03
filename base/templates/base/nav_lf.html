@@ -1,6 +1,6 @@
 {% load static from staticfiles %}
 
-{# lf-nav in case of LF #}
+{# 2019 LF nav #}
 {#<nav class="uk-navbar uk-margin-top lf-nav" style="margin-bottom:1.5em">#}
 {##}
 {#    <a class="uk-navbar-brand uk-visible-large uk-active-brand" href="/"><img src="/static/img/logo-icon.png"/></a>#}
@@ -102,20 +102,20 @@
 
 {# lf-nav in case of LF#}
 <nav class="uk-navbar uk-margin-top lf-nav uk-visible-small" style="margin-bottom:1.5em">
-    <a class="uk-navbar-brand uk-visible-large uk-active-brand" href="/"><img src="/static/img/logo-icon.png"/></a>
+    <a class="uk-navbar-brand uk-visible-large uk-active-brand" href="/"><img src="/static/img/logo-icon.png" /></a>
     <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
     <div class="uk-navbar-brand uk-padding-remove uk-visible-small">
         <ul class="uk-breadcrumb uk-margin-remove" style="float:left; line-height: 40px;">
             <li><a href="/">DS4</a></li>
             {% if breadcrumbs %}
-                {% for b in breadcrumbs %}
-                    {% if  forloop.counter0 == 0 and not forloop.revcounter0 == 0 %}
-                        <li><a href="/{{ b }}/">{{ b }}</a></li>
-                    {% else %}
-                        {% if not b == '' %}
-                            <li class="uk-active"><span>{{ b }}</span></li>{% endif %}
-                    {% endif %}
-                {% endfor %}
+            {% for b in breadcrumbs %}
+            {% if  forloop.counter0 == 0 and not forloop.revcounter0 == 0 %}
+            <li><a href="/{{ b }}/">{{ b }}</a></li>
+            {% else %}
+            {% if not b == '' %}
+            <li class="uk-active"><span>{{ b }}</span></li>{% endif %}
+            {% endif %}
+            {% endfor %}
             {% endif %}
         </ul>
     </div>
@@ -145,5 +145,25 @@
         <a href="/user/" class="strip-nav-text">
             Profile
         </a>
+        <span class="strip-nav-text">
+            <li class="uk-parent" data-uk-dropdown="{mode:'click',pos:'bottom-right'}">
+                <strong>{{ request.user.username }}</strong> <i class="uk-icon-angle-down"></i>
+                <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-lf">
+                    <ul class="uk-nav uk-nav-navbar">
+                        {% if request.user.username != 'huis' %}
+                        <li><a href="/user/huis">Veranderen naar 'Huis'</a></li>
+                        <li class="uk-nav-divider"></li>
+                        {% endif %}
+                        <li><a href="/user/profiel"><i class="uk-icon-user"></i> Profiel</a></li>
+                        {#                        <li><a href="/password_change/"><i class="uk-icon-lock"></i> Wijzig wachtwoord</a></li>#}
+                        {% if request.user|is_admin %}
+                        <li><a href="/ds4admin"><i class="uk-icon-diamond"></i> Admin</a></li>{% endif %}
+                        {% if request.user|is_thesau %}
+                        <li><a href="/thesau"><i class="uk-icon-university"></i> Thesau</a></li>{% endif %}
+                        <li><a href="/user/logout"><i class="uk-icon-sign-out"></i> Uitloggen</a></li>
+                    </ul>
+                </div>
+            </li>
+        </span>
     </div>
 </div>
