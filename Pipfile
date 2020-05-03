@@ -9,7 +9,7 @@ psycopg2 = "*"
 
 [packages]
 gunicorn = "==20.0.4"
-openpyxl = "==2.5.3"
+openpyxl = "==3.0.3"
 virtualenv = "==20.0.4"
 wiki = "==0.5"
 django = "==2.2.10"
