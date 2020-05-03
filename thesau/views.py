@@ -37,8 +37,10 @@ def hr(request):
     if request.user.groups.filter(name='thesau').exists() or request.user.is_superuser:
 
         # generate necessary user lists
-        active_users = User.objects.filter(is_active=True).exclude(username='admin')
-        user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
+        active_users = User.objects.filter(
+            is_active=True).exclude(username='admin')
+        user_list = Housemate.objects.filter(
+            user__id__in=active_users).order_by('movein_date')
 
         moveout_open_dinners, moveout_pending = check_moveout_dinners(request)
 
@@ -46,12 +48,15 @@ def hr(request):
         totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
                   str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
                   str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-                  str(list(user_list.aggregate(Sum('boetes_geturfd_rwijn')).values())[0]),
+                  str(list(user_list.aggregate(
+                      Sum('boetes_geturfd_rwijn')).values())[0]),
                   str(list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0])]
 
         # get boete counts
-        # boetes_w = BoetesReport.objects.get_or_create(type='w', defaults={'boete_count': 0})
-        # boetes_r = BoetesReport.objects.get_or_create(type='r', defaults={'boete_count': 0})
+        boetes_w, _ = BoetesReport.objects.get_or_create(
+            type='w', defaults={'boete_count': 0})
+        boetes_r, _ = BoetesReport.objects.get_or_create(
+            type='r', defaults={'boete_count': 0})
 
         # build context object
         context = {
@@ -59,7 +64,7 @@ def hr(request):
             'user_list': user_list,
             'moveout_list': moveout_pending,
             'moveout_open_dinners': moveout_open_dinners,
-            'boetes': [BoetesReport.objects.get(type='w').boete_count, BoetesReport.objects.get(type='r').boete_count],
+            'boetes': [boetes_w.boete_count, boetes_r.boete_count],
             'totals': totals,
         }
 
@@ -73,41 +78,53 @@ def hr(request):
 # generate XLSX file and commit changes
 def submit_hr(request):
     # generate necessary user lists
-    active_users = User.objects.filter(is_active=True).exclude(username='admin')
-    user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
-    moveout_list = Housemate.objects.filter(moveout_set=1).order_by('moveout_date')
+    active_users = User.objects.filter(
+        is_active=True).exclude(username='admin')
+    user_list = Housemate.objects.filter(
+        user__id__in=active_users).order_by('movein_date')
+    moveout_list = Housemate.objects.filter(
+        moveout_set=1).order_by('moveout_date')
 
     # calculate turf totals
     totals = [list(user_list.aggregate(Sum('sum_bier')).values())[0],
               list(user_list.aggregate(Sum('sum_wwijn')).values())[0],
               list(user_list.aggregate(Sum('sum_rwijn')).values())[0],
-              list(user_list.aggregate(Sum('boetes_geturfd_rwijn')).values())[0],
+              list(user_list.aggregate(
+                  Sum('boetes_geturfd_rwijn')).values())[0],
               list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0]]
 
     # get boete counts
-    boetes_rwijn = BoetesReport.objects.get(type='r')
-    boetes_wwijn = BoetesReport.objects.get(type='w')
+    boetes_wwijn, _ = BoetesReport.objects.get_or_create(
+        type='w', defaults={'boete_count': 0})
+    boetes_rwijn, _ = BoetesReport.objects.get_or_create(
+        type='r', defaults={'boete_count': 0})
 
     # make workbook and select active worksheet
     wb = Workbook()
     ws1 = wb.active
 
     ws1.title = 'Bierlijst'
-    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn', 'Boetewijn Rood', 'Boetewijn Wit'])
+    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn',
+                'Boetewijn Rood', 'Boetewijn Wit'])
 
     for u in user_list:
         ws1.append(
             [u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
 
     ws1.append([''])
-    ws1.append(['Totaal', totals[0], totals[1], totals[2], totals[3], totals[4]])
+    ws1.append(['Totaal', totals[0], totals[1],
+                totals[2], totals[3], totals[4]])
     ws1.append([''])
 
     # Latest HR date
-    latest_hr = Report.objects.latest('id')
+    if Report.objects.all().count() > 0:
+        latest_hr = Report.objects.latest('id')
+    else:
+        latest_hr = None
 
     ws1.append(['Moved out housemates below'])
-    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn', 'Boetewijn Rood', 'Boetewijn Wit', 'Open'])
+    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn',
+                'Boetewijn Rood', 'Boetewijn Wit', 'Open'])
     if moveout_list:
         for u in moveout_list:
             if u.moveout_date >= latest_hr.report_date:
@@ -142,16 +159,15 @@ def submit_hr(request):
         now_date = datetime.now().date()
 
         for u in moveout_list:
-
             if u.moveout_date >= latest_hr.report_date:
-
                 days_latest_hr = (u.moveout_date - latest_hr_date).days
                 days_current_hr = (now_date - u.moveout_date).days
 
                 if days_current_hr == 0 and days_latest_hr == 0:
                     perc = 0
                 else:
-                    perc = float(days_latest_hr / (days_latest_hr + days_current_hr))
+                    perc = float(days_latest_hr /
+                                 (days_latest_hr + days_current_hr))
 
                 ws3.append([u.display_name,
                             u.moveout_date, latest_hr_date,
@@ -169,16 +185,19 @@ def submit_hr(request):
     months = {1: 'januari', 2: 'februari', 3: 'maart', 4: 'april', 5: 'mei', 6: 'juni', 7: 'juli',
               8: 'augustus', 9: 'september', 10: 'oktober', 11: 'november', 12: 'december'}
 
-    temp_path = MEDIA_ROOT + "/" + TEMP_FOLDER + f"HR_{date.year}_{months[date.month]}.xlsx"
+    temp_path = MEDIA_ROOT + "/" + TEMP_FOLDER + \
+        f"HR_{date.year}_{months[date.month]}.xlsx"
 
     wb.save(temp_path)
     file_ref = open(temp_path, 'rb')
     file_content = File(file_ref)
     # create report entry in database
     r = Report(report_user=request.user,
-               report_name='HR %s-%s-%s (%s:%s)' % (date.day, months[date.month], date.year, date.hour, date.minute),
+               report_name='HR %s-%s-%s (%s:%s)' % (date.day,
+                                                    months[date.month], date.year, date.hour, date.minute),
                report_date=date)
-    r.report_file.save(f"HR_{date.year}_{months[date.month]}.xlsx", file_content)
+    r.report_file.save(
+        f"HR_{date.year}_{months[date.month]}.xlsx", file_content)
     r.save()
     file_ref.close()
 
