@@ -81,7 +81,7 @@ def submit_hr(request):
     # generate necessary user lists
     active_users = User.objects.filter(
         is_active=True).exclude(username='admin')
-    user_list = Housemate.objects.filter(
+    housemate_list = Housemate.objects.filter(
         user__id__in=active_users).order_by('movein_date')
     moveout_list = Housemate.objects.filter(
         moveout_set=1).order_by('moveout_date')
@@ -97,12 +97,12 @@ def submit_hr(request):
 
     # calculate turf totals
     totals = [
-        list(user_list.aggregate(Sum('sum_bier')).values())[0],
-        list(user_list.aggregate(Sum('sum_wwijn')).values())[0],
-        list(user_list.aggregate(Sum('sum_rwijn')).values())[0],
-        list(user_list.aggregate(
+        list(housemate_list.aggregate(Sum('sum_bier')).values())[0],
+        list(housemate_list.aggregate(Sum('sum_wwijn')).values())[0],
+        list(housemate_list.aggregate(Sum('sum_rwijn')).values())[0],
+        list(housemate_list.aggregate(
             Sum('boetes_geturfd_rwijn')).values())[0],
-        list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0],
+        list(housemate_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0],
         list(user_boetes.aggregate(Sum('boete_sum')).values())[0]
     ]
 
@@ -114,10 +114,10 @@ def submit_hr(request):
     ws1.append(['Name', 'Beer', 'W. Wine', 'R. Wine',
                 'Turfed Red', 'Turfed White', 'Fined (this HR)'])
 
-    for u in user_list:
+    for u in housemate_list:
         boete_count = 0
         for user_boete in user_boetes:
-            if user_boete['boete_user_id'] == u.id:
+            if user_boete['boete_user_id'] == u.user.id:
                 boete_count = user_boete['boete_sum']
         ws1.append(
             [u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn, boete_count])
@@ -213,7 +213,7 @@ def submit_hr(request):
     file_ref.close()
 
     # Save users, workbook, boetes and report
-    report_users = user_list | moveout_list
+    report_users = housemate_list | moveout_list
     for u in report_users:
         if u in moveout_list:
             open_balance = u.balance

@@ -67,7 +67,7 @@ class ThesauTest(TestCase):
         for report in Report.objects.all():
             try:
                 print("> Removing ", report.report_file.path)
-                # os.remove(report.report_file.path)
+                os.remove(report.report_file.path)
             except ValueError:
                 pass
 
@@ -157,7 +157,6 @@ class ThesauTest(TestCase):
         print("> Testing excel export")
         boete_amount = 44
         newboete = Boete(boete_user=self.user,
-                         created_time=self.report.report_date,
                          boete_name=self.user.housemate.display_name,
                          created_by=self.user.username,
                          boete_count=boete_amount,
@@ -177,8 +176,22 @@ class ThesauTest(TestCase):
         self.assertIn('.xlsx', file_url)
         wb = load_workbook(file_url)
         ws_bierlijst = wb['Bierlijst']
-        cell_name = ws_bierlijst.cell(row=3, column=1).value
-        cell_boetes = ws_bierlijst.cell(row=3, column=7).value
+
+        active_users = User.objects.filter(is_active=True)
+        reports = Report.objects.all()
+        boetes = Boete.objects.all()
+
+        user_row = -1
+        expected_user = self.user.housemate.display_name
+        for index in range(2, 1 + active_users.count()):
+            cell_name = ws_bierlijst.cell(row=index, column=1).value
+            if cell_name == expected_user:
+                user_row = index
+                break
+
+        self.assertNotEqual(user_row, -1)
+        cell_name = ws_bierlijst.cell(row=user_row, column=1).value
+        cell_boetes = ws_bierlijst.cell(row=user_row, column=7).value
         self.assertEqual(cell_name, self.user.housemate.display_name)
         self.assertEqual(cell_boetes, boete_amount)
 
