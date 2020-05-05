@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.db.models import Sum
 
 
 # model to account for turfing beer/wine
@@ -32,3 +33,12 @@ class Boete(models.Model):
 
     boete_count = models.IntegerField(default=1)
     boete_note = models.CharField(max_length=100)
+
+    @staticmethod
+    def aggregate_user_fines(latest_date):
+        result = Boete.objects.filter(created_time__gt=latest_date) \
+            .values('boete_user_id') \
+            .order_by('boete_user_id') \
+            .annotate(boete_sum=Sum('boete_count'))
+
+        return result

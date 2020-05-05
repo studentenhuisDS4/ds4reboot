@@ -1,19 +1,23 @@
 import os
-from datetime import timedelta
+import io
+import pytz
 
 from django.contrib.auth.models import User
-from django.test import TestCase
-# Create your tests here.
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.datetime_safe import date, datetime
+from django.conf.global_settings import DEBUG
+from django.utils.timezone import make_aware
+from django.utils import timezone
 from rainbowtests import colors
+from openpyxl.reader.excel import load_workbook
 
 from ds4reboot.tests import assert_total_balance
 from eetlijst.models import Dinner, UserDinner
 from thesau.models import Report, BoetesReport
 from thesau.urls import urlpatterns
 from user.models import Housemate
-from django.utils import timezone
+from bierlijst.models import Boete
 
 
 class ThesauTest(TestCase):
@@ -53,18 +57,29 @@ class ThesauTest(TestCase):
         self.report = Report.objects.create(
             report_user=self.user,
             report_name="TEST REPORT",
-            report_date=date(2019, 4, 13))
+            report_date=make_aware(datetime(2019, 4, 13), timezone=pytz.UTC))
         self.bwijn_w = BoetesReport.objects.create(type='w')
         self.bwijn_r = BoetesReport.objects.create(type='r')
 
     def tearDown(self):
+        print(">> Teardown, removing at most {} .xlsx report files created in this test.".format(
+            Report.objects.all().count()))
+        for report in Report.objects.all():
+            try:
+                print("> Removing ", report.report_file.path)
+                # os.remove(report.report_file.path)
+            except ValueError:
+                pass
+
         User.objects.filter(username='pietje').delete()
         User.objects.filter(username='pietje2').delete()
         User.objects.filter(username='pietje3').delete()
         User.objects.filter(username='huis').delete()
         Dinner.objects.all().delete()
         UserDinner.objects.all().delete()
+
         BoetesReport.objects.all().delete()
+        Report.objects.all().delete()
 
     def test_static_responses(self):
         for url in urlpatterns:
@@ -72,12 +87,102 @@ class ThesauTest(TestCase):
                 response = self.client.get(reverse(url.name), follow=True)
                 self.assertEqual(response.status_code, 200)
 
+    def test_boete_aggregate_regression(self):
+        # Setup and Act
+        print("> Regression, boete model aggregate function.")
+        previous_report_date = self.report.report_date
+        boete_amount = 5
+
+        Boete.objects.all().delete()
+        with override_settings(USE_TZ=False):
+            b = Boete(boete_user=self.user, boete_name=self.user.housemate.display_name, created_by=self.user, boete_count=boete_amount,
+                      boete_note="Regressive test Random boete.")
+            b.save()
+            user_boetes = Boete.aggregate_user_fines(
+                latest_date=previous_report_date)
+
+            # Assert
+            self.assertEqual(user_boetes.count(), 1)
+            self.assertIn('boete_sum', user_boetes[0])
+            self.assertEqual(user_boetes[0]['boete_sum'], 5)
+
+            # Cleanup
+            b.delete()
+
+    def test_boete_aggregate_previous_hr(self):
+        # Setup and Act
+        print("> Regression, boete model aggregate function.")
+        previous_report_date = self.report.report_date
+        boete_amount = 5
+
+        Boete.objects.all().delete()
+        with override_settings(USE_TZ=False):
+            b = Boete(boete_user=self.user,
+                      created_time=previous_report_date -
+                      timezone.timedelta(1),
+                      boete_name=self.user.housemate.display_name,
+                      created_by=self.user,
+                      boete_count=boete_amount,
+                      boete_note="Old fine, should not be exported.")
+            b2 = Boete(boete_user=self.user,
+                       created_time=previous_report_date +
+                       timezone.timedelta(1),
+                       boete_name=self.user.housemate.display_name,
+                       created_by=self.user,
+                       boete_count=boete_amount * 2,
+                       boete_note="New fine, should be exported.")
+            b.save()
+            b2.save()
+            user_boetes = Boete.aggregate_user_fines(
+                latest_date=previous_report_date)
+
+            # Assert
+            self.assertEqual(user_boetes.count(), 1)
+            self.assertIn('boete_sum', user_boetes[0])
+            self.assertEqual(user_boetes[0]['boete_sum'], boete_amount * 2)
+
+            # Cleanup
+            b.delete()
+
     def test_empty_hr_submit(self):
         print("> Testing empty hr submit")
         logged_in = self.client.login(
             username=self.superuser.username, password=self.SUPER_PASS)
-        # with self.assertR
         self.client.post(reverse('submit hr'))
+
+    def test_empty_hr_export(self):
+        # Quick run (within docker, otherwise python -m):
+        # python ./manage.py test thesau.tests.ThesauTest.test_empty_hr_export --failfast
+
+        print("> Testing excel export")
+        boete_amount = 44
+        newboete = Boete(boete_user=self.user,
+                         created_time=self.report.report_date,
+                         boete_name=self.user.housemate.display_name,
+                         created_by=self.user.username,
+                         boete_count=boete_amount,
+                         boete_note="Old fine, should not be exported.")
+        newboete.save()
+
+        # Login and submit HR
+        logged_in = self.client.login(
+            username=self.superuser.username, password=self.SUPER_PASS)
+        self.client.post(reverse('submit hr'))
+
+        # Fetch latest report from database
+        created_report = Report.objects.latest('report_date')
+        file_url = created_report.report_file.path
+
+        # Assert file and contents
+        self.assertIn('.xlsx', file_url)
+        wb = load_workbook(file_url)
+        ws_bierlijst = wb['Bierlijst']
+        cell_name = ws_bierlijst.cell(row=3, column=1).value
+        cell_boetes = ws_bierlijst.cell(row=3, column=7).value
+        self.assertEqual(cell_name, self.user.housemate.display_name)
+        self.assertEqual(cell_boetes, boete_amount)
+
+        wb.close()
 
     def test_empty_hr_submit_with_moveout(self):
         print("> Testing empty hr submit with moveout")
@@ -128,7 +233,7 @@ class ThesauTest(TestCase):
         print("> Testing closing HR with old housemate on dinner day")
 
         assert_total_balance()
-        week_ago = datetime.now() - timedelta(days=7)
+        week_ago = datetime.now() - timezone.timedelta(days=7)
 
         # add users (normal, cook) to dinner entries
         dinner = Dinner.objects.create(date=week_ago)

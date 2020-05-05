@@ -9,6 +9,7 @@ from ds4admin.utils import check_moveout_dinners
 from ds4reboot.settings import TEMP_FOLDER, MEDIA_ROOT, HR_REPORTS_FOLDER
 from thesau.models import Report, BoetesReport, UserReport
 from user.models import Housemate
+from bierlijst.models import Boete
 from django.contrib import messages
 from openpyxl import Workbook
 
@@ -85,42 +86,46 @@ def submit_hr(request):
     moveout_list = Housemate.objects.filter(
         moveout_set=1).order_by('moveout_date')
 
-    # calculate turf totals
-    totals = [list(user_list.aggregate(Sum('sum_bier')).values())[0],
-              list(user_list.aggregate(Sum('sum_wwijn')).values())[0],
-              list(user_list.aggregate(Sum('sum_rwijn')).values())[0],
-              list(user_list.aggregate(
-                  Sum('boetes_geturfd_rwijn')).values())[0],
-              list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0]]
+    # Latest HR date, used for processing 'old-housemates' and 'unturfed-boetes'
+    if Report.objects.all().count() > 0:
+        latest_hr = Report.objects.latest('id')
+    else:
+        latest_hr = None
 
-    # get boete counts
-    boetes_wwijn, _ = BoetesReport.objects.get_or_create(
-        type='w', defaults={'boete_count': 0})
-    boetes_rwijn, _ = BoetesReport.objects.get_or_create(
-        type='r', defaults={'boete_count': 0})
+    # aggregate boetes per user, note that the date is exclusive (greater than filter)
+    user_boetes = Boete.aggregate_user_fines(latest_date=latest_hr.report_date)
+
+    # calculate turf totals
+    totals = [
+        list(user_list.aggregate(Sum('sum_bier')).values())[0],
+        list(user_list.aggregate(Sum('sum_wwijn')).values())[0],
+        list(user_list.aggregate(Sum('sum_rwijn')).values())[0],
+        list(user_list.aggregate(
+            Sum('boetes_geturfd_rwijn')).values())[0],
+        list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0],
+        list(user_boetes.aggregate(Sum('boete_sum')).values())[0]
+    ]
 
     # make workbook and select active worksheet
     wb = Workbook()
     ws1 = wb.active
 
     ws1.title = 'Bierlijst'
-    ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn',
-                'Boetewijn Rood', 'Boetewijn Wit'])
+    ws1.append(['Name', 'Beer', 'W. Wine', 'R. Wine',
+                'Turfed Red', 'Turfed White', 'Fined (this HR)'])
 
     for u in user_list:
+        boete_count = 0
+        for user_boete in user_boetes:
+            if user_boete['boete_user_id'] == u.id:
+                boete_count = user_boete['boete_sum']
         ws1.append(
-            [u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn])
+            [u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn, u.boetes_geturfd_wwijn, boete_count])
 
     ws1.append([''])
     ws1.append(['Totaal', totals[0], totals[1],
-                totals[2], totals[3], totals[4]])
+                totals[2], totals[3], totals[4], totals[5]])
     ws1.append([''])
-
-    # Latest HR date
-    if Report.objects.all().count() > 0:
-        latest_hr = Report.objects.latest('id')
-    else:
-        latest_hr = None
 
     ws1.append(['Moved out housemates below'])
     ws1.append(['Naam', 'Bier', 'W. Wijn', 'R. Wijn',
@@ -131,9 +136,15 @@ def submit_hr(request):
                 ws1.append([u.display_name, u.sum_bier, u.sum_wwijn, u.sum_rwijn, u.boetes_geturfd_rwijn,
                             u.boetes_geturfd_wwijn, u.boetes_open])
 
+    # get total boete counts
+    boetes_wwijn, _ = BoetesReport.objects.get_or_create(
+        type='w', defaults={'boete_count': 0})
+    boetes_rwijn, _ = BoetesReport.objects.get_or_create(
+        type='r', defaults={'boete_count': 0})
+
     # create secondary worksheets
     ws2 = wb.create_sheet()
-    ws2.title = 'Geturfd Boetes'
+    ws2.title = 'Geturfde Boetes'
 
     ws2.append(['W. Wijn', 'R. Wijn'])
     ws2.append([boetes_wwijn.boete_count, boetes_rwijn.boete_count])
