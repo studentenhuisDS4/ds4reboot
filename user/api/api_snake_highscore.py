@@ -46,7 +46,6 @@ class SnakeHighScoreAdminViewSet(
                 highscores = SnakeHighScore.objects.filter(
                     user_id=data["remove_user"])
             deleted_highscores = list(highscores)
-            print(deleted_highscores)
             highscores.delete()
             return success_action(SnakeHighScoreSchema().dump(deleted_highscores, many=True))
         else:
