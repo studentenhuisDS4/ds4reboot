@@ -29,8 +29,8 @@ export class DinnerListComponent implements OnInit {
     filteredActiveUsers: Observable<IUser[]>;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     displayNameCtrl = new FormControl();
-    @ViewChild('userDinnerInput', {static: false}) userDinnerInput: ElementRef<HTMLInputElement>;
-    @ViewChild('autoComplete', {static: false}) matAutocomplete: MatAutocomplete;
+    @ViewChild('userDinnerInput') userDinnerInput: ElementRef<HTMLInputElement>;
+    @ViewChild('autoComplete') matAutocomplete: MatAutocomplete;
     preConfirm = false;
 
     dinnerCostCtrl = new FormControl();
