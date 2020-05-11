@@ -1,7 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {IReceipt} from '../../models/receipt.model';
 import {IUser} from '../../models/user.model';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {UserService} from '../../services/user.service';
 import {AdminService} from '../../services/admin.service';
 import {SnackBarService} from '../../services/snackBar.service';

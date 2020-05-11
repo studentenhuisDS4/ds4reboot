@@ -4,7 +4,7 @@ import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
-import {MatAutocomplete} from '@angular/material';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 import {EasterEggService} from '../services/easter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocompleteSelectedEvent} from '@angular/material/typings/esm5/autocomplete';

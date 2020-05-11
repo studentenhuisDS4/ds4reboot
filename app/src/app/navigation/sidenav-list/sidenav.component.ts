@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {GROUP} from '../../models/user.model';
-import {MatSidenav} from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
     selector: 'app-sidenav-list',
