@@ -132,11 +132,13 @@ API_BASE_URL = 'api/v1/'
 
 # Frontend CORS
 # https://github.com/ottoyiu/django-cors-headers/#configuration
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-    "https://app.ds4.nl",
-    "http://localhost:4200",
-]
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#     "https://app.ds4.nl",
+#     "http://localhost:4200",
+# ]
+
+CORS_URLS_REGEX = r'^/api/.*$'
 
 CSRF_TRUSTED_ORIGINS = [
     'ds4.nl',
