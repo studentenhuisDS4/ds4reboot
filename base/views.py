@@ -4,7 +4,8 @@ from django.utils import timezone
 
 from eetlijst.models import Dinner, UserDinner
 from organisation.views import get_cal_events
-from user.models import Housemate, SnakeHighScore
+from user.models import Housemate
+from game.models import SnakeHighScore
 
 # display home page
 def home_page(request):

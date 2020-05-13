@@ -19,7 +19,7 @@ from organisation.api.api_calendar import CalendarViewSet
 from organisation.api.api_keukendienst import KeukenDienstViewSet
 from organisation.api.api_receipts import ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
-from user.api.api_snake_highscore import SnakeHighScoreViewSet, SnakeHighScoreAdminViewSet
+from game.api.api_snake_highscore import SnakeHighScoreViewSet, SnakeHighScoreAdminViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')

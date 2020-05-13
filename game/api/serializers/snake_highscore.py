@@ -9,7 +9,7 @@ from marshmallow.validate import NoneOf
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import ModelAttributeValidator
 from ds4reboot.api.validators import UniqueModelValidator
-from user.models import SnakeHighScore, SNAKE_NICK_LENGTH
+from game.models import SnakeHighScore, SNAKE_NICK_LENGTH
 
 class SnakeHighScoreSchema(Schema):
     id = fields.Int(dump_only=True)

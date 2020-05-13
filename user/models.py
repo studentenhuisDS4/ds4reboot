@@ -10,7 +10,6 @@ from base.models import SoftDeletionModel
 from logging import DEBUG
 
 DIET_LENGTH = 300
-SNAKE_NICK_LENGTH = 100
 
 def get_active_users():
     return User.objects.filter(is_active=True).exclude(username__in=['huis', 'admin']).order_by(
@@ -86,16 +85,6 @@ class Housemate(SoftDeletionModel):
 
     def __str__(self):
         return self.display_name
-
-class SnakeHighScore(models.Model):
-    """
-    The DSnake4 game keeps its score in this model.
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    nickname = models.CharField(max_length=SNAKE_NICK_LENGTH)
-    score = models.IntegerField(null=False)
-    time = models.DateTimeField(default=timezone.now)
-
 
 def share_cost(housemates, cost, hm_payback):
     if len(housemates) < 2:

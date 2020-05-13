@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'thesau.apps.ThesauConfig',
     'organisation.apps.OrganisationConfig',
     'ds4admin.apps.Ds4AdminConfig',
+    'game.apps.GameConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,8 +125,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=7),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=3),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=14),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=21),
 }
 
 API_BASE_URL = 'api/v1/'

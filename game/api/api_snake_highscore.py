@@ -1,5 +1,5 @@
-from user.models import SnakeHighScore
-from user.api.serializers.snake_highscore import SnakeHighScoreSchema, SnakeHighScoreClearSchema
+from game.models import SnakeHighScore
+from game.api.serializers.snake_highscore import SnakeHighScoreSchema, SnakeHighScoreClearSchema
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, DestroyModelMixin
 from rest_framework.viewsets import GenericViewSet
