@@ -20,6 +20,7 @@ from organisation.api.api_keukendienst import KeukenDienstViewSet
 from organisation.api.api_receipts import ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
 from game.api.api_snake_highscore import SnakeHighScoreViewSet, SnakeHighScoreAdminViewSet
+from game.api.api_snake_chat import SnakeChatMessageAdminViewSet, SnakeChatMessageViewSet
 
 router = DefaultRouter()
 router.register(r'dinner', DinnerViewSet, basename='dinner')
@@ -30,8 +31,14 @@ router.register(r'split-cost', SplitCostViewSet, basename='split-cost')
 router.register(r'boete', BoeteViewSet, basename='boete')
 router.register(r'turf', TurfViewSet, basename='Turf')
 router.register(r'house', HouseViewSet, basename='House')
-router.register(r'snake-highscore', SnakeHighScoreViewSet, basename='Snake highscore')
-router.register(r'snake-admin', SnakeHighScoreAdminViewSet, basename='Snake administration')
+router.register(r'snake/highscore', SnakeHighScoreViewSet,
+                basename='Snake highscore')
+router.register(r'snake/highscore-admin', SnakeHighScoreAdminViewSet,
+                basename='Snake administration')
+router.register(r'snake/chat', SnakeChatMessageViewSet,
+                basename='Snake chat messages')
+router.register(r'snake/chat-admin', SnakeChatMessageAdminViewSet,
+                basename='Snake chat administration')
 router.register(r'user', UserViewSet, basename='User')
 router.register(r'user-full', UserFullViewSet, basename='User full')
 router.register(r'user-action', UserActionViewSet, basename='User action')
@@ -54,12 +61,16 @@ urlpatterns = \
         path('wiki/notifications/', include('django_nyt.urls')),
         path('wiki/', include('wiki.urls')),
 
-        path(f'{settings.API_BASE_URL}auth-jwt/', TokenPairView.as_view(), name='token'),
-        path(f'{settings.API_BASE_URL}auth-jwt-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-        path(f'{settings.API_BASE_URL}auth-jwt-verify/', TokenVerifyView.as_view(), name='token_verify'),
+        path(f'{settings.API_BASE_URL}auth-jwt/',
+             TokenPairView.as_view(), name='token'),
+        path(f'{settings.API_BASE_URL}auth-jwt-refresh/',
+             TokenRefreshView.as_view(), name='token_refresh'),
+        path(f'{settings.API_BASE_URL}auth-jwt-verify/',
+             TokenVerifyView.as_view(), name='token_verify'),
         path(f'{settings.API_BASE_URL}auth-house/', LoginHouse.as_view()),
         path(f'{settings.API_BASE_URL}', include((router.urls, 'ds4_api'))),
     ]
 
 if DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
