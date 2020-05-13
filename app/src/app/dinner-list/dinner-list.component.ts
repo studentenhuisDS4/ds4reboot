@@ -4,10 +4,9 @@ import {dayNames, IDinner, userEntry, weekDates} from '../models/dinner.models';
 import {compareAsc, isSameDay} from 'date-fns';
 import {UserService} from '../services/user.service';
 import {IUser} from '../models/user.model';
-import {MatAutocomplete} from '@angular/material';
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {EasterEggService} from '../services/easter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatAutocompleteSelectedEvent} from '@angular/material/typings/esm5/autocomplete';
 import {FormControl, Validators} from '@angular/forms';
 import {filter, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
@@ -29,8 +28,8 @@ export class DinnerListComponent implements OnInit {
     filteredActiveUsers: Observable<IUser[]>;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     displayNameCtrl = new FormControl();
-    @ViewChild('userDinnerInput', {static: false}) userDinnerInput: ElementRef<HTMLInputElement>;
-    @ViewChild('autoComplete', {static: false}) matAutocomplete: MatAutocomplete;
+    @ViewChild('userDinnerInput') userDinnerInput: ElementRef<HTMLInputElement>;
+    @ViewChild('autoComplete') matAutocomplete: MatAutocomplete;
     preConfirm = false;
 
     dinnerCostCtrl = new FormControl();

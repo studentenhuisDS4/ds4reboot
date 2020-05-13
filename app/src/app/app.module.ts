@@ -44,7 +44,7 @@ import {BoeteComponent} from './turf-list/boete/boete.component';
 import {TurfComponent} from './turf-list/turf-component/turf.component';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {GlobalErrorHandler} from './services/interceptors/error-handler.interceptor';
-import {MatCheckboxModule} from '@angular/material';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import {DisableControlDirective} from './directives/disableControl.directive';
 import {SpinnerComponent} from './directives/spinner/spinner.component';
 import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';

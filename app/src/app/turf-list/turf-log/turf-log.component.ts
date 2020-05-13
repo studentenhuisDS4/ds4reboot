@@ -1,7 +1,8 @@
 import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
 import {TurfService} from '../../services/turf.service';
 import {ITurfLogAggregation, ITurfLogEntry, TurfLogFilter} from '../../models/turf.model';
-import {MatPaginator, MatSort} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import {merge, of} from 'rxjs';
 import {catchError, map, startWith, switchMap} from 'rxjs/operators';
 
