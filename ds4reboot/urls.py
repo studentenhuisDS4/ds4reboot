@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView)
+from rest_framework_swagger.views import get_swagger_view
 
 from bierlijst.api.api_views import BoeteViewSet, TurfViewSet
 from ds4reboot import settings
@@ -46,10 +47,13 @@ router.register(r'keukendienst', KeukenDienstViewSet, basename='Keukendienst')
 router.register(r'calendar', CalendarViewSet, basename='Calendar')
 router.register(r'receipt', ReceiptViewSet, basename='Receipts')
 
+schema_view = get_swagger_view(title='DS4 Django-REST Auth')
+
 urlpatterns = \
     [
         path('', include('django.contrib.auth.urls')),
         path('', include('base.urls')),
+        path('api/schema/', schema_view),
         path('user/', include('user.urls')),
         path('bierlijst/', include('bierlijst.urls')),
         path('eetlijst/', include('eetlijst.urls')),

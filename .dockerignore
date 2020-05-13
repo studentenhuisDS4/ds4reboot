@@ -2,6 +2,10 @@ docs/**/*
 docs
 venv
 venv/**/*
+app
+app/**/*
+.vscode
+.vscode/**/*
 .git
 .git/**/*
 .circleci

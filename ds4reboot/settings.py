@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'url_filter',
+    'rest_framework_swagger',
 
     # Wiki
     'django.contrib.sites.apps.SitesConfig',
@@ -116,6 +117,7 @@ REST_FRAMEWORK = {
         'url_filter.integrations.drf.DjangoFilterBackend',
     ],
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'PAGE_SIZE': 15,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
