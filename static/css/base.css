@@ -5,16 +5,20 @@ html {
     background: #f5f5f5;
 }
 
-body {
-    height:100%;
+html {
+    height: 100%;
 }
 
-.slideshow-container{
+body {
+    min-height: 100%;
+}
+
+.slideshow-container {
     max-height: 500px;
 }
 
 input[type='number'] {
-    -moz-appearance:textfield;
+    -moz-appearance: textfield;
 }
 
 .small-rows td {
@@ -48,7 +52,6 @@ input[type='number'] {
     border-bottom: 0;
 }
 
-
 .big-totals tfoot {
     font-size: 14px;
     font-style: normal;
@@ -61,12 +64,15 @@ input[type='number'] {
 /* CUSTOM STYLING */
 
 /* medal colors */
+
 .gold {
     background-color: #e4c752;
 }
+
 .silver {
     background-color: #C0C0C0;
 }
+
 .bronze {
     background-color: #b39a6b;
 }
@@ -74,9 +80,11 @@ input[type='number'] {
 .gold-icon {
     color: #e4c752;
 }
+
 .silver-icon {
     color: #C0C0C0;
 }
+
 .bronze-icon {
     color: #b39a6b;
 }
@@ -87,6 +95,7 @@ input[type='number'] {
     width: 12em;
     border-right: 1px dotted #bbb;
 }
+
 .form-large form {
     width: 12em;
 }
@@ -95,6 +104,7 @@ input[type='number'] {
     width: 10em;
     border-right: 1px dotted #bbb;
 }
+
 .form-medium form {
     width: 10em;
 }
@@ -103,6 +113,7 @@ input[type='number'] {
     width: 8em;
     border-right: 1px dotted #bbb;
 }
+
 .form-small form {
     width: 8em;
 }
@@ -111,6 +122,7 @@ input[type='number'] {
     width: 7em;
     border-right: 1px dotted #bbb;
 }
+
 .form-mini form {
     width: 7em;
 }
@@ -152,6 +164,7 @@ input[type='number'] {
 }
 
 /* page styling */
+
 .content-box {
     background: #eaeaea;
     border: 1px solid #bbb;
@@ -166,17 +179,18 @@ input[type='number'] {
 /* eetlijst table styling */
 
 /* make ajax styling easier ... well, has to prove itself yet. */
+
 .eetlijst-item-hidden {
     display: none;
 }
 
 .eetlijst-cook-bg:disabled {
-    background-color:#EAEAEA
+    background-color: #EAEAEA
 }
 
 /* bierlijst table styling */
 
-.bierlijst-dropdown{
+.bierlijst-dropdown {
     background-color: #FEFEfE;
     border-color: #DADADA;
     padding: 0;
@@ -208,9 +222,9 @@ input[type='number'] {
 }
 
 .uk-navbar-toggle {
-    color:#FFF;
+    color: #FFF;
 }
 
-.warning-new{
+.warning-new {
     background-color: #D85030;
 }
