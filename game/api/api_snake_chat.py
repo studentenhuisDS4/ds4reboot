@@ -16,7 +16,7 @@ class SnakeChatMessageViewSet(RetrieveModelMixin,
     filter_fields = '__all__'
 
     @action(detail=False, methods=['post'])
-    def add(self, request):
+    def post(self, request):
         serializer = SnakeChatMessageSchema(data=request.data, context={
                                             'user_id': request.user.id})
         if serializer.is_valid():
