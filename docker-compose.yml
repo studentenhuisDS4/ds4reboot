@@ -3,6 +3,8 @@ version: '2'
 services:
     web:
         build: .
+        networks: 
+            - ds4
         container_name: django
         command: python3 manage.py runserver 0.0.0.0:8000
         ports:
@@ -24,6 +26,8 @@ services:
     db:
         image: postgres:11.2-alpine
         container_name: db
+        networks: 
+            - ds4
         restart: always
         ports:
             - "5432:5432"
@@ -37,6 +41,8 @@ services:
     pgadmin:
         container_name: pgadmin
         image: dpage/pgadmin4
+        networks: 
+            - ds4
         environment:
             PGADMIN_DEFAULT_EMAIL: admin@admin.org
             PGADMIN_DEFAULT_PASSWORD: admin
@@ -49,3 +55,5 @@ services:
 volumes:
     postgres:
     pgadmin:
+networks:
+    ds4:

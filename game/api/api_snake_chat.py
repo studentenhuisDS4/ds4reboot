@@ -6,17 +6,19 @@ from rest_framework.viewsets import GenericViewSet
 import json
 
 from ds4reboot.api.utils import IsSuperUser, illegal_action, success_action
+from django.utils.datetime_safe import datetime
+from _datetime import timedelta
 
 
 class SnakeChatMessageViewSet(RetrieveModelMixin,
                               ListModelMixin,
                               GenericViewSet):
-    queryset = SnakeChatMessage.objects.all()
+    queryset = SnakeChatMessage.objects.filter(time__gte=datetime.now()-timedelta(days=7))
     serializer_class = SnakeChatMessageSchema
     filter_fields = '__all__'
 
     @action(detail=False, methods=['post'])
-    def add(self, request):
+    def post(self, request):
         serializer = SnakeChatMessageSchema(data=request.data, context={
                                             'user_id': request.user.id})
         if serializer.is_valid():

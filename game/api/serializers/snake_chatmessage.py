@@ -9,13 +9,13 @@ from marshmallow.validate import NoneOf
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import ModelAttributeValidator
 from ds4reboot.api.validators import UniqueModelValidator
-from game.models import SnakeHighScore, SNAKE_NICK_LENGTH, MAX_CHAT_MESSAGE_LENGTH
+from game.models import SnakeHighScore, SnakeChatMessage, SNAKE_NICK_LENGTH, MAX_CHAT_MESSAGE_LENGTH
 
 class SnakeChatMessageSchema(Schema):
     id = fields.Int(dump_only=True)
     user_id = fields.Int(required=True, validate=[UniqueModelValidator(type=User)])
     message = fields.Str(required=True, validate=[Length(min=1, max=MAX_CHAT_MESSAGE_LENGTH)])
-    nickname = fields.Str(required=True, validate=[Length(max=SNAKE_NICK_LENGTH)])
+    nickname = fields.Str(required=True, validate=[Length(min=2, max=SNAKE_NICK_LENGTH)])
     time = fields.DateTime(dump_only=True)
 
     @pre_load
