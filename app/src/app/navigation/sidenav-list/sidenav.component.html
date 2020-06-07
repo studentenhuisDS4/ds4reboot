@@ -1,34 +1,69 @@
 <mat-divider></mat-divider>
 <mat-nav-list dense *ngIf="!loggedIn">
-    <h2 matSubheader> General </h2>
-    <a mat-list-item routerLink="/signup" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <h2 matSubheader>General</h2>
+    <a
+        mat-list-item
+        routerLink="/signup"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>person_add</mat-icon>
         <span class="nav-caption">Sign-up</span>
     </a>
-    <a mat-list-item routerLink="/login" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a
+        mat-list-item
+        routerLink="/login"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>account_circle</mat-icon>
         <span class="nav-caption">Login</span>
     </a>
-    <a mat-list-item routerLink="/contact" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a
+        mat-list-item
+        routerLink="/contact"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>time_to_leave</mat-icon>
         <span class="nav-caption">Contact & route</span>
     </a>
 </mat-nav-list>
 <mat-nav-list dense *ngIf="loggedIn">
-    <h2 matSubheader> General </h2>
-    <a mat-list-item routerLink="/home" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <h2 matSubheader>General</h2>
+    <a
+        mat-list-item
+        routerLink="/home"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>home</mat-icon>
         <span class="nav-caption">Home</span>
     </a>
-    <a mat-list-item routerLink="/turf" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a
+        mat-list-item
+        routerLink="/turf"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>equalizer</mat-icon>
         <span class="nav-caption">Turf List</span>
     </a>
-    <a mat-list-item routerLink="/dinner" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a
+        mat-list-item
+        routerLink="/dinner"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>fastfood</mat-icon>
         <span class="nav-caption">Dinner List</span>
     </a>
-    <a mat-list-item routerLink="/organisation" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a
+        mat-list-item
+        routerLink="/organisation"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>assignment_ind</mat-icon>
         <span class="nav-caption">Organisation</span>
     </a>
@@ -48,22 +83,76 @@
         <a matline>Admin</a>
     </mat-list-item>
     <mat-menu #menuReceipt="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/organisation/receipts']">View receipts</button>
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/organisation/receipts/upload-receipt']">Upload receipt</button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/organisation/receipts']"
+        >
+            View receipts
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/organisation/receipts/upload-receipt']"
+        >
+            Upload receipt
+        </button>
     </mat-menu>
     <mat-menu #menuThesau="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/thesau']">Manage finances</button>
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/manage-receipts']">Manage receipts</button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/thesau']"
+        >
+            Manage finances
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/manage-receipts']"
+        >
+            Manage receipts
+        </button>
     </mat-menu>
     <mat-menu #menuAdmin="matMenu">
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin']">Admin</button>
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin/user-manage']">User manage</button>
-        <button mat-menu-item (click)="onSidenavClose()" [routerLink]="['/admin/user-manage/user-create']">Create user</button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/admin']"
+        >
+            Admin
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/admin/group-manage']"
+        >
+            Groups
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/admin/user-manage']"
+        >
+            Users
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
+            [routerLink]="['/admin/user-manage/user-create']"
+        >
+            Create user
+        </button>
     </mat-menu>
 
     <mat-divider></mat-divider>
     <h2 matSubheader>Profile</h2>
-    <a mat-list-item routerLink="/profile" routerLinkActive="list-item-active" (click)="onSidenavClose()">
+    <a
+        mat-list-item
+        routerLink="/profile"
+        routerLinkActive="list-item-active"
+        (click)="onSidenavClose()"
+    >
         <mat-icon>perm_identity</mat-icon>
         <span class="nav-caption">Profile</span>
     </a>

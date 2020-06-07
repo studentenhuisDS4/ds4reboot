@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../environments/environment';
-import {JwtHelperService} from '@auth0/angular-jwt';
-import {tap} from 'rxjs/operators';
-import {Router} from '@angular/router';
-import {ITokenClaims} from '../models/auth.model';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { ITokenClaims } from '../models/auth.model';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +14,7 @@ export class AuthService {
     API_URL: string = environment.baseUrl;
     jwtHelper: JwtHelperService = new JwtHelperService();
 
-    constructor(private  httpClient: HttpClient, private router: Router) {
+    constructor(private httpClient: HttpClient, private router: Router) {
     }
 
     public isAuthenticated(): boolean {
@@ -25,7 +25,7 @@ export class AuthService {
 
         if (environment.debug) {
             this.validateAuth(token).subscribe(result => {
-                console.log('%c[Auth]/debug=true: %ctoken marked and verified as valid!', 'color: green', 'color: blue');
+                console.log('%c[Auth]/debug=true: %ctoken marked and verified as valid!', 'color: white', 'color: cyan');
             }, error => {
                 console.log('Token didnt validate...', error);
                 this.logout();
@@ -69,7 +69,11 @@ export class AuthService {
     }
 
     public validateAuth(token: string) {
-        return this.httpClient.post(`${this.API_URL}/auth-jwt-verify/`, {token});
+
+        if (environment.debug) {
+            console.log("Verifying token:", token);
+        }
+        return this.httpClient.post(`${this.API_URL}/auth-jwt-verify/`, { token });
     }
 
     public loginHouse() {

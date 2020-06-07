@@ -1,12 +1,14 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../environments/environment';
-import {GROUP, IGroup, IUser} from '../models/user.model';
-import {AuthService} from './auth.service';
-import {FormGroup} from '@angular/forms';
-import {map, tap} from 'rxjs/operators';
-import {ITokenClaims} from '../models/auth.model';
-import {of} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { IUser } from '../models/user.model';
+import { GROUP, IGroup } from '../models/group.model';
+
+import { AuthService } from './auth.service';
+import { FormGroup } from '@angular/forms';
+import { map, tap } from 'rxjs/operators';
+import { ITokenClaims } from '../models/auth.model';
+import { of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -127,7 +129,7 @@ export class UserService {
     }
 
     private purgeForm(form: FormGroup) {
-        const data = {...form.value};
+        const data = { ...form.value };
         if (data.password === '') {
             delete data.password;
             delete data.password_repeat;

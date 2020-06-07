@@ -24,6 +24,7 @@ import { SignupComponent } from './login/signup/signup.component';
 import { EditReceiptComponent } from './organisation/receipts/edit-receipt/edit-receipt.component';
 import { ReceiptComponent } from './organisation/receipts/receipt/receipt.component';
 import { CalendarComponent } from './organisation/calendar/calendar.component';
+import { GroupManageComponent } from './admin/group-manage/group-manage.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -53,6 +54,10 @@ const routes: Routes = [
     }, {
         path: 'admin/user-manage',
         component: UserManageComponent,
+        canActivate: [AuthGuard, AdminGuard],
+    }, {
+        path: 'admin/group-manage',
+        component: GroupManageComponent,
         canActivate: [AuthGuard, AdminGuard],
     }, {
         path: 'admin/user-manage/user-create',

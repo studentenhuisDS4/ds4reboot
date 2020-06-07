@@ -1,11 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {GROUP, IGroup, IUser} from '../../models/user.model';
-import {UserService} from '../../services/user.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IUser } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {AdminService} from '../../services/admin.service';
-import {SnackBarService} from '../../services/snackBar.service';
+import { AdminService } from '../../services/admin.service';
+import { SnackBarService } from '../../services/snackBar.service';
 
 @Component({
     selector: 'app-user-manage',
@@ -16,8 +16,8 @@ export class UserManageComponent implements OnInit {
     user: IUser;
     displayedColumns: string[] = ['display_name', 'surname', 'is_superuser', 'has_thesau', 'balance', 'actions'];
     dataSource: MatTableDataSource<IUser>;
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor(
         private userService: UserService,

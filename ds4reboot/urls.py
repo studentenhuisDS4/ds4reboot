@@ -19,6 +19,7 @@ from organisation.api.api_calendar import CalendarViewSet
 from organisation.api.api_keukendienst import KeukenDienstViewSet
 from organisation.api.api_receipts import ReceiptViewSet
 from user.api.api_user import UserViewSet, UserFullViewSet, UserActionViewSet, HouseViewSet
+from user.api.api_group import GroupViewSet, GroupAdminViewSet
 from game.api.api_snake_highscore import SnakeHighScoreViewSet, SnakeHighScoreAdminViewSet
 from game.api.api_snake_chat import SnakeChatMessageAdminViewSet, SnakeChatMessageViewSet
 
@@ -39,6 +40,8 @@ router.register(r'snake/chat', SnakeChatMessageViewSet,
                 basename='Snake chat messages')
 router.register(r'snake/chat-admin', SnakeChatMessageAdminViewSet,
                 basename='Snake chat administration')
+router.register(r'group', GroupViewSet, basename='Group')
+router.register(r'group-admin', GroupAdminViewSet, basename='Group admin')
 router.register(r'user', UserViewSet, basename='User')
 router.register(r'user-full', UserFullViewSet, basename='User full')
 router.register(r'user-action', UserActionViewSet, basename='User action')

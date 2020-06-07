@@ -50,6 +50,7 @@ import {SpinnerComponent} from './directives/spinner/spinner.component';
 import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
 import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
 import { CalendarComponent } from './organisation/calendar/calendar.component';
+import { GroupManageComponent } from './admin/group-manage/group-manage.component';
 
 @NgModule({
     declarations: [
@@ -86,7 +87,8 @@ import { CalendarComponent } from './organisation/calendar/calendar.component';
         SpinnerComponent,
         ReceiptComponent,
         EditReceiptComponent,
-        CalendarComponent
+        CalendarComponent,
+        GroupManageComponent
     ],
     imports: [
         BrowserModule,

@@ -1,0 +1,130 @@
+<section fxFlexAlign="stretch" fxLayout="column">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>
+                Groups
+            </mat-card-title>
+        </mat-card-header>
+        <div *ngIf="!user?.is_superuser">
+            You are not allowed to manage groups. Become admin, or drink a beer
+            or two.
+        </div>
+        <mat-form-field fxFlex="100%">
+            <input
+                (keyup)="applyFilter($event.target.value)"
+                matInput
+                placeholder="Filter (group name, member name, etc.)"
+            />
+        </mat-form-field>
+    </mat-card>
+    <br />
+    <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort>
+        <ng-container matColumnDef="name" sticky>
+            <th *matHeaderCellDef mat-header-cell>Group name</th>
+            <td *matCellDef="let element" mat-cell>
+                <small>
+                    <mat-icon *ngIf="element?.housemate?.sublet_date"
+                        >remove_circle_outline</mat-icon
+                    > </small
+                >{{ element?.name }}
+
+                <small fxHide.lt-sm>
+                    {{
+                        element?.housemate.display_name !== element.first_name
+                            ? element.first_name
+                            : ""
+                    }}
+                </small>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions" stickyEnd>
+            <th *matHeaderCellDef mat-header-cell>Actions</th>
+            <td *matCellDef="let element" mat-cell>
+                <mat-menu #appMenu="matMenu">
+                    <button
+                        [routerLink]="[
+                            '/admin/user-manage/user-edit/',
+                            element.id
+                        ]"
+                        mat-menu-item
+                        matTooltip="Click to Edit"
+                    >
+                        <mat-icon aria-label="Deactivate">edit</mat-icon>
+                        Edit
+                    </button>
+                    <button
+                        (click)="toggleAdmin(element)"
+                        [disabled]="
+                            !element.is_active || element.id === user.id
+                        "
+                        mat-menu-item
+                        matTooltip="Click to toggle admin"
+                    >
+                        <mat-icon aria-label="Deactivate">security</mat-icon>
+                        Toggle admin
+                    </button>
+                    <button
+                        (click)="toggleThesau(element)"
+                        [disabled]="!element.is_active"
+                        mat-menu-item
+                        matTooltip="Click to Edit"
+                    >
+                        <mat-icon aria-label="Deactivate">euro</mat-icon>
+                        Toggle thesau group
+                    </button>
+                    <button
+                        (click)="toggleActivationUser(element, false)"
+                        *ngIf="element.is_active"
+                        [disabled]="
+                            !element.is_active || element.id === user.id
+                        "
+                        mat-menu-item
+                        matTooltip="Click to Deactivate"
+                    >
+                        <mat-icon aria-label="Deactivate"
+                            >pause_circle_filled</mat-icon
+                        >
+                        Deactivate
+                    </button>
+                    <button
+                        (click)="toggleActivationUser(element, true)"
+                        *ngIf="!element.is_active"
+                        [disabled]="element.is_active || element.id === user.id"
+                        mat-menu-item
+                        matTooltip="Click to Activate"
+                    >
+                        <mat-icon aria-label="Activate"
+                            >play_circle_filled</mat-icon
+                        >
+                        Activate
+                    </button>
+                    <button
+                        (click)="deleteUser(element)"
+                        [disabled]="
+                            !element.is_active || element.id === user.id
+                        "
+                        color="warn"
+                        mat-menu-item
+                        matTooltip="Click to Delete"
+                    >
+                        <mat-icon aria-label="Delete">delete</mat-icon>
+                        Delete
+                    </button>
+                </mat-menu>
+                <button
+                    [matMenuTriggerFor]="appMenu"
+                    mat-icon-button
+                    matTooltip="Click to Edit"
+                >
+                    <mat-icon aria-label="Edit">more_vert</mat-icon>
+                </button>
+            </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</section>

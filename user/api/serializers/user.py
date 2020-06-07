@@ -8,17 +8,12 @@ from rest_marshmallow import Schema
 from ds4reboot.api.utils import Map
 from ds4reboot.api.validators import UniqueModelValidator
 from user.models import DIET_LENGTH, Housemate
-
+from user.api.serializers.group import GroupSchema
 
 class PermissionSchema(Schema):
     id = fields.Int()
     user_id = fields.Int()
     permission_id = fields.Int()
-
-
-class GroupSchema(Schema):
-    id = fields.Int(required=True, validate=[UniqueModelValidator(type=Group, error="This group does not exist")])
-    name = fields.Str()
 
 
 class HousemateSchema(Schema):
