@@ -132,6 +132,13 @@
         <button
             mat-menu-item
             (click)="onSidenavClose()"
+            [routerLink]="['/admin/group-manage/group-edit']"
+        >
+            Edit/create group
+        </button>
+        <button
+            mat-menu-item
+            (click)="onSidenavClose()"
             [routerLink]="['/admin/user-manage']"
         >
             Users

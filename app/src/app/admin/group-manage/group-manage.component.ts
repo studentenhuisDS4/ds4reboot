@@ -5,9 +5,8 @@ import { UserService } from '../../services/user.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AdminService } from '../../services/admin.service';
-import { SnackBarService } from '../../services/snackBar.service';
 import { GroupService } from '../../services/group.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-group-manage',
@@ -17,8 +16,8 @@ import { GroupService } from '../../services/group.service';
 export class GroupManageComponent implements OnInit {
     user: IUser;
     groups: IGroup[];
-    displayedColumns: string[] = ['name']; // 'members'
-    dataSource: MatTableDataSource<IUser>;
+    displayedColumns: string[] = ['name', 'members', 'actions']; // 'members'
+    dataSource: MatTableDataSource<IGroup>;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -33,8 +32,9 @@ export class GroupManageComponent implements OnInit {
         });
         this.groupService.getGroupList().then(result => {
             this.groups = result;
-
-            // TODO set dataSource here
+            this.dataSource = new MatTableDataSource(this.groups);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
         });
     }
 

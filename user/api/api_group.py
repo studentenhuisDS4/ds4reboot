@@ -7,12 +7,12 @@ from rest_framework.viewsets import GenericViewSet
 
 from ds4reboot.api.utils import illegal_action, IsSuperUser, EmptySchema, log_exception, \
     success_action
-from user.api.serializers.group import GroupSchema, GroupAdminSchema
+from user.api.serializers.group import GroupSchema
 
 
 class GroupViewSet(mixins.RetrieveModelMixin,
-                  mixins.ListModelMixin,
-                  GenericViewSet):
+                   mixins.ListModelMixin,
+                   GenericViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSchema
     filter_fields = '__all__'
@@ -20,7 +20,7 @@ class GroupViewSet(mixins.RetrieveModelMixin,
 
 class GroupAdminViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
-    serializer_class = GroupAdminSchema
+    serializer_class = GroupSchema
 
     permission_classes = [IsSuperUser, ]
     filter_fields = '__all__'

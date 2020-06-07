@@ -10,6 +10,7 @@ from ds4reboot.api.validators import UniqueModelValidator
 from user.models import DIET_LENGTH, Housemate
 from user.api.serializers.group import GroupSchema
 
+
 class PermissionSchema(Schema):
     id = fields.Int()
     user_id = fields.Int()
@@ -44,8 +45,10 @@ class HousemateFullSchema(HousemateSchema):
     boetes_geturfd_rwijn = fields.Int(dump_only=True)
     boetes_geturfd_wwijn = fields.Int(dump_only=True)
     total_bier = fields.Int(dump_only=True)
-    total_rwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
-    total_wwijn = fields.Decimal(dump_only=True, decimal_places=2, max_digits=8)
+    total_rwijn = fields.Decimal(
+        dump_only=True, decimal_places=2, max_digits=8)
+    total_wwijn = fields.Decimal(
+        dump_only=True, decimal_places=2, max_digits=8)
     moveout_set = fields.Boolean(default=False, dump_only=True)
     moveout_date = fields.Date(dump_only=True)
 
@@ -63,13 +66,15 @@ class UserSchema(Schema):
         lambda user: GroupSchema(user.groups.all(), many=True).data,
         dump_only=True)
     user_permissions = fields.Function(
-        lambda user: PermissionSchema(user.user_permissions.all(), many=True).data,
+        lambda user: PermissionSchema(
+            user.user_permissions.all(), many=True).data,
         dump_only=True)
 
     email = fields.Email(required=True)
     first_name = fields.Str(required=True, validate=[Length(min=2)])
     last_name = fields.Str(required=True, validate=[Length(min=2)], )
-    housemate = fields.Nested(HousemateSchema, exclude=('user_id',), required=True)
+    housemate = fields.Nested(
+        HousemateSchema, exclude=('user_id',), required=True)
 
     password = fields.Str(load_only=True, validate=[Length(min=6)])
     password_repeat = fields.Str(load_only=True, validate=[Length(min=6)])
@@ -112,12 +117,15 @@ class UserFullSchema(UserSchema):
     is_superuser = fields.Bool(default=False)
     last_login = fields.DateTime()
     date_joined = fields.DateTime(default=timezone.now())
-    housemate = fields.Nested(HousemateFullSchema, exclude=('user_id',), required=True)
+    housemate = fields.Nested(
+        HousemateFullSchema, exclude=('user_id',), required=True)
 
     # only settable by admin
     username = fields.Str(required=True, validate=[Length(min=4)])
-    password = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
-    password_repeat = fields.Str(required=True, load_only=True, validate=[Length(min=6)])
+    password = fields.Str(required=True, load_only=True,
+                          validate=[Length(min=6)])
+    password_repeat = fields.Str(
+        required=True, load_only=True, validate=[Length(min=6)])
 
     def create(self, validated_data):
         try:

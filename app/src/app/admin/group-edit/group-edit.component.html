@@ -1,0 +1,69 @@
+<section fxLayout="column" fxFlexAlign="stretch">
+    <mat-card>
+        <div *ngIf="!user?.is_superuser">
+            You are not allowed to create a new user. Become admin, or drink a
+            beer or two.
+        </div>
+        <div
+            class="container"
+            *ngIf="user?.is_superuser"
+            fxLayout
+            fxLayout.xs="column"
+            fxLayoutAlign="center"
+            fxLayoutGap="10px"
+            fxLayoutGap.xs="0"
+        >
+            <div class="item item-2" fxFlex>
+                <h1>New Group</h1>
+                <button mat-flat-button routerLink="/admin/group-manage/">
+                    <mat-icon>arrow_back</mat-icon>
+                    back to groups
+                </button>
+                <form [formGroup]="createGroupForm" fxLayout="column">
+                    <mat-form-field>
+                        <input
+                            matInput
+                            placeholder="Group name"
+                            type="text"
+                            formControlName="name"
+                            required
+                        />
+                        <mat-error *ngIf="E('name')?.required">
+                            Name is required.
+                        </mat-error>
+                        <mat-error *ngIf="E('name')?.groupNameExists">
+                            This group name is already taken.
+                        </mat-error>
+                    </mat-form-field>
+                    <div
+                        formArrayName="members"
+                        *ngFor="
+                            let member of createGroupForm.get('members')
+                                .controls;
+                            let i = index
+                        "
+                    >
+                        <mat-form-field [formGroupName]="i">
+                            <input
+                                matInput
+                                type="text"
+                                formControlName="username"
+                                required
+                                placeholder="Member"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        type="button"
+                        [disabled]="!createGroupForm.valid"
+                        (click)="createGroup()"
+                    >
+                        Create group
+                    </button>
+                </form>
+            </div>
+        </div>
+    </mat-card>
+</section>

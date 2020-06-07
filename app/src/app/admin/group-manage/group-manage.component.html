@@ -13,28 +13,31 @@
             <input
                 (keyup)="applyFilter($event.target.value)"
                 matInput
-                placeholder="Filter (group name, member name, etc.)"
+                placeholder="Filter (group name)"
             />
         </mat-form-field>
+        <button
+            color="primary"
+            mat-raised-button
+            routerLink="/admin/group-manage/group-edit"
+        >
+            <mat-icon>add</mat-icon>
+        </button>
     </mat-card>
     <br />
     <table [dataSource]="dataSource" class="mat-elevation-z8" mat-table matSort>
         <ng-container matColumnDef="name" sticky>
             <th *matHeaderCellDef mat-header-cell>Group name</th>
             <td *matCellDef="let element" mat-cell>
-                <small>
-                    <mat-icon *ngIf="element?.housemate?.sublet_date"
-                        >remove_circle_outline</mat-icon
-                    > </small
-                >{{ element?.name }}
-
-                <small fxHide.lt-sm>
-                    {{
-                        element?.housemate.display_name !== element.first_name
-                            ? element.first_name
-                            : ""
-                    }}
-                </small>
+                {{ element?.name }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="members" sticky>
+            <th *matHeaderCellDef mat-header-cell>Group members</th>
+            <td *matCellDef="let element" mat-cell>
+                <span *ngFor="let member of element?.members"
+                    >{{ member?.housemate.display_name }},
+                </span>
             </td>
         </ng-container>
 
@@ -44,7 +47,7 @@
                 <mat-menu #appMenu="matMenu">
                     <button
                         [routerLink]="[
-                            '/admin/user-manage/user-edit/',
+                            '/admin/group-manage/group-edit/',
                             element.id
                         ]"
                         mat-menu-item
@@ -54,53 +57,7 @@
                         Edit
                     </button>
                     <button
-                        (click)="toggleAdmin(element)"
-                        [disabled]="
-                            !element.is_active || element.id === user.id
-                        "
-                        mat-menu-item
-                        matTooltip="Click to toggle admin"
-                    >
-                        <mat-icon aria-label="Deactivate">security</mat-icon>
-                        Toggle admin
-                    </button>
-                    <button
-                        (click)="toggleThesau(element)"
-                        [disabled]="!element.is_active"
-                        mat-menu-item
-                        matTooltip="Click to Edit"
-                    >
-                        <mat-icon aria-label="Deactivate">euro</mat-icon>
-                        Toggle thesau group
-                    </button>
-                    <button
-                        (click)="toggleActivationUser(element, false)"
-                        *ngIf="element.is_active"
-                        [disabled]="
-                            !element.is_active || element.id === user.id
-                        "
-                        mat-menu-item
-                        matTooltip="Click to Deactivate"
-                    >
-                        <mat-icon aria-label="Deactivate"
-                            >pause_circle_filled</mat-icon
-                        >
-                        Deactivate
-                    </button>
-                    <button
-                        (click)="toggleActivationUser(element, true)"
-                        *ngIf="!element.is_active"
-                        [disabled]="element.is_active || element.id === user.id"
-                        mat-menu-item
-                        matTooltip="Click to Activate"
-                    >
-                        <mat-icon aria-label="Activate"
-                            >play_circle_filled</mat-icon
-                        >
-                        Activate
-                    </button>
-                    <button
-                        (click)="deleteUser(element)"
+                        (click)="deleteGroup(element)"
                         [disabled]="
                             !element.is_active || element.id === user.id
                         "
