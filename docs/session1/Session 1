@@ -1,0 +1,39 @@
+Session 1
+> Main overview, SSH
+
+- Picture
+Server 
+
+- Tool SSH
+VS Code
+https://code.visualstudio.com/
+SSH Extension
+https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh
+Powershell install
+https://www.techrepublic.com/blog/10-things/how-to-generate-ssh-keys-in-openssh-for-windows-10/
+Install-Module -Force OpenSSHUtils
+Commands:
+
+ssh-keygen
+~/.ssh/id_qleroi_ds4_rsa
+~/.ssh/id_qleroi_ds4_rsa.pub
+rename inner name 
+Copy .pub to server
+~/.ssh/authorized_keys
+
+Host DS4 Server
+  HostName ds4.nl
+  User root
+  IdentityFile ~/.ssh/id_ds4_rsa
+> .pub and private file
+
+Windows based SSH
+MobaXTerm
+https://mobaxterm.mobatek.net/download.html
+Putty
+> .ppk files
+
+Pub and private. Pub for server, private for you (keep it safe).
+
+More info:
+https://www.techrepublic.com/blog/10-things/how-to-generate-ssh-keys-in-openssh-for-windows-10/
