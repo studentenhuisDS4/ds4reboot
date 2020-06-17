@@ -20,11 +20,11 @@ def test_mail(request):
         return HttpResponse('Didnt send: DEBUG==True')
 
     if request.user.is_superuser or request.user.is_staff:
-        hm = Housemate.objects.get(display_name__exact='Dale')
+        hm = Housemate.objects.get(display_name__exact='Admin')
         last_hr_date = datetime.now()
         est_hr_perc = 50
-        send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['dale@ds4.nl'])
-        return HttpResponse('Sent')
+        send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['admin@ds4.nl'])
+        return HttpResponse('Sent to admin@ds4.nl')
     else:
         return HttpResponse('Denied (not admin)')
 

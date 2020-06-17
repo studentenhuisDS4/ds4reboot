@@ -1,0 +1,20 @@
+Connect to the new test server: replace ds4.nl with 165.22.192.54 in the ssh config. Key is the same.
+Command to run on the terminal of the test server:
+ufw status
+apt upgrade (updgrade packages)
+apt is the equivalent of pip and conda in python
+chsh -s /usr/bin/fish: to change the shell default (in this case fish)
+reboot: reboots the server
+htop: opens a task manager of the server
+tldr "command": gives a help function for the "command"
+man "command": same as tldr (but worst)
+ping google.com: check for servers ping
+"command" | grep "filter": keeps only the lines outputted by "command" that have the string "filter"
+wget "website": download "website"
+curl "website": show "website" on terminal
+netstat: active processes
+netstat -tupln: filter on processes that are on LISTEN status
+Everything over http goes through port 80, https goes on port 443
+cd /etc/ssh: for ssh_config (for the client) and sshd_config (for the server)
+X11Forwarding: graphical streaming protocol
+nano "file": open and edit "file" (ctrl+s to save)
