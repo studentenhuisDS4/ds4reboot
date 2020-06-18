@@ -1,26 +1,30 @@
-from game.models import SnakeChatMessage
-from game.api.serializers.snake_chatmessage import SnakeChatMessageSchema, SnakeChatClearSchema
+from django.utils.timezone import timedelta, datetime, utc
 from rest_framework.decorators import action
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
 from rest_framework.viewsets import GenericViewSet
-import json
 
 from ds4reboot.api.utils import IsSuperUser, illegal_action, success_action
-from django.utils.datetime_safe import datetime
-from _datetime import timedelta
+from game.api.serializers.snake_chatmessage import SnakeChatMessageSchema
+from game.models import SnakeChatMessage
 
 
 class SnakeChatMessageViewSet(RetrieveModelMixin,
                               ListModelMixin,
                               GenericViewSet):
-    queryset = SnakeChatMessage.objects.filter(time__gte=datetime.now()-timedelta(days=7))
+    # This is not dynamic
+    queryset = SnakeChatMessage.objects.filter(time__gte=(datetime.utcnow() - timedelta(days=7)).replace(tzinfo=utc))
     serializer_class = SnakeChatMessageSchema
     filter_fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        self.queryset = SnakeChatMessage.objects.filter(
+            time__gte=(datetime.utcnow() - timedelta(days=7)).replace(tzinfo=utc))
+        super().__init__(*args, **kwargs)
 
     @action(detail=False, methods=['post'])
     def post(self, request):
         serializer = SnakeChatMessageSchema(data=request.data, context={
-                                            'user_id': request.user.id})
+            'user_id': request.user.id})
         if serializer.is_valid():
             serializer.save()
             return success_action(serializer.data)
@@ -28,9 +32,7 @@ class SnakeChatMessageViewSet(RetrieveModelMixin,
             return illegal_action(serializer.errors)
 
 
-class SnakeChatMessageAdminViewSet(
-        GenericViewSet
-):
+class SnakeChatMessageAdminViewSet(GenericViewSet):
     queryset = SnakeChatMessage.objects.all()
     serializer_class = SnakeChatMessageSchema
     filter_fields = '__all__'

@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.datetime_safe import datetime
 
+from ds4reboot.secret_settings import EMAIL_HOST_USER
 from eetlijst.models import Dinner, UserDinner
 from thesau.models import Report
 from user.models import Housemate
@@ -30,7 +31,7 @@ def send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['thesa
         send_mail(
             'DS4 housemate moved out - site report',
             full_name + ' left DS4. TXT mail is not supported. Use HTML instead.',
-            'admin@ds4.nl',
+            EMAIL_HOST_USER,
             recipients,
             html_message=msg_html,
             fail_silently=False

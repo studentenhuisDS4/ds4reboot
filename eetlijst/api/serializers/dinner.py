@@ -33,6 +33,7 @@ class UserDinnerSchema(Schema):
     @validates_schema
     def validate_count(self, data, **kwargs):
         data = Map(data)
+        print(data)
         errors = {}
         if errors:
             raise ValidationError(errors)

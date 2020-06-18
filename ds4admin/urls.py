@@ -11,7 +11,6 @@ urlpatterns = [
     path('summary/', views.summary, name='summary'),
     path('create_user/', views.create_user, name='create user'),
     path('create_user/post', views.create_user_post, name='create user post'),
-    path('test_mail/', views.test_mail, name='admin test mail moveout'),
 
     url(r'^permissies/set/(?P<group_type>\w+)/(?P<user_id>[0-9]+)/$', views.toggle_group, name='toggle group'),
     url(r'^activate/$', views.activate_housemate, name='activate housemate'),

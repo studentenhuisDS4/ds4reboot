@@ -46,6 +46,7 @@ router.register(r'keukendienst', KeukenDienstViewSet, basename='Keukendienst')
 router.register(r'calendar', CalendarViewSet, basename='Calendar')
 router.register(r'receipt', ReceiptViewSet, basename='Receipts')
 
+
 urlpatterns = \
     [
         path('', include('django.contrib.auth.urls')),
@@ -60,6 +61,8 @@ urlpatterns = \
 
         path('wiki/notifications/', include('django_nyt.urls')),
         path('wiki/', include('wiki.urls')),
+
+        path('', include('mail_forward.urls')),
 
         path(f'{settings.API_BASE_URL}auth-jwt/',
              TokenPairView.as_view(), name='token'),

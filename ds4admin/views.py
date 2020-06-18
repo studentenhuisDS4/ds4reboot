@@ -5,7 +5,7 @@ from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST, require_GET
 
 from ds4admin.utils import check_dinners, check_moveout_dinners, check_dinners_housemate, send_moveout_mail
-from ds4reboot.secret_settings import DEBUG
+from ds4reboot.secret_settings import DEBUG, EMAIL_HOST_USER
 from user.models import Housemate
 from eetlijst.models import SplitTransfer
 from thesau.models import Report
@@ -13,20 +13,6 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.contrib import messages
 from decimal import Decimal
-
-
-def test_mail(request):
-    if DEBUG:
-        return HttpResponse('Didnt send: DEBUG==True')
-
-    if request.user.is_superuser or request.user.is_staff:
-        hm = Housemate.objects.get(display_name__exact='Admin')
-        last_hr_date = datetime.now()
-        est_hr_perc = 50
-        send_moveout_mail(request, hm, last_hr_date, est_hr_perc, recipients=['admin@ds4.nl'])
-        return HttpResponse('Sent to admin@ds4.nl')
-    else:
-        return HttpResponse('Denied (not admin)')
 
 
 # view for ds4 admin page

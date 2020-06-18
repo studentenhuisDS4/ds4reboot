@@ -8,3 +8,4 @@ media/
 venv/
 
 **/*_credentials.json
+**/*.pickle

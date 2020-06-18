@@ -1,0 +1,85 @@
+# Auth
+# {"session":"1469aa0155ed436c9ee62ed180a54fe1","user":"mail@ds4.nl","user_id":7,"context_id":37089,"locale":"nl_NL"}
+
+# edit
+# {
+#     "id": 3,
+#     "position": 1,
+#     "rulename": "Fwd 1-5 admin, d.zwart, ..., ...",
+#     "active": true,
+#     "flags": [],
+#     "test": {
+#         "id": "true"
+#     },
+#     "actioncmds": [
+#         {
+#             "id": "redirect",
+#             "to": "admin@ds4.nl"
+#         },
+#         {
+#             "id": "redirect",
+#             "to": "d.zwart@ridder.com"
+#         },
+#         {
+#             "id": "redirect",
+#             "to": "d.zwart@ridder.com"
+#         },
+#         {
+#             "id": "redirect",
+#             "to": "d.zwart@ridder.com"
+#         }
+#     ]
+# }
+
+# def action_put(self, forward_list):
+#         try:
+#             if self.logged_in:
+#                 # Add authentication
+#                 input_data = {'score': score, 'nickname': nickname}
+#                 response = requests.post(
+#                     self.SERVER_SNAKE_HIGHSCORES + "add/",
+#                     headers=self.get_token_header(self.login_token),
+#                     json=input_data
+#                 )
+#                 if response.status_code == 200:
+#                     return True
+#                 elif response.status_code == 401:
+#                     print(
+#                         "ERROR: server did not accept the login token provided (401 NOT_AUTH code)")
+#                 else:
+#                     print(
+#                         "WARN: request was responded with unhandled response code for highscores, status-code: {} (response: {})"
+#                         .format(response.status_code, response))
+#             else:
+#                 print("WARN: can't push snake highscores without successful login.")
+
+#         except Exception as e:
+#             print(
+#                 "ERROR: exception occurred while pushing high-scores from server API: {}".format(e))
+#         return False
+
+#     def action_list(self):
+#         # Load snake highscores from the server API, but only if logged in.
+#         try:
+#             if self.logged_in:
+#                 # Add authentication
+#                 response = requests.get(
+#                     self.SERVER_SNAKE_HIGHSCORES, headers=self.get_token_header(self.login_token))
+
+#                 if response.status_code == 200:
+#                     loaded_highscores = response.json()
+#                     return loaded_highscores
+#                 elif response.status_code == 401:
+#                     print(
+#                         "ERROR: server did not accept the login token provided (401 NOT_AUTH code)")
+#                 else:
+#                     print(
+#                         "WARN: request was responded with unhandled response code for highscores, status-code: {} (response: {})"
+#                         .format(response.status_code, response))
+#             else:
+#                 print("WARN: can't retrieve snake highscores without successful login.")
+
+#         except Exception as e:
+#             print(
+#                 "ERROR: exception occurred while fetching high-scores from server API: {}".format(e))
+#         return None

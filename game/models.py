@@ -5,6 +5,7 @@ from django.utils import timezone
 SNAKE_NICK_LENGTH = 100
 MAX_CHAT_MESSAGE_LENGTH = 1000
 
+
 # Create your models here.
 class SnakeHighScore(models.Model):
     """
@@ -14,6 +15,7 @@ class SnakeHighScore(models.Model):
     nickname = models.CharField(max_length=SNAKE_NICK_LENGTH)
     score = models.IntegerField(null=False)
     time = models.DateTimeField(default=timezone.now)
+
 
 class SnakeChatMessage(models.Model):
     """
