@@ -1,18 +1,21 @@
-{% load static from staticfiles %}
+{% load static from static %}
 {% load humanize %}
 {% load parse_iso from date_parse %}
 {% block add_to_header %}
+
 <link rel="stylesheet" href="{% static '/css/lf/slideshow.css' %}" />
 <script src="{% static '/js/lf/slideshow.js' %}"></script>
 {% endblock %}
 
 <script>
-    var clipboard = new ClipboardJS('[data-clipboard-text]', function (trigger) {
+    var clipboard = new ClipboardJS("[data-clipboard-text]", function (trigger) {
         return trigger;
     });
 
-    clipboard.on('success', function (e) {
-        UIkit.notify("<i class='uk-icon-check'></i> Copied the mediaserver URL!", { status: 'success' });
+    clipboard.on("success", function (e) {
+        UIkit.notify("<i class='uk-icon-check'></i> Copied the mediaserver URL!", {
+            status: "success",
+        });
         e.clearSelection();
     });
 </script>
@@ -23,10 +26,13 @@
             <img src="{% static '/img/resource/3.JPG' %}" alt="Sven HV">
         </div> -->
         <div class="uk-panel-badge uk-badge uk-badge-danger">Hot</div>
-        <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
+        <h3 class="uk-panel-title">
+            <i class="uk-icon-newspaper-o"></i> DS4 events
+        </h3>
         <ul>
             {% for r in google_cal_events.result %}
-            <li>{{ r.start.dateTime |parse_iso }} - <strong>{{ r.summary }}</strong>
+            <li>
+                {{ r.start.dateTime |parse_iso }} - <strong>{{ r.summary }}</strong>
             </li>
             {% endfor %}
         </ul>
@@ -36,12 +42,18 @@
             <img src="{% static '/img/resource/3.JPG' %}" alt="Sven HV">
         </div> -->
         <div class="uk-panel-badge uk-badge uk-badge-danger">Hot</div>
-        <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> Snake Game</h3>
-        <p>We received {{snake_highscores|length}} highscore(s) since April 2020!</p>
+        <h3 class="uk-panel-title">
+            <i class="uk-icon-newspaper-o"></i> Snake Game
+        </h3>
+        <p>
+            We received {{snake_highscores|length}} highscore(s) since April 2020!
+        </p>
         <ul>
             {% for highscore in snake_highscores|slice:":10" %}
-            <li>{{ forloop.counter }} - {{ highscore.nickname }} - Score: <strong>{{ highscore.score }}</strong> -
-                {{highscore.time | naturaltime}}
+            <li>
+                {{ forloop.counter }} - {{ highscore.nickname }} - Score:
+                <strong>{{ highscore.score }}</strong> - {{highscore.time |
+        naturaltime}}
             </li>
             {% endfor %}
         </ul>
@@ -52,25 +64,25 @@
     <div class="uk-panel uk-panel-box uk-panel-box-primary" style="background-color: rgba(0,0,0,0);">
         <div class="uk-panel-teaser slideshow-container" data-slides="10">
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/1.jpg'%}" style="width:100%">
+                <img src="{% static '/img/lf/1.jpg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/2.jpg'%}" style="width:100%">
+                <img src="{% static '/img/lf/2.jpg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/4.jpg'%}" style="width:100%">
+                <img src="{% static '/img/lf/4.jpg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/5.jpg'%}" style="width:100%">
+                <img src="{% static '/img/lf/5.jpg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/6.jpg'%}" style="width:100%">
+                <img src="{% static '/img/lf/6.jpg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/7.jpeg'%}" style="width:100%">
+                <img src="{% static '/img/lf/7.jpeg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
-                <img src="{% static '/img/lf/8.jpeg'%}" style="width:100%">
+                <img src="{% static '/img/lf/8.jpeg'%}" style="width: 100%;" />
             </div>
             <div class="mySlides fade">
                 <img src="{% static '/img/lf/9-min.jpg'%}" style="width:100%">
@@ -83,8 +95,8 @@
                     2020 - 2022! </div>
             </div>
         </div>
-        <br>
-        <div style="text-align:center">
+        <br />
+        <div style="text-align: center;">
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
@@ -106,14 +118,17 @@
 {# Small devices #}
 <div class="uk-width-1-1 uk-hidden-large">
     <div class="uk-panel uk-panel-box uk-panel-box-primary">
-        <div class="uk-panel-teaser" style="max-height:200px">
-            <img src="{% static '/img/resource/3.JPG' %}" alt="Sven HV">
+        <div class="uk-panel-teaser" style="max-height: 200px;">
+            <img src="{% static '/img/resource/3.JPG' %}" alt="Sven HV" />
         </div>
         <div class="uk-panel-badge uk-badge uk-badge-warning">Upcoming</div>
-        <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> DS4 events</h3>
+        <h3 class="uk-panel-title">
+            <i class="uk-icon-newspaper-o"></i> DS4 events
+        </h3>
         <ul>
             {% for r in google_cal_events.result %}
-            <li>{{ r.start.dateTime |parse_iso }} - <strong>{{ r.summary }}</strong>
+            <li>
+                {{ r.start.dateTime |parse_iso }} - <strong>{{ r.summary }}</strong>
             </li>
             {% endfor %}
         </ul>
@@ -121,13 +136,15 @@
 </div>
 
 <div class="uk-width-1-1 uk-hidden-large">
-    <div class="uk-panel uk-panel-box uk-panel-box-primary" style="height:350px;">
-        <div class="uk-panel-teaser" style="max-height:200px">
-            <img src="{% static '/img/resource/2.JPG' %}" alt="Wiki added">
+    <div class="uk-panel uk-panel-box uk-panel-box-primary" style="height: 350px;">
+        <div class="uk-panel-teaser" style="max-height: 200px;">
+            <img src="{% static '/img/resource/2.JPG' %}" alt="Wiki added" />
         </div>
         <div class="uk-panel-badge uk-badge uk-badge-danger">Hot</div>
         <a href="\wiki">
-            <h3 class="uk-panel-title"><i class="uk-icon-newspaper-o"></i> Wiki - DS4 Knowledge Base</h3>
+            <h3 class="uk-panel-title">
+                <i class="uk-icon-newspaper-o"></i> Wiki - DS4 Knowledge Base
+            </h3>
         </a>
         Add content for missing pages (stubs)!<br />
 

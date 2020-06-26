@@ -2,7 +2,9 @@
 version: '2'
 services:
     web:
-        build: .
+        build: 
+            dockerfile: Dockerfile
+            context: .
         networks: 
             - ds4
         container_name: django

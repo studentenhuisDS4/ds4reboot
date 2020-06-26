@@ -6,14 +6,12 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.datetime_safe import datetime
+from rainbowtests import colors
 
 from ds4reboot.tests import assert_total_balance
 from eetlijst.models import Dinner, UserDinner
 from eetlijst.urls import urlpatterns
-from rainbowtests import colors
-# Create your tests here.
 from user.models import Housemate
-from django.core.exceptions import ObjectDoesNotExist
 
 
 class DinnerTest(TestCase):
@@ -39,13 +37,13 @@ class DinnerTest(TestCase):
         self.assertIsNotNone(self.dinner_enroll_url)
         self.assertIsNotNone(self.dinner_close_url)
         self.assertIsNotNone(self.dinner_cost_url)
-    
+
     def createHouseAccount(self):
         User.objects.create_superuser(
             'huis', 'studentenhuisds4@gmail.com', 'Studentenhuis')
         Housemate.objects.create(user=User.objects.get(
             username='huis'), display_name='Huis')
-    
+
     def removeHouseAccount(self):
         User.objects.filter(username='huis').delete()
         Housemate.objects.filter(display_name='Huis').delete()
