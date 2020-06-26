@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {CanActivate, Router} from '@angular/router';
-import {AuthService} from '../auth.service';
-import {SnackBarService} from '../snackBar.service';
-import {UserService} from '../user.service';
+import { Injectable } from '@angular/core';
+import { CanActivate, Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { SnackBarService } from '../snackBar.service';
+import { UserService } from '../user.service';
 
 declare var ClientIP: string;
 
@@ -17,7 +17,7 @@ export class AuthGuardService implements CanActivate {
     }
 
     canActivate(): boolean {
-        if (ClientIP === '10.0.4.123' && this.auth.isAuthenticated() && !this.userService.checkHouse()) {
+        if (ClientIP === '10.0.4.123' && this.auth.isAuthTokenValid() && !this.userService.checkHouse(null)) {
             console.log('GR PC detected and login on personal account.');
             this.snackBar.openSnackBar('Logging into house account after 30 seconds...', 'Noice');
 
@@ -27,9 +27,7 @@ export class AuthGuardService implements CanActivate {
             }, 30000);
         }
 
-        if (!this.auth.isAuthenticated()) {
-            this.auth.logout();
-            this.router.navigate(['login']);
+        if (!this.auth.isAuthTokenValid()) {
             return false;
         }
         return true;

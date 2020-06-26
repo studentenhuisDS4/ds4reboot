@@ -13,7 +13,7 @@ import datetime
 import os
 
 from django.utils.timezone import now
-
+from datetime import timedelta
 from ds4reboot.secret_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -129,8 +129,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=14),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=21),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=21),
 }
 
 API_BASE_URL = 'api/v1/'

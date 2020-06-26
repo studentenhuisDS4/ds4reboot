@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {UserService} from '../../services/user.service';
-import {IUser} from '../../models/user.model';
-import {SnackBarService} from '../../services/snackBar.service';
-import {Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { UserService } from '../../services/user.service';
+import { IUser } from '../../models/user.model';
+import { SnackBarService } from '../../services/snackBar.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-profile-edit',
@@ -25,15 +25,15 @@ export class ProfileEditComponent implements OnInit {
     matchValues(matchTo: string): (AbstractControl) => ValidationErrors | null {
         return (control: AbstractControl): ValidationErrors | null => {
             return !!control.parent &&
-            !!control.parent.value &&
-            control.value === control.parent.controls[matchTo].value ? null : {isNotMatching: true};
+                !!control.parent.value &&
+                control.value === control.parent.controls[matchTo].value ? null : { isNotMatching: true };
         };
     }
 
     ngOnInit() {
         this.userService.getProfile().then(result => {
             if (result == null) {
-                this.isHouse = this.userService.checkHouse();
+                this.isHouse = this.userService.checkHouse(null);
                 if (this.isHouse) {
                     this.router.navigateByUrl('/home');
                 }

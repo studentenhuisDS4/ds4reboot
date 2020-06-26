@@ -12,13 +12,11 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
 
     handleError(error) {
-        console.log('Caught error!');
-        console.log(error);
         if (error != null) {
             this.snackBar.openSnackBar('Error! ' + error.toString().substring(0, 40), 'Ouch');
         }
-        // if (environment.debug) {
-        //     throw error;
-        // }
+        if (environment.debug) {
+            throw error;
+        }
     }
 }

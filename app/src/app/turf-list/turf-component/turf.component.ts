@@ -1,11 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {HOUSE_ID, IUser} from '../../models/user.model';
-import {TurfService} from '../../services/turf.service';
-import {UserService} from '../../services/user.service';
-import {SnackBarService} from '../../services/snackBar.service';
-import {EasterEggService} from '../../services/easter.service';
-import {TurfType} from '../../models/turf.model';
-import {IStatus} from '../../models/api.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { HOUSE_ID, IUser } from '../../models/user.model';
+import { TurfService } from '../../services/turf.service';
+import { UserService } from '../../services/user.service';
+import { SnackBarService } from '../../services/snackBar.service';
+import { EasterEggService } from '../../services/easter.service';
+import { TurfType } from '../../models/turf.model';
+import { IStatus } from '../../models/api.model';
 
 @Component({
     selector: 'app-turf-component',
@@ -29,7 +29,7 @@ export class TurfComponent implements OnInit {
         private snackBarService: SnackBarService,
         private easterEggService: EasterEggService
     ) {
-        this.isHouse = this.userService.checkHouse();
+        this.isHouse = this.userService.checkHouse(null);
         if (this.isHouse) {
             this.userService.getHouseProfile().then(result => {
                 this.user = result;

@@ -517,7 +517,6 @@ def close(request):
 @require_POST
 def cost(request):
     if request.user.is_authenticated:
-
         # get date from post
         date = request.POST.get('cost-date')
 
@@ -552,6 +551,12 @@ def cost(request):
             messages.error(request, 'No users signed up for selected date.')
             return redirect(request.META.get('HTTP_REFERER'))
 
+        # use huis account to buffer small unsplittable amounts
+        huis = Housemate.objects.filter(display_name='Huis')
+        if len(huis) == 0:
+            messages.error(request, 'Cannot split cost without a Huis account.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
         if date_entry.cook:
             try:
                 if date_entry.cost is None:
@@ -565,9 +570,6 @@ def cost(request):
                 # update housemate object for current user
                 h = Housemate.objects.get(user=request.user)
                 h.balance += cost_amount
-
-                # update housemate objects for users who signed up
-                huis = Housemate.objects.get(display_name='Huis')
 
                 remainder = huis.balance
                 split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
@@ -591,16 +593,12 @@ def cost(request):
 
                     u.save()
                     h.save()
-
             except:
                 messages.error(request, 'Server internal error during calculation of cost.')
-
         else:
             messages.error(request, 'Cannot input cost without cook.')
             return redirect(request.META.get('HTTP_REFERER'))
-
     else:
-
         return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))

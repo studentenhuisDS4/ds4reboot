@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit {
 
         this.userService.getProfile().then(result => {
             if (result == null) {
-                this.isHouse = this.userService.checkHouse();
+                this.isHouse = this.userService.checkHouse(null);
             } else {
                 this.profile = result;
                 this.profileForm.patchValue(result);

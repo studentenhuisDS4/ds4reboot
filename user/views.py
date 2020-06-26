@@ -123,7 +123,6 @@ def profile(request, user_id=None):
                 context['rooms'] = active_users
 
             return render(request, 'user/profile.html', context)
-            # return HttpResponse(json.dumps({'result': 'Profile updated.'}))
 
         else:
             if not user_id:
