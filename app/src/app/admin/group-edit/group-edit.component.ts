@@ -1,16 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { UserService } from '../../services/user.service';
-import { IUser } from '../../models/user.model';
-import { IGroup, ICreateGroup } from '../../models/group.model';
-import { GroupService } from '../../services/group.service';
-import { FormGroup, FormControl, Validators, FormBuilder, FormArray } from '@angular/forms';
-import { groupNameValidator } from '../../services/validators/async.validator';
-import { environment } from '../../../environments/environment';
-import { SnackBarService } from '../../services/snackBar.service';
-import { ActivatedRoute } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {UserService} from '../../services/user.service';
+import {IUser} from '../../models/user.model';
+import {ICreateGroup, IGroup} from '../../models/group.model';
+import {GroupService} from '../../services/group.service';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {groupNameValidator} from '../../services/validators/async.validator';
+import {environment} from '../../../environments/environment';
+import {SnackBarService} from '../../services/snackBar.service';
+import {ActivatedRoute} from '@angular/router';
 
 class GroupEditParams {
-    id: number;
+    id: string;
 }
 
 @Component({
@@ -20,8 +20,12 @@ class GroupEditParams {
 })
 export class GroupEditComponent implements OnInit {
     user: IUser;
+    activeUsers: IUser[] = [];
     groups: IGroup[];
+    filteredGroup: IGroup;
     public createGroupForm: FormGroup;
+
+    existingGroup = false;
 
     constructor(
         private userService: UserService,
@@ -29,28 +33,39 @@ export class GroupEditComponent implements OnInit {
         private snackBarService: SnackBarService,
         private formBuilder: FormBuilder,
         private route: ActivatedRoute
-    ) { }
+    ) {
+    }
 
     ngOnInit(): void {
         this.createGroupForm = this.formBuilder.group({
             name: new FormControl('',
                 {
-                    validators: [Validators.required, Validators.minLength(4),],
+                    validators: [Validators.required, Validators.minLength(3)],
                     asyncValidators: [groupNameValidator(this.groupService)]
                 }),
-            members: this.formBuilder.array([this.createItem()])
+            members: this.formBuilder.array([], {
+                validators: [Validators.minLength(1)]
+            }),
+            newMember: this.formBuilder.control(null)
         });
 
         this.route.params.subscribe((params: GroupEditParams) => {
             this.groupService.getGroupList().then(result => {
                 this.groups = result;
                 if (params.id) {
-                    let group = this.groups.find(group => group.id == params.id);
-                    this.createGroupForm.patchValue(group);
-                    this.createGroupForm.controls['members'] = this.processMembers(group.members);
+                    const groupId = parseInt(params.id, 10);
+                    this.existingGroup = true;
+
+                    this.createGroupForm.controls.name.clearAsyncValidators();
+                    this.filteredGroup = this.groups.find(group => group.id === groupId);
+                    this.createGroupForm.patchValue(this.filteredGroup);
+                    this.createGroupForm.controls.members = this.processMembers(this.filteredGroup.members);
                     this.createGroupForm.markAllAsTouched();
                 }
             });
+        });
+        this.userService.getActiveUsers().then(result => {
+            this.activeUsers = result;
         });
         this.userService.getProfile().then(result => {
             this.user = result;
@@ -58,33 +73,30 @@ export class GroupEditComponent implements OnInit {
     }
 
     processMembers(members: IUser[]): FormArray {
-        const controls: FormControl[] = [];
+        const groups: FormGroup[] = [];
         members.forEach(member => {
-            controls.push(this.formBuilder.control(member));
+            groups.push(this.formBuilder.group(member));
         });
-        const array = this.formBuilder.array(controls)
-        console.log(array);
-        return array;
+        return this.formBuilder.array(groups);
     }
 
-    createItem(): FormGroup {
-        return this.formBuilder.group({
-            username: ''
-        });
-    }
-
-    createGroup() {
+    createOrUpdateGroup() {
         this.createGroupForm.markAllAsTouched();
-
-        const newGroup = this.createGroupForm.value as ICreateGroup;
-        newGroup.members = [];
         if (this.createGroupForm.valid) {
-            this.groupService.createGroup(newGroup).then(result => {
-                this.createGroupForm.reset();
+            const formValue = this.createGroupForm.value;
+            delete formValue.newMember; // Only for adding new members to array
 
-                if (environment.debug) {
-                    console.log(result);
-                }
+            let createOrUpdatePromise: Promise<any>;
+            if (this.existingGroup) {
+                formValue.id = this.filteredGroup.id;
+                createOrUpdatePromise = this.groupService.updateGroup(formValue as IGroup);
+            } else {
+                createOrUpdatePromise = this.groupService.createGroup(formValue as ICreateGroup);
+            }
+
+            createOrUpdatePromise.then(result => {
+                this.createGroupForm.reset();
+                this.createGroupForm.patchValue(result);
             }, error => {
                 if (error) {
                     console.error(error);

@@ -1,12 +1,8 @@
-from django.contrib.auth.models import User, Group
-from django.utils import timezone
-from django.utils.datetime_safe import datetime
+from django.contrib.auth.models import Group
 from rest_framework import viewsets, mixins
-from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
-from ds4reboot.api.utils import illegal_action, IsSuperUser, EmptySchema, log_exception, \
-    success_action
+from ds4reboot.api.utils import IsSuperUser
 from user.api.serializers.group import GroupSchema
 
 

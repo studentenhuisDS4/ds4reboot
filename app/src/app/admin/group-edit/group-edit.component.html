@@ -1,12 +1,12 @@
-<section fxLayout="column" fxFlexAlign="stretch">
+<section fxFlexAlign="stretch" fxLayout="column">
     <mat-card>
         <div *ngIf="!user?.is_superuser">
             You are not allowed to create a new user. Become admin, or drink a
             beer or two.
         </div>
         <div
-            class="container"
             *ngIf="user?.is_superuser"
+            class="container"
             fxLayout
             fxLayout.xs="column"
             fxLayoutAlign="center"
@@ -14,7 +14,9 @@
             fxLayoutGap.xs="0"
         >
             <div class="item item-2" fxFlex>
-                <h1>New Group</h1>
+                <h1 *ngIf="!existingGroup">New Group</h1>
+                <h1 *ngIf="existingGroup">Edit <em>{{filteredGroup.name}}</em> - {{filteredGroup.members.length}}
+                    members</h1>
                 <button mat-flat-button routerLink="/admin/group-manage/">
                     <mat-icon>arrow_back</mat-icon>
                     back to groups
@@ -22,11 +24,11 @@
                 <form [formGroup]="createGroupForm" fxLayout="column">
                     <mat-form-field>
                         <input
+                            formControlName="name"
                             matInput
                             placeholder="Group name"
-                            type="text"
-                            formControlName="name"
                             required
+                            type="text"
                         />
                         <mat-error *ngIf="E('name')?.required">
                             Name is required.
@@ -36,31 +38,32 @@
                         </mat-error>
                     </mat-form-field>
                     <div
+                        *ngFor="let member of createGroupForm.get('members')?.controls; let i = index"
                         formArrayName="members"
-                        *ngFor="
-                            let member of createGroupForm.get('members')
-                                .controls;
-                            let i = index
-                        "
                     >
                         <mat-form-field [formGroupName]="i">
-                            <input
-                                matInput
-                                type="text"
-                                formControlName="username"
-                                required
-                                placeholder="Member"
-                            />
+                            <mat-select formControlName="member" placeholder="Group member" required>
+                                <mat-option *ngFor="let activeUser of activeUsers" [value]="activeUser.id">
+                                    {{activeUser.housemate.display_name}}
+                                </mat-option>
+                            </mat-select>
                         </mat-form-field>
                     </div>
+                    <mat-form-field>
+                        <mat-select formControlName="newMember" placeholder="Group member" required>
+                            <mat-option *ngFor="let activeUser of activeUsers" [value]="activeUser.id">
+                                {{activeUser.housemate.display_name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                     <button
-                        mat-raised-button
-                        color="primary"
-                        type="button"
+                        (click)="createOrUpdateGroup()"
                         [disabled]="!createGroupForm.valid"
-                        (click)="createGroup()"
+                        color="primary"
+                        mat-raised-button
+                        type="button"
                     >
-                        Create group
+                        {{existingGroup ? "Update group" : "Create group"}}
                     </button>
                 </form>
             </div>

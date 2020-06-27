@@ -16,7 +16,7 @@ export class GlobalErrorHandler implements ErrorHandler {
             this.snackBar.openSnackBar('Error! ' + error.toString().substring(0, 40), 'Ouch');
         }
         if (environment.debug) {
-            throw error;
+            console.error(error);
         }
     }
 }

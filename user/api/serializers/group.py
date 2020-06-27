@@ -1,14 +1,9 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.utils import timezone
-from django.apps import apps
-from marshmallow import fields, validates_schema, pre_load, pre_dump, post_dump
+from marshmallow import fields, pre_load, post_dump
 from marshmallow.validate import Length
 from rest_framework.exceptions import ValidationError
 from rest_marshmallow import Schema
-
-from ds4reboot.api.utils import Map
-from ds4reboot.api.validators import UniqueModelValidator
-from user.models import DIET_LENGTH, Housemate
 
 
 class GroupHousemateSchema(Schema):
@@ -30,8 +25,8 @@ class GroupUserSchema(Schema):
 
 
 class GroupSchema(Schema):
-    id = fields.Int(dump_only=True)
-    name = fields.Str(required=True, validate=[Length(min=4)])
+    id = fields.Int()
+    name = fields.Str(required=True, validate=[Length(min=3)])
     members = fields.Nested(GroupUserSchema, many=True)
     _members = fields.Function(
         lambda group: GroupUserSchema(
@@ -54,5 +49,14 @@ class GroupSchema(Schema):
         try:
             new_group = Group.objects.create(name=validated_data['name'])
             return new_group
+        except Exception as e:
+            raise ValidationError({'exception': str(e)})
+
+    def update(self, instance, validated_data):
+        try:
+            for key, value in validated_data.items():
+                setattr(instance, key, value)
+            instance.save()
+            return instance
         except Exception as e:
             raise ValidationError({'exception': str(e)})

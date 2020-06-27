@@ -58,9 +58,7 @@
                     </button>
                     <button
                         (click)="deleteGroup(element)"
-                        [disabled]="
-                            !element.is_active || element.id === user.id
-                        "
+
                         color="warn"
                         mat-menu-item
                         matTooltip="Click to Delete"

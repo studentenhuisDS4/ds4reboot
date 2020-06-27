@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { IGroup, ICreateGroup } from '../models/group.model';
-import { IResult } from '../models/api.model';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+import {ICreateGroup, IGroup} from '../models/group.model';
 
 @Injectable({
     providedIn: 'root'
@@ -23,8 +22,12 @@ export class GroupService {
         return this.httpClient.get<IGroup[]>(`${this.URL_GROUP}?name__iexact=${groupName}`);
     }
 
-    createGroup(newGroup: ICreateGroup) {
+    createGroup(newGroup: ICreateGroup): Promise<IGroup[]> {
         return this.httpClient.post<IGroup[]>(`${this.URL_GROUP_ADMIN}`, newGroup).toPromise();
+    }
+
+    updateGroup(group: IGroup): Promise<IGroup> {
+        return this.httpClient.put<IGroup>(`${this.URL_GROUP_ADMIN}${group.id}/`, group).toPromise();
     }
 
     // addUserToGroup(userId: number, groupId: number) {
@@ -33,4 +36,7 @@ export class GroupService {
     //         group_id: groupId
     //     }).toPromise();
     // }
+    deleteGroup(group: IGroup) {
+        return this.httpClient.delete<IGroup>(`${this.URL_GROUP_ADMIN}${group.id}`).toPromise();
+    }
 }
