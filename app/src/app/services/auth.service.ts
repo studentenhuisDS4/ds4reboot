@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {mergeMap, tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {ITokenClaims} from '../models/auth.model';
-import {of} from 'rxjs';
+import {AsyncSubject, of} from 'rxjs';
 
 const REFRESH_TOKEN = 'refresh';
 const AUTH_TOKEN = 'token';
@@ -23,6 +23,8 @@ export class AuthService {
     API_LOGIN_URL = `${this.API_URL}/auth-jwt/`;
     API_REFRESH_URL = `${this.API_URL}/auth-jwt-refresh/`;
     jwtHelper: JwtHelperService = new JwtHelperService();
+    authRefreshSubject = new AsyncSubject<IRefreshResponse>();
+    isRefreshRunning = false;
 
     constructor(private httpClient: HttpClient, private router: Router) {
     }
@@ -53,18 +55,25 @@ export class AuthService {
 
     public attemptRefreshAuth() {
         if (this.isAuthRefreshTokenValid()) {
-            return this.httpClient.post<IRefreshResponse>(this.API_REFRESH_URL, {
-                [REFRESH_TOKEN]: this.getRefreshToken()
-            }).pipe(
-                mergeMap(result => {
-                    if (result && this.isAuthTokenValid(result?.access)) {
-                        this.setAuthToken(result.access);
-                    } else {
-                        throw Error('Refresh token was rejected, or something went wrong with it.');
-                    }
-                    return of(result);
-                })
-            );
+            if (!this.isRefreshRunning) {
+                this.isRefreshRunning = true;
+                return this.httpClient.post<IRefreshResponse>(this.API_REFRESH_URL, {
+                    [REFRESH_TOKEN]: this.getRefreshToken()
+                }).pipe(
+                    map(result => {
+                        if (result && this.isAuthTokenValid(result?.access)) {
+                            this.setAuthToken(result.access);
+                        } else {
+                            throw Error('Refresh token was rejected, or something went wrong with it.');
+                        }
+                        this.authRefreshSubject.next(result);
+                        this.isRefreshRunning = false;
+                        return result.access;
+                    })
+                );
+            } else {
+                return this.authRefreshSubject.asObservable();
+            }
         } else {
             console.log('refresh invalid');
             return of(null);

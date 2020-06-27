@@ -21,8 +21,9 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                         errorMsg = `Error: ${error.error.message}`;
                     } else {
                         if (error.status === 401) {
+                            console.log('401 logging out');
+                            this.authService.logoutAndReturn();
                             if (!this.authService.isAuthTokenValid() && !this.authService.isAuthTokenUnset()) {
-                                this.authService.logoutAndReturn();
                                 return of(null);
                             }
                         }

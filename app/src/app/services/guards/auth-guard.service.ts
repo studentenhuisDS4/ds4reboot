@@ -27,7 +27,7 @@ export class AuthGuardService implements CanActivate {
             }, 30000);
         }
 
-        if (!this.auth.isAuthTokenValid()) {
+        if (!this.auth.isAuthTokenValid() && !this.auth.isAuthRefreshTokenValid()) {
             return false;
         }
         return true;
