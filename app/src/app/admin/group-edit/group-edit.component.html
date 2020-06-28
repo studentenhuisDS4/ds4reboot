@@ -1,5 +1,13 @@
-<section fxFlexAlign="stretch" fxLayout="column">
-    <mat-card>
+<section
+    fxLayout="row wrap"
+    fxLayout.lt-sm="column"
+    fxLayoutAlign="center center">
+    <mat-card
+        [ngStyle]="{'margin':'10px'}"
+        fxFlex="0 1 calc(33.3% - 32px)"
+        fxFlex.lt-md="0 1 calc(50% - 32px)"
+        fxFlex.lt-sm="100%"
+    >
         <div *ngIf="!user?.is_superuser">
             You are not allowed to create a new user. Become admin, or drink a
             beer or two.
@@ -10,13 +18,12 @@
             fxLayout
             fxLayout.xs="column"
             fxLayoutAlign="center"
-            fxLayoutGap="10px"
+            fxLayoutGap="5px"
             fxLayoutGap.xs="0"
         >
             <div class="item item-2" fxFlex>
                 <h1 *ngIf="!existingGroup">New Group</h1>
-                <h1 *ngIf="existingGroup">Edit <em>{{filteredGroup.name}}</em> - {{filteredGroup.members.length}}
-                    members</h1>
+                <h1 *ngIf="existingGroup">Edit Group <em>{{createOrEditGroup.name}}</em></h1>
                 <button mat-flat-button routerLink="/admin/group-manage/">
                     <mat-icon>arrow_back</mat-icon>
                     back to groups
@@ -37,25 +44,46 @@
                             This group name is already taken.
                         </mat-error>
                     </mat-form-field>
-                    <div
-                        *ngFor="let member of createGroupForm.get('members')?.controls; let i = index"
-                        formArrayName="members"
-                    >
-                        <mat-form-field [formGroupName]="i">
-                            <mat-select formControlName="member" placeholder="Group member" required>
-                                <mat-option *ngFor="let activeUser of activeUsers" [value]="activeUser.id">
+                    <div fxLayout.gt-sm="row" fxLayout.lt-md="column">
+                        <mat-form-field fxFlex="60">
+                            <mat-select formControlName="newMember" placeholder="Add active member">
+                                <mat-option *ngFor="let activeUser of activeUsers" [value]="activeUser">
                                     {{activeUser.housemate.display_name}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
+                        <button
+                            (click)="addAllActiveMembers()"
+                            [disabled]="!existingGroup || !activeUsers || activeUsers.length == 0"
+                            color="accent"
+                            mat-raised-button
+                            style="margin-bottom: 10px;"
+                            type="button">
+                            Add all active users
+                        </button>
                     </div>
-                    <mat-form-field>
-                        <mat-select formControlName="newMember" placeholder="Group member" required>
-                            <mat-option *ngFor="let activeUser of activeUsers" [value]="activeUser.id">
-                                {{activeUser.housemate.display_name}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <div
+                        *ngFor="let memberControl of createGroupForm.get('members')?.controls; let i = index"
+                        formArrayName="members"
+                    >
+                        <mat-form-field>
+                            <mat-select [compareWith]="compareTwoMembers"
+                                        [formControlName]="i"
+                                        [value]="memberControl.value"
+                                        placeholder="Group member"
+                                        required>
+                                <mat-option *ngFor="let activeUser of activeUsers" [value]="activeUser">
+                                    {{activeUser?.housemate?.display_name ? activeUser?.housemate?.display_name : activeUser.username + " (username)"}}
+                                </mat-option>
+                            </mat-select>
+                            <button (click)="deleteGroupMemberControl(i)" *ngIf="memberControl.value" aria-label="Clear"
+                                    mat-button mat-icon-button
+                                    matSuffix>
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+                    <mat-line></mat-line>
                     <button
                         (click)="createOrUpdateGroup()"
                         [disabled]="!createGroupForm.valid"
