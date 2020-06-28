@@ -326,6 +326,7 @@ class ThesauTest(TestCase):
         self.assertIsNotNone(response)
         self.assertEqual(response.status_code, 200)
         self.hm_pietje2.refresh_from_db()
+
         self.assertIsNotNone(self.hm_pietje2.moveout_date)
         print(colors.blue("Housemate pietje2 now correctly removed (move-out date): "),
               colors.blue(str(self.hm_pietje2.moveout_date)))

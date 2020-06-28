@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User, Group
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.utils.datetime_safe import datetime
 from django.views.decorators.http import require_POST, require_GET
@@ -229,7 +230,12 @@ def remove_housemate(request):
                 u.is_active = False
 
                 # Get required database objects
-                huis = Housemate.objects.get(display_name='Huis')
+                huis = None
+                try:
+                    huis = Housemate.objects.get(display_name='Huis')
+                except ObjectDoesNotExist as e:
+                    messages.error(request, 'Huis account not found, cant delete user as this would be inconsisten for total balance.')
+                    return redirect(request.META.get('HTTP_REFERER'))
                 active_users = User.objects \
                     .filter(is_active=True) \
                     .exclude(id=remove_id) \
@@ -287,7 +293,6 @@ def remove_housemate(request):
 
     else:
         messages.error(request, 'Method must be POST.')
-
     return redirect(request.META.get('HTTP_REFERER'))
 
 
