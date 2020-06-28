@@ -1,16 +1,7 @@
-@import '../../node_modules/@angular/material/theming';
+@import 'theme-variables.scss';
 @include mat-core();
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$ds4-app-primary: mat-palette($mat-light-blue);
-$ds4-app-accent:  mat-palette($mat-yellow, 600, A100, A400);
-$ds4-app-warn:    mat-palette($mat-red);
-
 $ds4-app-theme: mat-light-theme($ds4-app-primary, $ds4-app-accent, $ds4-app-warn);
 @include angular-material-theme($ds4-app-theme);
-
-$ds4-app-background: #08264D;
 
 $ds4-card-max-width: 340px;
 $ds4-card-min-width: 280px; //268px;

@@ -23,7 +23,7 @@ mat-toolbar{
     }
 }
 
-@import '../../theme';
+@import '../../theme-variables';
 .nav-item-active {
     background-color: mat-color($ds4-app-warn) !important;
     text-decoration-color: #3f51b5;

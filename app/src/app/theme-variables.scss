@@ -1,0 +1,6 @@
+@import '~@angular/material/theming';
+$ds4-app-primary: mat-palette($mat-light-blue);
+$ds4-app-accent:  mat-palette($mat-yellow, 600, A100, A400);
+$ds4-app-warn:    mat-palette($mat-red);
+
+$ds4-app-background: #08264D;

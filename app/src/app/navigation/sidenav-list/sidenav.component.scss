@@ -12,7 +12,7 @@ a:hover, a:active{
     padding-left: 6px;
 }
 
-@import '../../theme';
+@import '../../theme-variables';
 .list-item-active {
     color: mat-color($ds4-app-warn) !important;
     text-decoration-color: #3f51b5;

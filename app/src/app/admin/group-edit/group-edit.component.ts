@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../services/user.service';
-import {IUser} from '../../models/user.model';
+import {UserService} from '~/services/user.service';
+import {IUser} from '~/models/user.model';
 import {ICreateGroup, IGroup} from '../../models/group.model';
-import {GroupService} from '../../services/group.service';
+import {GroupService} from '~/services/group.service';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {groupNameValidator} from '../../services/validators/async.validator';
-import {SnackBarService} from '../../services/snackBar.service';
+import {groupNameValidator} from '~/services/validators/async.validator';
+import {SnackBarService} from '~/services/snackBar.service';
 import {ActivatedRoute} from '@angular/router';
 
 class GroupEditParams {

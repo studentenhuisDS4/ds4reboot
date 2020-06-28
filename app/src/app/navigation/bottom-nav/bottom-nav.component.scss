@@ -1,7 +1,7 @@
 $break-small: 320px;
 $break-medium: 576px;
 $break-large: 1200px;
-@import '../../theme';
+@import '../../theme-variables';
 
 .bottom-bar {
     background-color: $ds4-app-background !important;

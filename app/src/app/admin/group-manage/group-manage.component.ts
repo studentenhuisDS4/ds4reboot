@@ -1,12 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IUser} from '../../models/user.model';
-import {IGroup} from '../../models/group.model';
-import {UserService} from '../../services/user.service';
+import {IUser} from '~/models/user.model';
+import {IGroup} from '~/models/group.model';
+import {UserService} from '~/services/user.service';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {GroupService} from '../../services/group.service';
-import {SnackBarService} from '../../services/snackBar.service';
+import {GroupService} from '~/services/group.service';
+import {SnackBarService} from '~/services/snackBar.service';
 
 @Component({
     selector: 'app-group-manage',
