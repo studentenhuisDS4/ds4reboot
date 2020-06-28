@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {GROUP, IUser} from '../models/user.model';
-import {environment} from '../../environments/environment';
-import {IActivation, IMoveout} from '../models/admin.model';
-import {IResult} from '../models/api.model';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { IUser } from '../models/user.model';
+import { GROUP } from '../models/group.model';
+import { environment } from '../../environments/environment';
+import { IActivation, IMoveout } from '../models/admin.model';
+import { IResult } from '../models/api.model';
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,7 @@ import {IResult} from '../models/api.model';
 export class AdminService {
     API_URL: string = environment.baseUrl;
 
-    constructor(private  httpClient: HttpClient) {
+    constructor(private httpClient: HttpClient) {
     }
 
     getAdminUsers(): Promise<IUser[]> {

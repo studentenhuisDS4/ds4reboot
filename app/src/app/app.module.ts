@@ -44,12 +44,15 @@ import {BoeteComponent} from './turf-list/boete/boete.component';
 import {TurfComponent} from './turf-list/turf-component/turf.component';
 import {MaterialFileInputModule} from 'ngx-material-file-input';
 import {GlobalErrorHandler} from './services/interceptors/error-handler.interceptor';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {DisableControlDirective} from './directives/disableControl.directive';
 import {SpinnerComponent} from './directives/spinner/spinner.component';
 import {ReceiptComponent} from './organisation/receipts/receipt/receipt.component';
 import {EditReceiptComponent} from './organisation/receipts/edit-receipt/edit-receipt.component';
-import { CalendarComponent } from './organisation/calendar/calendar.component';
+import {CalendarComponent} from './organisation/calendar/calendar.component';
+import {GroupManageComponent} from './admin/group-manage/group-manage.component';
+import {GroupEditComponent} from './admin/group-edit/group-edit.component';
+import {HttpErrorInterceptor} from './services/interceptors/http-error.interceptor';
 
 @NgModule({
     declarations: [
@@ -86,7 +89,9 @@ import { CalendarComponent } from './organisation/calendar/calendar.component';
         SpinnerComponent,
         ReceiptComponent,
         EditReceiptComponent,
-        CalendarComponent
+        CalendarComponent,
+        GroupManageComponent,
+        GroupEditComponent
     ],
     imports: [
         BrowserModule,
@@ -115,6 +120,10 @@ import { CalendarComponent } from './organisation/calendar/calendar.component';
         ThesauGuard, {
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
+            multi: true
+        }, {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
             multi: true
         },
         {

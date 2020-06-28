@@ -4,7 +4,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.index, name='beerlist index'),
     path(r'log/', views.show_log, name='log'),
     url(r'^log/(?P<page>[0-9]+)/?$', views.show_log, name='log'),
     path('boetes/', views.boetes, name='boetes'),

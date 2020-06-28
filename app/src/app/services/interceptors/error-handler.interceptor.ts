@@ -1,6 +1,6 @@
-import {ErrorHandler, Injectable} from '@angular/core';
-import {SnackBarService} from '../snackBar.service';
-import {environment} from '../../../environments/environment';
+import { ErrorHandler, Injectable } from '@angular/core';
+import { SnackBarService } from '../snackBar.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -12,10 +12,11 @@ export class GlobalErrorHandler implements ErrorHandler {
     }
 
     handleError(error) {
-        console.log('Caught error!', error);
-        this.snackBar.openSnackBar('Error! ' + error.substring(0, 20), 'Ouch');
+        if (error != null) {
+            this.snackBar.openSnackBar('Error! ' + error.toString().substring(0, 40), 'Ouch');
+        }
         if (environment.debug) {
-            throw error;
+            console.error(error);
         }
     }
 }

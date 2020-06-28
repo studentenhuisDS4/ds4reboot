@@ -1,0 +1,98 @@
+<section
+    fxLayout="row wrap"
+    fxLayout.lt-sm="column"
+    fxLayoutAlign="center center">
+    <mat-card
+        [ngStyle]="{'margin':'10px'}"
+        fxFlex="0 1 calc(75% - 32px)"
+        fxFlex.lt-md="0 1 calc(85% - 32px)"
+        fxFlex.lt-sm="100%"
+    >
+        <mat-card-header>
+            <mat-card-title>
+                Groups
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content fxLayout="column">
+            <div *ngIf="!user?.is_superuser">
+                You are not allowed to manage groups. Become admin, or drink a beer
+                or two.
+            </div>
+            <div [style.margin]="'12px'" fxLayout="row" fxLayoutGap="12px">
+                <mat-form-field fxFlex="95%">
+                    <input
+                        (keyup)="applyFilter($event.target.value)"
+                        matInput
+                        placeholder="Filter (group name)"
+                    />
+                </mat-form-field>
+                <button
+                    color="primary"
+                    mat-raised-button
+                    routerLink="/admin/group-manage/group-edit"
+                >
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <table [dataSource]="dataSource" class="mat-elevation-z8" fxFlex.gt-sm="60" fxFlex.lt-md="100" mat-table
+                   matSort>
+                <ng-container matColumnDef="name" sticky>
+                    <th *matHeaderCellDef mat-header-cell>Group name</th>
+                    <td *matCellDef="let element" mat-cell>
+                        {{ element?.name }}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="members" sticky>
+                    <th *matHeaderCellDef mat-header-cell>Group members</th>
+                    <td *matCellDef="let element" mat-cell>
+                        <span *ngFor="let member of element?.members" fxHide.lt-md
+                        >{{ member?.housemate.display_name }},
+                        </span>
+                        <em fxHide.gt-sm> {{element?.members?.length}} members</em>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions" stickyEnd>
+                    <th *matHeaderCellDef mat-header-cell>Actions</th>
+                    <td *matCellDef="let element" mat-cell>
+                        <mat-menu #appMenu="matMenu">
+                            <button
+                                [routerLink]="[
+                            '/admin/group-manage/group-edit/',
+                            element.id
+                        ]"
+                                mat-menu-item
+                                matTooltip="Click to Edit"
+                            >
+                                <mat-icon aria-label="Deactivate">edit</mat-icon>
+                                Edit
+                            </button>
+                            <button
+                                (click)="deleteGroup(element)"
+
+                                color="warn"
+                                mat-menu-item
+                                matTooltip="Click to Delete"
+                            >
+                                <mat-icon aria-label="Delete">delete</mat-icon>
+                                Delete
+                            </button>
+                        </mat-menu>
+                        <button
+                            [matMenuTriggerFor]="appMenu"
+                            mat-icon-button
+                            matTooltip="Click to Edit"
+                        >
+                            <mat-icon aria-label="Edit">more_vert</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" fxFlex.gt-sm="60" fxFlex.lt-md="100"></mat-paginator>
+        </mat-card-content>
+    </mat-card>
+</section>

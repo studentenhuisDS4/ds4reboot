@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isHouse = this.userService.checkHouse();
+        this.isHouse = this.userService.checkHouse(null);
         this.userService.getProfile().then(r => {
                 this.user = r;
             }
@@ -50,7 +50,7 @@ export class HeaderComponent implements OnInit {
     }
 
     logout() {
-        this.authService.logout();
+        this.authService.logoutAndReturn();
         delete this.user;
         return this.router.navigateByUrl('login');
     }

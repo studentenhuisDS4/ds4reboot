@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {GROUP, IGroup, IUser} from '../models/user.model';
+import {IUser} from '../models/user.model';
+import {GROUP, IGroup} from '../models/group.model';
+
 import {AuthService} from './auth.service';
 import {FormGroup} from '@angular/forms';
 import {map, tap} from 'rxjs/operators';
@@ -20,7 +22,10 @@ export class UserService {
         private auth: AuthService) {
     }
 
-    checkHouse(token: ITokenClaims = this.auth.getTokenClaims()) {
+    checkHouse(token: ITokenClaims) {
+        if (token == null) {
+            token = this.auth.getTokenClaims();
+        }
         if (token) {
             return token.user_id === 2;
         }

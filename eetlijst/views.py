@@ -517,7 +517,6 @@ def close(request):
 @require_POST
 def cost(request):
     if request.user.is_authenticated:
-
         # get date from post
         date = request.POST.get('cost-date')
 
@@ -552,6 +551,12 @@ def cost(request):
             messages.error(request, 'No users signed up for selected date.')
             return redirect(request.META.get('HTTP_REFERER'))
 
+        # use huis account to buffer small unsplittable amounts
+        huis = Housemate.objects.filter(display_name='Huis').first()
+        if huis == None:
+            messages.error(request, 'Cannot split cost without a Huis account.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
         if date_entry.cook:
             try:
                 if date_entry.cost is None:
@@ -563,11 +568,8 @@ def cost(request):
                     raise AssertionError
 
                 # update housemate object for current user
-                h = Housemate.objects.get(user=request.user)
-                h.balance += cost_amount
-
-                # update housemate objects for users who signed up
-                huis = Housemate.objects.get(display_name='Huis')
+                hm = Housemate.objects.get(user=request.user)
+                hm.balance += cost_amount
 
                 remainder = huis.balance
                 split_cost = Decimal(round((cost_amount - remainder) / date_entry.num_eating, 2))
@@ -575,32 +577,28 @@ def cost(request):
 
                 # Seperately save
                 date_entry.save()
-                h.save()
+                hm.save()
                 huis.save()
 
                 # update userlist objects
                 for u in users_enrolled:
-                    h = Housemate.objects.get(user=u.user)
+                    hm = Housemate.objects.get(user=u.user)
 
-                    h.balance -= u.count * split_cost
+                    hm.balance -= u.count * split_cost
                     u.split_cost = -1 * u.count * split_cost
 
                     if u.is_cook:
-                        h.balance -= split_cost
+                        hm.balance -= split_cost
                         u.split_cost = cost_amount - split_cost * (1 + u.count)
 
                     u.save()
-                    h.save()
-
-            except:
+                    hm.save()
+            except Exception as e:
                 messages.error(request, 'Server internal error during calculation of cost.')
-
         else:
             messages.error(request, 'Cannot input cost without cook.')
             return redirect(request.META.get('HTTP_REFERER'))
-
     else:
-
         return render(request, 'base/login_page.html')
 
     return redirect(request.META.get('HTTP_REFERER'))

@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {UserService} from '../services/user.service';
+import { Component, OnInit } from '@angular/core';
+import { UserService } from '../services/user.service';
 
 @Component({
     selector: 'app-home',
@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.isHouse = this.userService.checkHouse();
+        this.isHouse = this.userService.checkHouse(null);
     }
 
 }

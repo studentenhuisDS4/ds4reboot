@@ -1,6 +1,5 @@
 {% load group_check %}
-{% load static from staticfiles %}
-{#{% load progressive_web_app_meta from pwa %}#}
+{% load static from static %}
 <!DOCTYPE html>
 <html lang="en" class="uk-height-1-1">
 
@@ -17,12 +16,12 @@
 
 <link href='https://fonts.googleapis.com/css?family=Open+Sans|Roboto' rel='stylesheet' type='text/css'>
 
-<link rel="stylesheet" href="/static/css/uikit.almost-flat.min.css"/>
-<link rel="stylesheet" href="{% static '/css/lf/lf20.css' %}"/>
-<link rel="stylesheet" href="/static/css/components/notify.almost-flat.min.css"/>
-<link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css"/>
-<link rel="stylesheet" href="/static/css/components/tooltip.almost-flat.min.css"/>
-<link rel="stylesheet" href="/static/css/base.css"/>
+<link rel="stylesheet" href="/static/css/uikit.almost-flat.min.css" />
+<link rel="stylesheet" href="{% static '/css/lf/lf20.css' %}" />
+<link rel="stylesheet" href="/static/css/components/notify.almost-flat.min.css" />
+<link rel="stylesheet" href="/static/css/components/datepicker.almost-flat.min.css" />
+<link rel="stylesheet" href="/static/css/components/tooltip.almost-flat.min.css" />
+<link rel="stylesheet" href="/static/css/base.css" />
 
 <script src="{% static 'js/jquery.js' %}"></script>
 <script src="{% static 'js/uikit.min.js' %}"></script>
@@ -35,40 +34,41 @@
 </head>
 
 <body class="uk-height-1-1">
-<div class="uk-container uk-container-center uk-margin-bottom">
+    <div class="uk-container uk-container-center uk-margin-bottom">
 
-    {% include 'base/nav_lf.html' %}
-    <!-- {% include 'base/nav.html' %} -->
+        {% include 'base/nav_lf.html' %}
+        <!-- {% include 'base/nav.html' %} -->
 
-    {% if messages %}
+        {% if messages %}
         {% for m in messages %}
-            {% if m.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                <div class="uk-alert uk-alert-danger" data-uk-alert>
-                    <a href="" class="uk-alert-close uk-close"></a>
-                    <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
-                </div>
-            {% elif m.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
-                <div class="uk-alert uk-alert-warning" data-uk-alert>
-                    <a href="" class="uk-alert-close uk-close"></a>
-                    <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
-                </div>
-            {% elif m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                <div class="uk-alert uk-alert-success" data-uk-alert>
-                    <a href="" class="uk-alert-close uk-close"></a>
-                    <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
-                </div>
-            {% elif m.level == DEFAULT_MESSAGE_LEVELS.INFO %}
-                <div class="uk-alert" data-uk-alert>
-                    <a href="" class="uk-alert-close uk-close"></a>
-                    <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
-                </div>
-            {% endif %}
+        {% if m.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="uk-alert uk-alert-danger" data-uk-alert>
+            <a href="" class="uk-alert-close uk-close"></a>
+            <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+        </div>
+        {% elif m.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+        <div class="uk-alert uk-alert-warning" data-uk-alert>
+            <a href="" class="uk-alert-close uk-close"></a>
+            <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+        </div>
+        {% elif m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="uk-alert uk-alert-success" data-uk-alert>
+            <a href="" class="uk-alert-close uk-close"></a>
+            <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+        </div>
+        {% elif m.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+        <div class="uk-alert" data-uk-alert>
+            <a href="" class="uk-alert-close uk-close"></a>
+            <p><i class="uk-icon-exclamation-triangle"></i> {{ m.tags|upper }}: {{ m }}</p>
+        </div>
+        {% endif %}
         {% endfor %}
-    {% endif %}
-    {% block body_block %}Failed to load page content.{% endblock %}
+        {% endif %}
+        {% block body_block %}Failed to load page content.{% endblock %}
 
-</div>
-{% include 'base/nav_side.html' %}
+    </div>
+    {% include 'base/nav_side.html' %}
 
 </body>
+
 </html>

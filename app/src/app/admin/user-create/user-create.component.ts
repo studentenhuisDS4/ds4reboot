@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {UserService} from '../../services/user.service';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {SnackBarService} from '../../services/snackBar.service';
-import {IUser} from '../../models/user.model';
-import {emailValidator, usernameValidator} from '../../services/validators/async.validator';
-import {format} from 'date-fns';
+import { Component, OnInit } from '@angular/core';
+import { UserService } from '../../services/user.service';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { SnackBarService } from '../../services/snackBar.service';
+import { IUser } from '../../models/user.model';
+import { emailValidator, usernameValidator } from '../../services/validators/async.validator';
+import { format } from 'date-fns';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-user-create',
@@ -21,14 +22,15 @@ export class UserCreateComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private snackBarService: SnackBarService) {
+        private snackBarService: SnackBarService
+    ) {
     }
 
     matchValues(matchTo: string): (AbstractControl) => ValidationErrors | null {
         return (control: AbstractControl): ValidationErrors | null => {
             return !!control.parent &&
-            !!control.parent.value &&
-            control.value === control.parent.controls[matchTo].value ? null : {isNotMatching: true};
+                !!control.parent.value &&
+                control.value === control.parent.controls[matchTo].value ? null : { isNotMatching: true };
         };
     }
 
@@ -96,7 +98,10 @@ export class UserCreateComponent implements OnInit {
             this.userService.createUser(this.createUserForm).then(result => {
                 localStorage.removeItem(this.storeFormKey);
                 this.createUserForm.reset();
-                console.log(result);
+
+                if (environment.debug) {
+                    console.log(result);
+                }
             }, error => {
                 if (error) {
                     console.error(error);

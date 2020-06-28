@@ -1,18 +1,11 @@
+import { IGroup } from './group.model';
+
 export interface IPermission {
     id: number;
 }
 
 export const HOUSE_ID = 2;
 export const ADMIN_ID = 1;
-
-export enum GROUP {
-    THESAU = 1
-}
-
-export interface IGroup {
-    id: number;
-    name?: string;
-}
 
 export interface IHousemate {
     display_name: string;

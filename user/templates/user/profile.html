@@ -16,6 +16,8 @@
     <div class="uk-grid uk-padding-remove" style="position:relative;" data-uk-grid-margin>
         <div class="uk-width-medium-7-10">
             <ul class="uk-tab" data-uk-tab="{connect:'#tab-container', animation: 'fade'}">
+            {{ profile_user.user.id }}
+            {{ request.user.id }}
                 {% if profile_user.user.id == request.user.id or user.is_staff %}
                 <li><a href=""><i class="uk-icon-user"></i> Profiel</a></li>
                 {% else %}

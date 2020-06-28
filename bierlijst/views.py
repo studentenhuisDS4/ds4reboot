@@ -22,14 +22,16 @@ def index(request):
     user_list = Housemate.objects.filter(user__id__in=active_users).order_by('movein_date')
 
     # calculate turf totals
-    totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
-              str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0] +
-                  list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('boetes_geturfd_rwijn')).values())[0] +
-                  list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0]),
-              str(list(user_list.aggregate(Sum('boetes_total')).values())[0])]
+    totals = []
+    if len(user_list) > 0:
+        totals = [str(list(user_list.aggregate(Sum('sum_bier')).values())[0]),
+                  str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0] +
+                      list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
+                  str(list(user_list.aggregate(Sum('sum_wwijn')).values())[0]),
+                  str(list(user_list.aggregate(Sum('sum_rwijn')).values())[0]),
+                  str(list(user_list.aggregate(Sum('boetes_geturfd_rwijn')).values())[0] +
+                      list(user_list.aggregate(Sum('boetes_geturfd_wwijn')).values())[0]),
+                  str(list(user_list.aggregate(Sum('boetes_total')).values())[0])]
 
     # find medaled users
     user_medals = Housemate.objects.exclude(user__username='huis').filter(user__id__in=active_users).order_by(
@@ -403,8 +405,8 @@ def list_medals(request):
                 if u.sum_bier > 0:
                     medals += [u.user_id]
                 else:
-                    medals += [0] 
-            
+                    medals += [0]
+
             try:
                 return JsonResponse(
                     {'status': 'success', 'medals': {'gold': medals[0], 'silver': medals[1], 'bronze': medals[2]}})

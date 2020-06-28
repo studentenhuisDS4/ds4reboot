@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         // Show loader while waiting for authService?
-        if (this.authService.isAuthenticated()) {
+        if (this.authService.isAuthTokenValid()) {
             this.router.navigate(['/home']);
         }
 
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
         this.awaitingLogin = true;
         this.signInMessage = '';
         if (this.loginForm.valid) {
-            this.authService.sendAuth(this.V('username-or-email'), this.V('password'))
+            this.authService.sendLogin(this.V('username-or-email'), this.V('password'))
                 .subscribe(res => {
                     this.awaitingLogin = false;
                     this.router.navigateByUrl('/home');
