@@ -60,7 +60,7 @@ def update_mijndomein_filters(buckets):
 
             filter_entry = dict(DEFAULT_FILTER)
             filter_entry[
-                "rulename"] = DEFAULT_RULENAME_BASE + f"{filter_index * 4}"
+                "rulename"] = "FWD:" + email
             filter_entry["actioncmds"] = action_cmds
 
             if not len(action_cmds) >= 1:

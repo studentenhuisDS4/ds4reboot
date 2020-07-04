@@ -1,4 +1,4 @@
-from rest_framework.decorators import action
+from django.core.mail import send_mail
 from django.http import HttpResponse
 
 from ds4reboot.api.auth import User
@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
 from ds4reboot.api.utils import EmptySchema, success_action
-from ds4reboot.secret_settings import DEBUG
+from ds4reboot.secret_settings import DEBUG, EMAIL_HOST_USER
 
 
 class MijndomeinMailForwardViewSet(GenericViewSet):
@@ -21,6 +21,27 @@ class MijndomeinMailForwardViewSet(GenericViewSet):
         else:
             filters = get_mijndomein_filters()
             return HttpResponse(filters)
+    
+    @action(detail=False, methods=['GET'])
+    def test_mail(self, request, pk=None):
+        recipients = ['mail2@ds4.nl']
+        # recipients = ['d.zwart@ridder.com']
+        if not DEBUG and (request.user.is_superuser or request.user.is_staff):
+            return HttpResponse('Denied (not admin)')
+        else:
+            if "number" in request.data:
+                mail_no = request.data["number"]
+            else:
+                mail_no = -1
+            response = send_mail(
+                'Test mail',
+                'Hey testers. This is mail' + str(mail_no),
+                'admin@ds4.nl',
+                recipients,
+                fail_silently=False
+            )
+            print(response)
+            return success_action(response)
 
     @action(detail=False, methods=['POST'])
     def update_filters(self, request, pk=None):
@@ -36,10 +57,10 @@ class MijndomeinMailForwardViewSet(GenericViewSet):
                 elif not user.email:
                     continue
 
-                if len(buckets_four[index]) == 4:
+                if len(buckets_four[index]) == 1:
                     buckets_four.append([])
                     index += 1
-                buckets_four[index].append(user.email)
+                buckets_four[index].append(user.email.lower())
 
             entries_response = update_mijndomein_filters(buckets_four)
             return success_action(data=entries_response)

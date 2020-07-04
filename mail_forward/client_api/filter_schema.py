@@ -28,4 +28,4 @@ class MijndomeinMailFilterSchema(Schema):
     active = fields.Bool(required=True)
     actioncmds = fields.Nested(ActionCmdSchema, many=True, default=[])
     test = fields.Nested(TestSchema, required=True, many=False, default={'id': 'true'})
-    flags = fields.Nested(FlagSchema, many=True)
+    flags = fields.Raw(many=True)
